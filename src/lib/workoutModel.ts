@@ -15,14 +15,17 @@ export type WorkoutSession = {
   // optional linkage
   routineId?: string;
   routineName?: string;
+  planId?: string;
 
-  // what the plan was, if any (kept small)
   plannedExercises?: Array<{
     exerciseId: string;
     targetSets: number;
     targetRepsMin?: number;
     targetRepsMax?: number;
   }>;
+
+  // 0..1 if planned, else undefined
+  completionPct?: number;
 };
 
 export function uid(): string {
