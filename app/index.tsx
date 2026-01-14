@@ -30,16 +30,18 @@ export default function Index() {
         Verified ranks. Real feedback. No fake leaderboards.
       </Text>
 
+      <CardLink href="/workout/start" title="Start Workout" subtitle="Pick a routine or go free." />
       <CardLink href="/live-workout" title="Live Workout" subtitle="Log sets, cues, PRs, rest timer." />
-      <CardLink href="/calendar" title="Calendar" subtitle="Highlighted workout days + timeline." />
-      <CardLink href="/history" title="History" subtitle="Workout sessions by day, duration, sets." />
-      <CardLink href="/profile" title="Profile" subtitle="Stats, lifetime PRs, ranks summary." />
 
-      <CardLink href="/routines" title="Routines" subtitle="Routine builder (scaffold)." />
-      <CardLink href="/exercises" title="Exercise DB" subtitle="Browse exercises (scaffold)." />
+      <CardLink href="/calendar" title="Calendar" subtitle="Month grid + highlighted workout days." />
+      <CardLink href="/history" title="History" subtitle="Workout sessions by day, time, duration." />
+      <CardLink href="/profile" title="Profile" subtitle="Stats, lifetime PRs, ranks summary (coming)." />
+
+      <CardLink href="/routines" title="Routines" subtitle="Build routines and targets." />
+      <CardLink href="/exercises" title="Exercise DB" subtitle="Browse exercises scaffold." />
 
       <CardLink href="/debug/ranks" title="Debug: Ranks" subtitle="Verify 20-rank curve + thresholds." />
-      <CardLink href="/settings" title="Settings" subtitle="Toggle haptics & sounds (wired)." />
+      <CardLink href="/settings" title="Settings" subtitle="Toggle haptics & sounds." />
     </View>
   );
 }
