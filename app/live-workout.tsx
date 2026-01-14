@@ -20,17 +20,11 @@ import {
   pickPunchyVariant,
 } from "../src/lib/perSetCue";
 
+import { getSettings } from "../src/lib/settings";
+
 function uid() {
   return Math.random().toString(16).slice(2);
 }
-
-/**
- * Settings stubs (wire these to a Settings screen later)
- */
-const SETTINGS = {
-  hapticsEnabled: true,
-  soundsEnabled: true,
-};
 
 // Optional runtime requires (no-op if not installed)
 let Haptics: any = null;
@@ -42,23 +36,25 @@ try {
 }
 
 function hapticFallback() {
-  if (!SETTINGS.hapticsEnabled || !Haptics) return;
-  // light tap
+  const s = getSettings();
+  if (!s.hapticsEnabled || !Haptics) return;
   Haptics.impactAsync?.(Haptics.ImpactFeedbackStyle.Light).catch?.(() => {});
 }
 
 function hapticPR() {
-  if (!SETTINGS.hapticsEnabled || !Haptics) return;
-  // more noticeable
+  const s = getSettings();
+  if (!s.hapticsEnabled || !Haptics) return;
   Haptics.notificationAsync?.(Haptics.NotificationFeedbackType.Success).catch?.(() => {});
 }
 
-// Sound placeholder (add an asset + expo-av later)
+// Sound placeholder (we’ll wire expo-av + actual sounds later)
 function soundFallback() {
-  if (!SETTINGS.soundsEnabled) return;
+  const s = getSettings();
+  if (!s.soundsEnabled) return;
 }
 function soundPR() {
-  if (!SETTINGS.soundsEnabled) return;
+  const s = getSettings();
+  if (!s.soundsEnabled) return;
 }
 
 export default function LiveWorkout() {
@@ -75,16 +71,11 @@ export default function LiveWorkout() {
   const [recapCues, setRecapCues] = useState<Cue[]>([]);
   const [instantCue, setInstantCue] = useState<Cue | null>(null);
 
-  // Per-exercise PR tracking (within this workout only)
   const [sessionStateByExercise, setSessionStateByExercise] = useState<Record<string, ExerciseSessionState>>({});
-
-  // Per-exercise fallback countdown: show a fallback only every 2–4 non-PR sets
   const [fallbackCountdownByExercise, setFallbackCountdownByExercise] = useState<Record<string, number>>({});
 
-  // Timer for toast dismiss
   const cueTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Toast animation values
   const toastOpacity = useRef(new Animated.Value(0)).current;
   const toastTranslateY = useRef(new Animated.Value(-18)).current;
 
@@ -122,7 +113,6 @@ export default function LiveWorkout() {
 
     if (cueTimerRef.current) clearTimeout(cueTimerRef.current);
 
-    // reset animation start
     toastOpacity.setValue(0);
     toastTranslateY.setValue(-18);
 
@@ -141,7 +131,6 @@ export default function LiveWorkout() {
       }),
     ]).start();
 
-    // low = fallback timing; high/med = PR/highlight timing
     const isHighlight = cue.intensity !== "low";
     const holdMs = isHighlight ? randomHighlightDurationMs() : randomFallbackDurationMs();
 
@@ -178,12 +167,8 @@ export default function LiveWorkout() {
     e1rmDeltaLb: number;
     weightLabel: string;
   }): string {
-    if (meta.type === "rep") {
-      return `+${meta.repDeltaAtWeight} reps @ ${meta.weightLabel}`;
-    }
-    if (meta.type === "weight") {
-      return `+${Math.round(meta.weightDeltaLb)} lb (new top weight)`;
-    }
+    if (meta.type === "rep") return `+${meta.repDeltaAtWeight} reps @ ${meta.weightLabel}`;
+    if (meta.type === "weight") return `+${Math.round(meta.weightDeltaLb)} lb (new top weight)`;
     return `+${Math.round(meta.e1rmDeltaLb)} lb e1RM`;
   }
 
@@ -212,7 +197,7 @@ export default function LiveWorkout() {
 
     setSessionStateByExercise((prev) => ({ ...prev, [selectedExerciseId]: result.next }));
 
-    // Cardio behaves like fallback (small + fallback timing). Show immediately.
+    // Cardio behaves like fallback
     if (result.meta.type === "cardio" && result.cue) {
       showInstantCue(result.cue);
       hapticFallback();
@@ -222,8 +207,8 @@ export default function LiveWorkout() {
 
     // PR: show always
     if (result.cue && (result.meta.type === "rep" || result.meta.type === "weight" || result.meta.type === "e1rm")) {
-      // Decide if we use punchy line (ONLY for big PRs)
       let title = result.cue.message;
+
       const detail = formatPRDetail({
         type: result.meta.type,
         repDeltaAtWeight: result.meta.repDeltaAtWeight,
@@ -246,23 +231,15 @@ export default function LiveWorkout() {
       return;
     }
 
-    // No PR: show fallback only every 2–4 such sets (per exercise)
+    // No PR: show fallback only every 2–4 such sets
     const current = ensureCountdown(selectedExerciseId);
-
     if (current <= 1) {
       showInstantCue(randomFallbackCue());
       hapticFallback();
       soundFallback();
-
-      setFallbackCountdownByExercise((prev) => ({
-        ...prev,
-        [selectedExerciseId]: randomFallbackEveryN(),
-      }));
+      setFallbackCountdownByExercise((prev) => ({ ...prev, [selectedExerciseId]: randomFallbackEveryN() }));
     } else {
-      setFallbackCountdownByExercise((prev) => ({
-        ...prev,
-        [selectedExerciseId]: current - 1,
-      }));
+      setFallbackCountdownByExercise((prev) => ({ ...prev, [selectedExerciseId]: current - 1 }));
     }
   };
 
@@ -286,7 +263,6 @@ export default function LiveWorkout() {
     if (all.length === 0) all.push({ message: "No working sets logged yet.", intensity: "low" });
     setRecapCues(all);
 
-    // Save confirmation as fallback-style (no screen shift, still overlay)
     showInstantCue({ message: "Workout saved (local).", intensity: "low" });
     hapticFallback();
     soundFallback();
@@ -326,9 +302,7 @@ export default function LiveWorkout() {
                     backgroundColor: isSelected ? c.card : c.bg,
                   }}
                 >
-                  <Text style={{ color: c.text, fontWeight: isSelected ? "700" : "500" }}>
-                    {item.name}
-                  </Text>
+                  <Text style={{ color: c.text, fontWeight: isSelected ? "700" : "500" }}>{item.name}</Text>
                 </Pressable>
               );
             }}
@@ -340,14 +314,11 @@ export default function LiveWorkout() {
     );
   }
 
-  // Sizes:
-  // fallback (low): 16
-  // PR/highlight (high): 16 * 1.75 = 28
   const toastFontSize = instantCue?.intensity === "low" ? 16 : 28;
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      {/* Floating toast (overlay, click-thru, never changes layout) */}
+      {/* Overlay toast (click-thru, never changes layout) */}
       {instantCue && (
         <Animated.View
           pointerEvents="none"
@@ -357,17 +328,14 @@ export default function LiveWorkout() {
             left: 12,
             right: 12,
             zIndex: 1000,
-
             borderWidth: 1,
             borderColor: c.border,
             borderRadius: 14,
             paddingVertical: 10,
             paddingHorizontal: 12,
             backgroundColor: c.card,
-
             opacity: toastOpacity,
             transform: [{ translateY: toastTranslateY }],
-
             shadowOpacity: 0.2,
             shadowRadius: 10,
             shadowOffset: { width: 0, height: 4 },
@@ -375,37 +343,22 @@ export default function LiveWorkout() {
           }}
         >
           <Text style={{ color: c.muted, marginBottom: 4, fontSize: 12 }}>Cue</Text>
-
-          <Text
-            style={{
-              color: c.text,
-              fontSize: toastFontSize,
-              fontWeight: instantCue.intensity === "high" ? "800" : "700",
-            }}
-          >
+          <Text style={{ color: c.text, fontSize: toastFontSize, fontWeight: instantCue.intensity === "high" ? "800" : "700" }}>
             {instantCue.message}
           </Text>
-
-          {!!instantCue.detail && (
-            <Text style={{ color: c.muted, marginTop: 6, fontSize: 13 }}>
-              {instantCue.detail}
-            </Text>
-          )}
+          {!!instantCue.detail && <Text style={{ color: c.muted, marginTop: 6, fontSize: 13 }}>{instantCue.detail}</Text>}
         </Animated.View>
       )}
 
-      {/* NOTE: no paddingTop adjustments -> no screen push when toast appears */}
       <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 40 }}>
         <Text style={{ fontSize: 22, fontWeight: "700", color: c.text }}>Live Workout</Text>
 
-        {/* Exercise selector */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 12, padding: 12, backgroundColor: c.card, gap: 8 }}>
           <Text style={{ color: c.muted }}>Selected Exercise</Text>
           <Text style={{ color: c.text, fontSize: 18, fontWeight: "800" }}>{selectedExerciseName}</Text>
           <Button title="Change Exercise" onPress={() => setIsPickingExercise(true)} />
         </View>
 
-        {/* Controls */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 12, padding: 12, gap: 10, backgroundColor: c.card }}>
           <Text style={{ fontSize: 16, fontWeight: "700", color: c.text }}>Quick Add Set</Text>
 
@@ -426,7 +379,6 @@ export default function LiveWorkout() {
           <Button title="Add Set" onPress={addSet} />
         </View>
 
-        {/* Sets list for selected exercise */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 12, padding: 12, backgroundColor: c.card }}>
           <Text style={{ fontSize: 16, fontWeight: "700", marginBottom: 8, color: c.text }}>
             Sets for {selectedExerciseName}
@@ -452,7 +404,6 @@ export default function LiveWorkout() {
           )}
         </View>
 
-        {/* Actions */}
         <View style={{ flexDirection: "row", gap: 10 }}>
           <Button title="Finish Workout" onPress={finishWorkout} flex />
           <Pressable
@@ -472,7 +423,6 @@ export default function LiveWorkout() {
           </Pressable>
         </View>
 
-        {/* Recap cues */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 12, padding: 12, gap: 6, backgroundColor: c.card }}>
           <Text style={{ fontSize: 16, fontWeight: "700", color: c.text }}>Recap Cues</Text>
           {recapCues.length === 0 ? (
