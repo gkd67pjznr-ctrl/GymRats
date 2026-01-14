@@ -11,6 +11,18 @@ export type WorkoutSession = {
   startedAtMs: number;
   endedAtMs: number;
   sets: WorkoutSet[];
+
+  // optional linkage
+  routineId?: string;
+  routineName?: string;
+
+  // what the plan was, if any (kept small)
+  plannedExercises?: Array<{
+    exerciseId: string;
+    targetSets: number;
+    targetRepsMin?: number;
+    targetRepsMax?: number;
+  }>;
 };
 
 export function uid(): string {
