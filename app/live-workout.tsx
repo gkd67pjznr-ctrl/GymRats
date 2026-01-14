@@ -194,7 +194,6 @@ export default function LiveWorkout() {
   const addSet = () => {
     const now = Date.now();
 
-    // start workout timer on first set
     if (!workoutStartedAt) setWorkoutStartedAt(now);
 
     const next: LoggedSet = {
@@ -208,7 +207,7 @@ export default function LiveWorkout() {
 
     setSets((prev) => [...prev, next]);
 
-    // rest overlay pops after set
+    // show rest overlay after set
     setRestVisible(true);
 
     const prevState = sessionStateByExercise[selectedExerciseId] ?? makeEmptyExerciseState();
@@ -273,7 +272,6 @@ export default function LiveWorkout() {
     const end = Date.now();
     const start = workoutStartedAt ?? (sets[0]?.timestampMs ?? end);
 
-    // save to store
     const session: WorkoutSession = {
       id: uid2(),
       startedAtMs: start,
@@ -364,7 +362,6 @@ export default function LiveWorkout() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      {/* Overlay toast (click-thru, never changes layout) */}
       {instantCue && (
         <Animated.View
           pointerEvents="none"
@@ -396,7 +393,6 @@ export default function LiveWorkout() {
         </Animated.View>
       )}
 
-      {/* Rest timer overlay */}
       <RestTimerOverlay visible={restVisible} initialSeconds={90} onClose={() => setRestVisible(false)} />
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 80 }}>
@@ -429,31 +425,6 @@ export default function LiveWorkout() {
           <Text style={{ fontSize: 18, fontWeight: "700", color: c.text }}>{reps} reps</Text>
 
           <Button title="Add Set" onPress={addSet} />
-        </View>
-
-        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 12, padding: 12, backgroundColor: c.card }}>
-          <Text style={{ fontSize: 16, fontWeight: "700", marginBottom: 8, color: c.text }}>
-            Sets for {selectedExerciseName}
-          </Text>
-
-          {setsForSelectedExercise.length === 0 ? (
-            <Text style={{ opacity: 0.8, color: c.muted }}>No sets for this exercise yet.</Text>
-          ) : (
-            setsForSelectedExercise.map((item, index) => (
-              <View
-                key={item.id}
-                style={{
-                  paddingVertical: 8,
-                  borderBottomWidth: index === setsForSelectedExercise.length - 1 ? 0 : 1,
-                  borderBottomColor: c.border,
-                }}
-              >
-                <Text style={{ fontWeight: "700", color: c.text }}>
-                  Set {index + 1}: {kgToLb(item.weightKg).toFixed(1)} lb x {item.reps}
-                </Text>
-              </View>
-            ))
-          )}
         </View>
 
         <View style={{ flexDirection: "row", gap: 10 }}>
