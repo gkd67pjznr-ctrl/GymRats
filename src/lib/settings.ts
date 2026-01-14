@@ -1,51 +1,93 @@
-export type AppSettings = {
-  hapticsEnabled: boolean;
-  soundsEnabled: boolean;
-};
-
-const DEFAULT_SETTINGS: AppSettings = {
-  hapticsEnabled: true,
-  soundsEnabled: true,
-};
-
-let current: AppSettings = { ...DEFAULT_SETTINGS };
-const listeners = new Set<() => void>();
-
-export function getSettings(): AppSettings {
-  return current;
-}
-
-export function setSettings(next: Partial<AppSettings>) {
-  current = { ...current, ...next };
-  for (const fn of listeners) fn();
-}
-
-export function toggleSetting(key: keyof AppSettings) {
-  setSettings({ [key]: !current[key] } as Partial<AppSettings>);
-}
-
-export function resetSettings() {
-  current = { ...DEFAULT_SETTINGS };
-  for (const fn of listeners) fn();
-}
-
-export function subscribeSettings(listener: () => void): () => void {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
-}
-
-/**
- * Simple React hook without external deps.
- * Works in Expo/React Native.
- */
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 
-export function useSettings(): AppSettings {
-  const [s, setS] = useState<AppSettings>(getSettings());
+export type Settings = {
+  hapticsEnabled: boolean;
+  soundsEnabled: boolean;
+  unitSystem: "lb" | "kg";
+  defaultRestSeconds: number;
+};
+
+const STORAGE_KEY = "forgerank.settings.v1";
+
+const DEFAULTS: Settings = {
+  hapticsEnabled: true,
+  soundsEnabled: true,
+  unitSystem: "lb",
+  defaultRestSeconds: 90,
+};
+
+let _settings: Settings = { ...DEFAULTS };
+let _loaded = false;
+
+// super lightweight subscribers so screens can react to changes
+const subs = new Set<(s: Settings) => void>();
+function notify() {
+  for (const fn of subs) fn(_settings);
+}
+
+export function getSettings(): Settings {
+  return _settings;
+}
+
+export async function loadSettings(): Promise<Settings> {
+  if (_loaded) return _settings;
+
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<Settings>;
+      _settings = { ...DEFAULTS, ...parsed };
+    } else {
+      _settings = { ...DEFAULTS };
+    }
+  } catch {
+    _settings = { ...DEFAULTS };
+  } finally {
+    _loaded = true;
+    notify();
+  }
+
+  return _settings;
+}
+
+async function persist() {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(_settings));
+  } catch {
+    // ignore persistence errors for now (offline storage issues etc.)
+  }
+}
+
+export function updateSettings(patch: Partial<Settings>) {
+  _settings = { ..._settings, ...patch };
+  notify();
+  void persist();
+}
+
+// React hook for screens
+export function useSettings() {
+  const [s, setS] = useState<Settings>(() => getSettings());
 
   useEffect(() => {
-    return subscribeSettings(() => setS(getSettings()));
+    let alive = true;
+
+    // load once on first mount
+    loadSettings().then((loaded) => {
+      if (alive) setS(loaded);
+    });
+
+    const fn = (next: Settings) => setS(next);
+    subs.add(fn);
+
+    return () => {
+      alive = false;
+      subs.delete(fn);
+    };
   }, []);
 
-  return s;
+  return {
+    settings: s,
+    updateSettings,
+  };
 }
