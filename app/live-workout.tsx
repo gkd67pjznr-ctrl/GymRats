@@ -1,31 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, Pressable, FlatList, ScrollView, Animated, Easing } from "react-native";
+import { Animated, Easing, FlatList, Pressable, ScrollView, Text, View } from "react-native";
 import { useThemeColors } from "../src/ui/theme";
 
-import { lbToKg } from "../src/lib/units";
+import { EXERCISES_V1 } from "../src/data/exercises";
 import type { UnitSystem } from "../src/lib/buckets";
 import type { LoggedSet } from "../src/lib/loggerTypes";
-import { groupSetsByExercise, generateCuesForExerciseSession } from "../src/lib/simpleSession";
-import { EXERCISES_V1 } from "../src/data/exercises";
+import { generateCuesForExerciseSession, groupSetsByExercise } from "../src/lib/simpleSession";
+import { lbToKg } from "../src/lib/units";
 
 import {
   type Cue,
+  detectCueForWorkingSet,
   type ExerciseSessionState,
   makeEmptyExerciseState,
-  detectCueForWorkingSet,
+  pickPunchyVariant,
   randomFallbackCue,
   randomFallbackDurationMs,
-  randomHighlightDurationMs,
   randomFallbackEveryN,
-  pickPunchyVariant,
+  randomHighlightDurationMs,
 } from "../src/lib/perSetCue";
 
 import { getSettings } from "../src/lib/settings";
-import { RestTimerOverlay } from "../src/ui/components/RestTimerOverlay";
+import { formatDuration, uid as uid2, type WorkoutSession, type WorkoutSet } from "../src/lib/workoutModel";
+import { setCurrentPlan, updateCurrentPlan, useCurrentPlan } from "../src/lib/workoutPlanStore";
+import { clampPlanIndex, completionPct as planCompletionPct } from "../src/lib/workoutPlanUtils";
 import { addWorkoutSession } from "../src/lib/workoutStore";
-import { uid as uid2, formatDuration, type WorkoutSession, type WorkoutSet } from "../src/lib/workoutModel";
-import { useCurrentPlan, updateCurrentPlan, setCurrentPlan } from "../src/lib/workoutPlanStore";
-import { completionPct as planCompletionPct, clampPlanIndex } from "../src/lib/workoutPlanUtils";
+import { RestTimerOverlay } from "../src/ui/components/RestTimerOverlay";
 
 function uid() {
   return Math.random().toString(16).slice(2);
@@ -519,7 +519,7 @@ export default function LiveWorkout() {
       <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 80 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
           <Text style={{ fontSize: 22, fontWeight: "700", color: c.text }}>Live Workout</Text>
-          <Text style={{ color: c.muted, fontWeight: "800" }}>⏱ {workoutElapsedLabel}</Text>
+          <Text style={{ color: c.muted, fontWeight: "800" }}>{`⏱ ${workoutElapsedLabel}`}</Text>
         </View>
 
         {!!planHeader && (
