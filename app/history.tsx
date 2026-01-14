@@ -18,6 +18,7 @@ export default function History() {
         ) : (
           sessions.map((s) => {
             const completionLabel = s.completionPct == null ? null : `${Math.round(s.completionPct * 100)}%`;
+
             return (
               <Link key={s.id} href={`/workout/${s.id}`} asChild>
                 <Pressable
