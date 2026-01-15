@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useThemeColors } from "../src/ui/theme";
 
@@ -71,10 +71,7 @@ function onRestTimerDoneFeedback() {
 
   if (s.soundsEnabled && Speech) {
     Speech.stop?.();
-    Speech.speak?.("Rest over.", {
-      rate: 1.05,
-      pitch: 1.1,
-    });
+    Speech.speak?.("Rest over.", { rate: 1.05, pitch: 1.1 });
   }
 }
 
@@ -121,6 +118,12 @@ export default function LiveWorkout() {
     planMode ? plannedExerciseIds.slice() : []
   );
 
+  // Focus mode (show only selected block)
+  const [focusMode, setFocusMode] = useState(false);
+
+  // session hook (sets + locking + quick add + per-exercise defaults)
+  const session = useLiveWorkoutSession({ weightLb: 135, reps: 8 });
+
   // sync selection to current plan exercise
   useEffect(() => {
     if (planMode && currentPlannedExerciseId) setSelectedExerciseId(currentPlannedExerciseId);
@@ -132,8 +135,25 @@ export default function LiveWorkout() {
     setExerciseBlocks((prev) => (prev.length ? prev : plannedExerciseIds.slice()));
   }, [planMode, plannedExerciseIds]);
 
-  // session hook (sets + locking + quick add typing/edit helpers)
-  const session = useLiveWorkoutSession({ weightLb: 135, reps: 8 });
+  // Per-exercise last-used behavior:
+  // - save previous exercise defaults when switching
+  // - when switching to a new exercise, pull its defaults into Quick Add fields (if any)
+  const prevSelectedRef = useRef<string>(selectedExerciseId);
+  useEffect(() => {
+    const prevId = prevSelectedRef.current;
+    if (prevId && prevId !== selectedExerciseId) {
+      session.setDefaultsForExercise(prevId, { weightLb: session.weightLb, reps: session.reps });
+    }
+    prevSelectedRef.current = selectedExerciseId;
+    session.syncQuickAddToExercise(selectedExerciseId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedExerciseId]);
+
+  // Also keep defaults updated for the currently selected exercise as user edits Quick Add
+  useEffect(() => {
+    session.setDefaultsForExercise(selectedExerciseId, { weightLb: session.weightLb, reps: session.reps });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedExerciseId, session.weightLb, session.reps]);
 
   const [recapCues, setRecapCues] = useState<Cue[]>([]);
   const [instantCue, setInstantCue] = useState<InstantCue | null>(null);
@@ -218,7 +238,6 @@ export default function LiveWorkout() {
   function jumpToPlanIndex(index: number) {
     if (!planMode || !plan) return;
     const clamped = clampPlanIndex(plan, index);
-
     updateCurrentPlan((p) => ({ ...p, currentExerciseIndex: clamped }));
     setSelectedExerciseId(plan.exercises[clamped].exerciseId);
   }
@@ -228,23 +247,33 @@ export default function LiveWorkout() {
     jumpToPlanIndex(plan.currentExerciseIndex + 1);
   }
 
-  function addSetInternal(exerciseId: string) {
+  function ensureBlock(exerciseId: string) {
+    setExerciseBlocks((prev) => (prev.includes(exerciseId) ? prev : [...prev, exerciseId]));
+  }
+
+  function addSetInternal(exerciseId: string, source: "block" | "quick") {
     const now = Date.now();
     if (!workoutStartedAt) setWorkoutStartedAt(now);
+
+    // 1) Auto-add a block if missing
+    ensureBlock(exerciseId);
+
+    // 2) Use per-exercise last-used values
+    const d = session.getDefaultsForExercise(exerciseId);
 
     const next: LoggedSet = {
       id: uid(),
       exerciseId,
       setType: "working",
-      weightKg: lbToKg(session.weightLb),
-      reps: session.reps,
+      weightKg: lbToKg(d.weightLb),
+      reps: d.reps,
       timestampMs: now,
     };
 
     session.setSets((prev) => [...prev, next]);
     setRestVisible(true);
 
-    // plan progress only counts if it's the CURRENT planned exercise
+    // Plan progress only counts if it's the CURRENT planned exercise
     if (planMode && plan && exerciseId === currentPlannedExerciseId) {
       updateCurrentPlan((p) => {
         const cur = p.exercises[p.currentExerciseIndex];
@@ -256,9 +285,7 @@ export default function LiveWorkout() {
           [cur.exerciseId]: nextDone,
         };
 
-        const shouldAdvance =
-          nextDone >= cur.targetSets &&
-          p.currentExerciseIndex < p.exercises.length - 1;
+        const shouldAdvance = nextDone >= cur.targetSets && p.currentExerciseIndex < p.exercises.length - 1;
 
         return {
           ...p,
@@ -268,6 +295,7 @@ export default function LiveWorkout() {
       });
     }
 
+    // Per-set cues / feedback
     const prevState = sessionStateByExercise[exerciseId] ?? makeEmptyExerciseState();
 
     const result = detectCueForWorkingSet({
@@ -287,10 +315,7 @@ export default function LiveWorkout() {
       return;
     }
 
-    if (
-      result.cue &&
-      (result.meta.type === "rep" || result.meta.type === "weight" || result.meta.type === "e1rm")
-    ) {
+    if (result.cue && (result.meta.type === "rep" || result.meta.type === "weight" || result.meta.type === "e1rm")) {
       let title = result.cue.message;
 
       const detail = formatPRDetail({
@@ -324,10 +349,15 @@ export default function LiveWorkout() {
     } else {
       setFallbackCountdownByExercise((prev) => ({ ...prev, [exerciseId]: current - 1 }));
     }
+
+    // UX nicety: Quick Add keeps selection aligned with what you just logged
+    if (source === "quick") {
+      setSelectedExerciseId(exerciseId);
+    }
   }
 
-  const addSet = () => addSetInternal(selectedExerciseId);
-  const addSetForExercise = (exerciseId: string) => addSetInternal(exerciseId);
+  const addSet = () => addSetInternal(selectedExerciseId, "quick");
+  const addSetForExercise = (exerciseId: string) => addSetInternal(exerciseId, "block");
 
   function makeRoutineNameNow(): string {
     const d = new Date();
@@ -346,7 +376,7 @@ export default function LiveWorkout() {
       return;
     }
 
-    // Preserve order of first appearance (prefer blocks if present)
+    // Preserve order of blocks if available
     const orderedExerciseIds =
       exerciseBlocks.length > 0
         ? exerciseBlocks.slice()
@@ -475,6 +505,7 @@ export default function LiveWorkout() {
   const reset = () => {
     session.resetSession();
     setExerciseBlocks(planMode ? plannedExerciseIds.slice() : []);
+    setFocusMode(false);
     setRecapCues([]);
     setInstantCue(null);
     setSessionStateByExercise({});
@@ -553,6 +584,22 @@ export default function LiveWorkout() {
           </Pressable>
 
           <Pressable
+            onPress={() => setFocusMode((v) => !v)}
+            style={{
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: c.border,
+              backgroundColor: focusMode ? c.bg : c.card,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: c.text, fontWeight: "900" }}>{focusMode ? "Focus ✓" : "Focus"}</Text>
+          </Pressable>
+
+          <Pressable
             onPress={() => setPickerMode("changeSelected")}
             style={{
               paddingVertical: 12,
@@ -575,6 +622,8 @@ export default function LiveWorkout() {
           sets={session.sets}
           onAddSetForExercise={addSetForExercise}
           onJumpToExercise={(id) => setSelectedExerciseId(id)}
+          focusMode={focusMode}
+          focusedExerciseId={selectedExerciseId}
           isDone={session.isDone}
           toggleDone={session.toggleDone}
           setWeightForSet={session.setWeightForSet}
