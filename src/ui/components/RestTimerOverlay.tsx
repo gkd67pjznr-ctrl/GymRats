@@ -1,179 +1,231 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { Animated, Pressable, Text, View } from "react-native";
 import { useThemeColors } from "../theme";
 
 type Props = {
-  visible: boolean;
+  visible: boolean; // if false, render nothing
   initialSeconds: number;
-  onClose: () => void;
-
-  // optional: future hook (sound/haptics)
-  onDone?: () => void;
+  onClose: () => void; // hides timer completely
+  onDone?: () => void; // called when timer hits 0
 };
 
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
+function clampInt(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, Math.floor(n)));
 }
 
-function fmt(sec: number) {
-  const s = Math.max(0, Math.floor(sec));
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${String(r).padStart(2, "0")}`;
+function formatMMSS(totalSeconds: number) {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const mm = Math.floor(s / 60);
+  const ss = s % 60;
+  return `${mm}:${String(ss).padStart(2, "0")}`;
 }
 
-export function RestTimerOverlay({ visible, initialSeconds, onClose, onDone }: Props) {
+export function RestTimerOverlay(props: Props) {
   const c = useThemeColors();
 
-  const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
-  const [running, setRunning] = useState(true);
+  // collapsed tab is always shown when visible=true
+  const [expanded, setExpanded] = useState(false);
 
-  // keep the current timer in a ref so we can cleanly stop it
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(props.initialSeconds);
+  const [isRunning, setIsRunning] = useState(true);
 
-  // when the overlay becomes visible, reset timer & start running
+  // slide animation (overlay panel only)
+  const panelY = useRef(new Animated.Value(260)).current; // start off-screen
+
   useEffect(() => {
-    if (!visible) {
-      // stop timer when hidden
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      return;
-    }
+    if (!props.visible) return;
+    // when newly shown, reset to initial + start running (and keep collapsed)
+    setExpanded(false);
+    setSecondsLeft(props.initialSeconds);
+    setIsRunning(true);
+  }, [props.visible, props.initialSeconds]);
 
-    setSecondsLeft(initialSeconds);
-    setRunning(true);
-  }, [visible, initialSeconds]);
-
-  // start/stop ticking
   useEffect(() => {
-    if (!visible) return;
+    if (!props.visible) return;
+    if (!isRunning) return;
 
-    if (!running) {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      return;
-    }
-
-    if (intervalRef.current) clearInterval(intervalRef.current);
-
-    intervalRef.current = setInterval(() => {
-      setSecondsLeft((prev) => prev - 1);
+    const t = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) return 0;
+        return s - 1;
+      });
     }, 1000);
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    };
-  }, [visible, running]);
+    return () => clearInterval(t);
+  }, [props.visible, isRunning]);
 
-  // auto-close when reaches 0
   useEffect(() => {
-    if (!visible) return;
-    if (secondsLeft > 0) return;
+    if (!props.visible) return;
+    if (secondsLeft !== 0) return;
 
-    // stop ticking
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = null;
+    setIsRunning(false);
+    props.onDone?.();
+  }, [secondsLeft, props]);
 
-    // optional callback (future: sound/haptic)
-    onDone?.();
+  useEffect(() => {
+    if (!props.visible) return;
 
-    // auto-close after a short beat so user can see 0:00
-    const t = setTimeout(() => onClose(), 250);
-    return () => clearTimeout(t);
-  }, [secondsLeft, visible, onClose, onDone]);
+    Animated.spring(panelY, {
+      toValue: expanded ? 0 : 260,
+      useNativeDriver: true,
+      damping: 18,
+      stiffness: 180,
+      mass: 0.9,
+    }).start();
+  }, [expanded, props.visible, panelY]);
 
-  const cardBg = useMemo(() => c.card, [c.card]);
+  const timeLabel = useMemo(() => formatMMSS(secondsLeft), [secondsLeft]);
 
-  if (!visible) return null;
+  if (!props.visible) return null;
 
-  const Btn = (p: { label: string; onPress: () => void; subtle?: boolean }) => (
+  const SmallBtn = (p: { title: string; onPress: () => void; subtle?: boolean }) => (
     <Pressable
       onPress={p.onPress}
       style={{
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        borderRadius: 10,
         borderWidth: 1,
         borderColor: c.border,
-        backgroundColor: p.subtle ? c.bg : cardBg,
+        backgroundColor: p.subtle ? c.bg : c.card,
         alignItems: "center",
         justifyContent: "center",
-        minWidth: 70,
+        minWidth: 64,
       }}
     >
-      <Text style={{ color: c.text, fontWeight: "900" }}>{p.label}</Text>
+      <Text style={{ color: c.text, fontWeight: "900", fontSize: 12 }}>{p.title}</Text>
     </Pressable>
   );
 
   return (
-    <View
-      pointerEvents="box-none"
-      style={{
-        position: "absolute",
-        left: 12,
-        right: 12,
-        bottom: 12,
-        zIndex: 999,
-      }}
-    >
+    <>
+      {/* COLLAPSED TAB (always visible, doesn’t push layout) */}
       <View
+        pointerEvents="box-none"
         style={{
-          borderWidth: 1,
-          borderColor: c.border,
-          borderRadius: 16,
-          padding: 12,
-          backgroundColor: c.card,
-          shadowOpacity: 0.2,
-          shadowRadius: 10,
-          shadowOffset: { width: 0, height: 4 },
-          elevation: 6,
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 14,
+          zIndex: 999,
+          alignItems: "center",
         }}
       >
-        <Text style={{ color: c.muted, fontSize: 12, fontWeight: "800" }}>REST</Text>
+        <Pressable
+          onPress={() => setExpanded((v) => !v)}
+          style={{
+            borderWidth: 1,
+            borderColor: c.border,
+            backgroundColor: c.card,
+            borderRadius: 999,
+            paddingVertical: 10,
+            paddingHorizontal: 14,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            shadowOpacity: 0.18,
+            shadowRadius: 10,
+            shadowOffset: { width: 0, height: 6 },
+            elevation: 8,
+          }}
+        >
+          <Text style={{ color: c.muted, fontWeight: "900", fontSize: 12 }}>Rest</Text>
+          <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>{timeLabel}</Text>
 
-        <View style={{ flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", marginTop: 6 }}>
-          <Text style={{ color: c.text, fontSize: 32, fontWeight: "900" }}>{fmt(secondsLeft)}</Text>
-          <Pressable onPress={onClose} style={{ padding: 6 }}>
-            <Text style={{ color: c.muted, fontWeight: "900" }}>Close</Text>
-          </Pressable>
-        </View>
+          <View style={{ width: 1, height: 18, backgroundColor: c.border, opacity: 0.8 }} />
 
-        <View style={{ flexDirection: "row", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
-          <Btn
-            label="-15"
-            onPress={() => setSecondsLeft((s) => clamp(s - 15, 0, 60 * 60))}
-            subtle
-          />
-          <Btn
-            label="+15"
-            onPress={() => setSecondsLeft((s) => clamp(s + 15, 0, 60 * 60))}
-            subtle
-          />
-
-          <Btn
-            label={running ? "Pause" : "Start"}
-            onPress={() => setRunning((r) => !r)}
-          />
-
-          <Btn
-            label="90s"
-            onPress={() => {
-              setSecondsLeft(90);
-              setRunning(true);
-            }}
-            subtle
-          />
-          <Btn
-            label="120s"
-            onPress={() => {
-              setSecondsLeft(120);
-              setRunning(true);
-            }}
-            subtle
-          />
-        </View>
+          <Text style={{ color: c.muted, fontWeight: "900", fontSize: 12 }}>
+            {expanded ? "Hide" : "Show"}
+          </Text>
+        </Pressable>
       </View>
-    </View>
+
+      {/* EXPANDED OVERLAY PANEL (slides in, does not shove main UI) */}
+      <Animated.View
+        pointerEvents={expanded ? "auto" : "none"}
+        style={{
+          position: "absolute",
+          left: 12,
+          right: 12,
+          bottom: 70,
+          zIndex: 1000,
+          transform: [{ translateY: panelY }],
+        }}
+      >
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: c.border,
+            backgroundColor: c.card,
+            borderRadius: 16,
+            padding: 12,
+            gap: 10,
+            shadowOpacity: 0.2,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 8 },
+            elevation: 10,
+          }}
+        >
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <Text style={{ color: c.text, fontWeight: "900" }}>Rest Timer</Text>
+
+            <Pressable
+              onPress={() => {
+                setExpanded(false);
+              }}
+              style={{
+                paddingVertical: 6,
+                paddingHorizontal: 10,
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: c.border,
+                backgroundColor: c.bg,
+              }}
+            >
+              <Text style={{ color: c.text, fontWeight: "900", fontSize: 12 }}>Close</Text>
+            </Pressable>
+          </View>
+
+          <Text style={{ color: c.text, fontWeight: "900", fontSize: 34 }}>{timeLabel}</Text>
+
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+            <SmallBtn title={isRunning ? "Pause" : "Start"} onPress={() => setIsRunning((v) => !v)} />
+            <SmallBtn
+              title="+15s"
+              onPress={() => setSecondsLeft((s) => clampInt(s + 15, 0, 60 * 60))}
+              subtle
+            />
+            <SmallBtn
+              title="-15s"
+              onPress={() => setSecondsLeft((s) => clampInt(s - 15, 0, 60 * 60))}
+              subtle
+            />
+            <SmallBtn
+              title="Reset"
+              onPress={() => {
+                setSecondsLeft(props.initialSeconds);
+                setIsRunning(true);
+              }}
+              subtle
+            />
+            <SmallBtn
+              title="Hide"
+              onPress={() => {
+                setExpanded(false);
+              }}
+              subtle
+            />
+            <SmallBtn
+              title="Dismiss"
+              onPress={() => {
+                setExpanded(false);
+                props.onClose();
+              }}
+              subtle
+            />
+          </View>
+        </View>
+      </Animated.View>
+    </>
   );
 }
