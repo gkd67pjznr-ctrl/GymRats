@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useThemeColors } from "../src/ui/theme";
 
@@ -29,12 +29,11 @@ import { upsertRoutine } from "../src/lib/routinesStore";
 import { uid as routineUid, type RoutineExercise, type Routine } from "../src/lib/routinesModel";
 
 import { RestTimerOverlay } from "../src/ui/components/RestTimerOverlay";
-
 import { ExercisePicker } from "../src/ui/components/LiveWorkout/ExercisePicker";
 import { PlanHeaderCard } from "../src/ui/components/LiveWorkout/PlanHeaderCard";
 import { QuickAddSetCard } from "../src/ui/components/LiveWorkout/QuickAddSetCard";
-import { WorkoutLogCard } from "../src/ui/components/LiveWorkout/WorkoutLogCard";
 import { InstantCueToast, type InstantCue } from "../src/ui/components/LiveWorkout/InstantCueToast";
+import { ExerciseBlocksCard } from "../src/ui/components/LiveWorkout/ExerciseBlocksCard";
 
 import { useLiveWorkoutSession } from "../src/lib/hooks/useLiveWorkoutSession";
 
@@ -91,7 +90,6 @@ function hapticPR() {
   Haptics.notificationAsync?.(Haptics.NotificationFeedbackType.Success).catch?.(() => {});
 }
 
-// Sound placeholder (we’ll wire expo-av + actual sounds later)
 function soundFallback() {
   const s = getSettings();
   if (!s.soundsEnabled) return;
@@ -114,12 +112,25 @@ export default function LiveWorkout() {
   const [selectedExerciseId, setSelectedExerciseId] = useState(
     currentPlannedExerciseId ?? EXERCISES_V1[0].id
   );
-  const [isPickingExercise, setIsPickingExercise] = useState(false);
+
+  // Picker now used for BOTH: change selected exercise, and add exercise blocks
+  const [pickerMode, setPickerMode] = useState<null | "changeSelected" | "addBlock">(null);
+
+  // Exercise Blocks v1: ordered list of exerciseIds shown as blocks
+  const [exerciseBlocks, setExerciseBlocks] = useState<string[]>(() =>
+    planMode ? plannedExerciseIds.slice() : []
+  );
 
   // sync selection to current plan exercise
   useEffect(() => {
     if (planMode && currentPlannedExerciseId) setSelectedExerciseId(currentPlannedExerciseId);
   }, [planMode, currentPlannedExerciseId]);
+
+  // if plan switches on, seed blocks (don’t fight user if they’ve already started adding)
+  useEffect(() => {
+    if (!planMode) return;
+    setExerciseBlocks((prev) => (prev.length ? prev : plannedExerciseIds.slice()));
+  }, [planMode, plannedExerciseIds]);
 
   // session hook (sets + locking + quick add typing/edit helpers)
   const session = useLiveWorkoutSession({ weightLb: 135, reps: 8 });
@@ -217,13 +228,13 @@ export default function LiveWorkout() {
     jumpToPlanIndex(plan.currentExerciseIndex + 1);
   }
 
-  const addSet = () => {
+  function addSetInternal(exerciseId: string) {
     const now = Date.now();
     if (!workoutStartedAt) setWorkoutStartedAt(now);
 
     const next: LoggedSet = {
       id: uid(),
-      exerciseId: selectedExerciseId,
+      exerciseId,
       setType: "working",
       weightKg: lbToKg(session.weightLb),
       reps: session.reps,
@@ -234,7 +245,7 @@ export default function LiveWorkout() {
     setRestVisible(true);
 
     // plan progress only counts if it's the CURRENT planned exercise
-    if (planMode && plan && selectedExerciseId === currentPlannedExerciseId) {
+    if (planMode && plan && exerciseId === currentPlannedExerciseId) {
       updateCurrentPlan((p) => {
         const cur = p.exercises[p.currentExerciseIndex];
         const prevDone = p.completedSetsByExerciseId[cur.exerciseId] ?? 0;
@@ -257,17 +268,17 @@ export default function LiveWorkout() {
       });
     }
 
-    const prevState = sessionStateByExercise[selectedExerciseId] ?? makeEmptyExerciseState();
+    const prevState = sessionStateByExercise[exerciseId] ?? makeEmptyExerciseState();
 
     const result = detectCueForWorkingSet({
       weightKg: next.weightKg,
       reps: next.reps,
       unit,
-      exerciseName: selectedExerciseName,
+      exerciseName: exerciseName(exerciseId),
       prev: prevState,
     });
 
-    setSessionStateByExercise((prev) => ({ ...prev, [selectedExerciseId]: result.next }));
+    setSessionStateByExercise((prev) => ({ ...prev, [exerciseId]: result.next }));
 
     if (result.meta.type === "cardio" && result.cue) {
       showInstantCue(result.cue as any);
@@ -304,16 +315,19 @@ export default function LiveWorkout() {
       return;
     }
 
-    const current = ensureCountdown(selectedExerciseId);
+    const current = ensureCountdown(exerciseId);
     if (current <= 1) {
       showInstantCue(randomFallbackCue() as any);
       hapticFallback();
       soundFallback();
-      setFallbackCountdownByExercise((prev) => ({ ...prev, [selectedExerciseId]: randomFallbackEveryN() }));
+      setFallbackCountdownByExercise((prev) => ({ ...prev, [exerciseId]: randomFallbackEveryN() }));
     } else {
-      setFallbackCountdownByExercise((prev) => ({ ...prev, [selectedExerciseId]: current - 1 }));
+      setFallbackCountdownByExercise((prev) => ({ ...prev, [exerciseId]: current - 1 }));
     }
-  };
+  }
+
+  const addSet = () => addSetInternal(selectedExerciseId);
+  const addSetForExercise = (exerciseId: string) => addSetInternal(exerciseId);
 
   function makeRoutineNameNow(): string {
     const d = new Date();
@@ -332,15 +346,21 @@ export default function LiveWorkout() {
       return;
     }
 
-    // Preserve order of first appearance in the session
-    const seen = new Set<string>();
-    const orderedExerciseIds: string[] = [];
-    for (const s of session.sets) {
-      if (!seen.has(s.exerciseId)) {
-        seen.add(s.exerciseId);
-        orderedExerciseIds.push(s.exerciseId);
-      }
-    }
+    // Preserve order of first appearance (prefer blocks if present)
+    const orderedExerciseIds =
+      exerciseBlocks.length > 0
+        ? exerciseBlocks.slice()
+        : (() => {
+            const seen = new Set<string>();
+            const ordered: string[] = [];
+            for (const s of session.sets) {
+              if (!seen.has(s.exerciseId)) {
+                seen.add(s.exerciseId);
+                ordered.push(s.exerciseId);
+              }
+            }
+            return ordered;
+          })();
 
     // Map plan targets if available
     const planTargetsByExerciseId: Record<
@@ -454,6 +474,7 @@ export default function LiveWorkout() {
 
   const reset = () => {
     session.resetSession();
+    setExerciseBlocks(planMode ? plannedExerciseIds.slice() : []);
     setRecapCues([]);
     setInstantCue(null);
     setSessionStateByExercise({});
@@ -465,28 +486,29 @@ export default function LiveWorkout() {
   // Exercise picker: in planMode only allow choosing within plan (v1)
   const allowedExerciseIds = planMode ? plannedExerciseIds : undefined;
 
-  if (isPickingExercise) {
+  if (pickerMode) {
     return (
       <ExercisePicker
         visible
         allowedExerciseIds={allowedExerciseIds}
         selectedExerciseId={selectedExerciseId}
         onSelect={(id) => {
-          setSelectedExerciseId(id);
-          setIsPickingExercise(false);
+          if (pickerMode === "changeSelected") {
+            setSelectedExerciseId(id);
+          } else if (pickerMode === "addBlock") {
+            setExerciseBlocks((prev) => (prev.includes(id) ? prev : [...prev, id]));
+            setSelectedExerciseId(id);
+          }
+          setPickerMode(null);
         }}
-        onBack={() => setIsPickingExercise(false)}
+        onBack={() => setPickerMode(null)}
       />
     );
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <InstantCueToast
-        cue={instantCue}
-        onClear={() => setInstantCue(null)}
-        randomHoldMs={randomHoldMs}
-      />
+      <InstantCueToast cue={instantCue} onClear={() => setInstantCue(null)} randomHoldMs={randomHoldMs} />
 
       <RestTimerOverlay
         visible={restVisible}
@@ -511,6 +533,57 @@ export default function LiveWorkout() {
           visible={planMode && !!plan}
         />
 
+        {/* Blocks header controls */}
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Pressable
+            onPress={() => setPickerMode("addBlock")}
+            style={{
+              flex: 1,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: c.border,
+              backgroundColor: c.card,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: c.text, fontWeight: "900" }}>Add Exercise</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setPickerMode("changeSelected")}
+            style={{
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: c.border,
+              backgroundColor: c.card,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: c.text, fontWeight: "900" }}>Pick</Text>
+          </Pressable>
+        </View>
+
+        {/* Exercise Blocks v1 (main UX) */}
+        <ExerciseBlocksCard
+          exerciseIds={exerciseBlocks}
+          sets={session.sets}
+          onAddSetForExercise={addSetForExercise}
+          onJumpToExercise={(id) => setSelectedExerciseId(id)}
+          isDone={session.isDone}
+          toggleDone={session.toggleDone}
+          setWeightForSet={session.setWeightForSet}
+          setRepsForSet={session.setRepsForSet}
+          kgToLb={session.kgToLb}
+          estimateE1RMLb={session.estimateE1RMLb}
+        />
+
+        {/* Quick Add stays (fast/global) */}
         <View
           style={{
             borderWidth: 1,
@@ -521,9 +594,9 @@ export default function LiveWorkout() {
             gap: 8,
           }}
         >
-          <Text style={{ color: c.muted }}>Selected Exercise</Text>
+          <Text style={{ color: c.muted }}>Selected Exercise (Quick Add)</Text>
           <Text style={{ color: c.text, fontSize: 18, fontWeight: "800" }}>{selectedExerciseName}</Text>
-          <Button title="Change Exercise" onPress={() => setIsPickingExercise(true)} />
+          <Button title="Change Selected Exercise" onPress={() => setPickerMode("changeSelected")} />
         </View>
 
         <QuickAddSetCard
@@ -540,16 +613,6 @@ export default function LiveWorkout() {
           onDecReps={session.decReps}
           onIncReps={session.incReps}
           onAddSet={addSet}
-        />
-
-        <WorkoutLogCard
-          sets={session.sets}
-          isDone={session.isDone}
-          toggleDone={session.toggleDone}
-          setWeightForSet={session.setWeightForSet}
-          setRepsForSet={session.setRepsForSet}
-          kgToLb={session.kgToLb}
-          estimateE1RMLb={session.estimateE1RMLb}
         />
 
         <View style={{ flexDirection: "row", gap: 10 }}>
