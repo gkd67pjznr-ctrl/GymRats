@@ -1,6 +1,8 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { LoggedSet } from "../loggerTypes";
 import { lbToKg } from "../units";
+
+type LastByExercise = Record<string, { weightLb: number; reps: number }>;
 
 export type UseLiveWorkoutSessionResult = {
   // session data
@@ -12,7 +14,10 @@ export type UseLiveWorkoutSessionResult = {
   isDone: (setId: string) => boolean;
   toggleDone: (setId: string) => void;
 
-  // quick add controls
+  // quick add controls (bound to activeExerciseId)
+  activeExerciseId: string | null;
+  setActiveExercise: (exerciseId: string) => void;
+
   weightLb: number;
   reps: number;
   weightLbText: string;
@@ -28,7 +33,11 @@ export type UseLiveWorkoutSessionResult = {
   decReps: () => void;
   incReps: () => void;
 
-  // edit existing set rows
+  // per-exercise last-used values
+  getLastForExercise: (exerciseId: string) => { weightLb: number; reps: number };
+  setLastForExercise: (exerciseId: string, next: { weightLb?: number; reps?: number }) => void;
+
+  // edit existing set rows (also updates last-used for that exercise)
   setWeightForSet: (setId: string, text: string) => void;
   setRepsForSet: (setId: string, text: string) => void;
 
@@ -45,7 +54,16 @@ export function useLiveWorkoutSession(initial?: { weightLb?: number; reps?: numb
   const startReps = initial?.reps ?? 8;
 
   const [sets, setSets] = useState<LoggedSet[]>([]);
+  const setsRef = useRef<LoggedSet[]>([]);
+  useEffect(() => {
+    setsRef.current = sets;
+  }, [sets]);
+
   const [doneBySetId, setDoneBySetId] = useState<Record<string, boolean>>({});
+
+  const [lastByExerciseId, setLastByExerciseId] = useState<LastByExercise>({});
+
+  const [activeExerciseId, setActiveExerciseId] = useState<string | null>(null);
 
   const [weightLb, setWeightLb] = useState(startWeight);
   const [reps, setReps] = useState(startReps);
@@ -65,39 +83,75 @@ export function useLiveWorkoutSession(initial?: { weightLb?: number; reps?: numb
     return wLb * (1 + r / 30);
   }, []);
 
-  const updateSet = useCallback((setId: string, patch: Partial<LoggedSet>) => {
-    setSets((prev) => prev.map((s) => (s.id === setId ? { ...s, ...patch } : s)));
-  }, []);
-
-  const setWeightForSet = useCallback(
-    (setId: string, text: string) => {
-      const parsed = Number(text);
-      if (!Number.isFinite(parsed)) return;
-      updateSet(setId, { weightKg: lbToKg(Math.max(0, parsed)) });
+  const getLastForExercise = useCallback(
+    (exerciseId: string) => {
+      const found = lastByExerciseId[exerciseId];
+      return {
+        weightLb: found?.weightLb ?? startWeight,
+        reps: found?.reps ?? startReps,
+      };
     },
-    [updateSet]
+    [lastByExerciseId, startWeight, startReps]
   );
 
-  const setRepsForSet = useCallback(
-    (setId: string, text: string) => {
-      const parsed = Math.floor(Number(text));
-      if (!Number.isFinite(parsed)) return;
-      updateSet(setId, { reps: Math.max(0, parsed) });
+  const setLastForExercise = useCallback(
+    (exerciseId: string, next: { weightLb?: number; reps?: number }) => {
+      setLastByExerciseId((prev) => {
+        const cur = prev[exerciseId] ?? { weightLb: startWeight, reps: startReps };
+        const merged = {
+          weightLb: next.weightLb ?? cur.weightLb,
+          reps: next.reps ?? cur.reps,
+        };
+        return { ...prev, [exerciseId]: merged };
+      });
     },
-    [updateSet]
+    [startWeight, startReps]
   );
 
-  const onWeightText = useCallback((t: string) => {
-    setWeightLbText(t);
-    const n = Number(t);
-    if (Number.isFinite(n)) setWeightLb(Math.max(0, n));
-  }, []);
+  const setActiveExercise = useCallback(
+    (exerciseId: string) => {
+      setActiveExerciseId(exerciseId);
 
-  const onRepsText = useCallback((t: string) => {
-    setRepsText(t);
-    const n = Math.floor(Number(t));
-    if (Number.isFinite(n)) setReps(Math.max(0, n));
-  }, []);
+      const last = getLastForExercise(exerciseId);
+      setWeightLb(last.weightLb);
+      setReps(last.reps);
+      setWeightLbText(last.weightLb.toFixed(1));
+      setRepsText(String(last.reps));
+    },
+    [getLastForExercise]
+  );
+
+  const onWeightText = useCallback(
+    (t: string) => {
+      setWeightLbText(t);
+      const n = Number(t);
+      if (!Number.isFinite(n)) return;
+
+      const nextW = Math.max(0, n);
+      setWeightLb(nextW);
+
+      if (activeExerciseId) {
+        setLastForExercise(activeExerciseId, { weightLb: nextW });
+      }
+    },
+    [activeExerciseId, setLastForExercise]
+  );
+
+  const onRepsText = useCallback(
+    (t: string) => {
+      setRepsText(t);
+      const n = Math.floor(Number(t));
+      if (!Number.isFinite(n)) return;
+
+      const nextR = Math.max(0, n);
+      setReps(nextR);
+
+      if (activeExerciseId) {
+        setLastForExercise(activeExerciseId, { reps: nextR });
+      }
+    },
+    [activeExerciseId, setLastForExercise]
+  );
 
   const onWeightCommit = useCallback(() => {
     setWeightLbText(weightLb.toFixed(1));
@@ -111,37 +165,78 @@ export function useLiveWorkoutSession(initial?: { weightLb?: number; reps?: numb
     setWeightLb((w) => {
       const next = Math.max(0, w - 2.5);
       setWeightLbText(next.toFixed(1));
+      if (activeExerciseId) setLastForExercise(activeExerciseId, { weightLb: next });
       return next;
     });
-  }, []);
+  }, [activeExerciseId, setLastForExercise]);
 
   const incWeight = useCallback(() => {
     setWeightLb((w) => {
       const next = w + 2.5;
       setWeightLbText(next.toFixed(1));
+      if (activeExerciseId) setLastForExercise(activeExerciseId, { weightLb: next });
       return next;
     });
-  }, []);
+  }, [activeExerciseId, setLastForExercise]);
 
   const decReps = useCallback(() => {
     setReps((r) => {
       const next = Math.max(0, r - 1);
       setRepsText(String(next));
+      if (activeExerciseId) setLastForExercise(activeExerciseId, { reps: next });
       return next;
     });
-  }, []);
+  }, [activeExerciseId, setLastForExercise]);
 
   const incReps = useCallback(() => {
     setReps((r) => {
       const next = r + 1;
       setRepsText(String(next));
+      if (activeExerciseId) setLastForExercise(activeExerciseId, { reps: next });
       return next;
     });
-  }, []);
+  }, [activeExerciseId, setLastForExercise]);
+
+  const setWeightForSet = useCallback(
+    (setId: string, text: string) => {
+      const parsed = Number(text);
+      if (!Number.isFinite(parsed)) return;
+      const nextW = Math.max(0, parsed);
+
+      const setObj = setsRef.current.find((s) => s.id === setId);
+      if (setObj?.exerciseId) {
+        setLastForExercise(setObj.exerciseId, { weightLb: nextW });
+      }
+
+      setSets((prev) =>
+        prev.map((s) => (s.id === setId ? { ...s, weightKg: lbToKg(nextW) } : s))
+      );
+    },
+    [setLastForExercise]
+  );
+
+  const setRepsForSet = useCallback(
+    (setId: string, text: string) => {
+      const parsed = Math.floor(Number(text));
+      if (!Number.isFinite(parsed)) return;
+      const nextR = Math.max(0, parsed);
+
+      const setObj = setsRef.current.find((s) => s.id === setId);
+      if (setObj?.exerciseId) {
+        setLastForExercise(setObj.exerciseId, { reps: nextR });
+      }
+
+      setSets((prev) => prev.map((s) => (s.id === setId ? { ...s, reps: nextR } : s)));
+    },
+    [setLastForExercise]
+  );
 
   const resetSession = useCallback(() => {
     setSets([]);
     setDoneBySetId({});
+    setLastByExerciseId({});
+    setActiveExerciseId(null);
+
     setWeightLb(startWeight);
     setReps(startReps);
     setWeightLbText(String(startWeight));
@@ -157,6 +252,9 @@ export function useLiveWorkoutSession(initial?: { weightLb?: number; reps?: numb
       isDone,
       toggleDone,
 
+      activeExerciseId,
+      setActiveExercise,
+
       weightLb,
       reps,
       weightLbText,
@@ -171,6 +269,9 @@ export function useLiveWorkoutSession(initial?: { weightLb?: number; reps?: numb
       incWeight,
       decReps,
       incReps,
+
+      getLastForExercise,
+      setLastForExercise,
 
       setWeightForSet,
       setRepsForSet,
@@ -185,6 +286,8 @@ export function useLiveWorkoutSession(initial?: { weightLb?: number; reps?: numb
       doneBySetId,
       isDone,
       toggleDone,
+      activeExerciseId,
+      setActiveExercise,
       weightLb,
       reps,
       weightLbText,
@@ -197,6 +300,8 @@ export function useLiveWorkoutSession(initial?: { weightLb?: number; reps?: numb
       incWeight,
       decReps,
       incReps,
+      getLastForExercise,
+      setLastForExercise,
       setWeightForSet,
       setRepsForSet,
       kgToLb,
