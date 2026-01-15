@@ -1,14 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  FlatList,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { useThemeColors } from "../src/ui/theme";
 
 import { EXERCISES_V1 } from "../src/data/exercises";
@@ -36,7 +27,16 @@ import { clampPlanIndex, completionPct as planCompletionPct } from "../src/lib/w
 import { addWorkoutSession } from "../src/lib/workoutStore";
 import { upsertRoutine } from "../src/lib/routinesStore";
 import { uid as routineUid, type RoutineExercise, type Routine } from "../src/lib/routinesModel";
+
 import { RestTimerOverlay } from "../src/ui/components/RestTimerOverlay";
+
+import { ExercisePicker } from "../src/ui/components/LiveWorkout/ExercisePicker";
+import { PlanHeaderCard } from "../src/ui/components/LiveWorkout/PlanHeaderCard";
+import { QuickAddSetCard } from "../src/ui/components/LiveWorkout/QuickAddSetCard";
+import { WorkoutLogCard } from "../src/ui/components/LiveWorkout/WorkoutLogCard";
+import { InstantCueToast, type InstantCue } from "../src/ui/components/LiveWorkout/InstantCueToast";
+
+import { useLiveWorkoutSession } from "../src/lib/hooks/useLiveWorkoutSession";
 
 function uid() {
   return Math.random().toString(16).slice(2);
@@ -66,12 +66,10 @@ try {
 function onRestTimerDoneFeedback() {
   const s = getSettings();
 
-  // haptic feedback
   if (s.hapticsEnabled && Haptics) {
     Haptics.notificationAsync?.(Haptics.NotificationFeedbackType.Success).catch?.(() => {});
   }
 
-  // audio feedback
   if (s.soundsEnabled && Speech) {
     Speech.stop?.();
     Speech.speak?.("Rest over.", {
@@ -123,53 +121,11 @@ export default function LiveWorkout() {
     if (planMode && currentPlannedExerciseId) setSelectedExerciseId(currentPlannedExerciseId);
   }, [planMode, currentPlannedExerciseId]);
 
-  const [weightLb, setWeightLb] = useState(135);
-  const [reps, setReps] = useState(8);
-
-  // typing inputs for quick add (in addition to +/- buttons)
-  const [weightLbText, setWeightLbText] = useState(String(135));
-  const [repsText, setRepsText] = useState(String(8));
-
-  const [sets, setSets] = useState<LoggedSet[]>([]);
-
-  // Per-set lock state (Done = locked)
-  const [doneBySetId, setDoneBySetId] = useState<Record<string, boolean>>({});
-
-  function isDone(setId: string): boolean {
-    return !!doneBySetId[setId];
-  }
-
-  function toggleDone(setId: string) {
-    setDoneBySetId((prev) => ({ ...prev, [setId]: !prev[setId] }));
-  }
-
-  function kgToLb(kg: number): number {
-    return kg * 2.2046226218;
-  }
-
-  function estimateE1RMLb(weightLb2: number, reps2: number): number {
-    if (!weightLb2 || reps2 <= 0) return 0;
-    return weightLb2 * (1 + reps2 / 30);
-  }
-
-  function updateSet(setId: string, patch: Partial<LoggedSet>) {
-    setSets((prev) => prev.map((s) => (s.id === setId ? { ...s, ...patch } : s)));
-  }
-
-  function setWeightForSet(setId: string, text: string) {
-    const parsed = Number(text);
-    if (!Number.isFinite(parsed)) return;
-    updateSet(setId, { weightKg: lbToKg(Math.max(0, parsed)) });
-  }
-
-  function setRepsForSet(setId: string, text: string) {
-    const parsed = Math.floor(Number(text));
-    if (!Number.isFinite(parsed)) return;
-    updateSet(setId, { reps: Math.max(0, parsed) });
-  }
+  // session hook (sets + locking + quick add typing/edit helpers)
+  const session = useLiveWorkoutSession({ weightLb: 135, reps: 8 });
 
   const [recapCues, setRecapCues] = useState<Cue[]>([]);
-  const [instantCue, setInstantCue] = useState<Cue | null>(null);
+  const [instantCue, setInstantCue] = useState<InstantCue | null>(null);
 
   const [sessionStateByExercise, setSessionStateByExercise] = useState<Record<string, ExerciseSessionState>>({});
   const [fallbackCountdownByExercise, setFallbackCountdownByExercise] = useState<Record<string, number>>({});
@@ -186,12 +142,7 @@ export default function LiveWorkout() {
     return () => clearInterval(t);
   }, []);
 
-  const cueTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const toastOpacity = useRef(new Animated.Value(0)).current;
-  const toastTranslateY = useRef(new Animated.Value(-18)).current;
-
   const selectedExerciseName = exerciseName(selectedExerciseId);
-  const displayWeight = useMemo(() => `${weightLb.toFixed(1)} lb`, [weightLb]);
 
   const Button = (props: { title: string; onPress: () => void; flex?: boolean }) => (
     <Pressable
@@ -211,52 +162,12 @@ export default function LiveWorkout() {
     </Pressable>
   );
 
-  function showInstantCue(cue: Cue) {
+  function showInstantCue(cue: InstantCue) {
     setInstantCue(cue);
+  }
 
-    if (cueTimerRef.current) clearTimeout(cueTimerRef.current);
-
-    toastOpacity.setValue(0);
-    toastTranslateY.setValue(-18);
-
-    Animated.parallel([
-      Animated.timing(toastOpacity, {
-        toValue: 1,
-        duration: 180,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(toastTranslateY, {
-        toValue: 0,
-        duration: 180,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    const isHighlight = cue.intensity !== "low";
-    const holdMs = isHighlight ? randomHighlightDurationMs() : randomFallbackDurationMs();
-
-    cueTimerRef.current = setTimeout(() => {
-      Animated.parallel([
-        Animated.timing(toastOpacity, {
-          toValue: 0,
-          duration: 220,
-          easing: Easing.in(Easing.cubic),
-          useNativeDriver: true,
-        }),
-        Animated.timing(toastTranslateY, {
-          toValue: -10,
-          duration: 220,
-          easing: Easing.in(Easing.cubic),
-          useNativeDriver: true,
-        }),
-      ]).start(({ finished }) => {
-        if (finished) setInstantCue(null);
-      });
-
-      cueTimerRef.current = null;
-    }, holdMs);
+  function randomHoldMs(isHighlight: boolean) {
+    return isHighlight ? randomHighlightDurationMs() : randomFallbackDurationMs();
   }
 
   function ensureCountdown(exId: string): number {
@@ -314,12 +225,12 @@ export default function LiveWorkout() {
       id: uid(),
       exerciseId: selectedExerciseId,
       setType: "working",
-      weightKg: lbToKg(weightLb),
-      reps,
+      weightKg: lbToKg(session.weightLb),
+      reps: session.reps,
       timestampMs: now,
     };
 
-    setSets((prev) => [...prev, next]);
+    session.setSets((prev) => [...prev, next]);
     setRestVisible(true);
 
     // plan progress only counts if it's the CURRENT planned exercise
@@ -335,7 +246,8 @@ export default function LiveWorkout() {
         };
 
         const shouldAdvance =
-          nextDone >= cur.targetSets && p.currentExerciseIndex < p.exercises.length - 1;
+          nextDone >= cur.targetSets &&
+          p.currentExerciseIndex < p.exercises.length - 1;
 
         return {
           ...p,
@@ -358,13 +270,16 @@ export default function LiveWorkout() {
     setSessionStateByExercise((prev) => ({ ...prev, [selectedExerciseId]: result.next }));
 
     if (result.meta.type === "cardio" && result.cue) {
-      showInstantCue(result.cue);
+      showInstantCue(result.cue as any);
       hapticFallback();
       soundFallback();
       return;
     }
 
-    if (result.cue && (result.meta.type === "rep" || result.meta.type === "weight" || result.meta.type === "e1rm")) {
+    if (
+      result.cue &&
+      (result.meta.type === "rep" || result.meta.type === "weight" || result.meta.type === "e1rm")
+    ) {
       let title = result.cue.message;
 
       const detail = formatPRDetail({
@@ -391,7 +306,7 @@ export default function LiveWorkout() {
 
     const current = ensureCountdown(selectedExerciseId);
     if (current <= 1) {
-      showInstantCue(randomFallbackCue());
+      showInstantCue(randomFallbackCue() as any);
       hapticFallback();
       soundFallback();
       setFallbackCountdownByExercise((prev) => ({ ...prev, [selectedExerciseId]: randomFallbackEveryN() }));
@@ -410,7 +325,7 @@ export default function LiveWorkout() {
   function saveAsRoutine() {
     const now = Date.now();
 
-    if (sets.length === 0) {
+    if (session.sets.length === 0) {
       showInstantCue({ message: "No sets yet.", detail: "Log at least one set first.", intensity: "low" });
       hapticFallback();
       soundFallback();
@@ -420,7 +335,7 @@ export default function LiveWorkout() {
     // Preserve order of first appearance in the session
     const seen = new Set<string>();
     const orderedExerciseIds: string[] = [];
-    for (const s of sets) {
+    for (const s of session.sets) {
       if (!seen.has(s.exerciseId)) {
         seen.add(s.exerciseId);
         orderedExerciseIds.push(s.exerciseId);
@@ -474,15 +389,15 @@ export default function LiveWorkout() {
 
   const finishWorkout = () => {
     const end = Date.now();
-    const start = workoutStartedAt ?? (sets[0]?.timestampMs ?? end);
+    const start = workoutStartedAt ?? (session.sets[0]?.timestampMs ?? end);
 
     const completionPct = planMode && plan ? planCompletionPct(plan) : undefined;
 
-    const session: WorkoutSession = {
+    const sessionObj: WorkoutSession = {
       id: uid2(),
       startedAtMs: start,
       endedAtMs: end,
-      sets: sets.map<WorkoutSet>((s) => ({
+      sets: session.sets.map<WorkoutSet>((s) => ({
         id: s.id,
         exerciseId: s.exerciseId,
         weightKg: s.weightKg,
@@ -502,9 +417,9 @@ export default function LiveWorkout() {
       completionPct,
     };
 
-    addWorkoutSession(session);
+    addWorkoutSession(sessionObj);
 
-    const grouped = groupSetsByExercise(sets);
+    const grouped = groupSetsByExercise(session.sets);
     const all: Cue[] = [];
 
     for (const [exerciseId, exerciseSets] of Object.entries(grouped)) {
@@ -538,97 +453,40 @@ export default function LiveWorkout() {
   };
 
   const reset = () => {
-    setSets([]);
-    setDoneBySetId({});
+    session.resetSession();
     setRecapCues([]);
     setInstantCue(null);
     setSessionStateByExercise({});
     setFallbackCountdownByExercise({});
     setWorkoutStartedAt(null);
     setRestVisible(false);
-    if (cueTimerRef.current) clearTimeout(cueTimerRef.current);
-    cueTimerRef.current = null;
   };
 
   // Exercise picker: in planMode only allow choosing within plan (v1)
-  const pickerExercises = planMode ? EXERCISES_V1.filter((e) => plannedExerciseIds.includes(e.id)) : EXERCISES_V1;
+  const allowedExerciseIds = planMode ? plannedExerciseIds : undefined;
 
   if (isPickingExercise) {
     return (
-      <View style={{ flex: 1, backgroundColor: c.bg, padding: 16, gap: 12 }}>
-        <Text style={{ fontSize: 22, fontWeight: "700", color: c.text }}>Pick Exercise</Text>
-
-        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 12, overflow: "hidden" }}>
-          <FlatList
-            data={pickerExercises}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
-              const isSelected = item.id === selectedExerciseId;
-              return (
-                <Pressable
-                  onPress={() => {
-                    setSelectedExerciseId(item.id);
-                    setIsPickingExercise(false);
-                  }}
-                  style={{
-                    padding: 14,
-                    borderBottomWidth: 1,
-                    borderBottomColor: c.border,
-                    backgroundColor: isSelected ? c.card : c.bg,
-                  }}
-                >
-                  <Text style={{ color: c.text, fontWeight: isSelected ? "700" : "500" }}>{item.name}</Text>
-                </Pressable>
-              );
-            }}
-          />
-        </View>
-
-        <Button title="Back" onPress={() => setIsPickingExercise(false)} />
-      </View>
+      <ExercisePicker
+        visible
+        allowedExerciseIds={allowedExerciseIds}
+        selectedExerciseId={selectedExerciseId}
+        onSelect={(id) => {
+          setSelectedExerciseId(id);
+          setIsPickingExercise(false);
+        }}
+        onBack={() => setIsPickingExercise(false)}
+      />
     );
   }
 
-  const toastFontSize = instantCue?.intensity === "low" ? 16 : 28;
-
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      {instantCue && (
-        <Animated.View
-          pointerEvents="none"
-          style={{
-            position: "absolute",
-            top: 12,
-            left: 12,
-            right: 12,
-            zIndex: 1000,
-            borderWidth: 1,
-            borderColor: c.border,
-            borderRadius: 14,
-            paddingVertical: 10,
-            paddingHorizontal: 12,
-            backgroundColor: c.card,
-            opacity: toastOpacity,
-            transform: [{ translateY: toastTranslateY }],
-            shadowOpacity: 0.2,
-            shadowRadius: 10,
-            shadowOffset: { width: 0, height: 4 },
-            elevation: 6,
-          }}
-        >
-          <Text style={{ color: c.muted, marginBottom: 4, fontSize: 12 }}>Cue</Text>
-          <Text
-            style={{
-              color: c.text,
-              fontSize: toastFontSize,
-              fontWeight: instantCue.intensity === "high" ? "800" : "700",
-            }}
-          >
-            {instantCue.message}
-          </Text>
-          {!!instantCue.detail && <Text style={{ color: c.muted, marginTop: 6, fontSize: 13 }}>{instantCue.detail}</Text>}
-        </Animated.View>
-      )}
+      <InstantCueToast
+        cue={instantCue}
+        onClear={() => setInstantCue(null)}
+        randomHoldMs={randomHoldMs}
+      />
 
       <RestTimerOverlay
         visible={restVisible}
@@ -637,75 +495,21 @@ export default function LiveWorkout() {
         onDone={onRestTimerDoneFeedback}
       />
 
-      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 120 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 140 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
           <Text style={{ fontSize: 22, fontWeight: "700", color: c.text }}>Live Workout</Text>
           <Text style={{ color: c.muted, fontWeight: "800" }}>{`⏱ ${workoutElapsedLabel}`}</Text>
         </View>
 
-        {!!planHeader && (
-          <View
-            style={{
-              borderWidth: 1,
-              borderColor: c.border,
-              borderRadius: 12,
-              padding: 12,
-              backgroundColor: c.card,
-              gap: 6,
-            }}
-          >
-            <Text style={{ color: c.text, fontWeight: "900" }}>{planHeader.title}</Text>
-            <Text style={{ color: c.muted }}>{planHeader.subtitle}</Text>
-          </View>
-        )}
-
-        {planMode && plan && (
-          <View
-            style={{
-              borderWidth: 1,
-              borderColor: c.border,
-              borderRadius: 12,
-              padding: 12,
-              backgroundColor: c.card,
-              gap: 8,
-            }}
-          >
-            <Text style={{ color: c.text, fontWeight: "900" }}>Planned Exercises</Text>
-
-            {plan.exercises.map((ex, idx) => {
-              const done = plan.completedSetsByExerciseId[ex.exerciseId] ?? 0;
-              const isCurrent = idx === plan.currentExerciseIndex;
-
-              return (
-                <Pressable
-                  key={`${ex.exerciseId}-${idx}`}
-                  onPress={() => jumpToPlanIndex(idx)}
-                  style={{
-                    paddingVertical: 10,
-                    paddingHorizontal: 12,
-                    borderRadius: 12,
-                    borderWidth: 1,
-                    borderColor: c.border,
-                    backgroundColor: isCurrent ? c.bg : c.card,
-                    gap: 3,
-                  }}
-                >
-                  <Text style={{ color: c.text, fontWeight: isCurrent ? "900" : "700" }}>
-                    {idx + 1}. {exerciseName(ex.exerciseId)}
-                  </Text>
-                  <Text style={{ color: c.muted }}>
-                    Sets: {done}/{ex.targetSets}{" "}
-                    {ex.targetRepsMin != null && ex.targetRepsMax != null ? `• ${ex.targetRepsMin}-${ex.targetRepsMax} reps` : ""}
-                  </Text>
-                </Pressable>
-              );
-            })}
-
-            <View style={{ flexDirection: "row", gap: 10, marginTop: 4 }}>
-              <Button title="Next Exercise" onPress={advanceToNextPlannedExercise} flex />
-            </View>
-          </View>
-        )}
+        <PlanHeaderCard
+          header={planHeader}
+          planExercises={plan?.exercises ?? []}
+          currentExerciseIndex={plan?.currentExerciseIndex ?? 0}
+          completedSetsByExerciseId={plan?.completedSetsByExerciseId ?? {}}
+          onJumpToIndex={jumpToPlanIndex}
+          onNext={advanceToNextPlannedExercise}
+          visible={planMode && !!plan}
+        />
 
         <View
           style={{
@@ -722,266 +526,31 @@ export default function LiveWorkout() {
           <Button title="Change Exercise" onPress={() => setIsPickingExercise(true)} />
         </View>
 
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: c.border,
-            borderRadius: 12,
-            padding: 12,
-            gap: 10,
-            backgroundColor: c.card,
-          }}
-        >
-          <Text style={{ fontSize: 16, fontWeight: "700", color: c.text }}>Quick Add Set</Text>
+        <QuickAddSetCard
+          weightLb={session.weightLb}
+          reps={session.reps}
+          weightLbText={session.weightLbText}
+          repsText={session.repsText}
+          onWeightText={session.onWeightText}
+          onRepsText={session.onRepsText}
+          onWeightCommit={session.onWeightCommit}
+          onRepsCommit={session.onRepsCommit}
+          onDecWeight={session.decWeight}
+          onIncWeight={session.incWeight}
+          onDecReps={session.decReps}
+          onIncReps={session.incReps}
+          onAddSet={addSet}
+        />
 
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <Button
-              title="- 2.5 lb"
-              onPress={() =>
-                setWeightLb((w) => {
-                  const next = Math.max(0, w - 2.5);
-                  setWeightLbText(next.toFixed(1));
-                  return next;
-                })
-              }
-              flex
-            />
-            <Button
-              title="+ 2.5 lb"
-              onPress={() =>
-                setWeightLb((w) => {
-                  const next = w + 2.5;
-                  setWeightLbText(next.toFixed(1));
-                  return next;
-                })
-              }
-              flex
-            />
-          </View>
-
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <View style={{ flex: 1, gap: 6 }}>
-              <Text style={{ color: c.muted, fontSize: 12, fontWeight: "800" }}>Weight (lb)</Text>
-              <TextInput
-                value={weightLbText}
-                keyboardType="decimal-pad"
-                onChangeText={(t) => {
-                  setWeightLbText(t);
-                  const n = Number(t);
-                  if (Number.isFinite(n)) setWeightLb(Math.max(0, n));
-                }}
-                onBlur={() => setWeightLbText(weightLb.toFixed(1))}
-                style={{
-                  borderWidth: 1,
-                  borderColor: c.border,
-                  borderRadius: 10,
-                  paddingVertical: 10,
-                  paddingHorizontal: 10,
-                  color: c.text,
-                  backgroundColor: c.bg,
-                  fontWeight: "900",
-                  fontSize: 16,
-                }}
-              />
-            </View>
-
-            <View style={{ width: 110, gap: 6 }}>
-              <Text style={{ color: c.muted, fontSize: 12, fontWeight: "800" }}>Reps</Text>
-              <TextInput
-                value={repsText}
-                keyboardType="number-pad"
-                onChangeText={(t) => {
-                  setRepsText(t);
-                  const n = Math.floor(Number(t));
-                  if (Number.isFinite(n)) setReps(Math.max(0, n));
-                }}
-                onBlur={() => setRepsText(String(reps))}
-                style={{
-                  borderWidth: 1,
-                  borderColor: c.border,
-                  borderRadius: 10,
-                  paddingVertical: 10,
-                  paddingHorizontal: 10,
-                  color: c.text,
-                  backgroundColor: c.bg,
-                  fontWeight: "900",
-                  fontSize: 16,
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            <Button
-              title="- 1 rep"
-              onPress={() =>
-                setReps((r) => {
-                  const next = Math.max(0, r - 1);
-                  setRepsText(String(next));
-                  return next;
-                })
-              }
-              flex
-            />
-            <Button
-              title="+ 1 rep"
-              onPress={() =>
-                setReps((r) => {
-                  const next = r + 1;
-                  setRepsText(String(next));
-                  return next;
-                })
-              }
-              flex
-            />
-          </View>
-
-          <Text style={{ color: c.muted, fontWeight: "800" }}>{`Current: ${displayWeight} • ${reps} reps`}</Text>
-
-          <Button title="Add Set" onPress={addSet} />
-        </View>
-
-        {/* Workout Log */}
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: c.border,
-            borderRadius: 12,
-            padding: 12,
-            gap: 10,
-            backgroundColor: c.card,
-          }}
-        >
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
-            <Text style={{ fontSize: 16, fontWeight: "900", color: c.text }}>Workout Log</Text>
-            <Text style={{ color: c.muted, fontWeight: "800" }}>{sets.length} sets</Text>
-          </View>
-
-          {sets.length === 0 ? (
-            <Text style={{ color: c.muted, opacity: 0.9 }}>No sets yet. Add your first set above.</Text>
-          ) : (
-            (() => {
-              const seen = new Set<string>();
-              const orderedExerciseIds: string[] = [];
-              for (const s of sets) {
-                if (!seen.has(s.exerciseId)) {
-                  seen.add(s.exerciseId);
-                  orderedExerciseIds.push(s.exerciseId);
-                }
-              }
-
-              return orderedExerciseIds.map((exerciseId) => {
-                const exSets = sets.filter((s) => s.exerciseId === exerciseId);
-
-                return (
-                  <View key={exerciseId} style={{ gap: 8 }}>
-                    <Text style={{ color: c.text, fontWeight: "900", marginTop: 6 }}>
-                      {exerciseName(exerciseId)}
-                    </Text>
-
-                    {exSets.map((s, idx) => {
-                      const wLb = kgToLb(s.weightKg);
-                      const e1rm = estimateE1RMLb(wLb, s.reps);
-                      const done = isDone(s.id);
-
-                      return (
-                        <View
-                          key={s.id}
-                          style={{
-                            borderWidth: 1,
-                            borderColor: c.border,
-                            borderRadius: 12,
-                            padding: 10,
-                            backgroundColor: done ? c.bg : c.card,
-                            gap: 8,
-                          }}
-                        >
-                          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                            <Text style={{ color: c.muted, fontWeight: "800" }}>Set {idx + 1}</Text>
-
-                            <Pressable
-                              onPress={() => toggleDone(s.id)}
-                              style={{
-                                paddingVertical: 6,
-                                paddingHorizontal: 10,
-                                borderRadius: 999,
-                                borderWidth: 1,
-                                borderColor: c.border,
-                                backgroundColor: done ? c.card : c.bg,
-                              }}
-                            >
-                              <Text style={{ color: c.text, fontWeight: "900" }}>{done ? "Done ✓" : "Mark Done"}</Text>
-                            </Pressable>
-                          </View>
-
-                          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-                            {/* Weight */}
-                            <View style={{ flex: 1, gap: 4 }}>
-                              <Text style={{ color: c.muted, fontSize: 12 }}>Weight (lb)</Text>
-                              {done ? (
-                                <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>
-                                  {wLb.toFixed(1)}
-                                </Text>
-                              ) : (
-                                <TextInput
-                                  defaultValue={wLb.toFixed(1)}
-                                  keyboardType="decimal-pad"
-                                  onChangeText={(t) => setWeightForSet(s.id, t)}
-                                  style={{
-                                    borderWidth: 1,
-                                    borderColor: c.border,
-                                    borderRadius: 10,
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 10,
-                                    color: c.text,
-                                    backgroundColor: c.bg,
-                                    fontWeight: "900",
-                                  }}
-                                />
-                              )}
-                            </View>
-
-                            {/* Reps */}
-                            <View style={{ width: 90, gap: 4 }}>
-                              <Text style={{ color: c.muted, fontSize: 12 }}>Reps</Text>
-                              {done ? (
-                                <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>{s.reps}</Text>
-                              ) : (
-                                <TextInput
-                                  defaultValue={String(s.reps)}
-                                  keyboardType="number-pad"
-                                  onChangeText={(t) => setRepsForSet(s.id, t)}
-                                  style={{
-                                    borderWidth: 1,
-                                    borderColor: c.border,
-                                    borderRadius: 10,
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 10,
-                                    color: c.text,
-                                    backgroundColor: c.bg,
-                                    fontWeight: "900",
-                                  }}
-                                />
-                              )}
-                            </View>
-
-                            {/* e1RM */}
-                            <View style={{ width: 90, alignItems: "flex-end", gap: 4 }}>
-                              <Text style={{ color: c.muted, fontSize: 12 }}>e1RM</Text>
-                              <Text style={{ color: c.text, fontWeight: "900" }}>
-                                {e1rm > 0 ? `${Math.round(e1rm)}` : "—"}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      );
-                    })}
-                  </View>
-                );
-              });
-            })()
-          )}
-        </View>
+        <WorkoutLogCard
+          sets={session.sets}
+          isDone={session.isDone}
+          toggleDone={session.toggleDone}
+          setWeightForSet={session.setWeightForSet}
+          setRepsForSet={session.setRepsForSet}
+          kgToLb={session.kgToLb}
+          estimateE1RMLb={session.estimateE1RMLb}
+        />
 
         <View style={{ flexDirection: "row", gap: 10 }}>
           <Button title="Finish Workout" onPress={finishWorkout} flex />
@@ -998,9 +567,9 @@ export default function LiveWorkout() {
               backgroundColor: c.card,
               alignItems: "center",
               justifyContent: "center",
-              opacity: sets.length === 0 ? 0.5 : 1,
+              opacity: session.sets.length === 0 ? 0.5 : 1,
             }}
-            disabled={sets.length === 0}
+            disabled={session.sets.length === 0}
           >
             <Text style={{ color: c.text, fontWeight: "700" }}>Save as Routine</Text>
           </Pressable>
