@@ -23,18 +23,18 @@ function formatMMSS(totalSeconds: number) {
 export function RestTimerOverlay(props: Props) {
   const c = useThemeColors();
 
-  // collapsed tab is always shown when visible=true
+  // pill always shows when visible, panel expands on tap
   const [expanded, setExpanded] = useState(false);
 
   const [secondsLeft, setSecondsLeft] = useState(props.initialSeconds);
   const [isRunning, setIsRunning] = useState(true);
 
-  // slide animation (overlay panel only)
-  const panelY = useRef(new Animated.Value(260)).current; // start off-screen
+  // slide animation: panel only (overlay)
+  const panelY = useRef(new Animated.Value(220)).current; // off-screen-ish
 
   useEffect(() => {
     if (!props.visible) return;
-    // when newly shown, reset to initial + start running (and keep collapsed)
+    // when shown, reset and start running
     setExpanded(false);
     setSecondsLeft(props.initialSeconds);
     setIsRunning(true);
@@ -66,7 +66,7 @@ export function RestTimerOverlay(props: Props) {
     if (!props.visible) return;
 
     Animated.spring(panelY, {
-      toValue: expanded ? 0 : 260,
+      toValue: expanded ? 0 : 220,
       useNativeDriver: true,
       damping: 18,
       stiffness: 180,
@@ -78,7 +78,7 @@ export function RestTimerOverlay(props: Props) {
 
   if (!props.visible) return null;
 
-  const SmallBtn = (p: { title: string; onPress: () => void; subtle?: boolean }) => (
+  const SmallBtn = (p: { title: string; onPress: () => void; subtle?: boolean; minW?: number }) => (
     <Pressable
       onPress={p.onPress}
       style={{
@@ -90,7 +90,7 @@ export function RestTimerOverlay(props: Props) {
         backgroundColor: p.subtle ? c.bg : c.card,
         alignItems: "center",
         justifyContent: "center",
-        minWidth: 64,
+        minWidth: p.minW ?? 64,
       }}
     >
       <Text style={{ color: c.text, fontWeight: "900", fontSize: 12 }}>{p.title}</Text>
@@ -99,7 +99,7 @@ export function RestTimerOverlay(props: Props) {
 
   return (
     <>
-      {/* COLLAPSED TAB (always visible, doesn’t push layout) */}
+      {/* PILL TAB (always overlay, never pushes layout) */}
       <View
         pointerEvents="box-none"
         style={{
@@ -123,7 +123,9 @@ export function RestTimerOverlay(props: Props) {
             flexDirection: "row",
             alignItems: "center",
             gap: 10,
-            shadowOpacity: 0.18,
+
+            // subtle but visible
+            shadowOpacity: 0.16,
             shadowRadius: 10,
             shadowOffset: { width: 0, height: 6 },
             elevation: 8,
@@ -140,7 +142,7 @@ export function RestTimerOverlay(props: Props) {
         </Pressable>
       </View>
 
-      {/* EXPANDED OVERLAY PANEL (slides in, does not shove main UI) */}
+      {/* SLIDE-IN PANEL (overlay only; compact) */}
       <Animated.View
         pointerEvents={expanded ? "auto" : "none"}
         style={{
@@ -160,6 +162,7 @@ export function RestTimerOverlay(props: Props) {
             borderRadius: 16,
             padding: 12,
             gap: 10,
+
             shadowOpacity: 0.2,
             shadowRadius: 12,
             shadowOffset: { width: 0, height: 8 },
@@ -170,9 +173,7 @@ export function RestTimerOverlay(props: Props) {
             <Text style={{ color: c.text, fontWeight: "900" }}>Rest Timer</Text>
 
             <Pressable
-              onPress={() => {
-                setExpanded(false);
-              }}
+              onPress={() => setExpanded(false)}
               style={{
                 paddingVertical: 6,
                 paddingHorizontal: 10,
@@ -186,32 +187,21 @@ export function RestTimerOverlay(props: Props) {
             </Pressable>
           </View>
 
-          <Text style={{ color: c.text, fontWeight: "900", fontSize: 34 }}>{timeLabel}</Text>
+          <Text style={{ color: c.text, fontWeight: "900", fontSize: 32 }}>{timeLabel}</Text>
 
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
-            <SmallBtn title={isRunning ? "Pause" : "Start"} onPress={() => setIsRunning((v) => !v)} />
             <SmallBtn
-              title="+15s"
-              onPress={() => setSecondsLeft((s) => clampInt(s + 15, 0, 60 * 60))}
-              subtle
+              title={isRunning ? "Pause" : "Start"}
+              onPress={() => setIsRunning((v) => !v)}
+              minW={74}
             />
-            <SmallBtn
-              title="-15s"
-              onPress={() => setSecondsLeft((s) => clampInt(s - 15, 0, 60 * 60))}
-              subtle
-            />
+            <SmallBtn title="+15s" onPress={() => setSecondsLeft((s) => clampInt(s + 15, 0, 3600))} subtle />
+            <SmallBtn title="-15s" onPress={() => setSecondsLeft((s) => clampInt(s - 15, 0, 3600))} subtle />
             <SmallBtn
               title="Reset"
               onPress={() => {
                 setSecondsLeft(props.initialSeconds);
                 setIsRunning(true);
-              }}
-              subtle
-            />
-            <SmallBtn
-              title="Hide"
-              onPress={() => {
-                setExpanded(false);
               }}
               subtle
             />
@@ -222,8 +212,14 @@ export function RestTimerOverlay(props: Props) {
                 props.onClose();
               }}
               subtle
+              minW={80}
             />
           </View>
+
+          {/* tiny hint line */}
+          <Text style={{ color: c.muted, fontSize: 12, marginTop: 2 }}>
+            Tip: Tap the pill to show/hide.
+          </Text>
         </View>
       </Animated.View>
     </>
