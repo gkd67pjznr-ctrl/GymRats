@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { Animated, Easing, FlatList, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useThemeColors } from "../src/ui/theme";
 
 import { EXERCISES_V1 } from "../src/data/exercises";
@@ -20,6 +20,8 @@ import {
   randomHighlightDurationMs,
 } from "../src/lib/perSetCue";
 
+import { type Routine, type RoutineExercise, uid as routineUid } from "../src/lib/routinesModel";
+import { upsertRoutine } from "../src/lib/routinesStore";
 import { getSettings } from "../src/lib/settings";
 import { formatDuration, uid as uid2, type WorkoutSession, type WorkoutSet } from "../src/lib/workoutModel";
 import { setCurrentPlan, updateCurrentPlan, useCurrentPlan } from "../src/lib/workoutPlanStore";
@@ -118,6 +120,44 @@ export default function LiveWorkout() {
   const [reps, setReps] = useState(8);
 
   const [sets, setSets] = useState<LoggedSet[]>([]);
+    // Per-set lock state (Done = locked)
+  const [doneBySetId, setDoneBySetId] = useState<Record<string, boolean>>({});
+
+  function isDone(setId: string): boolean {
+    return !!doneBySetId[setId];
+  }
+
+  function toggleDone(setId: string) {
+    setDoneBySetId((prev) => ({ ...prev, [setId]: !prev[setId] }));
+  }
+
+  function kgToLb(kg: number): number {
+    return kg * 2.2046226218;
+  }
+
+  function estimateE1RMLb(weightLb: number, reps: number): number {
+    // Epley: 1RM = w * (1 + reps/30)
+    if (!weightLb || reps <= 0) return 0;
+    return weightLb * (1 + reps / 30);
+  }
+
+  function updateSet(setId: string, patch: Partial<LoggedSet>) {
+    setSets((prev) => prev.map((s) => (s.id === setId ? { ...s, ...patch } : s)));
+  }
+
+  function setWeightForSet(setId: string, text: string) {
+    // allow "135" or "135.5"
+    const parsed = Number(text);
+    if (!Number.isFinite(parsed)) return;
+    updateSet(setId, { weightKg: lbToKg(Math.max(0, parsed)) });
+  }
+
+  function setRepsForSet(setId: string, text: string) {
+    const parsed = Math.floor(Number(text));
+    if (!Number.isFinite(parsed)) return;
+    updateSet(setId, { reps: Math.max(0, parsed) });
+  }
+
   const [recapCues, setRecapCues] = useState<Cue[]>([]);
   const [instantCue, setInstantCue] = useState<Cue | null>(null);
 
@@ -353,6 +393,80 @@ export default function LiveWorkout() {
     }
   };
 
+  function makeRoutineNameNow(): string {
+    // Keep it simple + readable, local device timezone
+    const d = new Date();
+    const date = d.toLocaleDateString(undefined, { month: "short", day: "2-digit" });
+    const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+    return `Workout • ${date} ${time}`;
+  }
+
+  function saveAsRoutine() {
+    const now = Date.now();
+
+    if (sets.length === 0) {
+      showInstantCue({ message: "No sets yet.", detail: "Log at least one set first.", intensity: "low" });
+      hapticFallback();
+      soundFallback();
+      return;
+    }
+
+    // Preserve order of first appearance in the session
+    const seen = new Set<string>();
+    const orderedExerciseIds: string[] = [];
+    for (const s of sets) {
+      if (!seen.has(s.exerciseId)) {
+        seen.add(s.exerciseId);
+        orderedExerciseIds.push(s.exerciseId);
+      }
+    }
+
+    // Map plan targets if available
+    const planTargetsByExerciseId: Record<
+      string,
+      { targetSets?: number; targetRepsMin?: number; targetRepsMax?: number }
+    > = {};
+    if (plan?.exercises?.length) {
+      for (const e of plan.exercises) {
+        planTargetsByExerciseId[e.exerciseId] = {
+          targetSets: e.targetSets,
+          targetRepsMin: e.targetRepsMin,
+          targetRepsMax: e.targetRepsMax,
+        };
+      }
+    }
+
+    const exercises: RoutineExercise[] = orderedExerciseIds.map((exerciseId) => {
+      const t = planTargetsByExerciseId[exerciseId];
+      return {
+        id: routineUid(),
+        exerciseId,
+        // sensible defaults if no plan targets
+        targetSets: t?.targetSets ?? 3,
+        targetRepsMin: t?.targetRepsMin ?? 6,
+        targetRepsMax: t?.targetRepsMax ?? 12,
+      };
+    });
+
+    const routine: Routine = {
+      id: routineUid(),
+      name: plan?.routineName ? `${plan.routineName} (Saved Copy)` : makeRoutineNameNow(),
+      createdAtMs: now,
+      updatedAtMs: now,
+      exercises,
+    };
+
+    upsertRoutine(routine);
+
+    showInstantCue({
+      message: "Routine saved.",
+      detail: `${routine.exercises.length} exercises`,
+      intensity: "low",
+    });
+    hapticFallback();
+    soundFallback();
+  }
+
   const finishWorkout = () => {
     const end = Date.now();
     const start = workoutStartedAt ?? (sets[0]?.timestampMs ?? end);
@@ -420,6 +534,7 @@ export default function LiveWorkout() {
 
   const reset = () => {
     setSets([]);
+    setDoneBySetId({});
     setRecapCues([]);
     setInstantCue(null);
     setSessionStateByExercise({});
@@ -632,8 +747,172 @@ export default function LiveWorkout() {
           <Button title="Add Set" onPress={addSet} />
         </View>
 
+                {/* Workout Log */}
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: c.border,
+            borderRadius: 12,
+            padding: 12,
+            gap: 10,
+            backgroundColor: c.card,
+          }}
+        >
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
+            <Text style={{ fontSize: 16, fontWeight: "900", color: c.text }}>Workout Log</Text>
+            <Text style={{ color: c.muted, fontWeight: "800" }}>{sets.length} sets</Text>
+          </View>
+
+          {sets.length === 0 ? (
+            <Text style={{ color: c.muted, opacity: 0.9 }}>No sets yet. Add your first set above.</Text>
+          ) : (
+            (() => {
+              // Order exercises by first appearance
+              const seen = new Set<string>();
+              const orderedExerciseIds: string[] = [];
+              for (const s of sets) {
+                if (!seen.has(s.exerciseId)) {
+                  seen.add(s.exerciseId);
+                  orderedExerciseIds.push(s.exerciseId);
+                }
+              }
+
+              return orderedExerciseIds.map((exerciseId) => {
+                const exSets = sets.filter((s) => s.exerciseId === exerciseId);
+
+                return (
+                  <View key={exerciseId} style={{ gap: 8 }}>
+                    <Text style={{ color: c.text, fontWeight: "900", marginTop: 6 }}>
+                      {exerciseName(exerciseId)}
+                    </Text>
+
+                    {exSets.map((s, idx) => {
+                      const weightLb = kgToLb(s.weightKg);
+                      const e1rm = estimateE1RMLb(weightLb, s.reps);
+                      const done = isDone(s.id);
+
+                      return (
+                        <View
+                          key={s.id}
+                          style={{
+                            borderWidth: 1,
+                            borderColor: c.border,
+                            borderRadius: 12,
+                            padding: 10,
+                            backgroundColor: done ? c.bg : c.card,
+                            gap: 8,
+                          }}
+                        >
+                          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <Text style={{ color: c.muted, fontWeight: "800" }}>Set {idx + 1}</Text>
+
+                            <Pressable
+                              onPress={() => toggleDone(s.id)}
+                              style={{
+                                paddingVertical: 6,
+                                paddingHorizontal: 10,
+                                borderRadius: 999,
+                                borderWidth: 1,
+                                borderColor: c.border,
+                                backgroundColor: done ? c.card : c.bg,
+                              }}
+                            >
+                              <Text style={{ color: c.text, fontWeight: "900" }}>{done ? "Done ✓" : "Mark Done"}</Text>
+                            </Pressable>
+                          </View>
+
+                          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                            {/* Weight */}
+                            <View style={{ flex: 1, gap: 4 }}>
+                              <Text style={{ color: c.muted, fontSize: 12 }}>Weight (lb)</Text>
+                              {done ? (
+                                <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>
+                                  {weightLb.toFixed(1)}
+                                </Text>
+                              ) : (
+                                <TextInput
+                                  defaultValue={weightLb.toFixed(1)}
+                                  keyboardType="decimal-pad"
+                                  onChangeText={(t) => setWeightForSet(s.id, t)}
+                                  style={{
+                                    borderWidth: 1,
+                                    borderColor: c.border,
+                                    borderRadius: 10,
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 10,
+                                    color: c.text,
+                                    backgroundColor: c.bg,
+                                    fontWeight: "900",
+                                  }}
+                                />
+                              )}
+                            </View>
+
+                            {/* Reps */}
+                            <View style={{ width: 90, gap: 4 }}>
+                              <Text style={{ color: c.muted, fontSize: 12 }}>Reps</Text>
+                              {done ? (
+                                <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>{s.reps}</Text>
+                              ) : (
+                                <TextInput
+                                  defaultValue={String(s.reps)}
+                                  keyboardType="number-pad"
+                                  onChangeText={(t) => setRepsForSet(s.id, t)}
+                                  style={{
+                                    borderWidth: 1,
+                                    borderColor: c.border,
+                                    borderRadius: 10,
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 10,
+                                    color: c.text,
+                                    backgroundColor: c.bg,
+                                    fontWeight: "900",
+                                  }}
+                                />
+                              )}
+                            </View>
+
+                            {/* e1RM */}
+                            <View style={{ width: 90, alignItems: "flex-end", gap: 4 }}>
+                              <Text style={{ color: c.muted, fontSize: 12 }}>e1RM</Text>
+                              <Text style={{ color: c.text, fontWeight: "900" }}>
+                                {e1rm > 0 ? `${Math.round(e1rm)}` : "—"}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                );
+              });
+            })()
+          )}
+        </View>
+
+
         <View style={{ flexDirection: "row", gap: 10 }}>
           <Button title="Finish Workout" onPress={finishWorkout} flex />
+
+          <Pressable
+            onPress={saveAsRoutine}
+            style={{
+              flex: 1,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: c.border,
+              backgroundColor: c.card,
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: sets.length === 0 ? 0.5 : 1,
+            }}
+            disabled={sets.length === 0}
+          >
+            <Text style={{ color: c.text, fontWeight: "700" }}>Save as Routine</Text>
+          </Pressable>
+
           <Pressable
             onPress={reset}
             style={{
@@ -650,6 +929,7 @@ export default function LiveWorkout() {
             <Text style={{ color: c.text }}>Reset</Text>
           </Pressable>
         </View>
+
 
         <View
           style={{
