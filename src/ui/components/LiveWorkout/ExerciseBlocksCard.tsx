@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { useThemeColors } from "../../theme";
 import { EXERCISES_V1 } from "../../../data/exercises";
@@ -12,6 +12,11 @@ export type ExerciseBlocksCardProps = {
   exerciseIds: string[]; // ordered blocks
   sets: LoggedSet[];
 
+  // focus mode
+  focusExerciseId?: string | null;
+  showOnlyFocus?: boolean;
+
+  // add set uses per-exercise last-used from parent
   onAddSetForExercise: (exerciseId: string) => void;
   onJumpToExercise?: (exerciseId: string) => void;
 
@@ -30,6 +35,14 @@ export type ExerciseBlocksCardProps = {
 
 export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
   const c = useThemeColors();
+  const [collapsedById, setCollapsedById] = useState<Record<string, boolean>>({});
+
+  const visibleExerciseIds = useMemo(() => {
+    if (props.showOnlyFocus && props.focusExerciseId) {
+      return props.exerciseIds.filter((id) => id === props.focusExerciseId);
+    }
+    return props.exerciseIds;
+  }, [props.exerciseIds, props.focusExerciseId, props.showOnlyFocus]);
 
   const BlockButton = (p: { title: string; onPress: () => void; subtle?: boolean }) => (
     <Pressable
@@ -71,8 +84,9 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
 
   return (
     <View style={{ gap: 12 }}>
-      {props.exerciseIds.map((exerciseId) => {
+      {visibleExerciseIds.map((exerciseId) => {
         const exSets = props.sets.filter((s) => s.exerciseId === exerciseId);
+        const collapsed = !!collapsedById[exerciseId];
 
         return (
           <View
@@ -90,7 +104,7 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <Pressable
                 onPress={() => props.onJumpToExercise?.(exerciseId)}
-                style={{ paddingVertical: 4, paddingRight: 10 }}
+                style={{ paddingVertical: 4, paddingRight: 10, flex: 1 }}
               >
                 <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>
                   {exerciseName(exerciseId)}
@@ -98,13 +112,22 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
                 <Text style={{ color: c.muted, fontWeight: "800", fontSize: 12 }}>{exSets.length} sets</Text>
               </Pressable>
 
-              <View style={{ flexDirection: "row", gap: 8 }}>
+              <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+                <BlockButton
+                  title={collapsed ? "Expand" : "Collapse"}
+                  onPress={() =>
+                    setCollapsedById((prev) => ({ ...prev, [exerciseId]: !prev[exerciseId] }))
+                  }
+                  subtle
+                />
                 <BlockButton title="+ Set" onPress={() => props.onAddSetForExercise(exerciseId)} />
               </View>
             </View>
 
-            {/* Set rows */}
-            {exSets.length === 0 ? (
+            {/* Body */}
+            {collapsed ? (
+              <Text style={{ color: c.muted, opacity: 0.9 }}>Collapsed.</Text>
+            ) : exSets.length === 0 ? (
               <Text style={{ color: c.muted, opacity: 0.9 }}>No sets yet. Tap “+ Set”.</Text>
             ) : (
               exSets.map((s, idx) => {
