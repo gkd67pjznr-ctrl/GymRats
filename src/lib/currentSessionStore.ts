@@ -28,6 +28,9 @@ let hydrated = false;
 
 const listeners = new Set<() => void>();
 
+// Queue for sequential persistence (fixes race condition)
+let persistQueue: Promise<void> = Promise.resolve();
+
 function notify() {
   for (const fn of listeners) fn();
 }
@@ -36,16 +39,26 @@ function uid(): string {
   return Math.random().toString(16).slice(2) + "-" + Math.random().toString(16).slice(2);
 }
 
+/**
+ * Persist to AsyncStorage with sequential queuing.
+ * Prevents race conditions when logging sets rapidly.
+ */
 async function persist() {
-  try {
-    if (!current) {
-      await AsyncStorage.removeItem(KEY);
-      return;
+  // Chain this write after the previous one completes
+  persistQueue = persistQueue.then(async () => {
+    try {
+      if (!current) {
+        await AsyncStorage.removeItem(KEY);
+        return;
+      }
+      await AsyncStorage.setItem(KEY, JSON.stringify(current));
+    } catch (err) {
+      console.error('Failed to persist current session:', err);
+      // Don't throw - app still works in-memory
     }
-    await AsyncStorage.setItem(KEY, JSON.stringify(current));
-  } catch {
-    // ignore persistence errors (app still works in-memory)
-  }
+  });
+  
+  return persistQueue;
 }
 
 async function load(): Promise<CurrentSession | null> {
@@ -53,7 +66,8 @@ async function load(): Promise<CurrentSession | null> {
     const raw = await AsyncStorage.getItem(KEY);
     if (!raw) return null;
     return JSON.parse(raw) as CurrentSession;
-  } catch {
+  } catch (err) {
+    console.error('Failed to load current session:', err);
     return null;
   }
 }
@@ -98,7 +112,7 @@ export function ensureCurrentSession(seed?: Partial<Pick<CurrentSession, "select
     doneBySetId: {},
   };
 
-  // fire-and-forget persist
+  // Queue persistence (non-blocking)
   persist();
   notify();
   return current;
@@ -143,7 +157,9 @@ export function useCurrentSession(): CurrentSession | null {
 
   useEffect(() => {
     // Lazy hydration
-    hydrateCurrentSession().catch(() => {});
+    hydrateCurrentSession().catch((err) => {
+      console.error('Failed to hydrate current session:', err);
+    });
     return subscribeCurrentSession(() => setS(getCurrentSession()));
   }, []);
 
