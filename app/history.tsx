@@ -1,12 +1,42 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { Link } from "expo-router";
+import { useEffect, useState } from "react";
 import { useThemeColors } from "../src/ui/theme";
-import { useWorkoutSessions } from "../src/lib/workoutStore";
+import { useWorkoutSessions, hydrateWorkoutStore } from "../src/lib/workoutStore";
 import { durationMs, formatDateShort, formatTimeShort, formatDuration } from "../src/lib/workoutModel";
 
 export default function History() {
   const c = useThemeColors();
   const sessions = useWorkoutSessions();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Hydrate workout data from AsyncStorage
+    hydrateWorkoutStore()
+      .catch((err) => {
+        console.error('Failed to load workout history:', err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  // Show loading spinner while hydrating
+  if (isLoading) {
+    return (
+      <View style={{ 
+        flex: 1, 
+        backgroundColor: c.bg, 
+        justifyContent: 'center', 
+        alignItems: 'center' 
+      }}>
+        <ActivityIndicator size="large" color={c.text} />
+        <Text style={{ color: c.muted, marginTop: 12, fontSize: 14 }}>
+          Loading history...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
