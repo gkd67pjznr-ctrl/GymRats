@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { useMemo, useState, useEffect } from "react";
+import { Pressable, Text, View, ActivityIndicator } from "react-native";
 import { startOfDayMs } from "../src/lib/workoutModel";
-import { useWorkoutSessions } from "../src/lib/workoutStore";
+import { useWorkoutSessions, hydrateWorkoutStore } from "../src/lib/workoutStore";
 import { useThemeColors } from "../src/ui/theme";
 
 function monthKey(d: Date) {
@@ -14,6 +14,18 @@ export default function Calendar() {
   const router = useRouter();
   const sessions = useWorkoutSessions();
   const [cursor, setCursor] = useState(() => new Date());
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Hydrate workout data from AsyncStorage
+    hydrateWorkoutStore()
+      .catch((err) => {
+        console.error('Failed to load calendar data:', err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   const workoutDays = useMemo(() => {
     const set = new Set<number>();
@@ -50,6 +62,23 @@ export default function Calendar() {
   }, [cursor]);
 
   const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
+
+  // Show loading spinner while hydrating
+  if (isLoading) {
+    return (
+      <View style={{ 
+        flex: 1, 
+        backgroundColor: c.bg, 
+        justifyContent: 'center', 
+        alignItems: 'center' 
+      }}>
+        <ActivityIndicator size="large" color={c.text} />
+        <Text style={{ color: c.muted, marginTop: 12, fontSize: 14 }}>
+          Loading calendar...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg, padding: 16, gap: 12 }}>
