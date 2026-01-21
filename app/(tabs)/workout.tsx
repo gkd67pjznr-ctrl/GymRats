@@ -22,12 +22,14 @@ export default function WorkoutTab() {
     onPress?: () => void;
     href?: string;
     rightBadge?: string;
+    emoji?: string;
+    color?: string;
   }) => {
     const inner = (
       <View
         style={{
           borderWidth: 1,
-          borderColor: c.border,
+          borderColor: props.color || c.border,
           borderRadius: 16,
           padding: 16,
           backgroundColor: c.card,
@@ -35,7 +37,10 @@ export default function WorkoutTab() {
         }}
       >
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Text style={{ color: c.text, fontSize: 18, fontWeight: "900" }}>{props.title}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
+            {props.emoji && <Text style={{ fontSize: 24 }}>{props.emoji}</Text>}
+            <Text style={{ color: c.text, fontSize: 18, fontWeight: "900", flex: 1 }}>{props.title}</Text>
+          </View>
           {!!props.rightBadge && (
             <View
               style={{
@@ -82,15 +87,16 @@ export default function WorkoutTab() {
     <ScrollView style={{ flex: 1, backgroundColor: c.bg }} contentContainerStyle={{ padding: 16, gap: 12 }}>
       <Text style={{ color: c.text, fontSize: 26, fontWeight: "900" }}>Workout</Text>
       <Text style={{ color: c.muted, lineHeight: 18 }}>
-        Start a session, log sets, and come back anytime. (We’ll wire Live Workout to this persistent session next.)
+        Start a free workout, follow a premade plan, or build your own routine.
       </Text>
 
+      {/* Main Action */}
       <BigButton
         title={hasSession ? "Resume Workout" : "Start Workout"}
         subtitle={
           hasSession
             ? `Current session has ${setCount} set${setCount === 1 ? "" : "s"} logged.`
-            : "Creates a session and opens Live Workout."
+            : "Start a free workout session."
         }
         rightBadge={hasSession ? `${setCount} sets` : undefined}
         onPress={startOrResume}
@@ -98,11 +104,46 @@ export default function WorkoutTab() {
 
       <View style={{ height: 6 }} />
 
-      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Shortcuts</Text>
+      {/* NEW: Browse Plans Section */}
+      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Premade Plans</Text>
 
-      <BigButton title="Start From a Routine" subtitle="Pick a routine and begin." href="/workout/start" />
-      <BigButton title="Routines" subtitle="Build routines and targets." href="/routines" />
-      <BigButton title="History" subtitle="Review past sessions and stats." href="/history" />
+      <BigButton
+        emoji="📚"
+        title="Browse Plans"
+        subtitle="Explore curated workout plans across 5 categories."
+        href="/workout/browse-plans"
+        color="#4ECDC4"
+      />
+
+      <BigButton
+        emoji="🤖"
+        title="AI Generator"
+        subtitle="Create a custom plan tailored to your goals."
+        href="/workout/ai-generate"
+        color="#9B59B6"
+      />
+
+      <View style={{ height: 6 }} />
+
+      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>My Workouts</Text>
+
+      <BigButton 
+        title="Start From a Routine" 
+        subtitle="Pick a saved routine and begin." 
+        href="/workout/start" 
+      />
+      
+      <BigButton 
+        title="Routines" 
+        subtitle="Build and manage your workout routines." 
+        href="/routines" 
+      />
+      
+      <BigButton 
+        title="History" 
+        subtitle="Review past sessions and stats." 
+        href="/history" 
+      />
     </ScrollView>
   );
 }
