@@ -15,6 +15,8 @@ export type Routine = {
   createdAtMs: number;
   updatedAtMs: number;
   exercises: RoutineExercise[];
+  sourcePlanId?: string;
+  sourcePlanCategory?: string;
 };
 
 export function uid(): string {
