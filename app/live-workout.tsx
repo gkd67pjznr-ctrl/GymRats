@@ -12,9 +12,9 @@ import { useThemeColors } from "../src/ui/theme";
 import { EXERCISES_V1 } from "../src/data/exercises";
 import type { UnitSystem } from "../src/lib/buckets";
 import type { LoggedSet } from "../src/lib/loggerTypes";
+import { randomHighlightDurationMs } from "../src/lib/perSetCue";
 import { getSettings } from "../src/lib/settings";
 import { useCurrentPlan } from "../src/lib/workoutPlanStore";
-import { randomHighlightDurationMs } from "../src/lib/perSetCue";
 
 import { ExerciseBlocksCard } from "../src/ui/components/LiveWorkout/ExerciseBlocksCard";
 import { ExercisePicker } from "../src/ui/components/LiveWorkout/ExercisePicker";
@@ -156,14 +156,6 @@ export default function LiveWorkout() {
     },
   });
 
-  // Workout timer
-  const timer = useWorkoutTimer({
-   exercises: plan?.exercises || [],
-   loggedSets: sets,
-   startedAtMs: (persisted as any)?.startedAtMs,
-  });
-
-  
   const selectedExerciseName = useMemo(() => exerciseName(selectedExerciseId), [selectedExerciseId]);
 
   // Wrapper to add set using both session and orchestrator
@@ -229,6 +221,19 @@ export default function LiveWorkout() {
   }
 
   const sets: LoggedSet[] = (session as any).sets ?? [];
+
+// Workout timer - MUST be before any early returns
+  const timer = useWorkoutTimer({
+    exercises: plan?.exercises ? plan.exercises.map(ex => ({
+    exerciseId: ex.exerciseId,
+    targetSets: ex.targetSets,
+    targetRepsMin: ex.targetRepsMin ?? 8,
+    targetRepsMax: ex.targetRepsMax ?? 12,
+    restSeconds: 90,
+  })) : [],
+  loggedSets: sets,
+  startedAtMs: (persisted as any)?.startedAtMs,
+});
 
   const isDoneFn = useMemo(() => {
     const anySession = session as any;

@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
-import { useMemo, useState, useEffect } from "react";
-import { Pressable, Text, View, ActivityIndicator } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { startOfDayMs } from "../src/lib/workoutModel";
-import { useWorkoutSessions, hydrateWorkoutStore } from "../src/lib/workoutStore";
+import { hydrateWorkoutStore, useWorkoutSessions } from "../src/lib/workoutStore";
 import { useThemeColors } from "../src/ui/theme";
 
 function monthKey(d: Date) {
@@ -61,7 +61,15 @@ export default function Calendar() {
     return d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
   }, [cursor]);
 
-  const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
+  const weekdays = [
+    { key: "sun", label: "S" },
+    { key: "mon", label: "M" },
+    { key: "tue", label: "T" },
+    { key: "wed", label: "W" },
+    { key: "thu", label: "T" },
+    { key: "fri", label: "F" },
+    { key: "sat", label: "S" },
+  ];
 
   // Show loading spinner while hydrating
   if (isLoading) {
@@ -111,12 +119,12 @@ export default function Calendar() {
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         {weekdays.map((w) => (
           <Text
-            key={w}
-            style={{ width: "14.28%", textAlign: "center", color: c.muted, fontWeight: "800" }}
-          >
-            {w}
-          </Text>
-        ))}
+           key={w.key}
+           style={{ width: "14.28%", textAlign: "center", color: c.muted, fontWeight: "800" }}
+          >                
+           {w.label}
+         </Text>                                                                                  
+      ))}
       </View>
 
       <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 10 }}>

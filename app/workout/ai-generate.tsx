@@ -1,12 +1,12 @@
-import { View, Text, Pressable, ScrollView, TextInput, ActivityIndicator, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { useThemeColors } from "../../src/ui/theme";
-import { FR } from "../../src/ui/forgerankStyle";
-import { makeDesignSystem } from "../../src/ui/designSystem";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { getCategoryInfo } from "../../src/lib/premadePlans/categories";
 import type { PlanCategory, PlanDifficulty } from "../../src/lib/premadePlans/types";
 import { useAIGeneratePlan } from "../../src/lib/premadePlans/useAIGeneratePlan";
-import { getCategoryInfo } from "../../src/lib/premadePlans/categories";
+import { makeDesignSystem } from "../../src/ui/designSystem";
+import { FR } from "../../src/ui/forgerankStyle";
+import { useThemeColors, useThemeRadius } from "../../src/ui/theme";
 
 /**
  * AI Plan Generator
@@ -16,6 +16,7 @@ import { getCategoryInfo } from "../../src/lib/premadePlans/categories";
  */
 export default function AIGeneratePlan() {
   const c = useThemeColors();
+  const r = useThemeRadius();
   const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
   const { generatePlan, state, isLoading } = useAIGeneratePlan();
@@ -29,10 +30,72 @@ export default function AIGeneratePlan() {
   const [equipment, setEquipment] = useState("");
   const [injuries, setInjuries] = useState("");
 
+  // Check if we're in native app (not web)
+  const isNativeApp = typeof navigator !== 'undefined' && 
+  (navigator.product === 'ReactNative' || typeof window === 'undefined');
+
   const categories: PlanCategory[] = ["bodybuilding", "calisthenics", "cardio", "core", "strength"];
   const difficulties: PlanDifficulty[] = ["beginner", "intermediate", "advanced"];
 
-  const handleGenerate = async () => {
+// Show "web only" message for native apps
+if (isNativeApp) {
+  return (
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x4 }}>
+        <View style={{ gap: FR.space.x2 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
+            <Text style={{ fontSize: 48 }}>🤖</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: c.text, ...FR.type.h1 }}>AI Generator</Text>
+              <Text style={{ color: "#9B59B6", ...FR.type.body, fontWeight: "700" }}>
+                Web Only Feature
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: "#9B59B620",
+            borderWidth: 1,
+            borderColor: "#9B59B6",
+            borderRadius: FR.radius.card,
+            padding: FR.space.x3,
+            gap: FR.space.x2,
+          }}
+        >
+          <Text style={{ color: "#9B59B6", ...FR.type.body, fontWeight: "700" }}>
+            ℹ️ Note
+          </Text>
+          <Text style={{ color: c.text, ...FR.type.body }}>
+            AI plan generation is currently only available in the web version of Forgerank.
+          </Text>
+          <Text style={{ color: c.muted, ...FR.type.sub, marginTop: FR.space.x2 }}>
+            For now, you can browse our 10 curated plans or use the dev tools to create custom plans.
+          </Text>
+        </View>
+
+        <Pressable
+          onPress={() => router.back()}
+          style={({ pressed }) => ({
+            paddingVertical: FR.space.x3,
+            borderRadius: r.button,
+            backgroundColor: c.card,
+            borderWidth: 1,
+            borderColor: c.border,
+            alignItems: "center",
+            opacity: pressed ? ds.rules.tapOpacity : 1,
+          })}
+        >
+          <Text style={{ color: c.text, ...FR.type.body }}>Back to Plans</Text>
+        </Pressable>
+      </ScrollView>
+    </View>
+  );
+}
+
+// Original form continues below for web users
+    const handleGenerate = async () => {
     const daysNum = parseInt(daysPerWeek);
     const weeksNum = parseInt(durationWeeks);
 
@@ -138,7 +201,7 @@ export default function AIGeneratePlan() {
                 style={({ pressed }) => ({
                   flex: 1,
                   paddingVertical: FR.space.x3,
-                  borderRadius: FR.radius.button,
+                  borderRadius: r.button,
                   borderWidth: 2,
                   borderColor: difficulty === diff ? c.text : c.border,
                   backgroundColor: difficulty === diff ? c.bg : c.card,
@@ -169,7 +232,7 @@ export default function AIGeneratePlan() {
                 backgroundColor: c.card,
                 borderWidth: 1,
                 borderColor: c.border,
-                borderRadius: FR.radius.input,
+                borderRadius: r.input,
                 padding: FR.space.x3,
                 ...FR.type.body,
               }}
@@ -189,7 +252,7 @@ export default function AIGeneratePlan() {
                 backgroundColor: c.card,
                 borderWidth: 1,
                 borderColor: c.border,
-                borderRadius: FR.radius.input,
+                borderRadius: r.input,
                 padding: FR.space.x3,
                 ...FR.type.body,
               }}
@@ -212,7 +275,7 @@ export default function AIGeneratePlan() {
               backgroundColor: c.card,
               borderWidth: 1,
               borderColor: c.border,
-              borderRadius: FR.radius.input,
+              borderRadius: r.input,
               padding: FR.space.x3,
               ...FR.type.body,
               minHeight: 80,
@@ -233,7 +296,7 @@ export default function AIGeneratePlan() {
               backgroundColor: c.card,
               borderWidth: 1,
               borderColor: c.border,
-              borderRadius: FR.radius.input,
+              borderRadius: r.input,
               padding: FR.space.x3,
               ...FR.type.body,
             }}
@@ -258,7 +321,7 @@ export default function AIGeneratePlan() {
               backgroundColor: c.card,
               borderWidth: 1,
               borderColor: c.border,
-              borderRadius: FR.radius.input,
+              borderRadius: r.input,
               padding: FR.space.x3,
               ...FR.type.body,
               minHeight: 60,
@@ -292,7 +355,7 @@ export default function AIGeneratePlan() {
           disabled={isLoading}
           style={({ pressed }) => ({
             paddingVertical: FR.space.x3,
-            borderRadius: FR.radius.button,
+            borderRadius: r.button,
             backgroundColor: c.card,
             borderWidth: 1,
             borderColor: c.border,
@@ -322,7 +385,7 @@ export default function AIGeneratePlan() {
           disabled={isLoading}
           style={({ pressed }) => ({
             paddingVertical: FR.space.x4,
-            borderRadius: FR.radius.button,
+            borderRadius: r.button,
             backgroundColor: "#9B59B6",
             alignItems: "center",
             opacity: pressed || isLoading ? ds.rules.tapOpacity : 1,

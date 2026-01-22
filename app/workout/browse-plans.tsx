@@ -1,10 +1,10 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import { useThemeColors } from "../../src/ui/theme";
-import { FR } from "../../src/ui/forgerankStyle";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { getAllCategories } from "../../src/lib/premadePlans/categories";
 import { getPlanCountByCategory } from "../../src/lib/premadePlans/store";
 import { makeDesignSystem } from "../../src/ui/designSystem";
+import { FR } from "../../src/ui/forgerankStyle";
+import { useThemeColors, useThemeRadius } from "../../src/ui/theme";
 
 /**
  * Browse Plans - Category Selection
@@ -14,10 +14,11 @@ import { makeDesignSystem } from "../../src/ui/designSystem";
  */
 export default function BrowsePlans() {
   const c = useThemeColors();
+  const r = useThemeRadius();
   const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
   const categories = getAllCategories();
-
+  
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3 }}>
@@ -106,7 +107,7 @@ export default function BrowsePlans() {
           onPress={() => router.back()}
           style={({ pressed }) => ({
             paddingVertical: FR.space.x3,
-            borderRadius: FR.radius.button,
+            borderRadius: r.button,  // CHANGED: FR.radius.button → r.button
             backgroundColor: c.card,
             borderWidth: 1,
             borderColor: c.border,
