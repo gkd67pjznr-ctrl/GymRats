@@ -158,30 +158,42 @@ export default function LiveWorkout() {
 
   const selectedExerciseName = useMemo(() => exerciseName(selectedExerciseId), [selectedExerciseId]);
 
-  // Wrapper to add set using both session and orchestrator
+  // FIX: Proper addSet implementation that actually logs the set
   function addSetInternal(exerciseId: string, source: "quick" | "block") {
     const anySession = session as any;
-    const fn =
+    
+    // Get the add set function from session
+    const addSetFn = 
       anySession.addSet ??
       anySession.onAddSet ??
       anySession.commitSet ??
       anySession.logSet ??
-      anySession.addWorkingSet ??
-      null;
+      anySession.addWorkingSet;
 
-    if (typeof fn !== "function") return;
+    if (typeof addSetFn !== "function") {
+      console.error("No addSet function found on session");
+      return;
+    }
 
-    const set = fn(exerciseId);
-    if (!set) return;
+    // Call the function with the exercise ID
+    const result = addSetFn(exerciseId);
+    
+    if (!result) {
+      console.error("addSet returned null/undefined");
+      return;
+    }
 
-    const anySet = set as any;
-    const weightLb = typeof anySet.weightLb === "number" ? anySet.weightLb : 0;
-    const reps = typeof anySet.reps === "number" ? anySet.reps : 0;
+    // Extract weight and reps from the result
+    const weightLb = typeof result.weightLb === "number" ? result.weightLb : 0;
+    const reps = typeof result.reps === "number" ? result.reps : 0;
 
-    // Use orchestrator for PR detection and cues
+    // Use orchestrator for PR detection
     orchestrator.addSetForExercise(exerciseId, weightLb, reps);
 
-    if (source === "quick") setSelectedExerciseId(exerciseId);
+    // Update selected exercise if from quick add
+    if (source === "quick") {
+      setSelectedExerciseId(exerciseId);
+    }
   }
 
   const addSet = () => addSetInternal(selectedExerciseId, "quick");
@@ -197,6 +209,16 @@ export default function LiveWorkout() {
     orchestrator.reset(plannedExerciseIds);
     setRestVisible(false);
     setFocusMode(false);
+  };
+
+  // FIX: Only allow adding exercises in free workout mode
+  const handleAddExercise = () => {
+    if (planMode) {
+      // Don't allow adding exercises in plan mode
+      console.log("Cannot add exercises during a planned workout");
+      return;
+    }
+    setPickerMode("addBlock");
   };
 
   const allowedExerciseIds = planMode ? plannedExerciseIds : undefined;
@@ -222,18 +244,18 @@ export default function LiveWorkout() {
 
   const sets: LoggedSet[] = (session as any).sets ?? [];
 
-// Workout timer - MUST be before any early returns
+  // Workout timer
   const timer = useWorkoutTimer({
     exercises: plan?.exercises ? plan.exercises.map(ex => ({
-    exerciseId: ex.exerciseId,
-    targetSets: ex.targetSets,
-    targetRepsMin: ex.targetRepsMin ?? 8,
-    targetRepsMax: ex.targetRepsMax ?? 12,
-    restSeconds: 90,
-  })) : [],
-  loggedSets: sets,
-  startedAtMs: (persisted as any)?.startedAtMs,
-});
+      exerciseId: ex.exerciseId,
+      targetSets: ex.targetSets,
+      targetRepsMin: ex.targetRepsMin ?? 8,
+      targetRepsMax: ex.targetRepsMax ?? 12,
+      restSeconds: 90,
+    })) : [],
+    loggedSets: sets,
+    startedAtMs: (persisted as any)?.startedAtMs,
+  });
 
   const isDoneFn = useMemo(() => {
     const anySession = session as any;
@@ -267,18 +289,19 @@ export default function LiveWorkout() {
       />
 
       <ScrollView contentContainerStyle={{ padding: PAD, gap: GAP, paddingBottom: 140 }}>
-       {/* Timer Bar - NEW */}
-       <WorkoutTimerBar 
-        timer={timer} 
-         onPressDetails={() => setShowTimerDetails(true)} 
-       />
+        {/* Timer Bar */}
+        <WorkoutTimerBar 
+          timer={timer} 
+          onPressDetails={() => setShowTimerDetails(true)} 
+        />
 
-       {/* Timer Details Modal - NEW */}
-       <WorkoutTimerDetails
-        visible={showTimerDetails}
-        timer={timer}
-        onClose={() => setShowTimerDetails(false)}
-       />
+        {/* Timer Details Modal */}
+        <WorkoutTimerDetails
+          visible={showTimerDetails}
+          timer={timer}
+          onClose={() => setShowTimerDetails(false)}
+        />
+
         {/* Header card */}
         <View
           style={{
@@ -298,25 +321,27 @@ export default function LiveWorkout() {
           </Text>
         </View>
 
-        {/* Top controls */}
+        {/* Top controls - FIX: Hide +Exercise in plan mode */}
         <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
-          <Pressable
-            onPress={() => setPickerMode("addBlock")}
-            style={({ pressed }) => ({
-              flex: 1,
-              paddingVertical: FR.space.x3,
-              paddingHorizontal: FR.space.x4,
-              borderRadius: PILL_R,
-              borderWidth: 1,
-              borderColor: c.border,
-              backgroundColor: c.card,
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: pressed ? ds.rules.tapOpacity : 1,
-            })}
-          >
-            <Text style={{ color: c.text, ...FR.type.h3 }}>+ Exercise</Text>
-          </Pressable>
+          {!planMode && (
+            <Pressable
+              onPress={handleAddExercise}
+              style={({ pressed }) => ({
+                flex: 1,
+                paddingVertical: FR.space.x3,
+                paddingHorizontal: FR.space.x4,
+                borderRadius: PILL_R,
+                borderWidth: 1,
+                borderColor: c.border,
+                backgroundColor: c.card,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: pressed ? ds.rules.tapOpacity : 1,
+              })}
+            >
+              <Text style={{ color: c.text, ...FR.type.h3 }}>+ Exercise</Text>
+            </Pressable>
+          )}
 
           <Pressable
             onPress={() => setFocusMode((v) => !v)}
@@ -335,22 +360,24 @@ export default function LiveWorkout() {
             <Text style={{ color: c.text, ...FR.type.h3 }}>{focusMode ? "Focus ✓" : "Focus"}</Text>
           </Pressable>
 
-          <Pressable
-            onPress={() => setPickerMode("changeSelected")}
-            style={({ pressed }) => ({
-              paddingVertical: FR.space.x3,
-              paddingHorizontal: FR.space.x4,
-              borderRadius: PILL_R,
-              borderWidth: 1,
-              borderColor: c.border,
-              backgroundColor: c.card,
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: pressed ? ds.rules.tapOpacity : 1,
-            })}
-          >
-            <Text style={{ color: c.text, ...FR.type.h3 }}>Pick</Text>
-          </Pressable>
+          {!planMode && (
+            <Pressable
+              onPress={() => setPickerMode("changeSelected")}
+              style={({ pressed }) => ({
+                paddingVertical: FR.space.x3,
+                paddingHorizontal: FR.space.x4,
+                borderRadius: PILL_R,
+                borderWidth: 1,
+                borderColor: c.border,
+                backgroundColor: c.card,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: pressed ? ds.rules.tapOpacity : 1,
+              })}
+            >
+              <Text style={{ color: c.text, ...FR.type.h3 }}>Pick</Text>
+            </Pressable>
+          )}
         </View>
 
         {/* Exercise blocks */}
@@ -369,54 +396,57 @@ export default function LiveWorkout() {
           estimateE1RMLb={(session as any).estimateE1RMLb}
         />
 
-        {/* Selected exercise card */}
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: c.border,
-            borderRadius: CARD_R,
-            padding: FR.space.x4,
-            backgroundColor: c.card,
-            gap: FR.space.x2,
-          }}
-        >
-          <Text style={{ color: c.muted, ...FR.type.sub }}>Selected Exercise (Quick Add)</Text>
-          <Text style={{ color: c.text, ...FR.type.h2 }}>{selectedExerciseName}</Text>
+        {/* Quick add card - FIX: Only show in free workout mode */}
+        {!planMode && (
+          <>
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: c.border,
+                borderRadius: CARD_R,
+                padding: FR.space.x4,
+                backgroundColor: c.card,
+                gap: FR.space.x2,
+              }}
+            >
+              <Text style={{ color: c.muted, ...FR.type.sub }}>Selected Exercise (Quick Add)</Text>
+              <Text style={{ color: c.text, ...FR.type.h2 }}>{selectedExerciseName}</Text>
 
-          <Pressable
-            onPress={() => setPickerMode("changeSelected")}
-            style={({ pressed }) => ({
-              paddingVertical: FR.space.x3,
-              paddingHorizontal: FR.space.x4,
-              borderRadius: PILL_R,
-              borderWidth: 1,
-              borderColor: c.border,
-              backgroundColor: c.bg,
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: pressed ? ds.rules.tapOpacity : 1,
-            })}
-          >
-            <Text style={{ color: c.text, ...FR.type.h3 }}>Change Selected</Text>
-          </Pressable>
-        </View>
+              <Pressable
+                onPress={() => setPickerMode("changeSelected")}
+                style={({ pressed }) => ({
+                  paddingVertical: FR.space.x3,
+                  paddingHorizontal: FR.space.x4,
+                  borderRadius: PILL_R,
+                  borderWidth: 1,
+                  borderColor: c.border,
+                  backgroundColor: c.bg,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: pressed ? ds.rules.tapOpacity : 1,
+                })}
+              >
+                <Text style={{ color: c.text, ...FR.type.h3 }}>Change Selected</Text>
+              </Pressable>
+            </View>
 
-        {/* Quick add */}
-        <QuickAddSetCard
-          weightLb={(session as any).weightLb}
-          reps={(session as any).reps}
-          weightLbText={(session as any).weightLbText}
-          repsText={(session as any).repsText}
-          onWeightText={(session as any).onWeightText}
-          onRepsText={(session as any).onRepsText}
-          onWeightCommit={(session as any).onWeightCommit}
-          onRepsCommit={(session as any).onRepsCommit}
-          onDecWeight={(session as any).decWeight}
-          onIncWeight={(session as any).incWeight}
-          onDecReps={(session as any).decReps}
-          onIncReps={(session as any).incReps}
-          onAddSet={addSet}
-        />
+            <QuickAddSetCard
+              weightLb={(session as any).weightLb}
+              reps={(session as any).reps}
+              weightLbText={(session as any).weightLbText}
+              repsText={(session as any).repsText}
+              onWeightText={(session as any).onWeightText}
+              onRepsText={(session as any).onRepsText}
+              onWeightCommit={(session as any).onWeightCommit}
+              onRepsCommit={(session as any).onRepsCommit}
+              onDecWeight={(session as any).decWeight}
+              onIncWeight={(session as any).incWeight}
+              onDecReps={(session as any).decReps}
+              onIncReps={(session as any).incReps}
+              onAddSet={addSet}
+            />
+          </>
+        )}
 
         {/* Bottom actions */}
         <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
