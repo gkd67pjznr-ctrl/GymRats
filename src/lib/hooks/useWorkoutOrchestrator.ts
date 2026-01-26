@@ -1,0 +1,325 @@
+import { useCallback, useState } from "react";
+import type { LoggedSet } from "../loggerTypes";
+import type { Cue, ExerciseSessionState, InstantCue } from "../perSetCue";
+import {
+  detectCueForWorkingSet,
+  makeEmptyExerciseState,
+  pickPunchyVariant,
+  randomFallbackCue,
+  randomFallbackEveryN,
+} from "../perSetCue";
+import { generateCuesForExerciseSession, groupSetsByExercise } from "../simpleSession";
+import type { UnitSystem } from "../buckets";
+import { lbToKg } from "../units";
+import { EXERCISES_V1 } from "../../data/exercises";
+import type { WorkoutPlan } from "../workoutPlanModel";
+import { formatDuration, uid as uid2, type WorkoutSession, type WorkoutSet } from "../workoutModel";
+import { setCurrentPlan } from "../workoutPlanStore";
+import { uid as routineUid, type Routine, type RoutineExercise } from "../routinesModel";
+// [MIGRATED 2026-01-23] Using Zustand stores
+import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine } from "../stores";
+
+function exerciseName(exerciseId: string) {
+  return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
+}
+
+export interface WorkoutOrchestratorOptions {
+  plan?: WorkoutPlan | null;
+  unit?: UnitSystem;
+  onHaptic?: (type: 'light' | 'pr') => void;
+  onSound?: (type: 'light' | 'pr') => void;
+}
+
+export interface WorkoutOrchestratorResult {
+  // State
+  instantCue: InstantCue | null;
+  recapCues: Cue[];
+  sessionStateByExercise: Record<string, ExerciseSessionState>;
+  
+  // Actions
+  addSetForExercise: (exerciseId: string, weightLb: number, reps: number) => void;
+  finishWorkout: () => void;
+  saveAsRoutine: (exerciseBlocks: string[], sets: LoggedSet[]) => void;
+  reset: (plannedExerciseIds: string[]) => void;
+  clearInstantCue: () => void;
+  
+  // Utilities
+  ensureExerciseState: (exerciseId: string) => ExerciseSessionState;
+}
+
+export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): WorkoutOrchestratorResult {
+  const { plan, unit = 'lb', onHaptic, onSound } = options;
+
+  const [instantCue, setInstantCue] = useState<InstantCue | null>(null);
+  const [recapCues, setRecapCues] = useState<Cue[]>([]);
+  const [sessionStateByExercise, setSessionStateByExercise] = useState<Record<string, ExerciseSessionState>>({});
+  const [fallbackCountdownByExercise, setFallbackCountdownByExercise] = useState<Record<string, number>>({});
+
+  // Hydration gate: wait for store to hydrate before accessing session
+  // IMPORTANT: All hooks must be called before any conditional returns (Rules of Hooks)
+  const hydrated = useIsHydrated();
+  const persisted = useCurrentSession();
+
+  // Define all callback hooks BEFORE the early return to satisfy Rules of Hooks
+  const ensureExerciseState = useCallback((exerciseId: string): ExerciseSessionState => {
+    const existing = sessionStateByExercise[exerciseId];
+    if (existing) return existing;
+
+    const next = makeEmptyExerciseState();
+    setSessionStateByExercise((prev) => ({ ...prev, [exerciseId]: next }));
+    return next;
+  }, [sessionStateByExercise]);
+
+  const ensureCountdown = useCallback((exerciseId: string): number => {
+    const v = fallbackCountdownByExercise[exerciseId];
+    if (typeof v === "number") return v;
+
+    const next = randomFallbackEveryN();
+    setFallbackCountdownByExercise((prev) => ({ ...prev, [exerciseId]: next }));
+    return next;
+  }, [fallbackCountdownByExercise]);
+
+  const addSetForExercise = useCallback((exerciseId: string, weightLb: number, reps: number) => {
+    // Before hydration, actions are no-ops
+    if (!hydrated) return;
+
+    const wKg = lbToKg(weightLb);
+    const prev = ensureExerciseState(exerciseId);
+
+    const res = detectCueForWorkingSet({
+      weightKg: wKg,
+      reps,
+      unit,
+      exerciseName: exerciseName(exerciseId),
+      prev,
+    } as any);
+
+    const cue: Cue | null = (res as any)?.cue ?? null;
+    const nextState: ExerciseSessionState = (res as any)?.next ?? prev;
+    const meta = (res as any)?.meta;
+
+    if (cue) {
+      // PR detected!
+      setSessionStateByExercise((p) => ({ ...p, [exerciseId]: nextState }));
+
+      const t: "weight" | "rep" | "e1rm" =
+        meta?.type === "rep" ? "rep" : meta?.type === "e1rm" ? "e1rm" : "weight";
+
+      const title = pickPunchyVariant(t);
+      const detail =
+        typeof meta?.weightLabel === "string"
+          ? meta.weightLabel
+          : typeof (cue as any)?.detail === "string"
+            ? (cue as any).detail
+            : undefined;
+
+      setInstantCue({ message: title, detail, intensity: "high" });
+      onHaptic?.('pr');
+      onSound?.('pr');
+    } else {
+      // No PR - check fallback cue
+      const current = ensureCountdown(exerciseId);
+      if (current <= 1) {
+        setInstantCue(randomFallbackCue() as any);
+        onHaptic?.('light');
+        onSound?.('light');
+        setFallbackCountdownByExercise((p) => ({ ...p, [exerciseId]: randomFallbackEveryN() }));
+      } else {
+        setFallbackCountdownByExercise((p) => ({ ...p, [exerciseId]: current - 1 }));
+      }
+    }
+  }, [hydrated, ensureExerciseState, ensureCountdown, unit, onHaptic, onSound]);
+
+  const finishWorkout = useCallback(() => {
+    // Before hydration, actions are no-ops
+    if (!hydrated) return;
+
+    const now = Date.now();
+    const start = (persisted as any)?.startedAtMs ?? now;
+    const sets: LoggedSet[] = (persisted as any)?.sets ?? [];
+
+    const sessionObj: WorkoutSession = {
+      id: uid2(),
+      startedAtMs: start,
+      endedAtMs: now,
+      sets: sets.map(
+        (s: any): WorkoutSet => ({
+          id: s.id ?? uid2(),
+          exerciseId: s.exerciseId,
+          weightKg: typeof s.weightKg === "number" ? s.weightKg : lbToKg(typeof s.weightLb === "number" ? s.weightLb : 0),
+          reps: typeof s.reps === "number" ? s.reps : 0,
+          timestampMs:
+            typeof s.timestampMs === "number"
+              ? s.timestampMs
+              : typeof s.createdAtMs === "number"
+                ? s.createdAtMs
+                : now,
+        })
+      ),
+      routineId: plan?.routineId,
+      routineName: plan?.routineName,
+      planId: plan?.id,
+      plannedExercises: plan?.exercises?.map((e) => ({
+        exerciseId: e.exerciseId,
+        targetSets: e.targetSets,
+        targetRepsMin: e.targetRepsMin,
+        targetRepsMax: e.targetRepsMax,
+      })),
+      completionPct: undefined,
+    };
+
+    addWorkoutSession(sessionObj);
+
+    // Generate recap cues
+    const grouped = groupSetsByExercise(sets as any);
+    const all: Cue[] = [];
+
+    for (const [exerciseId, exerciseSets] of Object.entries(grouped)) {
+      const cueEvents = generateCuesForExerciseSession({
+        exerciseId,
+        sets: exerciseSets as any,
+        unit,
+        previous: { bestE1RMKg: 0, bestRepsAtWeight: {} },
+      });
+      const name = exerciseName(exerciseId);
+      all.push({ message: `— ${name} —`, intensity: "low" });
+      all.push(...cueEvents);
+    }
+
+    if (all.length === 0) {
+      all.push({ message: "No working sets logged yet.", intensity: "low" });
+    }
+
+    setRecapCues(all);
+
+    setInstantCue({
+      message: "Workout saved.",
+      detail: `Duration: ${formatDuration(now - start)}`,
+      intensity: "low"
+    });
+
+    onHaptic?.('light');
+    onSound?.('light');
+
+    clearCurrentSession();
+    setCurrentPlan(null);
+  }, [hydrated, persisted, plan, unit, onHaptic, onSound]);
+
+  const saveAsRoutine = useCallback((exerciseBlocks: string[], sets: LoggedSet[]) => {
+    // Before hydration, actions are no-ops
+    if (!hydrated) return;
+
+    const now = Date.now();
+
+    if (!sets.length) {
+      setInstantCue({
+        message: "No sets yet.",
+        detail: "Log at least one set first.",
+        intensity: "low"
+      });
+      onHaptic?.('light');
+      onSound?.('light');
+      return;
+    }
+
+    const orderedExerciseIds = exerciseBlocks.length > 0
+      ? exerciseBlocks.slice()
+      : (() => {
+          const seen = new Set<string>();
+          const ordered: string[] = [];
+          for (const s of sets as any[]) {
+            if (!seen.has(s.exerciseId)) {
+              seen.add(s.exerciseId);
+              ordered.push(s.exerciseId);
+            }
+          }
+          return ordered;
+        })();
+
+    const exercises = orderedExerciseIds.map((exerciseId): RoutineExercise => ({
+      id: routineUid(),
+      exerciseId,
+      targetSets: 3,
+      targetRepsMin: 6,
+      targetRepsMax: 12,
+    }));
+
+    const makeRoutineNameNow = (): string => {
+      const d = new Date();
+      const date = d.toLocaleDateString(undefined, { month: "short", day: "2-digit" });
+      const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+      return `Workout • ${date} ${time}`;
+    };
+
+    const routine: Routine = {
+      id: routineUid(),
+      name: plan?.routineName ? `${plan.routineName} (Saved Copy)` : makeRoutineNameNow(),
+      createdAtMs: now,
+      updatedAtMs: now,
+      exercises,
+    };
+
+    upsertRoutine(routine);
+
+    setInstantCue({
+      message: "Routine saved.",
+      detail: `${routine.exercises.length} exercises`,
+      intensity: "low"
+    });
+
+    onHaptic?.('light');
+    onSound?.('light');
+  }, [hydrated, plan, onHaptic, onSound]);
+
+  const reset = useCallback((plannedExerciseIds: string[]) => {
+    // Before hydration, actions are no-ops
+    if (!hydrated) return;
+
+    clearCurrentSession();
+
+    const first = plannedExerciseIds[0] ?? EXERCISES_V1[0]?.id ?? "unknown";
+    ensureCurrentSession({
+      selectedExerciseId: first,
+      exerciseBlocks: first ? [first] : []
+    } as any);
+
+    setRecapCues([]);
+    setInstantCue(null);
+    setSessionStateByExercise({});
+    setFallbackCountdownByExercise({});
+  }, [hydrated]);
+
+  const clearInstantCue = useCallback(() => {
+    setInstantCue(null);
+  }, []);
+
+  // Return early with loading state if not yet hydrated
+  // This prevents UI from rendering with stale/missing persisted data
+  // All hooks have already been called above, so this is safe
+  if (!hydrated) {
+    return {
+      instantCue: null,
+      recapCues: [],
+      sessionStateByExercise: {},
+      addSetForExercise,
+      finishWorkout,
+      saveAsRoutine,
+      reset,
+      clearInstantCue,
+      ensureExerciseState,
+    };
+  }
+
+  // Return the result when hydrated
+  return {
+    instantCue,
+    recapCues,
+    sessionStateByExercise,
+    addSetForExercise,
+    finishWorkout,
+    saveAsRoutine,
+    reset,
+    clearInstantCue,
+    ensureExerciseState,
+  };
+}

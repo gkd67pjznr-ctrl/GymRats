@@ -1,0 +1,50 @@
+export type PlannedExercise = {
+  exerciseId: string;
+  targetSets: number; // default 3
+  targetRepsMin?: number;
+  targetRepsMax?: number;
+};
+
+export type WorkoutPlan = {
+  id: string;
+  createdAtMs: number;
+
+  // If started from a routine
+  routineId?: string;
+  routineName?: string;
+
+  exercises: PlannedExercise[];
+
+  // progress (live)
+  currentExerciseIndex: number;
+  completedSetsByExerciseId: Record<string, number>;
+};
+
+// [CHANGED 2026-01-23] Import from centralized uid
+import { uid } from "./uid";
+
+export function makePlanFromRoutine(args: {
+  routineId: string;
+  routineName: string;
+  exercises: PlannedExercise[];
+}): WorkoutPlan {
+  return {
+    id: uid(),
+    createdAtMs: Date.now(),
+    routineId: args.routineId,
+    routineName: args.routineName,
+    exercises: args.exercises,
+    currentExerciseIndex: 0,
+    completedSetsByExerciseId: {},
+  };
+}
+
+export function makeFreePlan(): WorkoutPlan {
+  return {
+    id: uid(),
+    createdAtMs: Date.now(),
+    exercises: [],
+    currentExerciseIndex: 0,
+    completedSetsByExerciseId: {},
+  };
+}

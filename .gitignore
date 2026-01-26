@@ -1,0 +1,170 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+app-example
+
+# generated native folders
+/ios
+/android
+*~
+*.key.*
+*.db
+.coverage
+.claude/skills/*/secrets/
+*-api-key.*
+# Logs & Temporary Files
+*.swp
+.VolumeIcon.icns
+*.pfx
+.LSOverride
+.#*
+*.bak
+.aws/config
+.env.*
+# IDE & Editors
+*.secret.*
+.env/
+.idea/
+*.sublime-project
+*_backup_*/
+!.env.example
+# Claude Code Configuration
+# Virtual Environments
+*.njsproj
+*_secret.*
+.next/
+secret-*.*
+*.egg
+.cursor/
+.DocumentRevisions-V100
+# Windows
+build/
+*.tmp
+*.suo
+.uv-cache/
+*.backup
+# Linux
+*.swo
+secret-key-*
+.tscache/
+*.backup/
+# Certificate files
+[Dd]esktop.ini
+.ruff_cache/
+*.pyo
+private-key*
+Thumbs.db
+# Backups
+*_secret=*
+.Trashes
+.claude/skills/*/*/*token*
+.pytest_cache/
+# Build Artifacts & Distribution
+*.temp
+.TemporaryItems
+.claude/skills/*/*/*key*
+# FIXED: Issue #237 - Replaced overly broad *key* and *secret* patterns
+# Secrets and Credentials (CRITICAL)
+.nuxt/
+# Node.js (for docs/Nextra)
+.vercel/
+.fseventsd
+# MoAI-ADK Package Distribution .gitignore
+*_token=*
+.claude/skills/*/.env*
+.env
+# Version: 0.33.0
+# Purpose: Essential patterns for user projects
+# Mac
+# Credential patterns in environment files
+.turbo/
+*.pyd
+.claude/plans/
+*.pyc
+*.rdb
+.claude/.env.local*
+env/
+*.sqlite3
+# Build Tools & Frameworks
+logs/
+.claude/local/
+.Spotlight-V100
+.uv_cache/
+*_key.*
+# Private keys (specific patterns to avoid false positives)
+# Deployment & CI/CD
+.claude/skills/*/*/*secret*
+coverage.json
+*.log
+*-backup/
+# Skill-specific credentials
+# ============================================
+# ===========================================
+# Test Coverage
+venv/
+*-key.*
+.AppleDouble
+__pycache__/
+ehthumbs.db
+.vscode/
+api-key-*
+out/
+.netlify/
+# OS Files
+*.dbm
+.directory
+.firebase/
+# Python Cache & Bytecode
+*.egg-info/
+.aws/credentials
+.moai-backups/
+.mypy_cache/
+*-secret-key.*
+.venv/
+# Environment files
+*.sqlite
+.claude/settings.local.*.json
+htmlcov/
+dist-ssr/
+.claude/settings.local.json
+# Updated: 2026-01-10
+# Cloud provider credentials
+*.sln
+*.sublime-workspace
+*.sw?
+*-secret.*

@@ -1,0 +1,223 @@
+[1mdiff --git a/.claude-plugin/MCP-SERVERS.md b/.claude-plugin/MCP-SERVERS.md[m
+[1mdeleted file mode 100644[m
+[1mindex 4c69c934..00000000[m
+[1m--- a/.claude-plugin/MCP-SERVERS.md[m
+[1m+++ /dev/null[m
+[36m@@ -1,98 +0,0 @@[m
+[31m-# MCP Servers Included[m
+[31m-[m
+[31m-This plugin includes 3 pre-configured MCP servers that enhance Claude Code's capabilities.[m
+[31m-[m
+[31m-## Included Servers[m
+[31m-[m
+[31m-### 1. **Context7** (`@upstash/context7-mcp`)[m
+[31m-**Purpose**: Access up-to-date, version-specific documentation for any library[m
+[31m-[m
+[31m-**Usage**: Just mention "use context7" in your prompt when you need current library documentation[m
+[31m-[m
+[31m-**Benefits**:[m
+[31m-- Always up-to-date docs[m
+[31m-- Version-specific information[m
+[31m-- Works with thousands of libraries[m
+[31m-- No manual searching required[m
+[31m-[m
+[31m-### 2. **Playwright** (`@playwright/mcp`)[m
+[31m-**Purpose**: Browser automation and web testing[m
+[31m-[m
+[31m-**Capabilities**:[m
+[31m-- Navigate websites[m
+[31m-- Take screenshots[m
+[31m-- Interact with web elements[m
+[31m-- Generate test code[m
+[31m-- Access accessibility trees[m
+[31m-[m
+[31m-**Use Cases**:[m
+[31m-- E2E testing[m
+[31m-- Web scraping[m
+[31m-- Browser automation[m
+[31m-- Visual testing[m
+[31m-[m
+[31m-### 3. **Supabase** (`@supabase/mcp-server-supabase`)[m
+[31m-**Purpose**: Supabase database operations[m
+[31m-[m
+[31m-**Capabilities**:[m
+[31m-- Query databases[m
+[31m-- Manage tables[m
+[31m-- Execute SQL[m
+[31m-- Handle authentication[m
+[31m-- Work with storage[m
+[31m-[m
+[31m-**Use Cases**:[m
+[31m-- Database management[m
+[31m-- Schema exploration[m
+[31m-- Data queries[m
+[31m-- Admin operations[m
+[31m-[m
+[31m-## Servers Not Included (Not Yet Available)[m
+[31m-[m
+[31m-The following servers were requested but don't have official MCP implementations yet:[m
+[31m-[m
+[31m-- **chrome-devtools** - No official MCP server found[m
+[31m-- **stripe** - No official MCP server found (as of Oct 2025)[m
+[31m-- **vercel** - No official MCP server found[m
+[31m-[m
+[31m-## Using MCP Servers[m
+[31m-[m
+[31m-After installing this plugin:[m
+[31m-[m
+[31m-1. **Automatic Activation**: MCP servers start automatically when you use the plugin[m
+[31m-2. **Restart Required**: Restart Claude Code after plugin installation[m
+[31m-3. **Tool Access**: MCP tools appear in Claude's available tools list[m
+[31m-[m
+[31m-## Adding More MCP Servers[m
+[31m-[m
+[31m-You can add custom MCP servers to your local `.claude/.mcp.json`:[m
+[31m-[m
+[31m-```json[m
+[31m-{[m
+[31m-  "server-name": {[m
+[31m-    "command": "npx",[m
+[31m-    "args": ["-y", "package-name"],[m
+[31m-    "env": {[m
+[31m-      "API_KEY": "your-key"[m
+[31m-    }[m
+[31m-  }[m
+[31m-}[m
+[31m-```[m
+[31m-[m
+[31m-## Troubleshooting[m
+[31m-[m
+[31m-**MCP servers not loading?**[m
+[31m-1. Restart Claude Code[m
+[31m-2. Check that npm/npx is installed[m
+[31m-3. Verify network connection (MCP servers download on first use)[m
+[31m-[m
+[31m-**Performance issues?**[m
+[31m-- MCP servers run on-demand[m
+[31m-- First use may be slower (package download)[m
+[31m-- Subsequent uses are fast[m
+[31m-[m
+[31m-## Learn More[m
+[31m-[m
+[31m-- Official MCP Documentation: https://modelcontextprotocol.io[m
+[31m-- Claude Code MCP Guide: https://docs.claude.com/en/docs/claude-code/mcp[m
+[31m-- MCP Server Directory: https://mcpcat.io[m
+[1mdiff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json[m
+[1mdeleted file mode 100644[m
+[1mindex 00187a89..00000000[m
+[1m--- a/.claude-plugin/marketplace.json[m
+[1m+++ /dev/null[m
+[36m@@ -1,21 +0,0 @@[m
+[31m-{[m
+[31m-  "name": "edmunds-claude-code",[m
+[31m-  "owner": {[m
+[31m-    "name": "Edmund",[m
+[31m-    "contact": "github.com/edmund-io"[m
+[31m-  },[m
+[31m-  "description": "Edmund's curated Claude Code setup for productive development",[m
+[31m-  "plugins": [[m
+[31m-    {[m
+[31m-      "name": "edmunds-claude-code",[m
+[31m-      "source": "./",[m
+[31m-      "description": "Personal Claude Code configuration with 14 productivity commands and 11 specialized AI agents for modern web development",[m
+[31m-      "version": "1.0.0",[m
+[31m-      "author": {[m
+[31m-        "name": "Edmund",[m
+[31m-        "email": "[email protected]"[m
+[31m-      },[m
+[31m-      "tags": ["productivity", "nextjs", "supabase", "typescript", "react", "development"][m
+[31m-    }[m
+[31m-  ][m
+[31m-}[m
+[1mdiff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json[m
+[1mdeleted file mode 100644[m
+[1mindex e78af6f4..00000000[m
+[1m--- a/.claude-plugin/plugin.json[m
+[1m+++ /dev/null[m
+[36m@@ -1,163 +0,0 @@[m
+[31m-{[m
+[31m-  "name": "edmunds-claude-code",[m
+[31m-  "version": "1.0.0",[m
+[31m-  "description": "Edmund's personal Claude Code setup with 14 productivity commands and 11 specialized AI agents for modern web development",[m
+[31m-  "author": "Edmund",[m
+[31m-  "license": "MIT",[m
+[31m-  "commands": [[m
+[31m-    {[m
+[31m-      "name": "new-task",[m
+[31m-      "path": ".claude/commands/new-task.md",[m
+[31m-      "description": "Analyze code for performance issues and suggest optimizations"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "code-explain",[m
+[31m-      "path": ".claude/commands/misc/code-explain.md",[m
+[31m-      "description": "Generate detailed code explanations"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "code-optimize",[m
+[31m-      "path": ".claude/commands/misc/code-optimize.md",[m
+[31m-      "description": "Optimize code for performance"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "code-cleanup",[m
+[31m-      "path": ".claude/commands/misc/code-cleanup.md",[m
+[31m-      "description": "Clean up and refactor code"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "feature-plan",[m
+[31m-      "path": ".claude/commands/misc/feature-plan.md",[m
+[31m-      "description": "Plan new feature implementation"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "lint",[m
+[31m-      "path": ".claude/commands/misc/lint.md",[m
+[31m-      "description": "Run linting and fix issues"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "docs-generate",[m
+[31m-      "path": ".claude/commands/misc/docs-generate.md",[m
+[31m-      "description": "Generate documentation"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "api-new",[m
+[31m-      "path": ".claude/commands/api/api-new.md",[m
+[31m-      "description": "Create new API endpoint"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "api-test",[m
+[31m-      "path": ".claude/commands/api/api-test.md",[m
+[31m-      "description": "Test API endpoints"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "api-protect",[m
+[31m-      "path": ".claude/commands/api/api-protect.md",[m
+[31m-      "description": "Add API protection and validation"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "component-new",[m
+[31m-      "path": ".claude/commands/ui/component-new.md",[m
+[31m-      "description": "Create new React component"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "page-new",[m
+[31m-      "path": ".claude/commands/ui/page-new.md",[m
+[31m-      "description": "Create new Next.js page"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "types-gen",[m
+[31m-      "path": ".claude/commands/supabase/types-gen.md",[m
+[31m-      "description": "Generate Supabase TypeScript types"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "edge-function-new",[m
+[31m-      "path": ".claude/commands/supabase/edge-function-new.md",[m
+[31m-      "description": "Create new Supabase Edge Function"[m
+[31m-    }[m
+[31m-  ],[m
+[31m-  "agents": [[m
+[31m-    {[m
+[31m-      "name": "tech-stack-researcher",[m
+[31m-      "path": ".claude/agents/tech-stack-researcher.md",[m
+[31m-      "description": "Research and recommend technology choices for feature development"[m
+[31m-    },[m
+[31m-    {[m
+[31m-      "name": "backend-architect",

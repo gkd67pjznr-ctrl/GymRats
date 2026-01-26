@@ -1,0 +1,9 @@
+project:
+  name: Forgerank
+  description: ''
+  type: ''
+  locale: '{{LOCALE}}'
+  created_at: '2026-01-25T14:22:26.081368Z'
+  initialized: 'true'
+github:
+  profile_name: gkd67pjznr-ctrl

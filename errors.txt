@@ -1,0 +1,4 @@
+[33mThe following packages should be updated for best compatibility with the installed [1mexpo[22m version:[39m
+[33m  [1m@types/jest[22m[36m@[39m[33m[31m30.0.0[39m[33m - expected version: [32m29.5.14[39m[33m[39m
+[33mYour project may not work correctly until you install the expected versions of the packages.[39m
+[37m⠋[39m Stopping server› Stopped server
