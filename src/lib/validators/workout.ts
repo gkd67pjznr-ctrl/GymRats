@@ -9,6 +9,7 @@ export interface ValidationResult {
   value?: number;
 }
 
+// TAG-SPEC-003-IMPROVE-weight-validation
 /**
  * Validate weight input (in lbs)
  * Range: 0-2000 lbs (reasonable max for any lift)
@@ -41,6 +42,7 @@ export function validateWeight(input: string): ValidationResult {
   return { valid: true, value: rounded };
 }
 
+// TAG-SPEC-003-IMPROVE-reps-validation
 /**
  * Validate reps input
  * Range: 1-100 (reasonable max for any set)
@@ -73,6 +75,7 @@ export function validateReps(input: string): ValidationResult {
   return { valid: true, value: intValue };
 }
 
+// TAG-SPEC-003-IMPROVE-bodyweight-validation
 /**
  * Validate bodyweight input (in lbs)
  * Range: 50-500 lbs (reasonable human range)
@@ -103,6 +106,7 @@ export function validateBodyweight(input: string): ValidationResult {
   return { valid: true, value: rounded };
 }
 
+// TAG-SPEC-003-IMPROVE-duration-validation
 /**
  * Validate duration input (in seconds)
  * Range: 1-86400 (1 second to 24 hours)

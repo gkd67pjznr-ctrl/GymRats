@@ -1,0 +1,348 @@
+{
+  "auditMetadata": {
+    "auditDate": "2026-01-26",
+    "auditFramework": "SPEC-QUALITY-001",
+    "scope": {
+      "totalFiles": 80,
+      "typescriptFiles": 65,
+      "reactFiles": 15,
+      "testFiles": 20
+    }
+  },
+  "overallScore": {
+    "total": 68,
+    "breakdown": {
+      "typescriptSafety": 55,
+      "errorHandling": 45,
+      "codeComplexity": 75,
+      "patternConsistency": 70,
+      "duplication": 60,
+      "validation": 80
+    }
+  },
+  "categories": [
+    {
+      "id": "typescript-safety",
+      "name": "TypeScript Safety",
+      "score": 55,
+      "severity": "medium",
+      "findings": [
+        {
+          "id": "TS-001",
+          "title": "Production code uses ': any' type",
+          "severity": "medium",
+          "count": 24,
+          "files": [
+            {
+              "path": "app/live-workout.tsx",
+              "lines": [42, 49, 133, 145],
+              "context": "Haptics and Speech module declarations, session updates"
+            },
+            {
+              "path": "src/lib/forgerankScoring.ts",
+              "lines": [351, 355],
+              "context": "safeNum and safeInt functions accept any type"
+            },
+            {
+              "path": "src/lib/hooks/useWorkoutOrchestrator.ts",
+              "lines": [95, 97, 98, 99, 112, 113, 123, 138, 139, 146, 174, 180, 230, 284],
+              "context": "Multiple as any casts in PR detection and workout logic"
+            },
+            {
+              "path": "src/lib/premadePlans/useAIGeneratePlan.ts",
+              "lines": [103, 104, 120],
+              "context": "AI response parsing"
+            }
+          ],
+          "recommendation": "Define proper TypeScript interfaces for optional modules and API responses",
+          "remediationPriority": "P1"
+        },
+        {
+          "id": "TS-002",
+          "title": "'as any' type assertions bypass type checking",
+          "severity": "high",
+          "count": 14,
+          "files": [
+            {
+              "path": "src/lib/hooks/useWorkoutOrchestrator.ts",
+              "lines": [95, 97, 98, 99, 112, 113, 123],
+              "context": "Critical PR detection flow uses as any casts"
+            }
+          ],
+          "recommendation": "Define strict interfaces for detectCueForWorkingSet parameters and return type",
+          "remediationPriority": "P0"
+        }
+      ]
+    },
+    {
+      "id": "error-handling",
+      "name": "Error Handling",
+      "score": 45,
+      "severity": "critical",
+      "findings": [
+        {
+          "id": "EH-001",
+          "title": "Silent error catch blocks suppress all errors",
+          "severity": "high",
+          "count": 32,
+          "files": [
+            { "path": "app/new-message.tsx", "lines": [24] },
+            { "path": "app/create-post.tsx", "lines": [29] },
+            { "path": "app/friends.tsx", "lines": [43] },
+            { "path": "app/u/[id].tsx", "lines": [55] },
+            { "path": "src/lib/_old/chatStore.ts", "lines": [101, 185, 216, 250, 259, 270, 281, 292, 316, 386] },
+            { "path": "src/lib/_old/socialStore.ts", "lines": [213, 224, 235, 246, 257] },
+            { "path": "src/lib/_old/feedStore.ts", "lines": [115, 179, 202, 217, 285] },
+            { "path": "src/lib/_old/friendsStore.ts", "lines": [149, 160] },
+            { "path": "src/lib/devMode.ts", "lines": [105] },
+            { "path": "src/lib/notificationPrefs.ts", "lines": [104] }
+          ],
+          "recommendation": "Add error logging and user-facing error feedback for all catch blocks",
+          "remediationPriority": "P0"
+        },
+        {
+          "id": "EH-002",
+          "title": "JSON.parse without try-catch in AsyncStorage",
+          "severity": "critical",
+          "count": 20,
+          "files": [
+            { "path": "src/lib/workoutPlanStore.ts", "lines": [44] },
+            { "path": "src/lib/_old/socialStore.ts", "lines": [63] },
+            { "path": "src/lib/_old/workoutStore.ts", "lines": [40] },
+            { "path": "src/lib/auth/oauth.ts", "lines": [251] },
+            { "path": "src/lib/_old/friendsStore.ts", "lines": [44] },
+            { "path": "src/lib/_old/routinesStore.ts", "lines": [26] },
+            { "path": "src/lib/_old/currentSessionStore.ts", "lines": [67] },
+            { "path": "src/lib/_old/feedStore.ts", "lines": [62] },
+            { "path": "src/lib/_old/settings.ts", "lines": [39] },
+            { "path": "src/lib/_old/chatStore.ts", "lines": [90] },
+            { "path": "src/lib/notificationPrefs.ts", "lines": [55] },
+            { "path": "src/lib/stores/socialStore.ts", "lines": [201] },
+            { "path": "src/lib/stores/friendsStore.ts", "lines": [126] },
+            { "path": "src/lib/stores/feedStore.ts", "lines": [199] },
+            { "path": "src/lib/stores/chatStore.ts", "lines": [246] },
+            { "path": "src/lib/premadePlans/progressStore.ts", "lines": [40] },
+            { "path": "src/lib/premadePlans/store.ts", "lines": [41] },
+            { "path": "src/lib/premadePlans/useAIGeneratePlan.ts", "lines": [109] }
+          ],
+          "recommendation": "Wrap all JSON.parse calls in try-catch with fallback values",
+          "remediationPriority": "P0"
+        },
+        {
+          "id": "EH-003",
+          "title": "Unawaited async hydration calls",
+          "severity": "medium",
+          "count": 15,
+          "files": [
+            { "path": "app/friends.tsx", "lines": [43] },
+            { "path": "app/u/[id].tsx", "lines": [55] },
+            { "path": "app/new-message.tsx", "lines": [24] },
+            { "path": "app/create-post.tsx", "lines": [29] }
+          ],
+          "recommendation": "Use React Query or SWR for data fetching with proper loading/error states",
+          "remediationPriority": "P1"
+        }
+      ]
+    },
+    {
+      "id": "code-complexity",
+      "name": "Code Complexity",
+      "score": 75,
+      "severity": "low",
+      "findings": [
+        {
+          "id": "CC-001",
+          "title": "Large file: app/live-workout.tsx (577 LOC)",
+          "severity": "medium",
+          "count": 1,
+          "files": [
+            {
+              "path": "app/live-workout.tsx",
+              "lines": "1-577",
+              "responsibilities": [
+                "Exercise selection state",
+                "Set logging",
+                "Timer management",
+                "Plan progress tracking",
+                "Focus mode",
+                "Rest timer overlay",
+                "Validation toast",
+                "PR feedback orchestration"
+              ]
+            }
+          ],
+          "recommendation": "Extract into smaller components (WorkoutHeader, WorkoutControls, ExerciseBlocks, QuickAddSet, WorkoutActions)",
+          "remediationPriority": "P2"
+        },
+        {
+          "id": "CC-002",
+          "title": "Complex hook: useWorkoutOrchestrator.ts (326 LOC)",
+          "severity": "medium",
+          "count": 1,
+          "files": [
+            {
+              "path": "src/lib/hooks/useWorkoutOrchestrator.ts",
+              "lines": "1-326",
+              "issues": [
+                "Multiple as any type casts",
+                "Complex hydration gating logic",
+                "Mix of PR detection, routine saving, and workout completion"
+              ]
+            }
+          ],
+          "recommendation": "Split into focused hooks (usePRDetection, useWorkoutCompletion, useRoutinePersistence)",
+          "remediationPriority": "P2"
+        }
+      ]
+    },
+    {
+      "id": "pattern-consistency",
+      "name": "Pattern Consistency",
+      "score": 70,
+      "severity": "medium",
+      "findings": [
+        {
+          "id": "PC-001",
+          "title": "Deprecated _old/ directory still exists",
+          "severity": "low",
+          "count": 8,
+          "files": [
+            { "path": "src/lib/_old/feedStore.ts" },
+            { "path": "src/lib/_old/friendsStore.ts" },
+            { "path": "src/lib/_old/chatStore.ts" },
+            { "path": "src/lib/_old/socialStore.ts" },
+            { "path": "src/lib/_old/currentSessionStore.ts" },
+            { "path": "src/lib/_old/workoutStore.ts" },
+            { "path": "src/lib/_old/routinesStore.ts" },
+            { "path": "src/lib/_old/settings.ts" }
+          ],
+          "recommendation": "Delete _old/ directory after confirming no references remain",
+          "remediationPriority": "P1"
+        },
+        {
+          "id": "PC-002",
+          "title": "Mixed import styles (@/ alias vs relative paths)",
+          "severity": "low",
+          "count": "many",
+          "recommendation": "Standardize on @/ alias for all internal imports",
+          "remediationPriority": "P2"
+        }
+      ]
+    },
+    {
+      "id": "duplication",
+      "name": "Duplication",
+      "score": 60,
+      "severity": "medium",
+      "findings": [
+        {
+          "id": "DUP-001",
+          "title": "Duplicate timeAgo function",
+          "severity": "medium",
+          "count": 5,
+          "files": [
+            { "path": "app/chat.tsx", "lines": [11] },
+            { "path": "app/(tabs)/feed.tsx", "lines": [16] },
+            { "path": "app/(tabs)/index.tsx", "lines": [11] },
+            { "path": "app/u/[id].tsx", "lines": [35] },
+            { "path": "app/post/[id].tsx", "lines": [27] }
+          ],
+          "recommendation": "Extract to src/lib/timeUtils.ts",
+          "remediationPriority": "P1"
+        },
+        {
+          "id": "DUP-002",
+          "title": "Duplicate kgToLb function",
+          "severity": "medium",
+          "count": 3,
+          "files": [
+            { "path": "app/workout/[sessionId].tsx", "lines": [13] },
+            { "path": "app/calendar/day/[dayMs].tsx", "lines": [13] },
+            { "path": "src/lib/units.ts", "lines": [7], "note": "Canonical implementation" }
+          ],
+          "recommendation": "Import from src/lib/units.ts in all locations",
+          "remediationPriority": "P1"
+        },
+        {
+          "id": "DUP-003",
+          "title": "Duplicate exerciseName function",
+          "severity": "low",
+          "count": 5,
+          "files": [
+            { "path": "app/live-workout.tsx", "lines": [37] },
+            { "path": "src/ui/components/LiveWorkout/ExerciseBlocksCard.tsx", "lines": [7] },
+            { "path": "src/ui/components/LiveWorkout/PlanHeaderCard.tsx", "lines": [29] },
+            { "path": "src/ui/components/LiveWorkout/WorkoutLiveCard.tsx", "lines": [7] },
+            { "path": "app/workout/[sessionId].tsx", "lines": [9] }
+          ],
+          "recommendation": "Extract to src/lib/exerciseUtils.ts",
+          "remediationPriority": "P2"
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "name": "Validation",
+      "score": 80,
+      "severity": "low",
+      "findings": [
+        {
+          "id": "VAL-001",
+          "title": "Input handlers without validation",
+          "severity": "low",
+          "count": "few",
+          "recommendation": "Add validation to all user input handlers",
+          "remediationPriority": "P2"
+        },
+        {
+          "id": "VAL-002",
+          "title": "Missing optional chaining in some places",
+          "severity": "low",
+          "count": "few",
+          "recommendation": "Use optional chaining consistently for potentially undefined values",
+          "remediationPriority": "P2"
+        }
+      ]
+    }
+  ],
+  "deprecatedCode": {
+    "directory": "src/lib/_old/",
+    "files": [
+      "feedStore.ts",
+      "friendsStore.ts",
+      "chatStore.ts",
+      "socialStore.ts",
+      "currentSessionStore.ts",
+      "workoutStore.ts",
+      "routinesStore.ts",
+      "settings.ts"
+    ],
+    "migrationStatus": "complete",
+    "recommendation": "Delete entire _old/ directory"
+  },
+  "security": {
+    "oauthRisk": {
+      "file": "src/lib/auth/oauth.ts",
+      "line": 251,
+      "issue": "JWT parsing without signature verification",
+      "severity": "high",
+      "recommendation": "Use proper JWT library with signature verification"
+    },
+    "consoleLogging": {
+      "count": 50,
+      "risk": "Information leakage in production",
+      "recommendation": "Add __DEV__ guards to all console statements"
+    }
+  },
+  "errorBoundaryCoverage": {
+    "root": {
+      "file": "app/_layout.tsx",
+      "status": "installed",
+      "component": "ErrorBoundary"
+    },
+    "tabs": {
+      "status": "available",
+      "component": "TabErrorBoundary"
+    }
+  }
+}

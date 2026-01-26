@@ -1,8 +1,8 @@
 // src/lib/stores/workoutStore.ts
 // Zustand store for workout sessions with AsyncStorage persistence
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import type { WorkoutSession } from "../workoutModel";
 
 const STORAGE_KEY = "workoutSessions.v2"; // New key for Zustand version
@@ -37,7 +37,7 @@ export const useWorkoutStore = create<WorkoutState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createQueuedJSONStorage(),
       partialize: (state) => ({ sessions: state.sessions }), // Only persist sessions
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);

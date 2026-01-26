@@ -16,7 +16,7 @@ export function calculateRoutineProgress(
   const total = routine.exercises.reduce((sum, ex) => sum + (ex.targetSets || 0), 0);
 
   const completed = loggedSets.filter((set) =>
-    routine.exercises.some((ex) => ex.id === set.exerciseId)
+    routine.exercises.some((ex) => ex.exerciseId === set.exerciseId)
   ).length;
 
   const percent = total > 0 ? completed / total : 0;

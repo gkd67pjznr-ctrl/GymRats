@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import type { PremadePlan, PlanCategory, PlanDifficulty } from "./types";
 import { addPlan } from "./store";
+import { logError } from "../errorHandler";
+import { safeJSONParse } from "../storage/safeJSONParse";
 
 /**
  * AI plan generation parameters
@@ -18,7 +20,7 @@ export interface AIGenerationParams {
 /**
  * Generation state
  */
-export type GenerationState = 
+export type GenerationState =
   | { status: 'idle' }
   | { status: 'loading' }
   | { status: 'success'; plan: PremadePlan }
@@ -26,7 +28,7 @@ export type GenerationState =
 
 /**
  * Hook for AI plan generation
- * 
+ *
  * This uses Claude's API to generate custom workout plans
  * based on user parameters.
  */
@@ -38,10 +40,10 @@ export function useAIGeneratePlan() {
 
     try {
       const plan = await callAIGenerator(params);
-      
+
       // Save generated plan to store
       addPlan(plan);
-      
+
       setState({ status: 'success', plan });
       return plan;
     } catch (err) {
@@ -67,7 +69,7 @@ export function useAIGeneratePlan() {
 
 /**
  * Call AI to generate a workout plan
- * 
+ *
  * Uses Anthropic API (available in claude.ai artifacts)
  * This will work in your app since it runs in the Claude environment
  */
@@ -97,34 +99,50 @@ async function callAIGenerator(params: AIGenerationParams): Promise<PremadePlan>
     }
 
     const data = await response.json();
-    
+
     // Extract text from response
     const text = data.content
-      .filter((item: any) => item.type === "text")
-      .map((item: any) => item.text)
+      .filter((item: unknown) => typeof item === 'object' && item !== null && 'type' in item && (item as { type: string }).type === "text")
+      .map((item: unknown) => typeof item === 'object' && item !== null && 'text' in item ? (item as { text: string }).text : '')
       .join("\n");
 
-    // Parse JSON response
+    // Parse JSON response safely
     const cleanText = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    const generatedData = JSON.parse(cleanText);
+    const generatedData = safeJSONParse(cleanText, null);
+
+    if (!generatedData) {
+      throw new Error('Failed to parse AI response');
+    }
 
     // Convert to PremadePlan format
     const plan: PremadePlan = {
       id: `ai-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      name: generatedData.name,
+      name: generatedData.name || 'Custom Plan',
       category: params.category,
-      description: generatedData.description,
+      description: generatedData.description || 'AI-generated workout plan',
       difficulty: params.difficulty,
       durationWeeks: params.durationWeeks,
       daysPerWeek: params.daysPerWeek,
-      exercises: generatedData.exercises.map((ex: any) => ({
-        exerciseId: ex.exerciseId,
-        targetSets: ex.sets,
-        targetRepsMin: ex.repsMin,
-        targetRepsMax: ex.repsMax,
-        restSeconds: ex.restSeconds || 90,
-        notes: ex.notes,
-      })),
+      exercises: (generatedData.exercises || []).map((ex: unknown) => {
+        if (typeof ex !== 'object' || ex === null) {
+          return {
+            exerciseId: 'unknown',
+            targetSets: 3,
+            targetRepsMin: 8,
+            targetRepsMax: 12,
+            restSeconds: 90,
+          };
+        }
+        const exObj = ex as Record<string, unknown>;
+        return {
+          exerciseId: typeof exObj.exerciseId === 'string' ? exObj.exerciseId : 'unknown',
+          targetSets: typeof exObj.sets === 'number' ? exObj.sets : 3,
+          targetRepsMin: typeof exObj.repsMin === 'number' ? exObj.repsMin : 8,
+          targetRepsMax: typeof exObj.repsMax === 'number' ? exObj.repsMax : 12,
+          restSeconds: typeof exObj.restSeconds === 'number' ? exObj.restSeconds : 90,
+          notes: typeof exObj.notes === 'string' ? exObj.notes : undefined,
+        };
+      }),
       tags: generatedData.tags || [],
       source: 'ai-generated',
       createdAtMs: Date.now(),
@@ -134,7 +152,7 @@ async function callAIGenerator(params: AIGenerationParams): Promise<PremadePlan>
 
     return plan;
   } catch (err) {
-    console.error('AI generation error:', err);
+    logError({ context: 'AIPlanGenerator', error: err, userMessage: 'Failed to generate workout plan' });
     throw new Error('Failed to generate plan. Please try again.');
   }
 }

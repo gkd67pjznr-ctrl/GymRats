@@ -1,8 +1,8 @@
 // src/lib/stores/settingsStore.ts
 // Zustand store for app settings with AsyncStorage persistence
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 
 const STORAGE_KEY = "forgerank.settings.v2"; // New key for Zustand version
 
@@ -47,7 +47,7 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createQueuedJSONStorage(),
       partialize: (state) => ({
         hapticsEnabled: state.hapticsEnabled,
         soundsEnabled: state.soundsEnabled,

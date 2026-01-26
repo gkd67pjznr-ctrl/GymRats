@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { logError } from "./errorHandler";
 
 const DEV_MODE_KEY = "devMode.enabled";
 
@@ -19,7 +20,7 @@ async function load(): Promise<boolean> {
     const raw = await AsyncStorage.getItem(DEV_MODE_KEY);
     return raw === "true";
   } catch (err) {
-    console.error('Failed to load dev mode:', err);
+    logError({ context: 'DevMode', error: err, userMessage: 'Failed to load dev mode state' });
     return false;
   }
 }
@@ -31,7 +32,7 @@ async function save(enabled: boolean): Promise<void> {
   try {
     await AsyncStorage.setItem(DEV_MODE_KEY, enabled ? "true" : "false");
   } catch (err) {
-    console.error("Failed to save dev mode:", err);
+    logError({ context: 'DevMode', error: err, userMessage: 'Failed to save dev mode state' });
   }
 }
 
@@ -41,7 +42,7 @@ async function save(enabled: boolean): Promise<void> {
 export async function hydrateDevMode(): Promise<void> {
   if (hydrated) return;
   hydrated = true;
-  
+
   devModeEnabled = await load();
   notify();
 }
@@ -102,7 +103,9 @@ export function useDevMode(): {
   const [isEnabled, setIsEnabled] = useState(isDevMode());
 
   useEffect(() => {
-    hydrateDevMode().catch(() => {});
+    hydrateDevMode().catch((err) => {
+      logError({ context: 'DevMode', error: err, userMessage: 'Failed to hydrate dev mode' });
+    });
     return subscribeDevMode(() => setIsEnabled(isDevMode()));
   }, []);
 

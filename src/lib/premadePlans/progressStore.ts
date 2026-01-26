@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import type { PlanProgress } from "./planToRoutine";
+import { logError } from "../errorHandler";
+import { safeJSONParseRecord } from "../storage/safeJSONParse";
 
 const STORAGE_KEY = "planProgress.v1";
 
@@ -23,10 +25,10 @@ async function persist() {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(progressByRoutineId));
     } catch (err) {
-      console.error('Failed to persist plan progress:', err);
+      logError({ context: 'PlanProgressStore', error: err, userMessage: 'Failed to save workout progress' });
     }
   });
-  
+
   return persistQueue;
 }
 
@@ -36,10 +38,9 @@ async function persist() {
 async function load(): Promise<Record<string, PlanProgress>> {
   try {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw) as Record<string, PlanProgress>;
+    return safeJSONParseRecord<PlanProgress>(raw);
   } catch (err) {
-    console.error('Failed to load plan progress:', err);
+    logError({ context: 'PlanProgressStore', error: err, userMessage: 'Failed to load workout progress' });
     return {};
   }
 }
@@ -50,12 +51,12 @@ async function load(): Promise<Record<string, PlanProgress>> {
 export async function hydratePlanProgressStore(): Promise<void> {
   if (hydrated) return;
   hydrated = true;
-  
+
   try {
     progressByRoutineId = await load();
     notify();
   } catch (err) {
-    console.error('Failed to hydrate plan progress store:', err);
+    logError({ context: 'PlanProgressStore', error: err, userMessage: 'Failed to initialize workout progress' });
     progressByRoutineId = {};
     notify();
   }
@@ -109,11 +110,11 @@ export function usePlanProgress(routineId: string): PlanProgress | undefined {
 
   useEffect(() => {
     const unsub = subscribePlanProgress(() => setData(getPlanProgress(routineId)));
-    
+
     hydratePlanProgressStore().catch((err) => {
-      console.error('Failed to hydrate in usePlanProgress:', err);
+      logError({ context: 'PlanProgressStore', error: err, userMessage: 'Failed to load workout progress' });
     });
-    
+
     return unsub;
   }, [routineId]);
 
@@ -128,11 +129,11 @@ export function useAllPlanProgress(): PlanProgress[] {
 
   useEffect(() => {
     const unsub = subscribePlanProgress(() => setData(getAllPlanProgress()));
-    
+
     hydratePlanProgressStore().catch((err) => {
-      console.error('Failed to hydrate in useAllPlanProgress:', err);
+      logError({ context: 'PlanProgressStore', error: err, userMessage: 'Failed to load workout progress' });
     });
-    
+
     return unsub;
   }, []);
 

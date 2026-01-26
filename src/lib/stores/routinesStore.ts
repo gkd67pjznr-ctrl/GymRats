@@ -1,8 +1,8 @@
 // src/lib/stores/routinesStore.ts
 // Zustand store for user routines with AsyncStorage persistence
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import type { Routine } from "../routinesModel";
 
 const STORAGE_KEY = "routines.v2"; // New key for Zustand version
@@ -46,7 +46,7 @@ export const useRoutinesStore = create<RoutinesState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createQueuedJSONStorage(),
       partialize: (state) => ({ routines: state.routines }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);

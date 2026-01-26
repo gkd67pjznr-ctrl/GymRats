@@ -2,9 +2,12 @@
 // Zustand store for feed posts with AsyncStorage persistence
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import type { ID } from "../socialModel";
 import { uid } from "../uid";
+import { logError } from "../errorHandler";
+import { safeJSONParse } from "../storage/safeJSONParse";
 
 // Import from new Zustand friendsStore location
 import {
@@ -186,7 +189,7 @@ export const useFeedStore = create<FeedState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createQueuedJSONStorage(),
       partialize: (state) => ({
         posts: state.posts,
         likesByPostId: state.likesByPostId,
@@ -195,15 +198,13 @@ export const useFeedStore = create<FeedState>()(
         // V1 to V2 migration
         AsyncStorage.getItem("feed.v1").then((v1Data) => {
           if (v1Data && state) {
-            try {
-              const parsed = JSON.parse(v1Data) as { posts: FeedPost[]; likesByPostId: Record<string, Record<string, boolean>> };
-              if (parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
-                state.posts = parsed.posts;
-                state.likesByPostId = parsed.likesByPostId ?? {};
-                AsyncStorage.removeItem("feed.v1");
-              }
-            } catch (e) {
-              console.error("[feedStore] Migration failed:", e);
+            const parsed = safeJSONParse<{ posts: FeedPost[]; likesByPostId: Record<string, Record<string, boolean>> }>(v1Data, null);
+            if (parsed && parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
+              state.posts = parsed.posts;
+              state.likesByPostId = parsed.likesByPostId ?? {};
+              AsyncStorage.removeItem("feed.v1").catch((err) => {
+                logError({ context: 'FeedStore', error: err, userMessage: 'Failed to remove old feed data' });
+              });
             }
           }
 
@@ -214,6 +215,9 @@ export const useFeedStore = create<FeedState>()(
             state.likesByPostId = mockData.likesByPostId;
           }
 
+          state?.setHydrated(true);
+        }).catch((err) => {
+          logError({ context: 'FeedStore', error: err, userMessage: 'Failed to load feed data' });
           state?.setHydrated(true);
         });
       },

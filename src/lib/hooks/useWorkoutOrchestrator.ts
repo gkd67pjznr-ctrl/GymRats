@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { LoggedSet } from "../loggerTypes";
-import type { Cue, ExerciseSessionState, InstantCue } from "../perSetCue";
+import type { Cue, ExerciseSessionState, InstantCue, DetectCueResult } from "../perSetCue";
 import {
   detectCueForWorkingSet,
   makeEmptyExerciseState,
@@ -86,32 +86,27 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     const wKg = lbToKg(weightLb);
     const prev = ensureExerciseState(exerciseId);
 
-    const res = detectCueForWorkingSet({
+    const res: DetectCueResult = detectCueForWorkingSet({
       weightKg: wKg,
       reps,
       unit,
       exerciseName: exerciseName(exerciseId),
       prev,
-    } as any);
+    });
 
-    const cue: Cue | null = (res as any)?.cue ?? null;
-    const nextState: ExerciseSessionState = (res as any)?.next ?? prev;
-    const meta = (res as any)?.meta;
+    const cue = res.cue;
+    const nextState = res.next;
+    const meta = res.meta;
 
     if (cue) {
       // PR detected!
       setSessionStateByExercise((p) => ({ ...p, [exerciseId]: nextState }));
 
       const t: "weight" | "rep" | "e1rm" =
-        meta?.type === "rep" ? "rep" : meta?.type === "e1rm" ? "e1rm" : "weight";
+        meta.type === "rep" ? "rep" : meta.type === "e1rm" ? "e1rm" : "weight";
 
       const title = pickPunchyVariant(t);
-      const detail =
-        typeof meta?.weightLabel === "string"
-          ? meta.weightLabel
-          : typeof (cue as any)?.detail === "string"
-            ? (cue as any).detail
-            : undefined;
+      const detail = meta.weightLabel;
 
       setInstantCue({ message: title, detail, intensity: "high" });
       onHaptic?.('pr');
@@ -120,7 +115,8 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       // No PR - check fallback cue
       const current = ensureCountdown(exerciseId);
       if (current <= 1) {
-        setInstantCue(randomFallbackCue() as any);
+        const fallbackCue = randomFallbackCue();
+        setInstantCue({ message: fallbackCue.message, intensity: fallbackCue.intensity === "med" ? "high" : fallbackCue.intensity });
         onHaptic?.('light');
         onSound?.('light');
         setFallbackCountdownByExercise((p) => ({ ...p, [exerciseId]: randomFallbackEveryN() }));
@@ -135,15 +131,16 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     if (!hydrated) return;
 
     const now = Date.now();
-    const start = (persisted as any)?.startedAtMs ?? now;
-    const sets: LoggedSet[] = (persisted as any)?.sets ?? [];
+    const persistedState = persisted;
+    const start = persistedState?.startedAtMs ?? now;
+    const sets: LoggedSet[] = persistedState?.sets ?? [];
 
     const sessionObj: WorkoutSession = {
       id: uid2(),
       startedAtMs: start,
       endedAtMs: now,
       sets: sets.map(
-        (s: any): WorkoutSet => ({
+        (s): WorkoutSet => ({
           id: s.id ?? uid2(),
           exerciseId: s.exerciseId,
           weightKg: typeof s.weightKg === "number" ? s.weightKg : lbToKg(typeof s.weightLb === "number" ? s.weightLb : 0),
@@ -171,13 +168,13 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     addWorkoutSession(sessionObj);
 
     // Generate recap cues
-    const grouped = groupSetsByExercise(sets as any);
+    const grouped = groupSetsByExercise(sets);
     const all: Cue[] = [];
 
     for (const [exerciseId, exerciseSets] of Object.entries(grouped)) {
       const cueEvents = generateCuesForExerciseSession({
         exerciseId,
-        sets: exerciseSets as any,
+        sets: exerciseSets,
         unit,
         previous: { bestE1RMKg: 0, bestRepsAtWeight: {} },
       });
@@ -227,7 +224,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       : (() => {
           const seen = new Set<string>();
           const ordered: string[] = [];
-          for (const s of sets as any[]) {
+          for (const s of sets) {
             if (!seen.has(s.exerciseId)) {
               seen.add(s.exerciseId);
               ordered.push(s.exerciseId);
@@ -281,7 +278,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     ensureCurrentSession({
       selectedExerciseId: first,
       exerciseBlocks: first ? [first] : []
-    } as any);
+    });
 
     setRecapCues([]);
     setInstantCue(null);

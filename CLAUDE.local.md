@@ -25,82 +25,77 @@
 4. Git commit from local root
 ```
 
----
+# Token Optimization for SPEC Creation
 
-## 2. File Synchronization
+## /moai:1-plan Token Limits 2. File Synchronization
 
 ### Auto-Sync Directories
-```bash
-src/moai_adk/templates/.claude/    → .claude/
-src/moai_adk/templates/.moai/      → .moai/
-src/moai_adk/templates/CLAUDE.md   → ./CLAUDE.md
-```
+When executing /moai:1-plan:```bash 
+src/moai_adk/templates/.claude/ → .claude/ 
+src/moai_adk/templates/.moai/ → .moai/ 
+src/moai_adk/templates/CLAUDE.md → ./CLAUDE.md ```
 
 ### Protected Directories (Never Delete During Sync)
-```bash
-# CRITICAL: These directories contain user data and must NEVER be deleted
-.moai/project/    # Project documentation (product.md, structure.md, tech.md)
-.moai/specs/      # SPEC documents (active development files)
-```
-
-### Local-Only Files (Never Sync)
-```
-.claude/commands/moai/99-release.md  # Local release command (NOT in template)
-.claude/settings.local.json          # Personal settings
-CLAUDE.local.md                      # This file
-.moai/cache/                         # Cache
-.moai/logs/                          # Logs
-.moai/rollbacks/                     # Rollback data
-.moai/project/                       # Project docs (protected from deletion)
-.moai/specs/                         # SPEC documents (protected from deletion)
-```
-
-**Note on 99-release.md**: This file is intentionally kept local-only and is NOT distributed with the template. It provides developer-specific release workflow automation that should not be part of the public distribution.
-
+**CRITICAL: Keep total token usage under 5K 
+tokens**```bash
+# CRITICAL: These directories contain user data and 
+# must NEVER be deleted
+**DO load (minimal only):**.moai/project/ # Project 
+documentation (product.md, structure.md, tech.md) 
+.moai/specs/ # SPEC documents (active development 
+files) ``` - ✅ User's feature description - ✅ EARS 
+format template (brief excerpt, ~50 lines)### 
+Local-Only Files (Never Sync) ``` 
+.claude/commands/moai/99-release.md # Local release 
+command (NOT in template) .claude/settings.local.json # 
+Personal settings CLAUDE.local.md # This file 
+.moai/cache/ # Cache .moai/logs/ # Logs 
+.moai/rollbacks/ # Rollback data .moai/project/ # 
+Project docs (protected from deletion) .moai/specs/ # 
+SPEC documents (protected from deletion) ``` - ✅ 
+Current STATUS.md (to check duplicates) **Note on 
+99-release.md**: This file is intentionally kept 
+local-only and is NOT distributed with the template. It 
+provides developer-specific release workflow automation 
+that should not be part of the public distribution. - 
+✅ Manager-spec basic instructions
 ### Template-Only Files (Distribution)
-```
-src/moai_adk/templates/.moai/config/config.yaml     # Default config template
-src/moai_adk/templates/.moai/config/presets/        # Configuration presets
-```
+**DO NOT load:**``` 
+src/moai_adk/templates/.moai/config/config.yaml # 
+Default config template 
+src/moai_adk/templates/.moai/config/presets/ # 
+Configuration presets ``` - ❌ Full moAI README (3000+ 
+lines) --- - ❌ Complete skill documentation - ❌ All 
+language skills## 3. Code Standards - ❌ Platform 
+integration guides - ❌ Example code from skills### 
+Language: English Only - ❌ Historical project context 
+**Source Code:** - All code, comments, docstrings in 
+English - Variable names: camelCase or snake_case - 
+Class names: PascalCase - Constants: UPPER_SNAKE_CASE - 
+Commit messages: English
 
----
-
-## 3. Code Standards
-
-### Language: English Only
-
-**Source Code:**
-- All code, comments, docstrings in English
-- Variable names: camelCase or snake_case
-- Class names: PascalCase
-- Constants: UPPER_SNAKE_CASE
-- Commit messages: English
-
-**Configuration Files (English ONLY):**
-- Command files (.claude/commands/**/*.md): English only
-- Agent definitions (.claude/agents/**/*.md): English only
-- Skill definitions (.claude/skills/**/*.md): English only
-- Hook scripts (.claude/hooks/**/*.py): English only
-- CLAUDE.md: English only
-
-**Why**: Command/agent/skill files are code, not user-facing content. They are read by Claude Code (English-based) and must be in English for consistent behavior.
-
-**User-facing vs Internal:**
-- User-facing: README, CHANGELOG, documentation (can be localized)
-- Internal: Commands, agents, skills, hooks (MUST be English)
-
-### Forbidden
-```python
-# WRONG - Korean comments
-def calculate():  # 계산
-    pass
-
+**Configuration Files (English ONLY):** - Command files 
+(.claude/commands/**/*.md): English only - Agent 
+definitions (.claude/agents/**/*.md): English only - 
+Skill definitions (.claude/skills/**/*.md): English 
+only - Hook scripts (.claude/hooks/**/*.py): English 
+only - CLAUDE.md: English only **Process:** **Why**: 
+Command/agent/skill files are code, not user-facing 
+content. They are read by Claude Code (English-based) 
+and must be in English for consistent behavior. 1. Read 
+user's feature request **User-facing vs Internal:** - 
+User-facing: README, CHANGELOG, documentation (can be 
+localized) - Internal: Commands, agents, skills, hooks 
+(MUST be English) 2. Check STATUS.md for duplicates 3. 
+Generate SPEC in EARS format (200-400 lines)### 
+Forbidden ```python 4. Create worktree entry# WRONG - 
+Korean comments def calculate(): # 계산 5. Update 
+STATUS.md pass 6. DONE - do not load additional context
 # CORRECT - English comments
-def calculate():  # Calculate score
-    pass
+**Target: 2-5K tokens maximum per SPEC creation**def 
+    calculate(): # Calculate score pass
 ```
-
----
+ --- ---
 
 ## 4. Git Workflow
 

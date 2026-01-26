@@ -35,6 +35,7 @@ const TOAST_STYLES = {
   },
 };
 
+// TAG-SPEC-003-IMPROVE-validation-toast-component
 /**
  * ValidationToast - Bottom-positioned toast for validation feedback
  *

@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import type { PremadePlan, PlanCategory } from "./types";
 import { SAMPLE_PLANS } from "./samplePlans";
+import { logError } from "../errorHandler";
+import { safeJSONParseArray } from "../storage/safeJSONParse";
 
 const STORAGE_KEY = "premadePlans.v1";
 
@@ -24,10 +26,10 @@ async function persist() {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(plans));
     } catch (err) {
-      console.error('Failed to persist premade plans:', err);
+      logError({ context: 'PremadePlansStore', error: err, userMessage: 'Failed to save workout plans' });
     }
   });
-  
+
   return persistQueue;
 }
 
@@ -37,10 +39,9 @@ async function persist() {
 async function load(): Promise<PremadePlan[]> {
   try {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as PremadePlan[];
+    return safeJSONParseArray<PremadePlan>(raw);
   } catch (err) {
-    console.error('Failed to load premade plans:', err);
+    logError({ context: 'PremadePlansStore', error: err, userMessage: 'Failed to load workout plans' });
     return [];
   }
 }
@@ -52,20 +53,20 @@ async function load(): Promise<PremadePlan[]> {
 export async function hydratePremadePlansStore(): Promise<void> {
   if (hydrated) return;
   hydrated = true;
-  
+
   try {
     plans = await load();
-    
+
     // Seed with sample plans if empty
     if (plans.length === 0) {
       console.log('Seeding premade plans with samples...');
       plans = SAMPLE_PLANS.slice();
       await persist();
     }
-    
+
     notify();
   } catch (err) {
-    console.error('Failed to hydrate premade plans store:', err);
+    logError({ context: 'PremadePlansStore', error: err, userMessage: 'Failed to initialize workout plans' });
     // Fallback to sample plans
     plans = SAMPLE_PLANS.slice();
     notify();
@@ -108,7 +109,7 @@ export function addPlan(plan: PremadePlan): void {
 export function updatePlan(id: string, updates: Partial<PremadePlan>): void {
   const index = plans.findIndex(p => p.id === id);
   if (index === -1) return;
-  
+
   plans[index] = { ...plans[index], ...updates };
   persist();
   notify();
@@ -148,11 +149,11 @@ export function usePremadePlans(): PremadePlan[] {
 
   useEffect(() => {
     const unsub = subscribePlans(() => setData(getAllPlans()));
-    
+
     hydratePremadePlansStore().catch((err) => {
-      console.error('Failed to hydrate in usePremadePlans:', err);
+      logError({ context: 'PremadePlansStore', error: err, userMessage: 'Failed to load workout plans' });
     });
-    
+
     return unsub;
   }, []);
 
@@ -167,11 +168,11 @@ export function usePlansByCategory(category: PlanCategory): PremadePlan[] {
 
   useEffect(() => {
     const unsub = subscribePlans(() => setData(getPlansByCategory(category)));
-    
+
     hydratePremadePlansStore().catch((err) => {
-      console.error('Failed to hydrate in usePlansByCategory:', err);
+      logError({ context: 'PremadePlansStore', error: err, userMessage: 'Failed to load workout plans' });
     });
-    
+
     return unsub;
   }, [category]);
 
@@ -186,11 +187,11 @@ export function usePlan(id: string): PremadePlan | undefined {
 
   useEffect(() => {
     const unsub = subscribePlans(() => setData(getPlanById(id)));
-    
+
     hydratePremadePlansStore().catch((err) => {
-      console.error('Failed to hydrate in usePlan:', err);
+      logError({ context: 'PremadePlansStore', error: err, userMessage: 'Failed to load workout plans' });
     });
-    
+
     return unsub;
   }, [id]);
 

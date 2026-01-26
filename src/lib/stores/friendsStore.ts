@@ -2,9 +2,12 @@
 // Zustand store for friend relationships with AsyncStorage persistence
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import type { FriendEdge, FriendStatus, ID } from "../socialModel";
 import { uid } from "../uid";
+import { logError } from "../errorHandler";
+import { safeJSONParse } from "../storage/safeJSONParse";
 
 const STORAGE_KEY = "friends.v2";
 
@@ -116,20 +119,18 @@ export const useFriendsStore = create<FriendsState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createQueuedJSONStorage(),
       partialize: (state) => ({ edges: state.edges }),
       onRehydrateStorage: () => (state) => {
         // V1 to V2 migration
         AsyncStorage.getItem("friends.v1").then((v1Data) => {
           if (v1Data && state) {
-            try {
-              const parsed = JSON.parse(v1Data) as { edges: FriendEdge[] };
-              if (parsed.edges && parsed.edges.length > 0 && state.edges.length === 0) {
-                state.edges = parsed.edges;
-                AsyncStorage.removeItem("friends.v1");
-              }
-            } catch (e) {
-              console.error("[friendsStore] Migration failed:", e);
+            const parsed = safeJSONParse<{ edges: FriendEdge[] }>(v1Data, null);
+            if (parsed && parsed.edges && parsed.edges.length > 0 && state.edges.length === 0) {
+              state.edges = parsed.edges;
+              AsyncStorage.removeItem("friends.v1").catch((err) => {
+                logError({ context: 'FriendsStore', error: err, userMessage: 'Failed to remove old friends data' });
+              });
             }
           }
 
@@ -138,6 +139,9 @@ export const useFriendsStore = create<FriendsState>()(
             state.edges = seedMockFriends();
           }
 
+          state?.setHydrated(true);
+        }).catch((err) => {
+          logError({ context: 'FriendsStore', error: err, userMessage: 'Failed to load friends data' });
           state?.setHydrated(true);
         });
       },

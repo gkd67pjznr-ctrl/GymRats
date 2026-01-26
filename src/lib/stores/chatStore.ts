@@ -3,8 +3,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import type { ChatMessage, ChatThread, ID } from "../socialModel";
+import { logError } from "../errorHandler";
+import { safeJSONParse } from "../storage/safeJSONParse";
 
 // Import from new Zustand friendsStore location
 import {
@@ -232,7 +235,7 @@ export const useChatStore = create<ChatState>()(
     },
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createQueuedJSONStorage(),
       partialize: (state) => ({
         threads: state.threads,
         messages: state.messages,
@@ -242,16 +245,14 @@ export const useChatStore = create<ChatState>()(
         // V1 to V2 migration
         AsyncStorage.getItem("chat.v1").then((v1Data) => {
           if (v1Data && state) {
-            try {
-              const parsed = JSON.parse(v1Data) as { threads: ChatThread[]; messages: ChatMessage[]; reads: ReadState };
-              if (parsed.threads && parsed.threads.length > 0 && state.threads.length === 0) {
-                state.threads = parsed.threads;
-                state.messages = parsed.messages ?? [];
-                state.reads = parsed.reads ?? {};
-                AsyncStorage.removeItem("chat.v1");
-              }
-            } catch (e) {
-              console.error("[chatStore] Migration failed:", e);
+            const parsed = safeJSONParse<{ threads: ChatThread[]; messages: ChatMessage[]; reads: ReadState }>(v1Data, null);
+            if (parsed && parsed.threads && parsed.threads.length > 0 && state.threads.length === 0) {
+              state.threads = parsed.threads;
+              state.messages = parsed.messages ?? [];
+              state.reads = parsed.reads ?? {};
+              AsyncStorage.removeItem("chat.v1").catch((err) => {
+                logError({ context: 'ChatStore', error: err, userMessage: 'Failed to remove old chat data' });
+              });
             }
           }
 
@@ -263,6 +264,9 @@ export const useChatStore = create<ChatState>()(
             state.reads = mockData.reads;
           }
 
+          state?.setHydrated(true);
+        }).catch((err) => {
+          logError({ context: 'ChatStore', error: err, userMessage: 'Failed to load chat data' });
           state?.setHydrated(true);
         });
       },

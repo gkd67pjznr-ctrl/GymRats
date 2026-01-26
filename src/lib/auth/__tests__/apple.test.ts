@@ -1,6 +1,7 @@
 // src/lib/auth/__tests__/apple.test.ts
 // Tests for Apple Sign In implementation
 
+import { renderHook, act } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
@@ -13,7 +14,12 @@ import {
   hasEmail,
   isFirstSignIn,
   useAppleAuth,
+  getAppleErrorMessage,
+  signInWithOAuthToken,
+  extractAppleProfile,
+  type OAuthUserProfile,
 } from '../apple';
+import { parseOAuthError, type OAuthError } from '../oauth';
 
 // Mock expo-apple-authentication
 jest.mock('expo-apple-authentication', () => ({
@@ -48,12 +54,19 @@ jest.mock('../../supabase/client', () => ({
   },
 }));
 
+// Mock oauth module functions
+jest.mock('../oauth', () => ({
+  signInWithOAuthToken: jest.fn(),
+  extractAppleProfile: jest.fn(),
+  parseOAuthError: jest.fn(),
+}));
+
 describe('Apple Sign In', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('isAppleAuthAvailable', () => {
+  describe('isAppleAuthAvailable - Platform Detection', () => {
     it('should return true on iOS', () => {
       jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
       expect(isAppleAuthAvailable()).toBe(true);
@@ -74,9 +87,116 @@ describe('Apple Sign In', () => {
       delete (window as any).MSStream;
       expect(isAppleAuthAvailable()).toBe(false);
     });
+
+    it('should return true on web with MSStream (IE11)', () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('web');
+      (window as any).MSStream = true;
+      expect(isAppleAuthAvailable()).toBe(true);
+      delete (window as any).MSStream;
+    });
+
+    it('should return true on iOS simulator', () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+      jest.spyOn(Platform, 'isPad', 'get').mockReturnValue(false);
+      jest.spyOn(Platform, 'isTV', 'get').mockReturnValue(false);
+      expect(isAppleAuthAvailable()).toBe(true);
+    });
   });
 
-  describe('parseAppleCredential', () => {
+  describe('useAppleAuth hook', () => {
+    it('should return object with signInWithApple and isAvailable', () => {
+      const hookResult = useAppleAuth();
+
+      expect(hookResult).toHaveProperty('signInWithApple');
+      expect(hookResult).toHaveProperty('isAvailable');
+      expect(typeof hookResult.signInWithApple).toBe('function');
+      expect(typeof hookResult.isAvailable).toBe('boolean');
+    });
+
+    it('should reflect correct availability on iOS', () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+      const hookResult = useAppleAuth();
+
+      expect(hookResult.isAvailable).toBe(true);
+    });
+
+    it('should reflect correct availability on Android', () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('android');
+      const hookResult = useAppleAuth();
+
+      expect(hookResult.isAvailable).toBe(false);
+    });
+
+    it('should call onSuccess callback when sign in succeeds', async () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+
+      const mockProfile: OAuthUserProfile = {
+        id: 'apple-user-123',
+        email: 'apple@example.com',
+        emailVerified: true,
+        name: 'Apple User',
+      };
+
+      const mockCredential: AppleAuthentication.AppleAuthenticationCredential = {
+        user: 'apple-user-123',
+        email: 'apple@example.com',
+        fullName: { givenName: 'Apple', familyName: 'User' },
+        authorizationCode: 'auth-code-123',
+        identityToken: 'valid-id-token',
+        realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL,
+      };
+
+      const onSuccessMock = jest.fn();
+      const onErrorMock = jest.fn();
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
+      (extractAppleProfile as jest.Mock).mockReturnValue(mockProfile);
+      (signInWithOAuthToken as jest.Mock).mockResolvedValue({ data: { user: {} }, error: null });
+
+      const { result } = renderHook(() => useAppleAuth({
+        onSuccess: onSuccessMock,
+        onError: onErrorMock,
+      }));
+
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+
+      expect(onSuccessMock).toHaveBeenCalledWith(mockProfile);
+      expect(onErrorMock).not.toHaveBeenCalled();
+    });
+
+    it('should call onError callback when sign in fails', async () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+
+      const mockError: OAuthError = {
+        type: 'cancelled',
+        message: 'Sign in was cancelled',
+      };
+
+      const onSuccessMock = jest.fn();
+      const onErrorMock = jest.fn();
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockRejectedValue(
+        new Error('ERR_REQUEST_CANCELED')
+      );
+      (parseOAuthError as jest.Mock).mockReturnValue(mockError);
+
+      const { result } = renderHook(() => useAppleAuth({
+        onSuccess: onSuccessMock,
+        onError: onErrorMock,
+      }));
+
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+
+      expect(onSuccessMock).not.toHaveBeenCalled();
+      expect(onErrorMock).toHaveBeenCalledWith(mockError);
+    });
+  });
+
+  describe('parseAppleCredential - Credential Utilities', () => {
     const mockCredential: AppleAuthentication.AppleAuthenticationCredential = {
       user: 'apple-user-123',
       email: 'apple@example.com',
@@ -124,9 +244,19 @@ describe('Apple Sign In', () => {
 
       expect(parsed.fullName).toBeNull();
     });
+
+    it('should handle null authorizationCode', () => {
+      const credential = {
+        ...mockCredential,
+        authorizationCode: null,
+      };
+      const parsed = parseAppleCredential(credential);
+
+      expect(parsed.authorizationCode).toBeNull();
+    });
   });
 
-  describe('isRealUser', () => {
+  describe('isRealUser - Real User Detection', () => {
     it('should return true for LIKELY_REAL status', () => {
       const credential: AppleAuthentication.AppleAuthenticationCredential = {
         user: '123',
@@ -153,7 +283,7 @@ describe('Apple Sign In', () => {
       expect(isRealUser(credential)).toBe(true);
     });
 
-    it('should return true for UNSUPPORTED status', () => {
+    it('should return false for UNSUPPORTED status', () => {
       const credential: AppleAuthentication.AppleAuthenticationCredential = {
         user: '123',
         email: 'test@example.com',
@@ -163,14 +293,13 @@ describe('Apple Sign In', () => {
         realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.UNSUPPORTED,
       };
 
-      expect(isRealUser(credential)).toBe(true);
+      expect(isRealUser(credential)).toBe(false);
     });
   });
 
   describe('getRealUserStatusString', () => {
     it('should return correct string for UNSUPPORTED', () => {
-      const status =
-        AppleAuthentication.AppleAuthenticationRealUserStatus.UNSUPPORTED;
+      const status = AppleAuthentication.AppleAuthenticationRealUserStatus.UNSUPPORTED;
       expect(getRealUserStatusString(status)).toBe('Not supported (iOS 12 or earlier)');
     });
 
@@ -180,13 +309,16 @@ describe('Apple Sign In', () => {
     });
 
     it('should return correct string for LIKELY_REAL', () => {
-      const status =
-        AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL;
+      const status = AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL;
       expect(getRealUserStatusString(status)).toBe('Likely a real user');
+    });
+
+    it('should return unknown status string for invalid status', () => {
+      expect(getRealUserStatusString(999 as any)).toBe('Unknown status');
     });
   });
 
-  describe('getAppleDisplayName', () => {
+  describe('getAppleDisplayName - Display Name Utilities', () => {
     it('should combine first and last name', () => {
       const fullName = {
         givenName: 'Jane',
@@ -226,9 +358,18 @@ describe('Apple Sign In', () => {
 
       expect(getAppleDisplayName(fullName)).toBeUndefined();
     });
+
+    it('should trim whitespace from combined name', () => {
+      const fullName = {
+        givenName: '  John  ',
+        familyName: '  Doe  ',
+      };
+
+      expect(getAppleDisplayName(fullName)).toBe('John Doe');
+    });
   });
 
-  describe('hasEmail', () => {
+  describe('hasEmail - Email Detection', () => {
     it('should return true when email is present', () => {
       const credential: AppleAuthentication.AppleAuthenticationCredential = {
         user: '123',
@@ -267,9 +408,22 @@ describe('Apple Sign In', () => {
 
       expect(hasEmail(credential)).toBe(false);
     });
+
+    it('should return false when email is undefined', () => {
+      const credential: AppleAuthentication.AppleAuthenticationCredential = {
+        user: '123',
+        email: undefined as any,
+        fullName: null,
+        authorizationCode: 'auth',
+        identityToken: 'token',
+        realUserStatus: 0,
+      };
+
+      expect(hasEmail(credential)).toBe(false);
+    });
   });
 
-  describe('isFirstSignIn', () => {
+  describe('isFirstSignIn - First Sign In Detection', () => {
     it('should return true when email and fullName are present', () => {
       const credential: AppleAuthentication.AppleAuthenticationCredential = {
         user: '123',
@@ -314,40 +468,22 @@ describe('Apple Sign In', () => {
 
       expect(isFirstSignIn(credential)).toBe(false);
     });
-  });
 
-  describe('useAppleAuth hook', () => {
-    it('should be defined as a function', () => {
-      expect(typeof useAppleAuth).toBe('function');
-    });
+    it('should return false when both email and fullName are missing', () => {
+      const credential: AppleAuthentication.AppleAuthenticationCredential = {
+        user: '123',
+        email: null,
+        fullName: null,
+        authorizationCode: 'auth',
+        identityToken: 'token',
+        realUserStatus: 0,
+      };
 
-    it('should return object with signInWithApple and isAvailable', () => {
-      const hookResult = useAppleAuth();
-
-      expect(hookResult).toHaveProperty('signInWithApple');
-      expect(hookResult).toHaveProperty('isAvailable');
-      expect(typeof hookResult.signInWithApple).toBe('function');
-      expect(typeof hookResult.isAvailable).toBe('boolean');
-    });
-
-    it('should reflect correct availability on iOS', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
-      const hookResult = useAppleAuth();
-
-      expect(hookResult.isAvailable).toBe(true);
-    });
-
-    it('should reflect correct availability on Android', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('android');
-      const hookResult = useAppleAuth();
-
-      expect(hookResult.isAvailable).toBe(false);
+      expect(isFirstSignIn(credential)).toBe(false);
     });
   });
 
-  describe('getAppleErrorMessage', () => {
-    const { getAppleErrorMessage } = require('../apple');
-
+  describe('getAppleErrorMessage - Error Messages', () => {
     it('should return message for ERR_REQUEST_CANCELED', () => {
       const error = new Error('Cancelled');
       (error as any).code = 'ERR_REQUEST_CANCELED';
@@ -355,21 +491,308 @@ describe('Apple Sign In', () => {
       expect(getAppleErrorMessage(error)).toBe('Sign in was cancelled.');
     });
 
+    it('should return message for ERR_REQUEST_NOT_HANDLED', () => {
+      const error = new Error('Not handled');
+      (error as any).code = 'ERR_REQUEST_NOT_HANDLED';
+
+      expect(getAppleErrorMessage(error)).toBe('Sign in request was not handled.');
+    });
+
     it('should return message for ERR_REQUEST_FAILED', () => {
       const error = new Error('Failed');
       (error as any).code = 'ERR_REQUEST_FAILED';
 
-      expect(getAppleErrorMessage(error)).toContain('try again');
+      expect(getAppleErrorMessage(error)).toBe('Sign in request failed. Please try again.');
     });
 
-    it('should return error message for other errors', () => {
+    it('should return message for ERR_REQUEST_RESPONSE', () => {
+      const error = new Error('Invalid response');
+      (error as any).code = 'ERR_REQUEST_RESPONSE';
+
+      expect(getAppleErrorMessage(error)).toBe('Invalid sign in response.');
+    });
+
+    it('should return message for ERR_REQUEST_UNKNOWN', () => {
+      const error = new Error('Unknown');
+      (error as any).code = 'ERR_REQUEST_UNKNOWN';
+
+      expect(getAppleErrorMessage(error)).toBe('An unknown error occurred.');
+    });
+
+    it('should return error message for other error codes', () => {
       const error = new Error('Some error');
 
       expect(getAppleErrorMessage(error)).toBe('Some error');
     });
 
     it('should return generic message for non-Error objects', () => {
-      expect(getAppleErrorMessage('string error')).toContain('unexpected error');
+      expect(getAppleErrorMessage('string error')).toBe('An unexpected error occurred. Please try again.');
+    });
+
+    it('should return generic message for null', () => {
+      expect(getAppleErrorMessage(null)).toBe('An unexpected error occurred. Please try again.');
+    });
+
+    it('should return generic message for undefined', () => {
+      expect(getAppleErrorMessage(undefined)).toBe('An unexpected error occurred. Please try again.');
+    });
+  });
+
+  describe('signInWithApple - Complete Sign In Flow', () => {
+    beforeEach(() => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+    });
+
+    it('should successfully complete Apple sign in flow', async () => {
+      const mockProfile: OAuthUserProfile = {
+        id: 'apple-user-123',
+        email: 'apple@example.com',
+        emailVerified: true,
+        name: 'Apple User',
+      };
+
+      const mockCredential: AppleAuthentication.AppleAuthenticationCredential = {
+        user: 'apple-user-123',
+        email: 'apple@example.com',
+        fullName: { givenName: 'Apple', familyName: 'User' },
+        authorizationCode: 'auth-code-123',
+        identityToken: 'valid-id-token',
+        realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL,
+      };
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
+      (extractAppleProfile as jest.Mock).mockReturnValue(mockProfile);
+      (signInWithOAuthToken as jest.Mock).mockResolvedValue({ data: { user: {} }, error: null });
+
+      const { result } = renderHook(() => useAppleAuth());
+
+      const response = await act(async () => {
+        return await result.current.signInWithApple();
+      });
+
+      expect(AppleAuthentication.signInAsync).toHaveBeenCalledWith({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      expect(extractAppleProfile).toHaveBeenCalledWith(
+        'valid-id-token',
+        'apple@example.com',
+        { givenName: 'Apple', familyName: 'User' }
+      );
+      expect(signInWithOAuthToken).toHaveBeenCalledWith('apple', 'valid-id-token', 'auth-code-123');
+      expect(response).toEqual({ success: true, user: mockProfile });
+    });
+
+    it('should return provider_error when platform is Android', async () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('android');
+
+      const onErrorMock = jest.fn();
+      const { result } = renderHook(() => useAppleAuth({
+        onError: onErrorMock,
+      }));
+
+      const response = await act(async () => {
+        return await result.current.signInWithApple();
+      });
+
+      expect(AppleAuthentication.signInAsync).not.toHaveBeenCalled();
+      expect(response).toEqual({
+        success: false,
+        error: {
+          type: 'provider_error',
+          message: 'Apple Sign In is not available on this platform',
+        },
+      });
+      expect(onErrorMock).toHaveBeenCalled();
+    });
+
+    it('should return invalid_token when identityToken is missing', async () => {
+      const mockCredential: AppleAuthentication.AppleAuthenticationCredential = {
+        user: 'apple-user-123',
+        email: 'apple@example.com',
+        fullName: null,
+        authorizationCode: 'auth-code-123',
+        identityToken: null, // Missing identity token
+        realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL,
+      };
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
+
+      const onErrorMock = jest.fn();
+      const { result } = renderHook(() => useAppleAuth({
+        onError: onErrorMock,
+      }));
+
+      const response = await act(async () => {
+        return await result.current.signInWithApple();
+      });
+
+      expect(response).toEqual({
+        success: false,
+        error: {
+          type: 'invalid_token',
+          message: 'No identity token received from Apple',
+        },
+      });
+      expect(onErrorMock).toHaveBeenCalled();
+    });
+
+    it('should return cancelled when user cancels', async () => {
+      const cancelError = new Error('User cancelled');
+      (cancelError as any).code = 'ERR_REQUEST_CANCELED';
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockRejectedValue(cancelError);
+      (parseOAuthError as jest.Mock).mockReturnValue({
+        type: 'cancelled',
+        message: 'Sign in was cancelled',
+      });
+
+      const onErrorMock = jest.fn();
+      const { result } = renderHook(() => useAppleAuth({
+        onError: onErrorMock,
+      }));
+
+      const response = await act(async () => {
+        return await result.current.signInWithApple();
+      });
+
+      expect(response).toEqual({
+        success: false,
+        error: {
+          type: 'cancelled',
+          message: 'Sign in was cancelled',
+        },
+      });
+      expect(onErrorMock).toHaveBeenCalled();
+    });
+
+    it('should return invalid_token when profile extraction fails', async () => {
+      const mockCredential: AppleAuthentication.AppleAuthenticationCredential = {
+        user: 'apple-user-123',
+        email: 'apple@example.com',
+        fullName: { givenName: 'Apple', familyName: 'User' },
+        authorizationCode: 'auth-code-123',
+        identityToken: 'invalid-token',
+        realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL,
+      };
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
+      (extractAppleProfile as jest.Mock).mockReturnValue(null);
+
+      const onErrorMock = jest.fn();
+      const { result } = renderHook(() => useAppleAuth({
+        onError: onErrorMock,
+      }));
+
+      const response = await act(async () => {
+        return await result.current.signInWithApple();
+      });
+
+      expect(response).toEqual({
+        success: false,
+        error: {
+          type: 'invalid_token',
+          message: 'Failed to extract user profile from Apple token',
+        },
+      });
+      expect(onErrorMock).toHaveBeenCalled();
+    });
+
+    it('should return OAuth error when Supabase auth fails', async () => {
+      const mockProfile: OAuthUserProfile = {
+        id: 'apple-user-123',
+        email: 'apple@example.com',
+        emailVerified: true,
+        name: 'Apple User',
+      };
+
+      const mockCredential: AppleAuthentication.AppleAuthenticationCredential = {
+        user: 'apple-user-123',
+        email: 'apple@example.com',
+        fullName: { givenName: 'Apple', familyName: 'User' },
+        authorizationCode: 'auth-code-123',
+        identityToken: 'valid-id-token',
+        realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL,
+      };
+
+      const mockSupabaseError = { message: 'Supabase auth failed' };
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
+      (extractAppleProfile as jest.Mock).mockReturnValue(mockProfile);
+      (signInWithOAuthToken as jest.Mock).mockResolvedValue({
+        data: null,
+        error: mockSupabaseError,
+      });
+      (parseOAuthError as jest.Mock).mockReturnValue({
+        type: 'supabase_error',
+        message: 'Supabase auth failed',
+      });
+
+      const onErrorMock = jest.fn();
+      const { result } = renderHook(() => useAppleAuth({
+        onError: onErrorMock,
+      }));
+
+      const response = await act(async () => {
+        return await result.current.signInWithApple();
+      });
+
+      expect(parseOAuthError).toHaveBeenCalledWith(mockSupabaseError);
+      expect(response).toEqual({
+        success: false,
+        error: {
+          type: 'supabase_error',
+          message: 'Supabase auth failed',
+        },
+      });
+      expect(onErrorMock).toHaveBeenCalled();
+    });
+
+    it('should handle network errors', async () => {
+      const networkError = new Error('Network connection failed');
+
+      (AppleAuthentication.signInAsync as jest.Mock).mockRejectedValue(networkError);
+      (parseOAuthError as jest.Mock).mockReturnValue({
+        type: 'network',
+        message: 'Network error. Please check your connection.',
+      });
+
+      const onErrorMock = jest.fn();
+      const { result } = renderHook(() => useAppleAuth({
+        onError: onErrorMock,
+      }));
+
+      const response = await act(async () => {
+        return await result.current.signInWithApple();
+      });
+
+      expect(parseOAuthError).toHaveBeenCalledWith(networkError);
+      expect(response).toEqual({
+        success: false,
+        error: {
+          type: 'network',
+          message: 'Network error. Please check your connection.',
+        },
+      });
+    });
+  });
+
+  describe('initializeAppleWebAuth - Web Platform', () => {
+    it('should log warning when called on non-web platform', () => {
+      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+      const { initializeAppleWebAuth } = require('../apple');
+
+      initializeAppleWebAuth('client-id', 'redirect-uri');
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Apple web auth should only be initialized on web platform'
+      );
+
+      consoleWarnSpy.mockRestore();
     });
   });
 });

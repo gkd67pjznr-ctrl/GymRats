@@ -2,9 +2,12 @@
 // Zustand store for social posts, reactions, comments with AsyncStorage persistence
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import type { AppNotification, Comment, EmoteId, Reaction, WorkoutPost } from "../socialModel";
 import { uid } from "../uid";
+import { logError } from "../errorHandler";
+import { safeJSONParse } from "../storage/safeJSONParse";
 
 const STORAGE_KEY = "social.v2";
 
@@ -186,7 +189,7 @@ export const useSocialStore = create<SocialState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createQueuedJSONStorage(),
       partialize: (state) => ({
         posts: state.posts,
         reactions: state.reactions,
@@ -197,17 +200,15 @@ export const useSocialStore = create<SocialState>()(
         // V1 to V2 migration
         AsyncStorage.getItem("social.v1").then((v1Data) => {
           if (v1Data && state) {
-            try {
-              const parsed = JSON.parse(v1Data) as SocialState;
-              if (parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
-                state.posts = parsed.posts;
-                state.reactions = parsed.reactions ?? [];
-                state.comments = parsed.comments ?? [];
-                state.notifications = parsed.notifications ?? [];
-                AsyncStorage.removeItem("social.v1");
-              }
-            } catch (e) {
-              console.error("[socialStore] Migration failed:", e);
+            const parsed = safeJSONParse<{ posts: WorkoutPost[]; reactions: Reaction[]; comments: Comment[]; notifications: AppNotification[] }>(v1Data, null);
+            if (parsed && parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
+              state.posts = parsed.posts;
+              state.reactions = parsed.reactions ?? [];
+              state.comments = parsed.comments ?? [];
+              state.notifications = parsed.notifications ?? [];
+              AsyncStorage.removeItem("social.v1").catch((err) => {
+                logError({ context: 'SocialStore', error: err, userMessage: 'Failed to remove old social data' });
+              });
             }
           }
 
@@ -220,6 +221,9 @@ export const useSocialStore = create<SocialState>()(
             state.notifications = mockData.notifications;
           }
 
+          state?.setHydrated(true);
+        }).catch((err) => {
+          logError({ context: 'SocialStore', error: err, userMessage: 'Failed to load social data' });
           state?.setHydrated(true);
         });
       },

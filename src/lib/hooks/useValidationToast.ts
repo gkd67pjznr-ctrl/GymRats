@@ -16,8 +16,32 @@ export type ValidationToastState = {
   type: ValidationToastType;
 };
 
+/**
+ * Type definition for expo-haptics NotificationFeedbackType
+ *
+ * Graceful fallback pattern: Allows the app to function even when
+ * expo-haptics is not installed (e.g., web environments)
+ */
+type NotificationFeedbackType = "success" | "warning" | "error";
+
+/**
+ * Interface for optional expo-haptics module
+ *
+ * This interface provides type safety for optional haptic feedback.
+ * The module is loaded dynamically at runtime and defaults to null
+ * if expo-haptics is not installed.
+ */
+interface HapticsModule {
+  notificationAsync(type: NotificationFeedbackType): Promise<void>;
+  readonly NotificationFeedbackType: {
+    readonly Success: "success";
+    readonly Warning: "warning";
+    readonly Error: "error";
+  };
+}
+
 // Optional runtime requires (no-op if not installed)
-let Haptics: any = null;
+let Haptics: HapticsModule | null = null;
 try {
   Haptics = require("expo-haptics");
 } catch {
@@ -32,6 +56,7 @@ export type UseValidationToastResult = {
   dismiss: () => void;
 };
 
+// TAG-SPEC-003-IMPROVE-validation-toast-hook
 /**
  * Hook for managing validation toast notifications with haptic feedback
  *

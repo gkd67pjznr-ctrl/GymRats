@@ -7,6 +7,7 @@ import { estimate1RM_Epley } from "../e1rm";
 
 type Defaults = { weightLb: number; reps: number };
 
+// TAG-SPEC-003-INTEGRATION-validation-callbacks-type
 /**
  * Validation feedback callbacks for toast notifications
  * Optional - if not provided, validation errors will be logged to console only
@@ -100,6 +101,7 @@ export function useLiveWorkoutSession(
     setSets((prev) => prev.map((s) => (s.id === setId ? { ...s, ...patch } : s)));
   }, []);
 
+  // TAG-SPEC-003-INTEGRATION-set-weight-validation
   const setWeightForSet = useCallback(
     (setId: string, text: string) => {
       const result = validateWeight(text);
@@ -116,6 +118,7 @@ export function useLiveWorkoutSession(
     [updateSet, callbacks]
   );
 
+  // TAG-SPEC-003-INTEGRATION-set-reps-validation
   const setRepsForSet = useCallback(
     (setId: string, text: string) => {
       const result = validateReps(text);
@@ -150,6 +153,7 @@ export function useLiveWorkoutSession(
     }
   }, []);
 
+  // TAG-SPEC-003-INTEGRATION-weight-commit-validation
   const onWeightCommit = useCallback(() => {
     const result = validateWeight(weightLbText);
 
@@ -166,6 +170,7 @@ export function useLiveWorkoutSession(
     }
   }, [weightLb, weightLbText, callbacks]);
 
+  // TAG-SPEC-003-INTEGRATION-reps-commit-validation
   const onRepsCommit = useCallback(() => {
     const result = validateReps(repsText);
 
@@ -239,6 +244,7 @@ export function useLiveWorkoutSession(
   );
 
   // Add set to the workout session
+  // TAG-SPEC-003-INTEGRATION-add-set-success-feedback
   const addSet = useCallback(
     (exerciseId: string, setType: SetType = "working") => {
       const newSet: LoggedSet = {

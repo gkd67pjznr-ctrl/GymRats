@@ -1,6 +1,8 @@
 // src/lib/notificationPrefs.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { logError } from "./errorHandler";
+import { safeJSONParse } from "./storage/safeJSONParse";
 
 const KEY = "notificationPrefs.v1";
 
@@ -42,7 +44,7 @@ async function persist() {
     try {
       await AsyncStorage.setItem(KEY, JSON.stringify(prefs));
     } catch (err) {
-      console.error('Failed to persist notification prefs:', err);
+      logError({ context: 'NotificationPrefs', error: err, userMessage: 'Failed to persist notification preferences' });
     }
   });
   return persistQueue;
@@ -52,9 +54,9 @@ async function load(): Promise<NotificationPrefs | null> {
   try {
     const raw = await AsyncStorage.getItem(KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as NotificationPrefs;
+    return safeJSONParse(raw, null);
   } catch (err) {
-    console.error('Failed to load notification prefs:', err);
+    logError({ context: 'NotificationPrefs', error: err, userMessage: 'Failed to load notification preferences' });
     return null;
   }
 }
@@ -101,7 +103,9 @@ export function useNotificationPrefs(): NotificationPrefs {
   const [p, setP] = useState<NotificationPrefs>(getNotificationPrefs());
 
   useEffect(() => {
-    hydrateNotificationPrefs().catch(() => {});
+    hydrateNotificationPrefs().catch((err) => {
+      logError({ context: 'NotificationPrefs', error: err, userMessage: 'Failed to hydrate notification preferences' });
+    });
     return subscribeNotificationPrefs(() => setP(getNotificationPrefs()));
   }, []);
 

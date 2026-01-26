@@ -144,6 +144,7 @@ export function useGoogleAuth(options: UseGoogleAuthOptions = {}) {
 
   /**
    * Initiate Google OAuth sign-in flow
+   * Uses Supabase's built-in OAuth flow for simplicity
    */
   const signInWithGoogle = async (): Promise<OAuthResult> => {
     // Validate configuration
@@ -158,77 +159,14 @@ export function useGoogleAuth(options: UseGoogleAuthOptions = {}) {
     }
 
     try {
-      // Resolve discovery document
-      const discovery: DiscoveryDocument = await resolveDiscoveryAsync(
-        GOOGLE_DISCOVERY_URL,
-        {
-          useHttps: true,
-        }
-      );
+      // Use Supabase's built-in OAuth flow
+      // This handles code exchange and session creation automatically
+      const authResult = await signInWithSupabaseGoogle();
 
-      // Configure auth request
-      const config: AuthRequestConfig = {
-        clientId,
-        scopes: GOOGLE_SCOPES,
-        redirectUri: getRedirectUri(),
-        responseType: 'code',
-        // Prompt for consent to ensure we get a refresh token
-        prompt: 'consent',
-        // Access type offline to get refresh token
-        extraParams: {
-          access_type: 'offline',
-        },
-      };
-
-      // Create auth request
-      const request = new AuthRequest(config);
-
-      // Prepare the request
-      const [result, responseUrl] = await request.promptAsync(discovery, {
-        // Use a modal presentation style for better UX
-        useProxy: false,
-      });
-
-      // Check if user cancelled
-      if (result.type === 'cancel' || result.params?.error === 'access_denied') {
-        const error = {
-          type: 'cancelled' as const,
-          message: 'Sign in was cancelled',
-        };
-        onError?.(error);
-        return { success: false, error };
-      }
-
-      // Check for errors in response
-      if (result.params?.error) {
-        const error = parseOAuthError(
-          new Error(result.params.error)
-        );
-        onError?.(error);
-        return { success: false, error };
-      }
-
-      // Extract authorization code
-      const code = result.params?.code;
-      if (!code) {
-        const error = {
-          type: 'invalid_token' as const,
-          message: 'No authorization code received from Google',
-        };
-        onError?.(error);
-        return { success: false, error };
-      }
-
-      // Exchange code for tokens using Supabase
-      // Note: Supabase handles the code exchange internally
-      // For a direct implementation, we would need to exchange the code
-      // with Google's token endpoint, then use signInWithOAuthToken
-
-      // For now, we'll use Supabase's OAuth flow which handles this
-      const authResult = await signInWithGoogleCode(code, getRedirectUri());
-
-      if (authResult.success && authResult.user) {
-        onSuccess?.(authResult.user);
+      if (authResult.success) {
+        onSuccess?.(authResult.user || null);
+      } else if (authResult.error) {
+        onError?.(authResult.error);
       }
 
       return authResult;
@@ -487,9 +425,39 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
       );
 
       if (result.type === 'success') {
-        const url = result.url;
-        // Parse the URL to get tokens
-        // Supabase handles the session automatically via deep link
+        // Wait for Supabase to establish the session
+        // The session is automatically created via the deep link callback
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session?.user) {
+          // Extract user profile from Supabase user metadata
+          // Use the Google email from the user object as the primary source
+          const userEmail = session.user.email;
+          const userName = session.user.user_metadata?.full_name ||
+                          session.user.user_metadata?.name ||
+                          session.user.user_metadata?.user_name ||
+                          (userEmail ? userEmail.split('@')[0] : 'User');
+          const userPicture = session.user.user_metadata?.avatar_url ||
+                             session.user.user_metadata?.picture;
+
+          // Extract profile from ID token if available, otherwise use Supabase user data
+          // For OAuth flows, Supabase stores the provider tokens
+          const profile: OAuthUserProfile = {
+            id: session.user.id,
+            email: userEmail || '',
+            emailVerified: session.user.email_confirmed_at != null ||
+                          session.user.user_metadata?.email_verified === true ||
+                          session.user.user_metadata?.verified_email === true,
+            name: userName,
+            picture: userPicture,
+          };
+
+          return {
+            success: true,
+            user: profile,
+          };
+        }
+
         return {
           success: true,
         };

@@ -29,6 +29,22 @@ export {
   type CurrentSession,
 } from "./currentSessionStore";
 
+// Current workout plan
+export {
+  useWorkoutPlanStore,
+  useCurrentPlan,
+  useIsHydrated as usePlanHydrated,
+  getCurrentPlan,
+  getIsHydrated as getPlanHydrated,
+  setCurrentPlan,
+  updateCurrentPlan,
+  clearCurrentPlan,
+  hydrateWorkoutPlanStore,
+  subscribeCurrentPlan,
+  selectPlan,
+  selectIsHydrated,
+} from "./workoutPlanStore";
+
 // User routines
 export {
   useRoutinesStore,

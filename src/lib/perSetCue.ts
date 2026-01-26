@@ -3,25 +3,16 @@ import { bucketKeyForUser, bucketValueInUserUnit } from "./buckets";
 import { estimate1RM_Epley } from "./e1rm";
 import { kgToLb } from "./units"; // [FIX 2026-01-23] Use canonical implementation
 
-export type Cue = {
-  message: string;
-  intensity: "low" | "med" | "high";
-  detail?: string; // optional second line for PR deltas, etc.
-};
-
-// [NEW 2026-01-23] InstantCue - simpler toast-friendly type (no id/duration needed)
-// Note: Toast component uses "low" | "high" only, "med" maps to "high" for display
-export type InstantCue = {
-  message: string;
-  detail?: string;
-  intensity: "low" | "high";
-};
-
-export type ExerciseSessionState = {
-  bestE1RMKg: number;
-  bestWeightKg: number;
-  bestRepsAtWeight: Record<string, number>;
-};
+// Export types from centralized types file
+export type {
+  Cue,
+  InstantCue,
+  ExerciseSessionState,
+  DetectCueParams,
+  DetectCueResult,
+  DetectCueMeta,
+  PRType,
+} from "./perSetCueTypes";
 
 export function makeEmptyExerciseState(): ExerciseSessionState {
   return { bestE1RMKg: 0, bestWeightKg: 0, bestRepsAtWeight: {} };
@@ -47,18 +38,7 @@ export function detectCueForWorkingSet(args: {
   unit: UnitSystem;
   exerciseName: string;
   prev: ExerciseSessionState;
-}): {
-  cue: Cue | null;
-  next: ExerciseSessionState;
-  meta: {
-    isCardio: boolean;
-    repDeltaAtWeight: number; // newReps - previousBestRepsAtThatBucket (0 if not PR)
-    weightDeltaLb: number; // newWeight - previousBestWeight (lb)
-    e1rmDeltaLb: number; // newE1RM - previousBestE1RM (lb)
-    type: "none" | "weight" | "rep" | "e1rm" | "cardio";
-    weightLabel: string; // e.g., "225.0 lb"
-  };
-} {
+}): DetectCueResult {
   const { weightKg, reps, unit, exerciseName, prev } = args;
 
   const next: ExerciseSessionState = {
@@ -103,7 +83,7 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "cardio",
         weightLabel,
-      },
+      } as const,
     };
   }
 
@@ -118,7 +98,7 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "weight",
         weightLabel,
-      },
+      } as const,
     };
   }
 
@@ -133,7 +113,7 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "rep",
         weightLabel,
-      },
+      } as const,
     };
   }
 
@@ -148,7 +128,7 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "e1rm",
         weightLabel,
-      },
+      } as const,
     };
   }
 
@@ -162,7 +142,7 @@ export function detectCueForWorkingSet(args: {
       e1rmDeltaLb: 0,
       type: "none",
       weightLabel,
-    },
+    } as const,
   };
 }
 

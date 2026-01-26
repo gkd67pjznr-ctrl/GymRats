@@ -3,6 +3,8 @@
 
 import { supabase } from '../supabase/client';
 import type { AuthResponse } from '@supabase/supabase-js';
+import { safeJSONParse } from '../storage/safeJSONParse';
+import { logError } from '../errorHandler';
 
 // ============================================================================
 // Types
@@ -246,11 +248,11 @@ export function decodeIdToken<T = Record<string, unknown>>(idToken: string): T |
     // Add padding if needed
     const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
 
-    // Decode and parse
+    // Decode and parse safely
     const decoded = atob(padded);
-    return JSON.parse(decoded) as T;
+    return safeJSONParse<T>(decoded, null);
   } catch (error) {
-    console.error('Failed to decode ID token:', error);
+    logError({ context: 'OAuth', error, userMessage: 'Failed to decode ID token' });
     return null;
   }
 }

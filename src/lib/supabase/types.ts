@@ -223,9 +223,7 @@ export type DatabaseUserInsert = Omit<
 export type DatabaseRoutineInsert = Pick<
   DatabaseRoutine,
   "name" | "exercises" | "source_plan_id" | "source_plan_category"
-> & {
-  user_id: string;
-};
+> & { user_id: string };
 
 export type DatabaseWorkoutInsert = Pick<
   DatabaseWorkout,
@@ -236,14 +234,9 @@ export type DatabaseWorkoutInsert = Pick<
   | "routine_name"
   | "plan_id"
   | "completion_pct"
-> & {
-  user_id: string;
-};
+> & { user_id: string };
 
-export type DatabaseFriendshipInsert = Pick<DatabaseFriendship, "status"> & {
-  user_id: string;
-  friend_id: string;
-};
+export type DatabaseFriendshipInsert = Pick<DatabaseFriendship, "status"> & { user_id: string; friend_id: string };
 
 export type DatabasePostInsert = Pick<
   DatabasePost,
@@ -255,26 +248,16 @@ export type DatabasePostInsert = Pick<
   | "exercise_count"
   | "set_count"
   | "workout_snapshot"
-} & {
-  author_id: string;
-};
+> & { author_id: string };
 
-export type DatabaseReactionInsert = Pick<DatabaseReaction, "emote"> & {
-  post_id: string;
-  user_id: string;
-};
+export type DatabaseReactionInsert = Pick<DatabaseReaction, "emote"> & { post_id: string; user_id: string };
 
-export type DatabaseCommentInsert = Pick<DatabaseComment, "text" | "parent_comment_id"> & {
-  post_id: string;
-  user_id: string;
-};
+export type DatabaseCommentInsert = Pick<DatabaseComment, "text" | "parent_comment_id"> & { post_id: string; user_id: string };
 
 export type DatabaseNotificationInsert = Pick<
   DatabaseNotification,
   "type" | "title" | "body" | "post_id" | "comment_id" | "read_at"
-> & {
-  user_id: string;
-};
+> & { user_id: string };
 
 // ============================================================================
 // Update Types (for updating existing records)
