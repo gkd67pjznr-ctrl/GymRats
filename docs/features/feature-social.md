@@ -1,7 +1,9 @@
 # Feature: Social & Feed
 
 ## Overview
-Social features for community engagement - friends, feed, posts, reactions. Built to help lifters share achievements and motivate each other.
+Social features for community engagement - friends, feed, posts, reactions. Built specifically for lifters, not general fitness. The social loop is a core differentiator.
+
+**Philosophy:** Public by default - encourages discovery and growth.
 
 ---
 
@@ -50,54 +52,94 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
-### Planned - Global Feed
-- [ ] Fetch public posts from Supabase
+### Planned - Feed Tabs
+- [ ] Global feed tab (all public posts)
+- [ ] Friends feed tab (friends only)
+- [ ] Easy tab switching
+- [ ] Remember last viewed tab
+
+---
+
+### Planned - Post Creation
+- [ ] Post creation screen
+- [ ] Workout stats display (exercises, sets, PRs)
+- [ ] Caption input
+- [ ] Optional photo upload
+- [ ] Body model default image (if no photo)
+- [ ] Rank badges earned display
+- [ ] Privacy selection (public/friends)
+- [ ] One-tap share to feed
+
+---
+
+### Planned - Feed Display
 - [ ] Infinite scroll pagination
 - [ ] Pull to refresh
-- [ ] Real-time updates
+- [ ] Real-time updates (new posts appear)
+- [ ] Post cards with consistent styling
+- [ ] Card skins (cosmetic customization)
 
-### Planned - Friends Feed
-- [ ] Filter by friends
-- [ ] Friend-only visibility
-
-### Planned - Post Workout
-- [ ] Post creation screen
-- [ ] Workout stats display
-- [ ] Caption input
-- [ ] Photo upload
-- [ ] Privacy selection
+---
 
 ### Planned - Reactions
-- [ ] Emote buttons (fire, skull, crown, etc.)
+- [ ] Quick emote buttons (fire, skull, crown, bolt, clap)
 - [ ] Reaction counts
 - [ ] Reaction animations
 - [ ] Real-time reaction updates
+- [ ] See who reacted
+
+---
 
 ### Planned - Comments
 - [ ] Comment input
 - [ ] Comment thread display
 - [ ] Reply to comments
+- [ ] Comment notifications
+
+---
 
 ### Planned - Friend Requests
 - [ ] Send friend request
 - [ ] Accept/decline UI
 - [ ] Request notifications
+- [ ] Friend request list
 
-### Planned - User Search
+---
+
+### Planned - User Discovery
 - [ ] Search by username
-- [ ] Search results display
+- [ ] Algorithm-suggested users
 - [ ] User profile preview
+- [ ] "People you may know"
+
+---
 
 ### Planned - User Profiles
 - [ ] Public profile page
 - [ ] Rank badges display
+- [ ] Level and streak display
 - [ ] Recent workouts
 - [ ] Stats summary
+- [ ] Add friend button
+- [ ] Block option
 
-### Planned - Notifications
-- [ ] Friend request alerts
-- [ ] Reaction notifications
-- [ ] Comment notifications
+---
+
+### Planned - Content Moderation
+- [ ] Report post button
+- [ ] Report user button
+- [ ] Block user functionality
+- [ ] AI pre-filtering (future)
+- [ ] Moderation queue (admin)
+
+---
+
+### Planned - Privacy Controls
+- [ ] Public by default (encourages discovery)
+- [ ] Friends-only option per post
+- [ ] Private account option
+- [ ] Per-post privacy selection
+- [ ] Clear privacy indicators
 
 ---
 
@@ -119,42 +161,88 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 type Post = {
   id: string;
   authorId: string;
-  title: string;
   caption?: string;
+  photoUrl?: string;
+  bodyModelData?: MuscleVolumeMap; // for default image
   privacy: 'public' | 'friends';
   workoutSnapshot: WorkoutSnapshot;
-  likeCount: number;
+  ranksEarned: RankBadge[];
+  reactionCounts: Record<string, number>;
   commentCount: number;
   createdAtMs: number;
-}
+};
+
+type WorkoutSnapshot = {
+  exercises: string[];
+  totalSets: number;
+  totalVolume: number;
+  durationMs: number;
+  prs: PR[];
+};
 
 type Friendship = {
   userId: string;
   friendId: string;
   status: 'requested' | 'pending' | 'friends' | 'blocked';
-}
+  createdAtMs: number;
+};
 
 type Reaction = {
+  id: string;
   postId: string;
   userId: string;
-  emote: 'like' | 'fire' | 'skull' | 'crown' | 'bolt' | 'clap';
-}
+  emote: 'fire' | 'skull' | 'crown' | 'bolt' | 'clap' | 'heart';
+  createdAtMs: number;
+};
 ```
 
 **Database Tables:**
-- `posts` - Social feed posts
+- `posts` - Social feed posts (JSONB: workout_snapshot)
 - `reactions` - Post reactions
 - `comments` - Post comments
 - `friendships` - Friend relationships
 - `notifications` - User notifications
 
+**Real-Time Subscriptions:**
+```typescript
+// Subscribe to new posts
+supabase
+  .channel('public:posts')
+  .on('INSERT', payload => handleNewPost(payload))
+  .subscribe();
+
+// Subscribe to reactions on your posts
+supabase
+  .channel('user:reactions')
+  .on('INSERT', payload => handleNewReaction(payload))
+  .subscribe();
+```
+
 ---
 
 ## Privacy Model
 
-- **Public**: Visible to all users
-- **Friends**: Visible to friends only
-- **Default**: Public (encourages discovery)
+| Setting | Visibility |
+|---------|------------|
+| Public (default) | All users |
+| Friends | Friends only |
+| Private account | Only you see your posts |
+
+**Why Public Default:** Encourages discovery, community growth, and app virality. Users can always opt out.
+
+---
+
+## Content Moderation
+
+**v1 Approach (Simple):**
+- Report + Block functionality
+- Manual review queue
+- User blocking persists
+
+**Future (v2+):**
+- AI content filtering
+- Automated flagging
+- Moderation tools for admins
 
 ---
 
@@ -163,3 +251,26 @@ type Reaction = {
 - Backend (Supabase) for data persistence
 - Auth for user identity
 - Real-time subscriptions for updates
+- Body Model (for default post images)
+- Cosmetics (for card skins)
+
+---
+
+## Priority
+
+**P0 (Phase 3):**
+- Global + Friends feed tabs
+- Workout posts with stats
+- Reactions
+- Friend requests
+
+**P1 (Phase 3-4):**
+- Comments
+- User profiles
+- User search
+- Content moderation
+
+**P2 (Post-Launch):**
+- Algorithm suggestions
+- Advanced privacy controls
+- AI moderation
