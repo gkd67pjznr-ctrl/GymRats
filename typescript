@@ -1,183 +1,0 @@
-Script started on 2026-01-13 09:17:50-07:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="108" LINES="47"]
-[?2004h]0;thomas@tubuntu: ~/forgerank[01;32mthomas@tubuntu[00m:[01;34m~/forgerank[00m$ "scripts" [K: {
-[?2004lscripts:: command not found
-[?2004h]0;thomas@tubuntu: ~/forgerank[01;32mthomas@tubuntu[00m:[01;34m~/forgerank[00m$ "scripts": {[K"scripts": {npx expo start[2P"scripts": {[Knpx expo install @react-navigation/native
-[?2004l› Installing 1 other package using [1mnpm[22m
-> npm install --save @react-navigation/native
-⠙[1G[0K⠹[1G[0K⠸[1G[0K⠼[1G[0K⠴[1G[0K⠦[1G[0K⠧[1G[0K⠇[1G[0K⠏[1G[0K⠋[1G[0K⠙[1G[0K⠹[1G[0K⠸[1G[0K
-added 2 packages, and audited 915 packages in 2s
-⠸[1G[0K
-⠸[1G[0K166 packages are looking for funding
-⠸[1G[0K  run `npm fund` for details
-⠸[1G[0K
-found [32m[1m0[22m[39m vulnerabilities
-⠸[1G[0K⠙[1G[0K[?2004h]0;thomas@tubuntu: ~/forgerank[01;32mthomas@tubuntu[00m:[01;34m~/forgerank[00m$ npx expo install react-native-screens react [K-native-safe-area-context
-[?2004l› Installing 2 SDK 54.0.0 compatible native modules using [1mnpm[22m
-> npm install
-⠙[1G[0K⠹[1G[0K⠸[1G[0K⠼[1G[0K
-up to date, audited 915 packages in 1s
-⠼[1G[0K
-⠼[1G[0K166 packages are looking for funding
-⠼[1G[0K  run `npm fund` for details
-⠼[1G[0K
-found [32m[1m0[22m[39m vulnerabilities
-⠼[1G[0K⠙[1G[0K[?2004h]0;thomas@tubuntu: ~/forgerank[01;32mthomas@tubuntu[00m:[01;34m~/forgerank[00m$ npx expo install @react-navt[Kigation/boo[Kttom-=[Ktabs @react-navigation/native-=[Kstack
-[?2004l› Installing 2 other packages using [1mnpm[22m
-> npm install --save @react-navigation/bottom-tabs @react-navigation/native-stack
-⠙[1G[0K⠹[1G[0K⠸[1G[0K⠼[1G[0K⠴[1G[0K⠦[1G[0K⠧[1G[0K⠇[1G[0K⠏[1G[0K⠋[1G[0K
-up to date, audited 915 packages in 2s
-⠋[1G[0K
-⠋[1G[0K166 packages are looking for funding
-⠋[1G[0K  run `npm fund` for details
-⠋[1G[0K
-found [32m[1m0[22m[39m vulnerabilities
-⠋[1G[0K⠙[1G[0K[?2004h]0;thomas@tubuntu: ~/forgerank[01;32mthomas@tubuntu[00m:[01;34m~/forgerank[00m$ import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Text, View, Pressable } from "react-native";
-
-function TrainScreen({ navigation }: any) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 16 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", marginBottom: 12 }}>Train</Text>
-
-      <Pressable
-        onPress={() => navigation.navigate("LiveWorkout")}
-        style={{
-          paddingVertical: 12,
-          paddingHorizontal: 16,
-          borderRadius: 12,
-          borderWidth: 1,
-        }}
-      >
-        <Text style={{ fontSize: 16, fontWeight: "600" }}>Start Workout</Text>
-      </Pressable>
-[7m    </View>[27m
-[7m  );[27m
-[7m}[27m
-
-[7mfunction LiveWorkoutScreen() {[27m
-[7m  return ([27m
-[7m    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 16 }}>[27m
-[7m      <Text style={{ fontSize: 22, fontWeight: "700" }}>Live Workout</Text>[27m
-[7m      <Text style={{ marginTop: 8 }}>We’ll build the logger here next.</Text>[27m
-[7m    </View>[27m
-[7m  );[27m
-[7m}[27m
-
-[7mconst Stack = createNativeStackNavigator();[27m
-[7mfunction TrainStack() {[27m
-[7m  return ([27m
-[7m    <Stack.Navigator>[27m
-[7m      <Stack.Screen name="TrainHome" component={TrainScreen} options={{ title: "Train" }} />[27m
-[7m      <Stack.Screen name="LiveWorkout" component={LiveWorkoutScreen} options={{ title: "Live Workout" }} />[27m
-[7m    </Stack.Navigator>[27m
-[7m  );[27m
-[7m}[27m
-
-[7mfunction Placeholder({ title }: { title: string }) {[27m
-[7m  return ([27m
-[7m    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>[27m[7m      <Text style={{ fontSize: 22, fontWeight: "700" }}>{title}</Text>[27m[7m    </View>[27m[7m  );[27m[7m}[27m[7mconst Tab = createBottomTabNavigator();[27m[7mexport default function App() {[27m[7m  return ([27m[7m    <NavigationContainer>[27m[7m      <Tab.Navigator screenOptions={{ headerShown: false }}>[27m[7m        <Tab.Screen name="Train" component={TrainStack} />[27m[7m        <Tab.Screen name="Programs" children={() => <Placeholder title="Programs" />} />[27m[7m        <Tab.Screen name="Rank" children={() => <Placeholder title="Rank" />} />[27m[7m        <Tab.Screen name="Community" children={() => <Placeholder title="Community" />} />[27m[7m        <Tab.Screen name="Profile" children={() => <Placeholder title="Profile" />} />[27m[7m      </Tab.Navigator>[27m[7m    </NavigationContainer>[27m[7m  );[27m[7m}[27m[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A    </View>
-  );
-}
-
-function LiveWorkoutScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 16 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700" }}>Live Workout</Text>
-      <Text style={{ marginTop: 8 }}>We’ll build the logger here next.</Text>
-    </View>
-  );
-}
-
-const Stack = createNativeStackNavigator();
-function TrainStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="TrainHome" component={TrainScreen} options={{ title: "Train" }} />
-      <Stack.Screen name="LiveWorkout" component={LiveWorkoutScreen} options={{ title: "Live Workout" }} />
-    </Stack.Navigator>
-  );
-}
-
-function Placeholder({ title }: { title: string }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>      <Text style={{ fontSize: 22, fontWeight: "700" }}>{title}</Text>    </View>  );}const Tab = createBottomTabNavigator();export default function App() {  return (    <NavigationContainer>      <Tab.Navigator screenOptions={{ headerShown: false }}>        <Tab.Screen name="Train" component={TrainStack} />        <Tab.Screen name="Programs" children={() => <Placeholder title="Programs" />} />        <Tab.Screen name="Rank" children={() => <Placeholder title="Rank" />} />        <Tab.Screen name="Community" children={() => <Placeholder title="Community" />} />        <Tab.Screen name="Profile" children={() => <Placeholder title="Profile" />} />      </Tab.Navigator>    </NavigationContainer>  );}
-[?2004lCommand 'import' not found, but can be installed with:
-sudo apt install graphicsmagick-imagemagick-compat  # version 1.4+really1.3.45+hg17696-1build1, or
-sudo apt install imagemagick-7.q16                  # version 8:7.1.2.3+dfsg1-1
-sudo apt install imagemagick-7.q16hdri              # version 8:7.1.2.3+dfsg1-1
-Command 'import' not found, but can be installed with:
-sudo apt install graphicsmagick-imagemagick-compat  # version 1.4+really1.3.45+hg17696-1build1, or
-sudo apt install imagemagick-7.q16                  # version 8:7.1.2.3+dfsg1-1
-sudo apt install imagemagick-7.q16hdri              # version 8:7.1.2.3+dfsg1-1
-Command 'import' not found, but can be installed with:
-sudo apt install graphicsmagick-imagemagick-compat  # version 1.4+really1.3.45+hg17696-1build1, or
-sudo apt install imagemagick-7.q16                  # version 8:7.1.2.3+dfsg1-1
-sudo apt install imagemagick-7.q16hdri              # version 8:7.1.2.3+dfsg1-1
-Command 'import' not found, but can be installed with:
-sudo apt install graphicsmagick-imagemagick-compat  # version 1.4+really1.3.45+hg17696-1build1, or
-sudo apt install imagemagick-7.q16                  # version 8:7.1.2.3+dfsg1-1
-sudo apt install imagemagick-7.q16hdri              # version 8:7.1.2.3+dfsg1-1
-Command 'import' not found, but can be installed with:
-sudo apt install graphicsmagick-imagemagick-compat  # version 1.4+really1.3.45+hg17696-1build1, or
-sudo apt install imagemagick-7.q16                  # version 8:7.1.2.3+dfsg1-1
-sudo apt install imagemagick-7.q16hdri              # version 8:7.1.2.3+dfsg1-1
-bash: syntax error near unexpected token `)'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: Pressable: No such file or directory
-bash: syntax error near unexpected token `('
-paddingVertical:: command not found
-paddingHorizontal:: command not found
-borderRadius:: command not found
-borderWidth:: command not found
-}}: command not found
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `)'
-bash: syntax error near unexpected token `}'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `)'
-bash: syntax error near unexpected token `}'
-bash: syntax error near unexpected token `('
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `)'
-bash: syntax error near unexpected token `}'
-bash: syntax error near unexpected token `)'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near `}}>{title}<'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `)'
-bash: syntax error near unexpected token `}'
-bash: syntax error near unexpected token `('
-bash: syntax error near unexpected token `('
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `('
-bash: syntax error near unexpected token `('
-bash: syntax error near unexpected token `('
-bash: syntax error near unexpected token `('
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `newline'
-bash: syntax error near unexpected token `)'
-bash: syntax error near unexpected token `}'
-[?2004h]0;thomas@tubuntu: ~/forgerank[01;32mthomas@tubuntu[00m:[01;34m~/forgerank[00m$ app.tsx
-[?2004lapp.tsx: command not found
-[?2004h]0;thomas@tubuntu: ~/forgerank[01;32mthomas@tubuntu[00m:[01;34m~/forgerank[00m$ 
-Script done on 2026-01-13 09:55:30-07:00 [COMMAND_EXIT_CODE="0"]
