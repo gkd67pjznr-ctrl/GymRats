@@ -168,3 +168,4 @@ dist-ssr/
 *.sublime-workspace
 *.sw?
 *-secret.*
+claude-settings-*.json
