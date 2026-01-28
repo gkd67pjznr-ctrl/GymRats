@@ -1,9 +1,11 @@
 // app/create-post.tsx
 import { Stack, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View, Image, Alert, ActivityIndicator } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { useUser } from "../src/lib/stores/authStore";
 import { createPost, type PostVisibility } from "../src/lib/stores/feedStore";
+import { uploadPostPhoto } from "../src/lib/supabase/storage";
 import type { ID } from "../src/lib/socialModel";
 import { useThemeColors } from "../src/ui/theme";
 import { KeyboardAwareScrollView } from "../src/ui/components/KeyboardAwareScrollView";
@@ -19,21 +21,70 @@ export default function CreatePostScreen() {
   const [text, setText] = useState("");
   const [visibility, setVisibility] = useState<PostVisibility>("public");
   const [error, setError] = useState<string | null>(null);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const remaining = useMemo(() => 240 - text.length, [text.length]);
-  const canPublish = text.trim().length >= 1 && remaining >= 0;
+  const canPublish = (text.trim().length >= 1 || photoUri) && remaining >= 0 && !isUploading;
 
-  function onPublish() {
+  async function handlePickPhoto() {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Required", "Please grant camera roll permissions to add a photo.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setPhotoUri(result.assets[0].uri);
+      }
+    } catch (err) {
+      Alert.alert("Error", "Failed to pick photo");
+    }
+  }
+
+  function handleRemovePhoto() {
+    setPhotoUri(null);
+  }
+
+  async function onPublish() {
     const clean = text.trim();
-    if (!clean) return;
+    if (!clean && !photoUri) return;
 
     setError(null);
+    setIsUploading(true);
 
     try {
-      createPost({ authorUserId: userId, text: clean, visibility });
+      let photoUrl: string | undefined;
+
+      // Upload photo if present
+      if (photoUri && user) {
+        const uploadResult = await uploadPostPhoto(photoUri, user.id);
+        if (!uploadResult.success || !uploadResult.url) {
+          throw new Error(uploadResult.error || "Failed to upload photo");
+        }
+        photoUrl = uploadResult.url;
+      }
+
+      // Create post with or without photo
+      createPost({
+        authorUserId: userId,
+        text: clean || "",
+        visibility,
+        photoUrl,
+      });
+
       router.back();
-    } catch {
-      setError("Could not publish post.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not publish post.");
+      setIsUploading(false);
     }
   }
 
@@ -57,6 +108,65 @@ export default function CreatePostScreen() {
 
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 24 }}>
+          {/* Photo Upload */}
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: c.border,
+              backgroundColor: c.card,
+              borderRadius: 18,
+              padding: 14,
+              gap: 10,
+            }}
+          >
+            <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Photo</Text>
+
+            {photoUri ? (
+              <View style={{ gap: 10 }}>
+                <Image
+                  source={{ uri: photoUri }}
+                  style={{
+                    width: "100%",
+                    height: 200,
+                    borderRadius: 12,
+                  }}
+                />
+                <Pressable
+                  onPress={handleRemovePhoto}
+                  style={{
+                    alignSelf: "flex-start",
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    borderRadius: 12,
+                    backgroundColor: "#fee2e2",
+                    borderWidth: 1,
+                    borderColor: "#fca5a5",
+                  }}
+                >
+                  <Text style={{ color: "#991b1b", fontWeight: "700", fontSize: 12 }}>Remove</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <Pressable
+                onPress={handlePickPhoto}
+                style={({ pressed }) => ({
+                  borderWidth: 1,
+                  borderColor: c.border,
+                  backgroundColor: c.bg,
+                  borderRadius: 12,
+                  paddingVertical: 16,
+                  paddingHorizontal: 14,
+                  alignItems: "center",
+                  opacity: pressed ? 0.7 : 1,
+                  gap: 8,
+                })}
+              >
+                <Text style={{ color: c.muted, fontSize: 24 }}>📷</Text>
+                <Text style={{ color: c.text, fontWeight: "700" }}>Add Photo</Text>
+              </Pressable>
+            )}
+          </View>
+
           {/* Visibility toggle */}
           <View
             style={{
@@ -164,7 +274,11 @@ export default function CreatePostScreen() {
                 opacity: !canPublish ? 0.45 : pressed ? 0.7 : 1,
               })}
             >
-              <Text style={{ color: c.text, fontWeight: "900" }}>Publish</Text>
+              {isUploading ? (
+                <ActivityIndicator size="small" color={c.text} />
+              ) : (
+                <Text style={{ color: c.text, fontWeight: "900" }}>Publish</Text>
+              )}
             </Pressable>
           </View>
         </KeyboardAwareScrollView>

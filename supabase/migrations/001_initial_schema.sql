@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS public.users (
 -- User workout routines with exercise configurations
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.routines (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   exercises JSONB NOT NULL DEFAULT '[]',
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS public.routines (
 -- Workout sessions with sets and completion data
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.workouts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   started_at BIGINT NOT NULL,
   ended_at BIGINT NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS public.workouts (
 -- Friend relationships between users
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.friendships (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   friend_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   status TEXT NOT NULL DEFAULT 'none' CHECK (status IN ('none', 'requested', 'pending', 'friends', 'blocked')),
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS public.friendships (
 -- Social workout posts for the feed
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.posts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   author_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   title TEXT,
   caption TEXT,
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS public.posts (
 -- User reactions (emotes) on posts
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.reactions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   emote TEXT NOT NULL CHECK (emote IN ('like', 'fire', 'skull', 'crown', 'bolt', 'clap')),
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS public.reactions (
 -- Comments on posts (with threading support)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.comments (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   text TEXT NOT NULL,
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS public.comments (
 -- User notifications for social interactions
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.notifications (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   type TEXT NOT NULL CHECK (type IN ('reaction', 'comment', 'friend_request', 'friend_accept', 'message')),
   title TEXT NOT NULL,

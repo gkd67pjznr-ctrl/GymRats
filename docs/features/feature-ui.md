@@ -76,10 +76,20 @@ Visual design, theming, components, and polish. The "mysterious, exclusive" aest
 
 ---
 
-### Planned - PR Celebration Animation
-- [ ] Toast slide-in animation
-- [ ] Particle/sparkle effects
-- [ ] Rank tier gradient background
+### Done - PR Celebration Animation
+- [x] Full-screen celebration modal
+- [x] 4-tier system based on PR magnitude
+- [x] Animated entrance/exit (pop-in, glow pulse)
+- [x] Sound effects integration
+- [x] Haptic feedback patterns
+- [x] 60 celebrations (3 PR types × 4 tiers × 5 variants)
+- [x] AI-ready content system for future images
+
+**Implementation:** `src/lib/celebration/`, `src/ui/components/LiveWorkout/PRCelebration.tsx`
+
+**Tests:** 53 tests (selector, content, sound manager)
+
+**See Also:** `docs/instructions.md` for adding AI-generated images
 
 ### Planned - Rank-Up Animation
 - [ ] Level-up modal

@@ -6,6 +6,12 @@ import { useThemeColors } from "../../src/ui/theme";
 import { useDevMode } from "../../src/lib/devMode";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
+// Gamification imports
+import { useGamificationStore } from "../../src/lib/stores/gamificationStore";
+import { useIsGamificationHydrated, usePendingLevelUp } from "../../src/lib/stores/gamificationStore";
+import { StatsAndRanksCard } from "../../src/ui/components/Gamification";
+import { LevelUpModal } from "../../src/ui/components/Gamification";
+import type { LevelUpCelebration } from "../../src/lib/gamification/types";
 
 export default function ProfileTab() {
   const c = useThemeColors();
@@ -15,7 +21,21 @@ export default function ProfileTab() {
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [password, setPassword] = useState("");
 
+  // Gamification state
+  const isHydrated = useIsGamificationHydrated();
+  const profile = useGamificationStore((s) => s.profile);
+  const pendingLevelUp = usePendingLevelUp();
+  const dismissLevelUp = useGamificationStore((s) => s.dismissLevelUp);
+  const syncToServer = useGamificationStore((s) => s.sync);
+
   const DEV_PASSWORD = "62136213";
+
+  // Sync gamification data on mount
+  useEffect(() => {
+    if (isHydrated) {
+      syncToServer().catch((err) => console.error("Failed to sync gamification:", err));
+    }
+  }, [isHydrated]);
 
   useEffect(() => {
     // Simulate brief initialization
@@ -54,8 +74,8 @@ export default function ProfileTab() {
     setPassword("");
   };
 
-  // Show loading spinner briefly
-  if (isLoading) {
+  // Show loading spinner briefly (or waiting for gamification to hydrate)
+  if (isLoading || !isHydrated) {
     return (
       <View style={{ 
         flex: 1, 
@@ -232,21 +252,18 @@ export default function ProfileTab() {
           </Text>
         </View>
 
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: c.border,
-            borderRadius: 14,
-            padding: 14,
-            backgroundColor: c.card,
-            gap: 8,
-          }}
-        >
-          <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Stats & Ranks</Text>
-          <Text style={{ color: c.muted, lineHeight: 18 }}>
-            Lifetime PRs, streaks, volume charts, and exercise ranks will live here.
-          </Text>
-        </View>
+        {/* Gamification Stats & Ranks Card */}
+        <StatsAndRanksCard profile={profile} />
+
+        {/* Gamification Stats & Ranks Card */}
+        <StatsAndRanksCard profile={profile} />
+
+        {/* Level Up Modal */}
+        <LevelUpModal
+          visible={pendingLevelUp !== null}
+          celebration={pendingLevelUp}
+          onDismiss={dismissLevelUp}
+        />
 
         {/* Dev tools (only shown when dev mode enabled) */}
         {devMode.isEnabled && (

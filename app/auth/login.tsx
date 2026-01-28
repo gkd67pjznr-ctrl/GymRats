@@ -134,12 +134,7 @@ export default function LoginScreen() {
    * Handle forgot password
    */
   function handleForgotPassword() {
-    // TODO: Implement password reset flow
-    Alert.alert(
-      "Password Reset",
-      "Password reset functionality will be implemented soon.",
-      [{ text: "OK" }]
-    );
+    router.push("/auth/forgot-password");
   }
 
   /**
@@ -345,6 +340,32 @@ export default function LoginScreen() {
             </Text>
           </Pressable>
         </View>
+
+        {/* Dev Login Button (DEV ONLY) */}
+        {__DEV__ && (
+          <Pressable
+            onPress={async () => {
+              setIsGoogleLoading(true);
+              const result = await authStore.devLogin();
+              setIsGoogleLoading(false);
+              if (result.success) {
+                router.replace("/(tabs)");
+              } else {
+                Alert.alert("Dev Login Error", result.error || "Failed to login");
+              }
+            }}
+            style={{
+              backgroundColor: "#FF6B6B",
+              borderRadius: 12,
+              padding: 12,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: "900", color: "#ffffff" }}>
+              👨‍💻 Dev Login (Quick)
+            </Text>
+          </Pressable>
+        )}
 
         {/* Signup Link */}
         <View style={{ flexDirection: "row", justifyContent: "center", gap: 4 }}>

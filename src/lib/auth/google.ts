@@ -47,12 +47,11 @@ const GOOGLE_DISCOVERY_URL =
  */
 function getRedirectUri(): string {
   const scheme = Constants.expoConfig?.scheme || 'forgerank';
-  return makeRedirectUri({
-    scheme,
-    path: 'auth',
-    // For standalone apps, use the native redirect
-    preferLocalhost: true,
-  });
+  // Use the simple scheme://path format for deep linking
+  // This works better with Supabase OAuth than makeRedirectUri
+  const redirectUri = `${scheme}://auth`;
+  console.log('[Google OAuth] Redirect URI:', redirectUri);
+  return redirectUri;
 }
 
 /**
@@ -164,7 +163,9 @@ export function useGoogleAuth(options: UseGoogleAuthOptions = {}) {
       const authResult = await signInWithSupabaseGoogle();
 
       if (authResult.success) {
-        onSuccess?.(authResult.user || null);
+        if (authResult.user) {
+          onSuccess?.(authResult.user);
+        }
       } else if (authResult.error) {
         onError?.(authResult.error);
       }
@@ -406,6 +407,8 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
   try {
     const redirectUri = getRedirectUri();
 
+    console.log('[Google OAuth] Initiating sign in with redirect URI:', redirectUri);
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -418,8 +421,11 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
     });
 
     if (error) {
+      console.error('[Google OAuth] Supabase OAuth error:', error);
       throw error;
     }
+
+    console.log('[Google OAuth] Auth URL generated:', data.url);
 
     // Open the auth URL in a browser
     if (data.url) {
@@ -428,6 +434,8 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
         redirectUri
       );
 
+      console.log('[Google OAuth] WebBrowser result:', result.type);
+
       if (result.type === 'success') {
         // The browser will redirect to the app's deep link
         // Supabase's URL listener in _layout.tsx will handle the session
@@ -435,11 +443,12 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
         // when the deep link is processed
         return {
           success: true,
-          user: null, // Will be populated by auth state change
+          // user: undefined - will be populated by auth state change
         };
       }
 
       if (result.type === 'cancel') {
+        console.log('[Google OAuth] User cancelled sign in');
         return {
           success: false,
           error: {
@@ -458,6 +467,7 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
       },
     };
   } catch (error) {
+    console.error('[Google OAuth] Sign in error:', error);
     return {
       success: false,
       error: parseOAuthError(error),

@@ -19,6 +19,9 @@ import { setCurrentPlan } from "../workoutPlanStore";
 import { uid as routineUid, type Routine, type RoutineExercise } from "../routinesModel";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine } from "../stores";
+// Gamification integration
+import { processGamificationWorkout, toWorkoutForCalculation } from "../hooks/useGamificationWorkoutFinish";
+import { useGamificationStore } from "../stores/gamificationStore";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -178,6 +181,15 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     };
 
     addWorkoutSession(sessionObj);
+
+    // Process gamification after workout is saved
+    const currentStreak = useGamificationStore.getState().profile.currentStreak;
+    const workoutForGamification = toWorkoutForCalculation(
+      sessionObj.sets,
+      currentStreak,
+      plan?.completionPct === 100
+    );
+    processGamificationWorkout(workoutForGamification);
 
     // Generate recap cues
     const grouped = groupSetsByExercise(sets);

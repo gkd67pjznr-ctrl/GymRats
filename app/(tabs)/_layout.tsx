@@ -94,11 +94,11 @@ export default function TabsLayout() {
         />
 
         <Tabs.Screen
-          name="body"
+          name="leaderboard"
           options={{
-            title: "Body",
+            title: "Ranks",
             tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? "body" : "body-outline"} size={size} color={color} />
+              <Ionicons name={focused ? "trophy" : "trophy-outline"} size={size} color={color} />
             ),
           }}
         />

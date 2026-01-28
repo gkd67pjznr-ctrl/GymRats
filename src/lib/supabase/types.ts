@@ -64,6 +64,15 @@ export type JsonWorkoutSnapshot = {
 // ============================================================================
 
 /**
+ * WorkoutCalendarEntry - stored in users.workout_calendar jsonb column
+ */
+export type JsonWorkoutCalendarEntry = {
+  date: string; // YYYY-MM-DD
+  count: number;
+  xp: number;
+};
+
+/**
  * users table - extends auth.users with profile data
  */
 export type DatabaseUser = {
@@ -73,6 +82,19 @@ export type DatabaseUser = {
   avatar_url: string | null;
   created_at: string; // ISO 8601 datetime
   updated_at: string; // ISO 8601 datetime
+  // Gamification columns
+  total_xp: number;
+  current_level: number;
+  xp_to_next_level: number;
+  level_up_celebration_shown: string | null; // ISO 8601 datetime
+  current_streak: number;
+  longest_streak: number;
+  last_workout_date: string | null; // YYYY-MM-DD
+  workout_calendar: JsonWorkoutCalendarEntry[];
+  forge_tokens: number;
+  tokens_earned_total: number;
+  tokens_spent_total: number;
+  milestones_completed: string[];
 };
 
 /**
@@ -218,7 +240,21 @@ export type DatabaseNotification = {
 export type DatabaseUserInsert = Omit<
   DatabaseUser,
   "id" | "created_at" | "updated_at"
->;
+> & {
+  // Gamification fields have defaults in the database
+  total_xp?: number;
+  current_level?: number;
+  xp_to_next_level?: number;
+  level_up_celebration_shown?: string | null;
+  current_streak?: number;
+  longest_streak?: number;
+  last_workout_date?: string | null;
+  workout_calendar?: JsonWorkoutCalendarEntry[];
+  forge_tokens?: number;
+  tokens_earned_total?: number;
+  tokens_spent_total?: number;
+  milestones_completed?: string[];
+};
 
 export type DatabaseRoutineInsert = Pick<
   DatabaseRoutine,
@@ -265,7 +301,25 @@ export type DatabaseNotificationInsert = Pick<
 // ============================================================================
 
 export type DatabaseUserUpdate = Partial<
-  Pick<DatabaseUserInsert, "email" | "display_name" | "avatar_url">
+  Pick<
+    DatabaseUserInsert,
+    | "email"
+    | "display_name"
+    | "avatar_url"
+    // Gamification fields
+    | "total_xp"
+    | "current_level"
+    | "xp_to_next_level"
+    | "level_up_celebration_shown"
+    | "current_streak"
+    | "longest_streak"
+    | "last_workout_date"
+    | "workout_calendar"
+    | "forge_tokens"
+    | "tokens_earned_total"
+    | "tokens_spent_total"
+    | "milestones_completed"
+  >
 >;
 
 export type DatabaseRoutineUpdate = Partial<

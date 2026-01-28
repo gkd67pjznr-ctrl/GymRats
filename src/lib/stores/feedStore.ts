@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
-import type { ID } from "../socialModel";
+import type { ID, WorkoutPost } from "../socialModel";
 import { uid } from "../uid";
 import { logError } from "../errorHandler";
 import { safeJSONParse } from "../storage/safeJSONParse";
@@ -31,6 +31,7 @@ export type FeedPost = {
   visibility: PostVisibility;
   baseLikeCount: number;
   baseCommentCount: number;
+  photoUrl?: string;
 };
 
 interface FeedState {
@@ -41,7 +42,7 @@ interface FeedState {
 
   // Actions
   toggleLike: (postId: ID, userId: ID) => { ok: boolean; reason?: string };
-  createPost: (opts: { authorUserId: ID; text: string; visibility?: PostVisibility }) => FeedPost;
+  createPost: (opts: { authorUserId: ID; text: string; visibility?: PostVisibility; photoUrl?: string }) => FeedPost;
   setHydrated: (value: boolean) => void;
 
   // Sync actions
@@ -137,6 +138,7 @@ export const useFeedStore = create<FeedState>()(
           visibility: opts.visibility ?? "public",
           baseLikeCount: 0,
           baseCommentCount: 0,
+          photoUrl: opts.photoUrl,
         };
 
         set((state) => ({
@@ -160,7 +162,8 @@ export const useFeedStore = create<FeedState>()(
 
         try {
           // Fetch feed from server
-          const remotePosts = await postRepository.fetchFeed({ userId: user.id });
+          const remoteWorkoutPosts = await postRepository.fetchFeed({ userId: user.id });
+          const remotePosts = remoteWorkoutPosts.map(workoutPostToFeedPost);
 
           set((state) => ({
             posts: mergeFeedPosts(state.posts, remotePosts),
@@ -225,7 +228,7 @@ export const useFeedStore = create<FeedState>()(
         // V1 to V2 migration
         AsyncStorage.getItem("feed.v1").then((v1Data) => {
           if (v1Data && state) {
-            const parsed = safeJSONParse<{ posts: FeedPost[]; likesByPostId: Record<string, Record<string, boolean>> }>(v1Data, null);
+            const parsed = safeJSONParse<{ posts: FeedPost[]; likesByPostId: Record<string, Record<string, boolean>> }>(v1Data, { posts: [], likesByPostId: {} });
             if (parsed && parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
               state.posts = parsed.posts;
               state.likesByPostId = parsed.likesByPostId ?? {};
@@ -329,7 +332,7 @@ export const areFriends = checkAreFriends;
 // Imperative action wrappers for non-React code
 // ============================================================================
 
-export function createPost(opts: { authorUserId: ID; text: string; visibility?: PostVisibility }): FeedPost {
+export function createPost(opts: { authorUserId: ID; text: string; visibility?: PostVisibility; photoUrl?: string }): FeedPost {
   return useFeedStore.getState().createPost(opts);
 }
 
@@ -340,6 +343,22 @@ export function toggleLike(postId: string, userId: string): { ok: boolean; reaso
 // ============================================================================
 // Sync Helpers
 // ============================================================================
+
+/**
+ * Convert WorkoutPost from cloud to FeedPost for local storage
+ */
+function workoutPostToFeedPost(wp: WorkoutPost): FeedPost {
+  return {
+    id: wp.id,
+    authorUserId: wp.authorUserId,
+    createdAtMs: wp.createdAtMs,
+    text: wp.caption ?? wp.title ?? "",
+    visibility: wp.privacy === "public" ? "public" : "friends",
+    baseLikeCount: wp.likeCount,
+    baseCommentCount: wp.commentCount,
+    photoUrl: wp.photoUrls?.[0], // Take first photo if available
+  };
+}
 
 /**
  * Merge local and remote feed posts

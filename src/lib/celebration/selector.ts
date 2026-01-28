@@ -17,7 +17,7 @@ import { CELEBRATIONS } from './content';
  * Tier 3: 10-20 lb  - Big PR, exciting celebration
  * Tier 4: 20+ lb    - MASSIVE PR, epic celebration
  */
-function deltaToTier(deltaLb: number): 1 | 2 | 3 | 4 {
+export function deltaToTier(deltaLb: number): 1 | 2 | 3 | 4 {
   if (deltaLb < 5) return 1;
   if (deltaLb < 10) return 2;
   if (deltaLb < 20) return 3;

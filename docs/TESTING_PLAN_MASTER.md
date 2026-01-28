@@ -257,6 +257,121 @@ Day 3: Move to next feature
 - Complete workout flow
 - PR detection accuracy
 - Data persistence
+- PR celebration system
+
+### After Phase 1 (Core Workout) - PR Celebration Testing
+
+#### TC-PR01: Small Weight PR (Tier 1)
+**Steps:**
+1. Start a workout on an exercise you've done before
+2. Log a set that beats your previous best by 1-5 lb
+3. Verify celebration modal appears
+4. Check that emoji shows correctly
+5. Tap "Continue" to dismiss
+
+**Expected:** Tier 1 celebration with modest visual, sound plays, haptic feedback
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
+
+#### TC-PR02: Medium Weight PR (Tier 2)
+**Steps:**
+1. Log a set that beats previous best by 5-10 lb
+2. Verify celebration modal appears
+3. Check tier indicator shows "Big"
+4. Verify sound is more intense than Tier 1
+
+**Expected:** Tier 2 celebration with more energy
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
+
+#### TC-PR03: Massive Weight PR (Tier 4)
+**Steps:**
+1. Log a set that beats previous best by 20+ lb
+2. Verify celebration modal appears
+3. Check tier indicator shows "Mythic"
+4. Verify haptic feedback has multiple pulses
+
+**Expected:** Tier 4 celebration with maximum intensity
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
+
+#### TC-PR04: Rep PR Celebration
+**Steps:**
+1. Log same weight as before but with more reps
+2. Verify "Rep PR" badge shows
+3. Check appropriate tier based on rep increase
+4. Verify detail text shows rep count
+
+**Expected:** Rep PR detected and celebrated
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
+
+#### TC-PR05: e1RM PR Celebration
+**Steps:**
+1. Log a set with higher reps at a weight that increases e1RM
+2. Verify "e1RM PR" badge shows
+3. Check celebration appears
+
+**Expected:** e1RM PR detected and celebrated
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
+
+#### TC-PR06: Dismiss Functionality
+**Steps:**
+1. Trigger any PR
+2. Wait for modal to appear
+3. Tap "Continue" button
+4. Verify modal closes smoothly
+5. Verify workout continues normally
+
+**Expected:** Modal dismisses cleanly without affecting workout state
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
+
+#### TC-PR07: Share Button (Stub)
+**Steps:**
+1. Trigger any PR
+2. Tap "Share" button
+3. Verify modal closes
+
+**Expected:** Modal closes (share functionality not implemented yet)
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
+
+#### TC-PR08: Multiple PRs in Session
+**Steps:**
+1. Log a PR (celebration should show)
+2. Dismiss celebration
+3. Log another PR on different exercise
+4. Verify celebration shows again with correct content
+
+**Expected:** Each PR triggers its own celebration
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+
+---
 
 ### After Phase 2 (Backend)
 - Auth flows

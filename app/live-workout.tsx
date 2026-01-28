@@ -27,6 +27,10 @@ import { SelectedExerciseCard } from "../src/ui/components/LiveWorkout/SelectedE
 import { WorkoutActions } from "../src/ui/components/LiveWorkout/WorkoutActions";
 import { RecapCues } from "../src/ui/components/LiveWorkout/RecapCues";
 import { PRCelebration } from "../src/ui/components/LiveWorkout/PRCelebration";
+// Gamification components
+import { LevelUpModal } from "../src/ui/components/Gamification";
+import { usePendingLevelUp } from "../src/lib/stores/gamificationStore";
+import { useGamificationStore } from "../src/lib/stores/gamificationStore";
 
 // Hooks
 import { useValidationToast } from "../src/lib/hooks/useValidationToast";
@@ -118,6 +122,10 @@ export default function LiveWorkout() {
 
   // PR celebration state
   const [celebration, setCelebration] = useState<SelectedCelebration | null>(null);
+
+  // Gamification state for level up modal
+  const pendingLevelUp = usePendingLevelUp();
+  const dismissLevelUp = useGamificationStore((s) => s.dismissLevelUp);
 
   // Exercise picker state - extracted to custom hook
   const pickerState = useExercisePickerState({
@@ -279,6 +287,12 @@ export default function LiveWorkout() {
           // TODO: Implement share functionality
           setCelebration(null);
         }}
+      />
+
+      <LevelUpModal
+        visible={pendingLevelUp !== null}
+        celebration={pendingLevelUp}
+        onDismiss={dismissLevelUp}
       />
 
       <ScrollView

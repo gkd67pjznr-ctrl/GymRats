@@ -190,6 +190,78 @@ npm run test:watch
 
 ---
 
+## INSTRUCTIONS.MD UPDATE PROTOCOL
+
+**CRITICAL:** After completing ANY feature that requires admin/user instructions to use, customize, or extend, you MUST update `docs/instructions.md` with those instructions.
+
+### When to Add Instructions
+
+Add instructions to `docs/instructions.md` when you build:
+- Features with configuration options (e.g., AI image integration, theme customization)
+- Systems that require content to be added (e.g., celebration assets, exercise data)
+- Features with extensible APIs or hooks
+- Anything the user (admin) needs to manually configure or maintain
+
+### What to Include
+
+For each instruction section, include:
+1. **Feature name** as heading
+2. **Brief description** of what it does
+3. **File(s) to edit** - exact paths
+4. **Step-by-step instructions** - clear, actionable steps
+5. **Code examples** - where helpful
+6. **Reference tables** - for keys, options, etc.
+
+### Template
+
+```markdown
+### [Feature Name]
+
+[Brief description of what the feature does]
+
+**File(s) to Edit:** `path/to/file.ts`
+
+**Instructions:**
+1. Step one
+2. Step two
+3. Step three
+
+**Example:**
+```typescript
+// Code example
+```
+
+**Reference:**
+| Key | Description |
+|-----|-------------|
+| key1 | Description |
+```
+```
+
+### After Adding Instructions
+
+1. Update the Table of Contents at the top of `docs/instructions.md`
+2. Inform the user that instructions have been added
+3. Reference the instructions file in completion message
+
+### Example Completion Message
+
+```markdown
+## Work Complete
+
+I've implemented the [feature name] system.
+
+**Instructions Added:**
+See `docs/instructions.md` → "[Feature Name]" section for:
+- How to customize [configurable aspect]
+- Where to add [content/assets]
+- Configuration options and examples
+
+The feature is ready to use with defaults, or you can customize it following the instructions.
+```
+
+---
+
 ## FEATURE FILE UPDATE PROTOCOL
 
 After completing work, update the relevant feature file in `docs/features/`:

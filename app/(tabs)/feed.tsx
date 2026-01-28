@@ -12,6 +12,7 @@ import { useThemeColors } from "../../src/ui/theme";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
 import { timeAgo } from "../../src/lib/units";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
+import { SyncStatusIndicator } from "../../src/ui/components/SyncStatusIndicator";
 
 type FeedMode = "public" | "friends";
 const ME = ME_ID;
@@ -222,9 +223,10 @@ export default function FeedTab() {
           </View>
 
           {/* Mode toggle */}
-          <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
+          <View style={{ flexDirection: "row", gap: FR.space.x2, alignItems: "center" }}>
             <ToggleChip label="Public" active={mode === "public"} onPress={() => setMode("public")} />
             <ToggleChip label="Friends" active={mode === "friends"} onPress={() => setMode("friends")} />
+            <SyncStatusIndicator displayMode="compact" storeName="social" />
             <Link href={"/friends" as any} asChild>
               <Pressable
                 style={({ pressed }) => ({

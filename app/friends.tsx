@@ -16,6 +16,7 @@ import {
 import type { ID } from "../src/lib/socialModel";
 import { useThemeColors } from "../src/ui/theme";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
+import { SyncStatusIndicator } from "../src/ui/components/SyncStatusIndicator";
 
 const ME: ID = "u_demo_me";
 
@@ -95,7 +96,10 @@ export default function FriendsScreen() {
           }
         >
           <View style={{ gap: 6, marginBottom: 6 }}>
-            <Text style={{ color: c.text, fontSize: 18, fontWeight: "900" }}>Friends</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <Text style={{ color: c.text, fontSize: 18, fontWeight: "900" }}>Friends</Text>
+              <SyncStatusIndicator displayMode="compact" storeName="friends" />
+            </View>
             <Text style={{ color: c.muted, fontWeight: "700" }}>
               Friends-only messaging is enforced in the chat store. Manage requests here.
             </Text>
