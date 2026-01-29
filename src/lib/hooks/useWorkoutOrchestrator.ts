@@ -18,7 +18,7 @@ import { formatDuration, uid as uid2, type WorkoutSession, type WorkoutSet } fro
 import { setCurrentPlan } from "../workoutPlanStore";
 import { uid as routineUid, type Routine, type RoutineExercise } from "../routinesModel";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine } from "../stores";
+import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine, useUser } from "../stores";
 // Gamification integration
 import { toWorkoutForCalculation } from "../hooks/useGamificationWorkoutFinish";
 import { useGamificationStore, processGamificationWorkout } from "../stores/gamificationStore";
@@ -65,6 +65,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
   // IMPORTANT: All hooks must be called before any conditional returns (Rules of Hooks)
   const hydrated = useIsHydrated();
   const persisted = useCurrentSession();
+  const user = useUser();
 
   // Define all callback hooks BEFORE the early return to satisfy Rules of Hooks
   const ensureExerciseState = useCallback((exerciseId: string): ExerciseSessionState => {
@@ -152,6 +153,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
 
     const sessionObj: WorkoutSession = {
       id: uid2(),
+      userId: user?.id ?? 'anonymous',
       startedAtMs: start,
       endedAtMs: now,
       sets: sets.map(
@@ -227,7 +229,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
 
     // Notify that workout is finished with session ID for navigation
     onWorkoutFinished?.(sessionObj.id);
-  }, [hydrated, persisted, plan, unit, onHaptic, onSound, onWorkoutFinished]);
+  }, [hydrated, persisted, plan, unit, onHaptic, onSound, onWorkoutFinished, user]);
 
   const saveAsRoutine = useCallback((exerciseBlocks: string[], sets: LoggedSet[]) => {
     // Before hydration, actions are no-ops

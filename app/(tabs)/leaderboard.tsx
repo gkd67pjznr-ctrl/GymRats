@@ -1,16 +1,18 @@
 // app/(tabs)/leaderboard.tsx
 // Leaderboard screens showing rankings across exercises, users, and activity
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Pressable, ScrollView, Text, View, ActivityIndicator } from "react-native";
 import { useThemeColors } from "../../src/ui/theme";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
 import { useUser } from "../../src/lib/stores/authStore";
 import { useWorkoutSessions } from "../../src/lib/stores";
+import { supabase } from "../../src/lib/supabase/client";
 import { EXERCISES_V1 } from "../../src/data/exercises";
 import type { WorkoutSet } from "../../src/lib/workoutModel";
 import { FR } from "../../src/ui/forgerankStyle";
+import { estimate1RM_Epley } from "../../src/lib/e1rm";
 
 type LeaderboardTab = "exercises" | "users" | "volume" | "streaks";
 
@@ -31,158 +33,80 @@ export default function LeaderboardTab() {
   const [activeTab, setActiveTab] = useState<LeaderboardTab>("exercises");
   const userId = user?.id ?? "u_demo_me";
 
-  // Calculate exercise rankings
-  const exerciseRankings = useMemo(() => {
-    const rankings: ExerciseRank[] = [];
+  const [exerciseRankings, setExerciseRankings] = useState<ExerciseRank[]>([]);
+  const groupedExerciseRankings = useMemo(() => {
+    const grouped = new Map<string, ExerciseRank[]>();
+    for (const ranking of exerciseRankings) {
+      if (!grouped.has(ranking.exerciseId)) {
+        grouped.set(ranking.exerciseId, []);
+      }
+      grouped.get(ranking.exerciseId)!.push(ranking);
+    }
+    return grouped;
+  }, [exerciseRankings]);
+  const [userRankings, setUserRankings] = useState<(LeaderboardEntry & { workoutCount?: number; setCount?: number })[]>([]);
+  const [volumeRankings, setVolumeRankings] = useState<Map<string, ExerciseRank[]>>(new Map());
+  const [streakRankings, setStreakRankings] = useState<(LeaderboardEntry & { currentStreak?: number })[]>([]);
 
-    for (const exercise of EXERCISES_V1) {
-      const exerciseStats = new Map<string, { bestE1RM: number; totalVolume: number }>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-      // Calculate best e1RM per user for this exercise
-      // Note: In production, sessions would have a userId field
-      // For now, we're using the current user ID as a placeholder
-      for (const session of sessions) {
-        for (const set of session.sets) {
-          if (set.exerciseId === exercise.id) {
-            const current = exerciseStats.get(userId) || { bestE1RM: 0, totalVolume: 0 };
-            const setE1RM = calculateE1RM(set.weightKg, set.reps);
-            const setVolume = set.weightKg * set.reps;
-
-            if (setE1RM > current.bestE1RM) {
-              current.bestE1RM = setE1RM;
-            }
-            current.totalVolume += setVolume;
-
-            exerciseStats.set(userId, current);
-          }
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        let functionName = '';
+        switch (activeTab) {
+          case 'exercises':
+            functionName = 'get-all-exercise-leaderboards';
+            break;
+          case 'users':
+            functionName = 'get-user-leaderboard-by-volume';
+            break;
+          case 'volume':
+            functionName = 'get-volume-leaderboards';
+            break;
+          case 'streaks':
+            functionName = 'get-streak-leaderboard';
+            break;
         }
-      }
 
-      // Sort by best e1RM and rank
-      const sorted = Array.from(exerciseStats.entries())
-        .map(([uid, stats]) => ({
-          exerciseId: exercise.id,
-          userId: uid,
-          userName: uid === userId ? "You" : uid,
-          value: stats.bestE1RM,
-          display: `${stats.bestE1RM.toFixed(1)} kg`,
-        }))
-        .sort((a, b) => b.value - a.value)
-        .map((entry, index) => ({ ...entry, rank: index + 1 }));
+        if (!functionName) return;
 
-      if (sorted.length > 0) {
-        rankings.push(...sorted);
-      }
-    }
+        const { data, error } = await supabase.functions.invoke(functionName);
 
-    return rankings;
-  }, [sessions, userId]);
+        if (error) throw error;
 
-  // Calculate overall user rankings by total volume
-  const userRankings = useMemo(() => {
-    const userStats = new Map<string, { totalVolume: number; workoutCount: number; setCount: number }>();
-
-    for (const session of sessions) {
-      const current = userStats.get(userId) || { totalVolume: 0, workoutCount: 0, setCount: 0 };
-
-      current.workoutCount += 1;
-
-      for (const set of session.sets) {
-        current.setCount += 1;
-        current.totalVolume += set.weightKg * set.reps;
-      }
-
-      userStats.set(userId, current);
-    }
-
-    // Sort by total volume
-    return Array.from(userStats.entries())
-      .map(([uid, stats]) => ({
-        rank: 0,
-        userId: uid,
-        userName: uid === userId ? "You" : uid,
-        value: stats.totalVolume,
-        display: `${(stats.totalVolume / 1000).toFixed(1)}k kg`,
-        workoutCount: stats.workoutCount,
-        setCount: stats.setCount,
-      }))
-      .sort((a, b) => b.value - a.value)
-      .map((entry, index) => ({ ...entry, rank: index + 1 }));
-  }, [sessions, userId]);
-
-  // Calculate volume rankings (per exercise)
-  const volumeRankings = useMemo(() => {
-    const volumeByExercise = new Map<string, ExerciseRank[]>();
-
-    for (const exercise of EXERCISES_V1) {
-      const exerciseStats = new Map<string, number>();
-
-      for (const session of sessions) {
-        for (const set of session.sets) {
-          if (set.exerciseId === exercise.id) {
-            const current = exerciseStats.get(userId) || 0;
-            const setVolume = set.weightKg * set.reps;
-            exerciseStats.set(userId, current + setVolume);
-          }
+        switch (activeTab) {
+          case 'exercises':
+            setExerciseRankings(data || []);
+            break;
+          case 'users':
+            setUserRankings(data || []);
+            break;
+          case 'volume':
+            setVolumeRankings(new Map(Object.entries(data || {})));
+            break;
+          case 'streaks':
+            setStreakRankings(data || []);
+            break;
         }
+
+      } catch (e: any) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const sorted = Array.from(exerciseStats.entries())
-        .map(([uid, volume]) => ({
-          exerciseId: exercise.id,
-          userId: uid,
-          userName: uid === userId ? "You" : uid,
-          value: volume,
-          display: `${(volume / 1000).toFixed(1)}k kg`,
-        }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 10) // Top 10 per exercise
-        .map((entry, index) => ({ ...entry, rank: index + 1 }));
+    fetchLeaderboard();
+  }, [activeTab, supabase]);
 
-      if (sorted.length > 0) {
-        volumeByExercise.set(exercise.id, sorted);
-      }
-    }
-
-    return volumeByExercise;
-  }, [sessions, userId]);
-
-  // Calculate streak rankings
-  const streakRankings = useMemo(() => {
-    const streaks = new Map<string, { currentStreak: number; longestStreak: number }>();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    for (const session of sessions) {
-      const sessionDate = new Date(session.startedAtMs);
-      sessionDate.setHours(0, 0, 0, 0);
-
-      // Simple streak calculation - count consecutive days with workouts
-      const dayDiff = Math.floor((today.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24));
-      if (dayDiff <= 5) {
-        // Recent workout, contributes to streak
-        const current = streaks.get(userId) || { currentStreak: 0, longestStreak: 0 };
-        current.currentStreak += 1;
-        if (current.currentStreak > current.longestStreak) {
-          current.longestStreak = current.currentStreak;
-        }
-        streaks.set(userId, current);
-      }
-    }
-
-    return Array.from(streaks.entries())
-      .map(([uid, stats]) => ({
-        rank: 0,
-        userId: uid,
-        userName: uid === userId ? "You" : uid,
-        value: stats.longestStreak,
-        display: `${stats.longestStreak} days`,
-        currentStreak: stats.currentStreak,
-      }))
-      .sort((a, b) => b.value - a.value)
-      .map((entry, index) => ({ ...entry, rank: index + 1 }));
-  }, [sessions, userId]);
-
+    
+  
+  
+  
   const ToggleTab = (p: { label: string; tab: LeaderboardTab }) => (
     <Pressable
       onPress={() => setActiveTab(p.tab)}
@@ -301,7 +225,11 @@ export default function LeaderboardTab() {
             {/* Content */}
             {activeTab === "exercises" && (
               <View style={{ gap: FR.space.x3 }}>
-                {exerciseRankings.length === 0 ? (
+                {loading ? (
+              <ActivityIndicator />
+            ) : error ? (
+              <Text style={{ color: c.danger }}>{error}</Text>
+            ) : exerciseRankings.length === 0 ? (
                   <View style={{ ...FR.card({ card: c.card, border: c.border }), padding: FR.space.x4, gap: 6 }}>
                     <Text style={{ color: c.text, ...FR.type.h3 }}>No rankings yet</Text>
                     <Text style={{ color: c.muted, ...FR.type.sub }}>
@@ -309,20 +237,36 @@ export default function LeaderboardTab() {
                     </Text>
                   </View>
                 ) : (
-                  exerciseRankings.slice(0, 20).map((entry) => (
-                    <ExerciseRankRow
-                      key={`${entry.exerciseId}-${entry.userId}`}
-                      entry={entry}
-                      exerciseName={EXERCISES_V1.find((e) => e.id === entry.exerciseId)?.name ?? entry.exerciseId}
-                    />
-                  ))
+                  Array.from(groupedExerciseRankings.entries()).map(([exerciseId, rankings]) => {
+                    const exercise = EXERCISES_V1.find((e) => e.id === exerciseId);
+                    if (!exercise || rankings.length === 0) return null;
+
+                    return (
+                      <View key={exerciseId} style={{ gap: FR.space.x2 }}>
+                        <Text style={{ color: c.text, ...FR.type.h3 }}>{exercise.name}</Text>
+                        <View style={{ ...FR.card({ card: c.card, border: c.border }) }}>
+                          {rankings.slice(0, 5).map((entry) => (
+                            <ExerciseRankRow
+                              key={`${exerciseId}-${entry.userId}`}
+                              entry={entry}
+                              exerciseName={exercise.name}
+                            />
+                          ))}
+                        </View>
+                      </View>
+                    );
+                  })
                 )}
               </View>
             )}
 
             {activeTab === "users" && (
               <View style={{ gap: FR.space.x3 }}>
-                {userRankings.length === 0 ? (
+                {loading ? (
+              <ActivityIndicator />
+            ) : error ? (
+              <Text style={{ color: c.danger }}>{error}</Text>
+            ) : userRankings.length === 0 ? (
                   <View style={{ ...FR.card({ card: c.card, border: c.border }), padding: FR.space.x4, gap: 6 }}>
                     <Text style={{ color: c.text, ...FR.type.h3 }}>No rankings yet</Text>
                     <Text style={{ color: c.muted, ...FR.type.sub }}>
@@ -346,7 +290,19 @@ export default function LeaderboardTab() {
 
             {activeTab === "volume" && (
               <View style={{ gap: FR.space.x4 }}>
-                {Array.from(volumeRankings.entries()).map(([exerciseId, rankings]) => {
+                {loading ? (
+              <ActivityIndicator />
+            ) : error ? (
+              <Text style={{ color: c.danger }}>{error}</Text>
+            ) : Array.from(volumeRankings.entries()).length === 0 ? (
+              <View style={{ ...FR.card({ card: c.card, border: c.border }), padding: FR.space.x4, gap: 6 }}>
+                <Text style={{ color: c.text, ...FR.type.h3 }}>No rankings yet</Text>
+                <Text style={{ color: c.muted, ...FR.type.sub }}>
+                  Log some workouts to see your rankings!
+                </Text>
+              </View>
+            ) : (
+              Array.from(volumeRankings.entries()).map(([exerciseId, rankings]) => {
                   const exercise = EXERCISES_V1.find((e) => e.id === exerciseId);
                   if (!exercise || rankings.length === 0) return null;
 
@@ -370,7 +326,11 @@ export default function LeaderboardTab() {
 
             {activeTab === "streaks" && (
               <View style={{ gap: FR.space.x3 }}>
-                {streakRankings.length === 0 ? (
+                {loading ? (
+              <ActivityIndicator />
+            ) : error ? (
+              <Text style={{ color: c.danger }}>{error}</Text>
+            ) : streakRankings.length === 0 ? (
                   <View style={{ ...FR.card({ card: c.card, border: c.border }), padding: FR.space.x4, gap: 6 }}>
                     <Text style={{ color: c.text, ...FR.type.h3 }}>No streaks yet</Text>
                     <Text style={{ color: c.muted, ...FR.type.sub }}>
@@ -398,7 +358,3 @@ export default function LeaderboardTab() {
   );
 }
 
-// Epley formula for e1RM calculation
-function calculateE1RM(weightKg: number, reps: number): number {
-  return weightKg * (1 + reps / 30);
-}

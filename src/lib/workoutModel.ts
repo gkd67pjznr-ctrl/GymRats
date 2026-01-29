@@ -8,6 +8,7 @@ export type WorkoutSet = {
 
 export type WorkoutSession = {
   id: string;
+  userId: string;
   startedAtMs: number;
   endedAtMs: number;
   sets: WorkoutSet[];

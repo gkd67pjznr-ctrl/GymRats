@@ -349,7 +349,9 @@ describe('currentSessionStore - PersistQueue verification (TASK-005)', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
     });
 
-    ensureCurrentSession();
+    act(() => {
+      ensureCurrentSession();
+    });
 
     // Rapidly update session 5 times
     act(() => {
@@ -395,7 +397,9 @@ describe('currentSessionStore - PersistQueue verification (TASK-005)', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
     });
 
-    ensureCurrentSession();
+    act(() => {
+      ensureCurrentSession();
+    });
 
     // Rapid updates
     act(() => {
@@ -427,7 +431,9 @@ describe('currentSessionStore - Error boundary (TASK-008)', () => {
     mockAsyncStorage.getItem.mockResolvedValueOnce(null);
     mockAsyncStorage.setItem.mockRejectedValue(writeError);
 
-    ensureCurrentSession();
+    act(() => {
+      ensureCurrentSession();
+    });
 
     // Wait for error to be logged
     await waitFor(() => {
@@ -453,7 +459,9 @@ describe('currentSessionStore - Error boundary (TASK-008)', () => {
     mockAsyncStorage.getItem.mockResolvedValueOnce(null);
     mockAsyncStorage.setItem.mockRejectedValue(new Error('Write failed'));
 
-    ensureCurrentSession();
+    act(() => {
+      ensureCurrentSession();
+    });
 
     // Wait a bit for any unhandled rejections
     await new Promise(resolve => setTimeout(resolve, 100));

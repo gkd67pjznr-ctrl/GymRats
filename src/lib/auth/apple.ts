@@ -354,8 +354,8 @@ export function getAppleDisplayName(
     return undefined;
   }
 
-  const firstName = fullName.givenName || '';
-  const lastName = fullName.familyName || '';
+  const firstName = fullName.givenName?.trim() || '';
+  const lastName = fullName.familyName?.trim() || '';
 
   if (!firstName && !lastName) {
     return undefined;
@@ -376,7 +376,7 @@ export function getAppleDisplayName(
 export function hasEmail(
   credential: AppleAuthentication.AppleAuthenticationCredential
 ): boolean {
-  return credential.email !== null && credential.email !== undefined;
+  return credential.email !== null && credential.email !== undefined && credential.email !== '';
 }
 
 /**
