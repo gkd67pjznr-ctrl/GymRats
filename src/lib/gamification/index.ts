@@ -119,3 +119,19 @@ export {
   selectLevelTierColor,
   selectLevelTierName,
 } from './levelUp/selector';
+
+// ========== Shop ==========
+export {
+  SHOP_ITEMS,
+  getShopItemsByCategory,
+  getShopItem,
+  getRarityColor,
+  DEFAULT_INVENTORY,
+} from './shop';
+
+export type {
+  ShopCategory,
+  ShopRarity,
+  ShopItem,
+  UserInventory,
+} from './shop';

@@ -1,4 +1,4 @@
-# Forgerank Instructions
+# Forgerank User Instructions
 
 **This file is the central repository for all instructions on using features and systems built for Forgerank.**
 
@@ -8,7 +8,39 @@ Whenever a new feature is built that requires special usage instructions, those 
 
 ## Table of Contents
 
-1. [Adding Images to PR Celebrations](#adding-images-to-pr-celebrations)
+1. [Supabase Database Migrations](#supabase-database-migrations)
+2. [Adding Images to PR Celebrations](#adding-images-to-pr-celebrations)
+
+---
+
+## Supabase Database Migrations
+
+Some features require database migrations to be applied to your Supabase project before they can be used.
+
+### Current Pending Migrations
+
+**Migration 005: User Search Functionality**
+
+The user discovery/search feature requires migration `005_user_search.sql` to be applied.
+
+**File:** `supabase/migrations/005_user_search.sql`
+
+**What it does:**
+- Creates `search_users()` database function for searching by name/email
+- Adds RLS policies to allow user profile discovery
+- Creates indexes for search performance
+
+**How to apply:**
+
+1. Go to your Supabase project dashboard
+2. Navigate to **SQL Editor**
+3. Click "New Query"
+4. Copy the contents of `supabase/migrations/005_user_search.sql`
+5. Paste and click "Run" or press `Cmd+Enter`
+
+**Verification:**
+
+After applying, you can verify the migration worked by testing the user search in the Friends screen.
 
 ---
 

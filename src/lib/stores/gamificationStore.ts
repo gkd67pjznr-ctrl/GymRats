@@ -21,6 +21,12 @@ import {
   getCompletedMilestones,
   getNewMilestones,
   calculateLevelUpReward,
+  SHOP_ITEMS,
+  getShopItem,
+  DEFAULT_INVENTORY,
+  type ShopItem,
+  type ShopCategory,
+  type UserInventory,
 } from '../gamification';
 import {
   dbUserToGamificationProfile,
@@ -42,6 +48,9 @@ interface GamificationState {
   _sync: SyncMetadata;
   pendingLevelUp: LevelUpCelebration | null;
 
+  // Shop/Inventory
+  inventory: UserInventory;
+
   // Actions
   setProfile: (profile: GamificationProfile) => void;
   setHydrated: (value: boolean) => void;
@@ -59,6 +68,10 @@ interface GamificationState {
     streakMilestoneTokens?: number;
   };
   dismissLevelUp: () => void;
+
+  // Shop actions
+  purchaseItem: (itemId: string) => { success: boolean; error?: string };
+  equipItem: (itemId: string, category: ShopCategory) => { success: boolean; error?: string };
 
   // Sync actions
   pullFromServer: () => Promise<void>;
@@ -79,6 +92,7 @@ export const useGamificationStore = create<GamificationState>()(
         pendingMutations: 0,
       },
       pendingLevelUp: null,
+      inventory: { ...DEFAULT_INVENTORY },
 
       setProfile: (profile) =>
         set({
@@ -286,6 +300,94 @@ export const useGamificationStore = create<GamificationState>()(
         set({ pendingLevelUp: null });
       },
 
+      /**
+       * Purchase shop item with forge tokens
+       */
+      purchaseItem: (itemId) => {
+        const state = get();
+        const item = getShopItem(itemId);
+
+        if (!item) {
+          return { success: false, error: 'Item not found' };
+        }
+
+        // Check if already owned
+        if (state.inventory.ownedItems.includes(itemId)) {
+          return { success: false, error: 'Already owned' };
+        }
+
+        // Check currency (forge tokens)
+        if (state.profile.forgeTokens < item.cost) {
+          return { success: false, error: 'Insufficient tokens' };
+        }
+
+        // Purchase successful - deduct tokens and add to inventory
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            forgeTokens: state.profile.forgeTokens - item.cost,
+            tokensSpentTotal: state.profile.tokensSpentTotal + item.cost,
+            updatedAt: Date.now(),
+          },
+          inventory: {
+            ...state.inventory,
+            ownedItems: [...state.inventory.ownedItems, itemId],
+          },
+        }));
+
+        return { success: true };
+      },
+
+      /**
+       * Equip item from inventory
+       */
+      equipItem: (itemId, category) => {
+        const state = get();
+        const item = getShopItem(itemId);
+
+        if (!item) {
+          return { success: false, error: 'Item not found' };
+        }
+
+        // Check if owned
+        if (!state.inventory.ownedItems.includes(itemId)) {
+          return { success: false, error: 'Not owned' };
+        }
+
+        // Update equipped item based on category
+        set((state) => {
+          const inventory = { ...state.inventory };
+
+          switch (category) {
+            case 'personalities':
+              inventory.equippedPersonality = itemId;
+              break;
+            case 'themes':
+              inventory.equippedTheme = itemId;
+              break;
+            case 'card_skins':
+              inventory.equippedCardSkin = itemId;
+              break;
+            case 'profile_frames':
+              inventory.equippedFrame = itemId;
+              break;
+            case 'titles':
+              inventory.equippedTitle = itemId;
+              break;
+            case 'profile_badges':
+              // Badges can have multiple equipped
+              if (!inventory.equippedBadges.includes(itemId)) {
+                inventory.equippedBadges = [...inventory.equippedBadges, itemId];
+              }
+              break;
+          }
+
+          return { inventory };
+        });
+
+        return { success: true };
+      },
+
       // Sync actions
       pullFromServer: async () => {
         const user = getUser();
@@ -408,6 +510,7 @@ export const useGamificationStore = create<GamificationState>()(
       partialize: (state) => ({
         profile: state.profile,
         pendingLevelUp: state.pendingLevelUp,
+        inventory: state.inventory,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
@@ -480,4 +583,63 @@ export function processGamificationWorkout(
 
 export function dismissGamificationLevelUp() {
   useGamificationStore.getState().dismissLevelUp();
+}
+
+// ========== Shop/Inventory Hooks ==========
+
+export const selectInventory = (state: GamificationState) => state.inventory;
+export const selectOwnedItems = (state: GamificationState) => state.inventory.ownedItems;
+
+export function useInventory(): UserInventory {
+  return useGamificationStore(selectInventory);
+}
+
+export function useOwnedItems(): string[] {
+  return useGamificationStore(selectOwnedItems);
+}
+
+export function useShopItems(category?: ShopCategory): ShopItem[] {
+  const ownedItems = useOwnedItems();
+  const items = category
+    ? SHOP_ITEMS.filter(item => item.category === category)
+    : SHOP_ITEMS;
+
+  return items.map(item => ({
+    ...item,
+    isOwned: ownedItems.includes(item.id) || item.cost === 0,
+    isEquipped: getCategoryEquipped(item.category, item.id, useGamificationStore.getState().inventory),
+  }));
+}
+
+function getCategoryEquipped(category: ShopCategory, itemId: string, inventory: UserInventory): boolean {
+  switch (category) {
+    case 'personalities':
+      return inventory.equippedPersonality === itemId;
+    case 'themes':
+      return inventory.equippedTheme === itemId;
+    case 'card_skins':
+      return inventory.equippedCardSkin === itemId;
+    case 'profile_frames':
+      return inventory.equippedFrame === itemId;
+    case 'titles':
+      return inventory.equippedTitle === itemId;
+    case 'profile_badges':
+      return inventory.equippedBadges.includes(itemId);
+    default:
+      return false;
+  }
+}
+
+// ========== Imperative Shop Functions ==========
+
+export function purchaseShopItem(itemId: string): { success: boolean; error?: string } {
+  return useGamificationStore.getState().purchaseItem(itemId);
+}
+
+export function equipShopItem(itemId: string, category: ShopCategory): { success: boolean; error?: string } {
+  return useGamificationStore.getState().equipItem(itemId, category);
+}
+
+export function getUserInventory(): UserInventory {
+  return useGamificationStore.getState().inventory;
 }

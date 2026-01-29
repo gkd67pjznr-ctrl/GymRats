@@ -190,13 +190,13 @@ npm run test:watch
 
 ---
 
-## INSTRUCTIONS.MD UPDATE PROTOCOL
+## USER-INSTRUCTIONS.MD UPDATE PROTOCOL
 
-**CRITICAL:** After completing ANY feature that requires admin/user instructions to use, customize, or extend, you MUST update `docs/instructions.md` with those instructions.
+**CRITICAL:** After completing ANY feature that requires admin/user instructions to use, customize, or extend, you MUST update `docs/user-instructions.md` with those instructions.
 
 ### When to Add Instructions
 
-Add instructions to `docs/instructions.md` when you build:
+Add instructions to `docs/user-instructions.md` when you build:
 - Features with configuration options (e.g., AI image integration, theme customization)
 - Systems that require content to be added (e.g., celebration assets, exercise data)
 - Features with extensible APIs or hooks
@@ -240,7 +240,7 @@ For each instruction section, include:
 
 ### After Adding Instructions
 
-1. Update the Table of Contents at the top of `docs/instructions.md`
+1. Update the Table of Contents at the top of `docs/user-instructions.md`
 2. Inform the user that instructions have been added
 3. Reference the instructions file in completion message
 
@@ -252,7 +252,7 @@ For each instruction section, include:
 I've implemented the [feature name] system.
 
 **Instructions Added:**
-See `docs/instructions.md` → "[Feature Name]" section for:
+See `docs/user-instructions.md` → "[Feature Name]" section for:
 - How to customize [configurable aspect]
 - Where to add [content/assets]
 - Configuration options and examples

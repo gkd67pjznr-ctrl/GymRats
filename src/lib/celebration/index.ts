@@ -5,3 +5,5 @@
 export * from './types';
 export * from './content';
 export * from './selector';
+export * from './personalities';
+export * from './personalityCues';

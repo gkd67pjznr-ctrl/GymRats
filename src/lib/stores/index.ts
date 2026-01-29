@@ -161,3 +161,61 @@ export {
   hydrateChat,
   subscribeChat,
 } from "./chatStore";
+
+// Personality
+export {
+  usePersonalityStore,
+  usePersonality,
+  useAllPersonalities,
+  usePersonalityCue,
+  getSelectedPersonality,
+  getPersonalityCue,
+  getPRCue,
+  setPersonality,
+  getAllPersonalitiesList,
+  type Personality,
+  type CueContext,
+  type CueIntensity,
+} from "./personalityStore";
+
+// Gamification (XP, Currency, Shop)
+export {
+  useGamificationStore,
+  useGamificationProfile,
+  useIsGamificationHydrated,
+  usePendingLevelUp,
+  useCurrentLevel,
+  useTotalXP,
+  useCurrentStreak,
+  useForgeTokens,
+  useInventory,
+  useOwnedItems,
+  useShopItems,
+  addGamificationXP,
+  addGamificationTokens,
+  updateGamificationStreak,
+  processGamificationWorkout,
+  dismissGamificationLevelUp,
+  purchaseShopItem,
+  equipShopItem,
+  getUserInventory,
+  type UserInventory,
+  type ShopItem,
+  type ShopCategory,
+} from "./gamificationStore";
+
+// Body Model
+export {
+  BodyModel,
+  CompactBodyModel,
+  calculateMuscleVolume,
+  type MuscleVolumeData,
+} from "../lib/bodyModel";
+
+// Shop Items (from gamification module)
+export {
+  SHOP_ITEMS,
+  getShopItemsByCategory,
+  getShopItem,
+  getRarityColor,
+} from "../lib/gamification/shop";

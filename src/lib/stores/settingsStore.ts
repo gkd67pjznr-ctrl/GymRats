@@ -5,6 +5,9 @@ import { persist } from "zustand/middleware";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import { useMemo } from "react";
 
+// Import experience level type from onboarding store
+import type { ExperienceLevel } from "./onboardingStore";
+
 const STORAGE_KEY = "forgerank.settings.v2"; // New key for Zustand version
 
 export interface Settings {
@@ -12,6 +15,11 @@ export interface Settings {
   soundsEnabled: boolean;
   unitSystem: "lb" | "kg";
   defaultRestSeconds: number;
+  // User profile from onboarding
+  displayName: string;
+  bodyweight: number; // Always stored in kg internally
+  experienceLevel: ExperienceLevel;
+  personalityId: string;
 }
 
 const DEFAULTS: Settings = {
@@ -19,6 +27,10 @@ const DEFAULTS: Settings = {
   soundsEnabled: true,
   unitSystem: "lb",
   defaultRestSeconds: 90,
+  displayName: "Lifter",
+  bodyweight: 70, // default kg (~154 lb)
+  experienceLevel: "intermediate",
+  personalityId: "coach",
 };
 
 interface SettingsState extends Settings {
@@ -54,6 +66,10 @@ export const useSettingsStore = create<SettingsState>()(
         soundsEnabled: state.soundsEnabled,
         unitSystem: state.unitSystem,
         defaultRestSeconds: state.defaultRestSeconds,
+        displayName: state.displayName,
+        bodyweight: state.bodyweight,
+        experienceLevel: state.experienceLevel,
+        personalityId: state.personalityId,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
@@ -68,6 +84,10 @@ export const selectSettings = (state: SettingsState): Settings => ({
   soundsEnabled: state.soundsEnabled,
   unitSystem: state.unitSystem,
   defaultRestSeconds: state.defaultRestSeconds,
+  displayName: state.displayName,
+  bodyweight: state.bodyweight,
+  experienceLevel: state.experienceLevel,
+  personalityId: state.personalityId,
 });
 
 // Hook for accessing settings (matches old API)
@@ -77,6 +97,10 @@ export function useSettings(): Settings {
   const soundsEnabled = useSettingsStore((state) => state.soundsEnabled);
   const unitSystem = useSettingsStore((state) => state.unitSystem);
   const defaultRestSeconds = useSettingsStore((state) => state.defaultRestSeconds);
+  const displayName = useSettingsStore((state) => state.displayName);
+  const bodyweight = useSettingsStore((state) => state.bodyweight);
+  const experienceLevel = useSettingsStore((state) => state.experienceLevel);
+  const personalityId = useSettingsStore((state) => state.personalityId);
 
   // Memoize the settings object to prevent unnecessary re-renders
   return useMemo(
@@ -85,8 +109,12 @@ export function useSettings(): Settings {
       soundsEnabled,
       unitSystem,
       defaultRestSeconds,
+      displayName,
+      bodyweight,
+      experienceLevel,
+      personalityId,
     }),
-    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds]
+    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId]
   );
 }
 
@@ -98,6 +126,10 @@ export function getSettings(): Settings {
     soundsEnabled: state.soundsEnabled,
     unitSystem: state.unitSystem,
     defaultRestSeconds: state.defaultRestSeconds,
+    displayName: state.displayName,
+    bodyweight: state.bodyweight,
+    experienceLevel: state.experienceLevel,
+    personalityId: state.personalityId,
   };
 }
 

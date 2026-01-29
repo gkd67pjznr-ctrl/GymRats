@@ -118,6 +118,13 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       onHaptic?.('pr');
       onSound?.('pr');
 
+      // Award Forge Tokens for PR
+      const { calculatePRReward } = require("../gamification");
+      const { addGamificationTokens } = require("../stores/gamificationStore");
+      const tier = meta.tier as number | undefined;
+      const reward = calculatePRReward(t, tier);
+      addGamificationTokens(reward.amount);
+
       // Trigger PR celebration callback
       onPRCelebration?.({
         prType: meta.type,

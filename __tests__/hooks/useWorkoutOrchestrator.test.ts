@@ -18,7 +18,7 @@ import { useWorkoutOrchestrator } from '../../src/lib/hooks/useWorkoutOrchestrat
 import { detectCueForWorkingSet, makeEmptyExerciseState } from '../../src/lib/perSetCue';
 import type { LoggedSet } from '../../src/lib/loggerTypes';
 import type { WorkoutPlan } from '../../src/lib/workoutPlanModel';
-import { useCurrentSessionStore, useRoutinesStore } from '../../src/lib/stores';
+import { useCurrentSessionStore } from '../../src/lib/stores';
 
 // Mock the perSetCue module
 jest.mock('../../src/lib/perSetCue', () => ({
@@ -73,49 +73,133 @@ const mockEnsureCurrentSession = jest.fn();
 const mockUpsertRoutine = jest.fn();
 
 jest.mock('../../src/lib/stores', () => ({
-  useCurrentSessionStore: jest.fn(),
+  useCurrentSessionStore: jest.fn((selector) => selector({
+    session: {
+      id: 'session-1',
+      startedAtMs: 1000000,
+      selectedExerciseId: 'bench',
+      exerciseBlocks: ['bench'],
+      sets: [] as LoggedSet[],
+    },
+    hydrated: true,
+  })),
+  useCurrentSession: jest.fn(() => ({
+    id: 'session-1',
+    startedAtMs: 1000000,
+    selectedExerciseId: 'bench',
+    exerciseBlocks: ['bench'],
+    sets: [] as LoggedSet[],
+  })),
   useIsHydrated: jest.fn(() => true),
-  upsertRoutine: jest.fn(() => mockUpsertRoutine()),
-  addWorkoutSession: jest.fn(() => mockAddWorkoutSession()),
-  clearCurrentSession: jest.fn(() => mockClearCurrentSession()),
-  ensureCurrentSession: jest.fn(() => mockEnsureCurrentSession()),
+  upsertRoutine: jest.fn((...args) => mockUpsertRoutine(...args)),
+  addWorkoutSession: jest.fn((...args) => mockAddWorkoutSession(...args)),
+  clearCurrentSession: jest.fn((...args) => mockClearCurrentSession(...args)),
+  ensureCurrentSession: jest.fn((...args) => mockEnsureCurrentSession(...args)),
+  useRoutinesStore: jest.fn(),
+  getCurrentSession: jest.fn(),
+  getIsHydrated: jest.fn(() => true),
+  hasCurrentSession: jest.fn(),
+  updateCurrentSession: jest.fn(),
+  setCurrentSession: jest.fn(),
+  flushPendingWrites: jest.fn(),
+}));
+
+// Mock gamificationStore - properly mock Zustand store API
+const mockGamificationProfile = {
+  totalXP: 0,
+  currentLevel: 1,
+  xpToNextLevel: 100,
+  currentStreak: 0,
+  longestStreak: 0,
+  workoutCalendar: [],
+  forgeTokens: 0,
+  tokensEarnedTotal: 0,
+  tokensSpentTotal: 0,
+  milestonesCompleted: [],
+  updatedAt: Date.now(),
+};
+
+const mockGamificationState = {
+  profile: mockGamificationProfile,
+  hydrated: true,
+  pendingLevelUp: null,
+  _sync: {
+    lastSyncAt: null,
+    lastSyncHash: null,
+    syncStatus: 'idle' as const,
+    syncError: null,
+    pendingMutations: 0,
+  },
+  setProfile: jest.fn(),
+  setHydrated: jest.fn(),
+  addXP: jest.fn(),
+  addTokens: jest.fn(),
+  spendTokens: jest.fn(() => ({ success: true, newBalance: 10 })),
+  updateStreak: jest.fn(),
+  processWorkout: jest.fn(),
+  dismissLevelUp: jest.fn(),
+  pullFromServer: jest.fn(),
+  pushToServer: jest.fn(),
+  sync: jest.fn(),
+  getState: jest.fn(() => mockGamificationState),
+};
+
+jest.mock('../../src/lib/stores/gamificationStore', () => {
+  const mockStore = {
+    useGamificationStore: jest.fn((selector) => selector ? selector(mockGamificationState) : mockGamificationState),
+    ...mockGamificationState,
+    addGamificationTokens: jest.fn(),
+    processGamificationWorkout: jest.fn(() => ({
+      xpEarned: 100,
+      didLevelUp: false,
+      tokensEarned: 5,
+    })),
+  };
+  // Add getState to the useGamificationStore function for imperative access
+  mockStore.useGamificationStore.getState = jest.fn(() => mockGamificationState);
+  return mockStore;
+});
+
+// Mock gamification functions
+jest.mock('../../src/lib/gamification', () => ({
+  calculatePRReward: jest.fn((type: string, tier?: number) => ({ amount: 5, type: 'pr_weight', context: 'Tier 1' })),
+}));
+
+// Mock useGamificationWorkoutFinish module
+jest.mock('../../src/lib/hooks/useGamificationWorkoutFinish', () => ({
+  processGamificationWorkout: jest.fn(() => ({
+    xpEarned: 100,
+    didLevelUp: false,
+    tokensEarned: 5,
+  })),
+  toWorkoutForCalculation: jest.fn((sets, streak, fullyCompleted) => ({
+    sets,
+    totalSets: sets.length,
+    totalWeight: sets.reduce((sum, s) => sum + s.weightKg * s.reps, 0),
+    totalReps: sets.reduce((sum, s) => sum + s.reps, 0),
+    uniqueExercises: [...new Set(sets.map(s => s.exerciseId))].length,
+    durationMs: 0,
+    fullyCompleted,
+  })),
 }));
 
 describe('useWorkoutOrchestrator', () => {
   const mockOnHaptic = jest.fn();
   const mockOnSound = jest.fn();
 
+  // Reset all mocks before each test to prevent test interference
   beforeEach(() => {
     jest.clearAllMocks();
+    (require('../../src/lib/stores').useIsHydrated as jest.Mock).mockReturnValue(true);
+  });
 
-    // Mock useCurrentSessionStore to return a default state
-    (useCurrentSessionStore as jest.Mock).mockImplementation((selector) => {
-      const state = {
-        id: 'session-1',
-        startedAtMs: 1000000,
-        selectedExerciseId: 'bench',
-        exerciseBlocks: ['bench'],
-        sets: [] as LoggedSet[],
-      };
-      return selector ? selector(state) : state;
-    });
-
-    // Mock useRoutinesStore to return a default state
-    (useRoutinesStore as unknown as jest.Mock).mockImplementation((selector) => {
-      const state = {
-        routines: [],
-        hydrated: true,
-        upsertRoutine: mockUpsertRoutine,
-        deleteRoutine: jest.fn(),
-        clearRoutines: jest.fn(),
-        setHydrated: jest.fn(),
-      };
-      return selector ? selector(state) : state;
-    });
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
+    jest.clearAllTimers();
   });
 
   describe('initialization', () => {
@@ -135,6 +219,9 @@ describe('useWorkoutOrchestrator', () => {
       expect(result.current.instantCue).toBeNull();
       expect(result.current.recapCues).toEqual([]);
       expect(result.current.sessionStateByExercise).toEqual({});
+
+      // Reset mock for other tests
+      (require('../../src/lib/stores').useIsHydrated as jest.Mock).mockReturnValue(true);
     });
 
     it('should return initial state when hydrated', () => {
@@ -170,6 +257,9 @@ describe('useWorkoutOrchestrator', () => {
       });
 
       expect(detectCueForWorkingSet).not.toHaveBeenCalled();
+
+      // Reset for other tests
+      (require('../../src/lib/stores').useIsHydrated as jest.Mock).mockReturnValue(true);
     });
 
     it('should call detectCueForWorkingSet with correct parameters', () => {
@@ -303,8 +393,7 @@ describe('useWorkoutOrchestrator', () => {
         },
       });
 
-      const { require } = require('../../src/lib/perSetCue');
-      const randomFallbackEveryNMock = require('../../src/lib/perSetCue').randomFallbackEveryN;
+      const randomFallbackEveryNMock = require('../../src/lib/perSetCue').randomFallbackEveryN as jest.Mock;
       randomFallbackEveryNMock.mockReturnValue(1); // Trigger on first set
 
       const { result } = renderHook(() =>
@@ -415,6 +504,15 @@ describe('useWorkoutOrchestrator', () => {
         };
         return selector ? selector(state) : state;
       });
+      // Also update useCurrentSession since orchestrator uses it
+      const stores = require('../../src/lib/stores');
+      stores.useCurrentSession = jest.fn(() => ({
+        id: 'session-1',
+        startedAtMs: 1000000,
+        selectedExerciseId: 'bench',
+        exerciseBlocks: ['bench'],
+        sets: mockLoggedSets,
+      }));
     });
 
     it('should be no-op when not hydrated', () => {
@@ -1143,7 +1241,10 @@ describe('useWorkoutOrchestrator', () => {
 
       (makeEmptyExerciseState as jest.Mock).mockReturnValue(emptyState);
 
-      const state = result.current.ensureExerciseState('squat');
+      let state: ReturnType<typeof emptyState>;
+      act(() => {
+        state = result.current.ensureExerciseState('squat');
+      });
 
       expect(state).toEqual(emptyState);
       expect(result.current.sessionStateByExercise['squat']).toEqual(emptyState);

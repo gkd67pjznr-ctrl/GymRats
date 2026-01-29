@@ -1,6 +1,6 @@
 # Forgerank Project Progress
 
-**Last Updated:** 2026-01-26
+**Last Updated:** 2026-01-28
 **Project Start:** ~2026-01-14 (initial scaffolding)
 
 ---
@@ -46,6 +46,7 @@
 - Workout history storage
 - Basic routine builder
 - Premade plan browser
+- User profile editing (display name, avatar upload/remove)
 
 ### Technical Foundation
 - Expo 54 + React Native 0.81
@@ -78,19 +79,23 @@
 - Backend sync system implemented ✅
 - Real-time subscriptions implemented ✅
 - Social stores integrated with sync ✅
-- Feed/social UI needs to use sync data instead of mock data
-- Friends list needs to use sync data
+- Feed UI connected to sync data ✅
+- Friends UI connected to sync data ✅
+- User discovery/search implemented ✅
+- User profile editing (display name, avatar) ✅
+- Need to apply migration 005_user_search.sql to Supabase
 
 ### Backend
 - Backend sync system implemented ✅
-- Repository layer for all 8 tables ✅
+- Repository layer for all 8 tables ✅ (including user profiles)
 - Real-time subscriptions via Supabase ✅
 - Offline mutation queuing ✅
 - Conflict resolution strategies ✅
-- Need to connect UI to sync data streams
+- UI connected to sync data streams ✅
+- Sync status indicators added ✅
 
 ### Polish
-- No PR celebration animations
+- PR celebration animations implemented ✅
 - No onboarding
 - Many empty states missing
 - Input polish needed
@@ -118,15 +123,15 @@
 ## Next Steps
 
 ### Immediate (This Week)
-1. Connect social UI to sync data streams
+1. Apply database migration 005_user_search.sql to Supabase
 2. Implement protected routes
-3. Add sync status UI components
+3. Test sync functionality with real backend
 
 ### Short Term (Next 2 Weeks)
 1. Routine-based workout flow
 2. Set input polish
 3. Rest timer enhancements
-4. PR detection celebration
+4. Onboarding screens
 
 ### Medium Term (Next Month)
 1. Complete social feature integration
@@ -158,6 +163,34 @@
 ---
 
 ## Decision Log
+
+### 2026-01-28 (profile edit)
+- Created User Profile Editing Screen:
+  - Added `updateDisplayName()` action to authStore for updating user display names
+  - Created `app/profile/edit.tsx` with keyboard-aware form
+  - Integrated `expo-image-picker` for avatar image selection from gallery
+  - Added avatar upload functionality using existing `uploadAvatar()` action
+  - Added remove avatar option with confirmation dialog
+  - Added "Edit Profile" card link to profile tab
+  - Form validation for display name (required, max 50 characters)
+  - Loading states for save and upload operations
+  - Uses `KeyboardAwareScrollView` for better input handling on mobile
+
+### 2026-01-28 (continued)
+- Connected Social UI to sync data streams:
+  - Verified Feed and Friends screens already using sync-aware stores
+  - Feed uses `socialStore` with `pullFromServer()` and `setupPostsRealtime()`
+  - Friends uses `friendsStore` with `pullFromServer()` and `setupFriendsRealtime()`
+  - Created `SyncStatusIndicator` UI component for visual sync feedback
+  - Added sync indicators to Feed and Friends screens
+  - Created debug screen `app/debug/sync-status.tsx` for detailed sync monitoring
+  - Implemented user discovery functionality:
+    - Created `userProfileRepository` for searching users by name/email
+    - Created `userProfileStore` for caching user profiles locally
+    - Added database migration `005_user_search.sql` with `search_users()` function
+    - Updated Friends screen with real-time search bar and user search
+    - Replaced mock `DIRECTORY` with real user search results
+  - Created `useSyncState()` hook for accessing sync status across all stores
 
 ### 2026-01-28
 - Implemented complete PR Celebration System:

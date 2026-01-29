@@ -40,6 +40,7 @@ interface AuthState {
   resendVerificationEmail: () => Promise<{ success: boolean; error?: string }>;
   checkEmailVerification: () => Promise<boolean>;
   deleteAccount: (password: string) => Promise<{ success: boolean; error?: string }>;
+  updateDisplayName: (displayName: string) => Promise<{ success: boolean; error?: string }>;
   updateAvatar: (fileUri: string) => Promise<{ success: boolean; avatarUrl?: string; error?: string }>;
   removeAvatar: () => Promise<{ success: boolean; error?: string }>;
   devLogin: () => Promise<{ success: boolean; error?: string }>;
@@ -364,6 +365,61 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       // Clear local state
       set({ user: null, session: null, loading: false, error: null, isEmailVerified: false });
+
+      return { success: true };
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
+      set({ error: errorMessage, loading: false });
+      return { success: false, error: errorMessage };
+    }
+  },
+
+  /**
+   * Update user's display name
+   * @param displayName New display name (1-50 characters)
+   */
+  updateDisplayName: async (displayName: string) => {
+    set({ loading: true, error: null });
+
+    try {
+      const session = get().session;
+      if (!session?.user) {
+        set({ error: "No active session", loading: false });
+        return { success: false, error: "No active session" };
+      }
+
+      const userId = session.user.id;
+
+      // Validate display name
+      const trimmedName = displayName.trim();
+      if (trimmedName.length === 0) {
+        set({ error: "Display name cannot be empty", loading: false });
+        return { success: false, error: "Display name cannot be empty" };
+      }
+      if (trimmedName.length > 50) {
+        set({ error: "Display name must be 50 characters or less", loading: false });
+        return { success: false, error: "Display name must be 50 characters or less" };
+      }
+
+      // Update user profile in database
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ display_name: trimmedName, updated_at: new Date().toISOString() })
+        .eq("id", userId);
+
+      if (updateError) {
+        set({ error: updateError.message, loading: false });
+        return { success: false, error: updateError.message };
+      }
+
+      // Update local state
+      const currentUser = get().user;
+      if (currentUser) {
+        set({
+          user: { ...currentUser, displayName: trimmedName },
+          loading: false,
+        });
+      }
 
       return { success: true };
     } catch (err) {
@@ -729,6 +785,12 @@ export function setupAuthListener(
         if (session?.user) {
           syncOrchestrator.onSignIn(session.user.id, session).catch(err => {
             console.error('[authStore] Sync on sign-in error:', err);
+          });
+
+          // Sync gamification data from server
+          const { pullFromServer: pullGamification } = require('../stores/gamificationStore');
+          pullGamification().catch(err => {
+            console.error('[authStore] Gamification sync error:', err);
           });
         }
       }

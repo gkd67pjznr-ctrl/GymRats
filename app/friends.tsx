@@ -1,7 +1,7 @@
 // app/friends.tsx
 import { Stack, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View, ActivityIndicator, RefreshControl } from "react-native";
+import { useEffect, useState, useCallback } from "react";
+import { Pressable, ScrollView, Text, View, ActivityIndicator, RefreshControl, TextInput } from "react-native";
 import { useUser } from "../src/lib/stores/authStore";
 import { ensureThread } from "../src/lib/stores/chatStore";
 import {
@@ -13,20 +13,17 @@ import {
   setupFriendsRealtime,
   useFriendsStore,
 } from "../src/lib/stores/friendsStore";
-import type { ID } from "../src/lib/socialModel";
+import {
+  useUserProfile,
+  searchUserProfiles,
+} from "../src/lib/stores/userProfileStore";
+import type { ID, UserProfile } from "../src/lib/socialModel";
 import { useThemeColors } from "../src/ui/theme";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { SyncStatusIndicator } from "../src/ui/components/SyncStatusIndicator";
+import { FR } from "../../src/ui/forgerankStyle";
 
 const ME: ID = "u_demo_me";
-
-// v1 mock directory (later: real profiles)
-const DIRECTORY: Array<{ id: ID; name: string; subtitle?: string }> = [
-  { id: "u_demo_1", name: "Sarah", subtitle: "Leg day enabler" },
-  { id: "u_demo_2", name: "TJ", subtitle: "Chaos + caffeine" },
-  { id: "u_demo_3", name: "Mark", subtitle: "Gym homie" },
-  { id: "u_demo_4", name: "Olivia", subtitle: "Runner arc" },
-];
 
 function labelForStatus(opts: {
   isFriends: boolean;
@@ -47,6 +44,9 @@ export default function FriendsScreen() {
   const user = useUser();
   const [refreshing, setRefreshing] = useState(false);
   const { pullFromServer } = useFriendsStore();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const userId = user?.id ?? ME;
 
@@ -73,7 +73,41 @@ export default function FriendsScreen() {
     }
   }
 
-  const people = DIRECTORY.filter((p) => p.id !== userId);
+  // User search with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (searchQuery.trim().length >= 2) {
+        setIsSearching(true);
+        try {
+          const results = await searchUserProfiles(searchQuery.trim());
+          setSearchResults(results.filter((p) => p.id !== userId));
+        } catch (err) {
+          console.error('[Friends] Search failed:', err);
+          setSearchResults([]);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, userId]);
+
+  // Combine search results with friends (show search results when searching)
+  const showSearchResults = searchQuery.trim().length >= 2;
+  const displayedUsers = showSearchResults ? searchResults : friendEdges.map((e) => {
+    const profile = useUserProfile(e.otherUserId);
+    return {
+      id: e.otherUserId,
+      displayName: profile?.displayName ?? e.otherUserId,
+      email: "",
+      avatarUrl: profile?.avatarUrl ?? null,
+      createdAt: 0,
+      updatedAt: 0,
+    };
+  });
 
   return (
     <ProtectedRoute>
@@ -105,7 +139,40 @@ export default function FriendsScreen() {
             </Text>
           </View>
 
-          {people.map((p) => {
+          {/* Search Bar */}
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: c.muted, ...FR.type.sub }}>Find people</Text>
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search by name or email..."
+              placeholderTextColor={c.muted}
+              style={{
+                ...FR.card({ card: c.card, border: c.border }),
+                color: c.text,
+                ...FR.type.body,
+                paddingVertical: FR.space.x3,
+                paddingHorizontal: FR.space.x3,
+                minHeight: 44,
+              }}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
+
+          {/* Search results indicator */}
+          {showSearchResults && (
+            <Text style={{ color: c.muted, ...FR.type.sub }}>
+              {isSearching
+                ? "Searching..."
+                : searchResults.length === 0
+                  ? "No results found"
+                  : `Found ${searchResults.length} ${searchResults.length === 1 ? "person" : "people"}`
+              }
+            </Text>
+          )}
+
+          {displayedUsers.map((p) => {
             const isFriends = areFriends(userId, p.id);
 
             // We look both directions to infer a simple request state.
@@ -134,8 +201,12 @@ export default function FriendsScreen() {
               >
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
                   <View style={{ gap: 4, flexShrink: 1 }}>
-                    <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>{p.name}</Text>
-                    {!!p.subtitle ? <Text style={{ color: c.muted, fontWeight: "700" }}>{p.subtitle}</Text> : null}
+                    <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>{p.displayName}</Text>
+                    {showSearchResults && (
+                      <Text style={{ color: c.muted, fontWeight: "700", fontSize: 12 }}>
+                        {p.email}
+                      </Text>
+                    )}
                   </View>
 
                   <View

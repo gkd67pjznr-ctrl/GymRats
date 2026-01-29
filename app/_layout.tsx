@@ -1,5 +1,5 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useEffect } from 'react';
@@ -10,6 +10,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import ErrorBoundary from '@/src/ui/error-boundary';
 import { setupAuthListener, useAuthStore } from '@/src/lib/stores';
 import { supabase } from '@/src/lib/supabase/client';
+import { useIsOnboarding } from '@/src/lib/stores/onboardingStore';
 
 // Initialize WebBrowser for auth sessions
 WebBrowser.maybeCompleteAuthSession();
@@ -20,6 +21,15 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
+  const isOnboarding = useIsOnboarding();
+
+  // Redirect to onboarding if not completed
+  useEffect(() => {
+    if (isOnboarding) {
+      router.replace('/onboarding');
+    }
+  }, [isOnboarding, router]);
 
   // Initialize auth state listener on mount
   useEffect(() => {
@@ -57,6 +67,13 @@ export default function RootLayout() {
     <ErrorBoundary name="root">
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
+          <Stack.Screen
+            name="onboarding"
+            options={{
+              headerShown: false,
+              presentation: 'card',
+            }}
+          />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
             name="auth/login"

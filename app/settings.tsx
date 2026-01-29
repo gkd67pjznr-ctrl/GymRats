@@ -10,6 +10,9 @@ import { useAuthStore, useIsEmailVerified, useUser } from "../src/lib/stores/aut
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { migrateLocalToCloud, importFromCSV } from "../src/lib/migration/dataMigrator";
 import type { MigrationProgress } from "../src/lib/migration/dataMigrator";
+// Personality system
+import { usePersonality, useAllPersonalities, setPersonality } from "../src/lib/stores/personalityStore";
+import type { Personality } from "../src/lib/stores/personalityStore";
 
 function Row(props: {
   title: string;
@@ -72,6 +75,11 @@ export default function SettingsScreen() {
   const user = useUser();
   const { signOut, loading: authLoading, session, resendVerificationEmail, deleteAccount, updateAvatar, removeAvatar, loading: avatarLoading } = useAuthStore();
   const isEmailVerified = useIsEmailVerified();
+
+  // Personality state
+  const currentPersonality = usePersonality();
+  const allPersonalities = useAllPersonalities();
+  const [showPersonalityModal, setShowPersonalityModal] = useState(false);
 
   // Delete account modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -426,6 +434,24 @@ export default function SettingsScreen() {
           />
         </View>
 
+        {/* Personality Selection */}
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Pressable onPress={() => setShowPersonalityModal(true)}>
+            <Row
+              title="Gym Buddy Personality"
+              subtitle="Choose your workout motivation style"
+              right={
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <Text style={{ fontSize: 24 }}>{currentPersonality.emoji}</Text>
+                  <View style={{ paddingVertical: 8, paddingHorizontal: 12, borderRadius: 12, backgroundColor: c.bg, borderWidth: 1, borderColor: c.border }}>
+                    <Text style={{ fontWeight: "900", fontSize: 12 }}>{currentPersonality.name}</Text>
+                  </View>
+                </View>
+              }
+            />
+          </Pressable>
+        </View>
+
         {/* Email Verification Status */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -774,6 +800,121 @@ export default function SettingsScreen() {
                 </Pressable>
               </>
             ) : null}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Personality Selection Modal */}
+      <Modal
+        visible={showPersonalityModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowPersonalityModal(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: c.card,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: c.border,
+              padding: 24,
+              width: "100%",
+              maxWidth: 420,
+              gap: 16,
+              maxHeight: "80%",
+            }}
+          >
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={{ color: c.text, fontSize: 20, fontWeight: "900" }}>
+                Choose Your Gym Buddy
+              </Text>
+              <Pressable onPress={() => setShowPersonalityModal(false)}>
+                <Text style={{ color: c.muted, fontSize: 24, fontWeight: "900" }}>✕</Text>
+              </Pressable>
+            </View>
+
+            <Text style={{ color: c.muted, lineHeight: 18 }}>
+              Your gym buddy provides encouragement and celebrates your PRs. Pick a personality that matches your vibe!
+            </Text>
+
+            <ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={false}>
+              <View style={{ gap: 12 }}>
+                {allPersonalities.map((personality) => (
+                  <Pressable
+                    key={personality.id}
+                    onPress={() => {
+                      setPersonality(personality.id);
+                      setShowPersonalityModal(false);
+                    }}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 14,
+                      padding: 14,
+                      borderRadius: 12,
+                      backgroundColor: currentPersonality.id === personality.id ? `${personality.color}20` : c.bg,
+                      borderWidth: 2,
+                      borderColor: currentPersonality.id === personality.id ? personality.color : c.border,
+                    }}
+                  >
+                    <Text style={{ fontSize: 32 }}>{personality.emoji}</Text>
+                    <View style={{ flex: 1, gap: 4 }}>
+                      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>
+                        {personality.name}
+                      </Text>
+                      <Text style={{ color: c.muted, fontSize: 13, lineHeight: 16 }}>
+                        {personality.description}
+                      </Text>
+                      <View style={{ flexDirection: "row", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
+                        {personality.tone.map((t) => (
+                          <View
+                            key={t}
+                            style={{
+                              paddingHorizontal: 8,
+                              paddingVertical: 3,
+                              borderRadius: 6,
+                              backgroundColor: currentPersonality.id === personality.id ? `${personality.color}30` : c.card,
+                              borderWidth: 1,
+                              borderColor: currentPersonality.id === personality.id ? personality.color : c.border,
+                            }}
+                          >
+                            <Text style={{ color: c.text, fontSize: 11, fontWeight: "700", textTransform: "capitalize" }}>
+                              {t}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                    {currentPersonality.id === personality.id && (
+                      <Text style={{ color: personality.color, fontSize: 20, fontWeight: "900" }}>✓</Text>
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+            </ScrollView>
+
+            <Pressable
+              onPress={() => setShowPersonalityModal(false)}
+              style={{
+                paddingVertical: 12,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: c.border,
+                backgroundColor: c.bg,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: c.text, fontWeight: "700" }}>Cancel</Text>
+            </Pressable>
           </View>
         </View>
       </Modal>

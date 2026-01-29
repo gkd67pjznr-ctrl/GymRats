@@ -50,6 +50,7 @@ export { postRepository } from './repositories/postRepository';
 export { reactionRepository } from './repositories/reactionRepository';
 export { commentRepository } from './repositories/commentRepository';
 export { notificationRepository } from './repositories/notificationRepository';
+export { userProfileRepository } from './repositories/userProfileRepository';
 
 // Repository types
 export type { WorkoutRepository } from './repositories/workoutRepository';
@@ -59,6 +60,7 @@ export type { PostRepository } from './repositories/postRepository';
 export type { ReactionRepository } from './repositories/reactionRepository';
 export type { CommentRepository } from './repositories/commentRepository';
 export type { NotificationRepository } from './repositories/notificationRepository';
+export type { UserProfile } from './repositories/userProfileRepository';
 
 // Re-export sync status getters from stores
 export { getWorkoutSyncStatus } from '../stores/workoutStore';

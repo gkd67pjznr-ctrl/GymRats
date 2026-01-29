@@ -218,6 +218,25 @@ export default function ProfileTab() {
           Your training history, calendar, stats, and progress over time.
         </Text>
 
+        {/* Edit Profile Card */}
+        <Link href="/profile/edit" asChild>
+          <Pressable
+            style={{
+              borderWidth: 1,
+              borderColor: c.border,
+              borderRadius: 14,
+              padding: 14,
+              backgroundColor: c.card,
+              gap: 6,
+            }}
+          >
+            <Text style={{ color: c.text, fontSize: 18, fontWeight: "900" }}>Edit Profile</Text>
+            <Text style={{ color: c.muted, lineHeight: 18 }}>
+              Update your display name and profile picture
+            </Text>
+          </Pressable>
+        </Link>
+
         {/* Calendar: real data lives in /calendar */}
         <CardLink
           href="/calendar"
@@ -251,9 +270,6 @@ export default function ProfileTab() {
             Each calendar day will eventually show a workout title and/or tiny muscle indicators.
           </Text>
         </View>
-
-        {/* Gamification Stats & Ranks Card */}
-        <StatsAndRanksCard profile={profile} />
 
         {/* Gamification Stats & Ranks Card */}
         <StatsAndRanksCard profile={profile} />
