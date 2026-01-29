@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import { useMemo } from "react";
+import { Accent } from "@/src/ui/designSystem";
 
 const STORAGE_KEY = "forgerank.settings.v2"; // New key for Zustand version
 
@@ -12,6 +13,7 @@ export interface Settings {
   soundsEnabled: boolean;
   unitSystem: "lb" | "kg";
   defaultRestSeconds: number;
+  accent: Accent;
 }
 
 const DEFAULTS: Settings = {
@@ -19,6 +21,7 @@ const DEFAULTS: Settings = {
   soundsEnabled: true,
   unitSystem: "lb",
   defaultRestSeconds: 90,
+  accent: "toxic",
 };
 
 interface SettingsState extends Settings {
@@ -54,6 +57,7 @@ export const useSettingsStore = create<SettingsState>()(
         soundsEnabled: state.soundsEnabled,
         unitSystem: state.unitSystem,
         defaultRestSeconds: state.defaultRestSeconds,
+        accent: state.accent,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
@@ -68,6 +72,7 @@ export const selectSettings = (state: SettingsState): Settings => ({
   soundsEnabled: state.soundsEnabled,
   unitSystem: state.unitSystem,
   defaultRestSeconds: state.defaultRestSeconds,
+  accent: state.accent,
 });
 
 // Hook for accessing settings (matches old API)
@@ -77,6 +82,7 @@ export function useSettings(): Settings {
   const soundsEnabled = useSettingsStore((state) => state.soundsEnabled);
   const unitSystem = useSettingsStore((state) => state.unitSystem);
   const defaultRestSeconds = useSettingsStore((state) => state.defaultRestSeconds);
+  const accent = useSettingsStore((state) => state.accent);
 
   // Memoize the settings object to prevent unnecessary re-renders
   return useMemo(
@@ -85,8 +91,9 @@ export function useSettings(): Settings {
       soundsEnabled,
       unitSystem,
       defaultRestSeconds,
+      accent,
     }),
-    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds]
+    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds, accent]
   );
 }
 
@@ -98,6 +105,7 @@ export function getSettings(): Settings {
     soundsEnabled: state.soundsEnabled,
     unitSystem: state.unitSystem,
     defaultRestSeconds: state.defaultRestSeconds,
+    accent: state.accent,
   };
 }
 

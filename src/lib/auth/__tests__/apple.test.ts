@@ -71,11 +71,6 @@ jest.mock('../../supabase/client', () => ({
 }));
 
 // Mock oauth module functions
-jest.mock('../oauth', () => ({
-  signInWithOAuthToken: jest.fn(),
-  extractAppleProfile: jest.fn(),
-  parseOAuthError: jest.fn(),
-}));
 
 describe('Apple Sign In', () => {
   afterEach(() => {
@@ -171,9 +166,8 @@ describe('Apple Sign In', () => {
       const onSuccessMock = jest.fn();
       const onErrorMock = jest.fn();
 
-      (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
-      (extractAppleProfile as jest.Mock).mockReturnValue(mockProfile);
-      (signInWithOAuthToken as jest.Mock).mockResolvedValue({ data: { user: {} }, error: null });
+      const extractAppleProfileSpy = jest.spyOn(require('../oauth'), 'extractAppleProfile').mockReturnValue(mockProfile);
+      const signInWithOAuthTokenSpy = jest.spyOn(require('../oauth'), 'signInWithOAuthToken').mockResolvedValue({ data: { user: {} }, error: null });
 
       const { result } = renderHook(() => useAppleAuth({
         onSuccess: onSuccessMock,
@@ -186,6 +180,9 @@ describe('Apple Sign In', () => {
 
       expect(onSuccessMock).toHaveBeenCalledWith(mockProfile);
       expect(onErrorMock).not.toHaveBeenCalled();
+
+      extractAppleProfileSpy.mockRestore();
+      signInWithOAuthTokenSpy.mockRestore();
     });
 
     it('should call onError callback when sign in fails', async () => {
@@ -582,9 +579,8 @@ describe('Apple Sign In', () => {
         realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL,
       };
 
-      (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
-      (extractAppleProfile as jest.Mock).mockReturnValue(mockProfile);
-      (signInWithOAuthToken as jest.Mock).mockResolvedValue({ data: { user: {} }, error: null });
+      const extractAppleProfileSpy = jest.spyOn(require('../oauth'), 'extractAppleProfile').mockReturnValue(mockProfile);
+      const signInWithOAuthTokenSpy = jest.spyOn(require('../oauth'), 'signInWithOAuthToken').mockResolvedValue({ data: { user: {} }, error: null });
 
       const { result } = renderHook(() => useAppleAuth());
 
@@ -605,6 +601,9 @@ describe('Apple Sign In', () => {
       );
       expect(signInWithOAuthToken).toHaveBeenCalledWith('apple', 'valid-id-token', 'auth-code-123');
       expect(response).toEqual({ success: true, user: mockProfile });
+
+      extractAppleProfileSpy.mockRestore();
+      signInWithOAuthTokenSpy.mockRestore();
     });
 
     it('should return provider_error when platform is Android', async () => {
