@@ -434,6 +434,34 @@ Claude uses AskUserQuestion tool with:
 
 ---
 
+## INTERVIEW / ASKUSERQUESTION ARCHIVE PROTOCOL
+
+**CRITICAL:** After conducting ANY interview or extended AskUserQuestion session (3+ questions), you MUST save the full transcript to `docs/AskUQ/`.
+
+### When to Save
+- Feature brainstorming sessions
+- Requirements gathering interviews
+- Design decision discussions
+- Any multi-question AskUserQuestion flow
+
+### File Naming
+`docs/AskUQ/YYYY-MM-DD-topic-name.md`
+
+Example: `docs/AskUQ/2026-01-29-feature-brainstorm.md`
+
+### What to Include
+- Date and participants
+- Context (what prompted the interview)
+- Every question asked and the user's full answer
+- Decisions made
+- Summary table of outcomes/action items
+
+### After Saving
+1. Inform the user that the interview has been archived
+2. Reference the file path in your completion message
+
+---
+
 ## CURRENT STATE QUICK REFERENCE
 
 ### Phase: 0 - Stabilization
