@@ -22,27 +22,33 @@ describe('calculateMuscleVolumes', () => {
 
     const volumes = calculateMuscleVolumes(sessions);
 
-    // bench: 1000 volume -> chest (1000), shoulders_front (500), triceps (500)
-    // squat: 1200 volume -> quads (1200), glutes (1200), hamstrings (600), lower_back (600), adductors (600)
+    // bench: 1000 volume -> lower_chest (1000), front_delt (1000), triceps (1000), upper_chest (500), traps (500)
+    // squat: 1200 volume -> quads (1200), glutes (1200), hamstrings (600), adductors (600), abductors (600), lower_back (600)
 
     // Total volumes:
-    // chest: 1000
-    // shoulders_front: 500
-    // triceps: 500
+    // lower_chest: 1000
+    // front_delt: 1000
+    // triceps: 1000
+    // upper_chest: 500
+    // traps: 500
     // quads: 1200
     // glutes: 1200
     // hamstrings: 600
-    // lower_back: 600
     // adductors: 600
+    // abductors: 600
+    // lower_back: 600
 
     // Max volume is 1200 (quads, glutes)
-    expect(volumes.chest).toBeCloseTo(1000 / 1200);
-    expect(volumes.shoulders_front).toBeCloseTo(500 / 1200);
-    expect(volumes.triceps).toBeCloseTo(500 / 1200);
+    expect(volumes.lower_chest).toBeCloseTo(1000 / 1200);
+    expect(volumes.front_delt).toBeCloseTo(1000 / 1200);
+    expect(volumes.triceps).toBeCloseTo(1000 / 1200);
+    expect(volumes.upper_chest).toBeCloseTo(500 / 1200);
+    expect(volumes.traps).toBeCloseTo(500 / 1200);
     expect(volumes.quads).toBe(1);
     expect(volumes.glutes).toBe(1);
     expect(volumes.hamstrings).toBeCloseTo(600 / 1200);
-    expect(volumes.lower_back).toBeCloseTo(600 / 1200);
     expect(volumes.adductors).toBeCloseTo(600 / 1200);
+    expect(volumes.abductors).toBeCloseTo(600 / 1200);
+    expect(volumes.lower_back).toBeCloseTo(600 / 1200);
   });
 });

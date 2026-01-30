@@ -1,9 +1,38 @@
 import { WorkoutSet, WorkoutSession } from '@/src/lib/workoutModel';
-import { EXERCISE_MUSCLE_MAPPING } from '@/src/data/exerciseMuscleMapping';
+import { getExerciseMuscleMaps } from '@/src/data/muscleGroupsManager';
 
 // A simple volume calculation: weight * reps
-// Primary muscles get 100% of the volume from a set
-// Secondary muscles get 50% of the volume
+// Uses the muscle group manager for exercise mappings
+function calculateMuscleContribution(
+  exerciseId: string,
+  weightKg: number,
+  reps: number
+): Record<string, number> {
+  const contributions: Record<string, number> = {};
+  const volume = weightKg * reps;
+  const EXERCISE_MUSCLE_MAPS = getExerciseMuscleMaps();
+  const map = EXERCISE_MUSCLE_MAPS[exerciseId];
+
+  if (!map) return contributions;
+
+  // Primary muscles: 100% contribution
+  for (const muscleId of map.primary) {
+    contributions[muscleId] = (contributions[muscleId] || 0) + volume * 1.0;
+  }
+
+  // Secondary muscles: 50% contribution
+  for (const muscleId of map.secondary) {
+    contributions[muscleId] = (contributions[muscleId] || 0) + volume * 0.5;
+  }
+
+  // Tertiary muscles: 25% contribution
+  for (const muscleId of map.tertiary) {
+    contributions[muscleId] = (contributions[muscleId] || 0) + volume * 0.25;
+  }
+
+  return contributions;
+}
+
 export function calculateMuscleVolumes(
   sessions: WorkoutSession[]
 ): Record<string, number> {
@@ -13,22 +42,14 @@ export function calculateMuscleVolumes(
   const allSets = sessions.flatMap((s) => s.sets);
 
   for (const set of allSets) {
-    const mapping = EXERCISE_MUSCLE_MAPPING.find(
-      (m) => m.exerciseId === set.exerciseId
+    const contributions = calculateMuscleContribution(
+      set.exerciseId,
+      set.weightKg || 0,
+      set.reps || 0
     );
 
-    if (!mapping) {
-      continue;
-    }
-
-    const volume = (set.weightKg || 0) * (set.reps || 0);
-
-    for (const muscleId of mapping.primary) {
+    for (const [muscleId, volume] of Object.entries(contributions)) {
       muscleVolumes[muscleId] = (muscleVolumes[muscleId] || 0) + volume;
-    }
-
-    for (const muscleId of mapping.secondary) {
-      muscleVolumes[muscleId] = (muscleVolumes[muscleId] || 0) + volume * 0.5;
     }
   }
 

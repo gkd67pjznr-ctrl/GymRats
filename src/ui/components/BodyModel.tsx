@@ -1,9 +1,11 @@
 import React from 'react';
 import { Svg, Path } from 'react-native-svg';
 import { View, useColorScheme } from 'react-native';
-import { MUSCLE_GROUPS } from '@/src/data/muscleGroups';
+import { getMuscleGroups } from '@/src/data/muscleGroupsManager';
 import { makeDesignSystem, alpha } from '@/src/ui/designSystem';
 import { useSettings } from '@/src/lib/stores/settingsStore';
+
+const MUSCLE_GROUPS = getMuscleGroups();
 
 interface BodyModelProps {
   muscleVolumes: Record<string, number>; // Muscle ID -> Volume (0-1)

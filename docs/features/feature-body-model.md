@@ -11,6 +11,8 @@ A visual representation of the human body that shows muscle engagement based on 
 - Implemented exercise-to-muscle mapping for 300+ exercises
 - Built BodyModel component with SVG visualization
 - Integrated body stats screen with volume-based coloring
+- Consolidated muscle group definitions into single source of truth
+- Created robust data management system to handle external database syncs
 
 ---
 
@@ -79,12 +81,21 @@ Basic interactive functionality implemented in the Body Stats screen with front/
 ## Technical Notes
 
 **Key Files:**
-- `src/ui/components/BodyModel.tsx` - SVG body component (simplified implementation)
-- `src/lib/bodyModel/bodyModel.tsx` - SVG body component (detailed implementation)
-- `src/data/muscleGroups.ts` - Simplified muscle definitions
-- `src/lib/bodyModel/muscleGroups.ts` - Detailed muscle definitions with exercise mappings
+- `src/ui/components/BodyModel.tsx` - SVG body component
+- `src/data/consolidatedMuscleGroups.ts` - Core muscle definitions with exercise mappings
+- `src/data/muscleGroupsManager.ts` - Data management system for external sync protection
 - `src/lib/volumeCalculator.ts` - Volume per muscle calculation
-- `src/lib/bodyModel/index.ts` - Module exports
+- `src/data/index.ts` - Data module exports
+
+**Data Management Strategy:**
+The body model system implements a robust data management strategy to handle external database syncs:
+
+1. **Core Definitions**: Immutable core muscle group definitions and exercise mappings
+2. **External Data Layer**: Separate storage for externally synced data with conflict resolution
+3. **Priority System**: Core definitions always take precedence over external data
+4. **Validation**: All external data is validated before integration
+5. **Version Tracking**: Data versioning for cache invalidation and sync monitoring
+6. **Recovery Mechanisms**: Ability to clear external data and revert to core definitions
 
 **Data Structure:**
 ```typescript

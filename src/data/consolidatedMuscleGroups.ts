@@ -1,5 +1,5 @@
-// src/lib/bodyModel/muscleGroups.ts
-// Muscle group definitions and exercise-to-muscle mapping
+// src/data/consolidatedMuscleGroups.ts
+// Consolidated muscle group definitions with SVG paths
 
 /**
  * Muscle group identifiers
@@ -31,15 +31,39 @@ export type MuscleId =
   | 'adductors'
   | 'abductors';
 
+export const CORE_MUSCLE_IDS: MuscleId[] = [
+  'upper_chest',
+  'lower_chest',
+  'front_delt',
+  'side_delt',
+  'rear_delt',
+  'upper_abs',
+  'lower_abs',
+  'obliques',
+  'biceps',
+  'forearms',
+  'traps',
+  'lats',
+  'mid_back',
+  'lower_back',
+  'quads',
+  'hamstrings',
+  'glutes',
+  'calves',
+  'adductors',
+  'abductors'
+];
+
 /**
- * Muscle group metadata
+ * Muscle group metadata with SVG paths
  */
 export interface MuscleGroup {
   id: MuscleId;
   name: string;
   displayName: string;
-  // Body position for visualization (0-1 coordinates)
   region: 'upper_front' | 'upper_back' | 'lower_body';
+  side: 'front' | 'back';
+  svgPath: string;
 }
 
 /**
@@ -47,30 +71,170 @@ export interface MuscleGroup {
  */
 export const MUSCLE_GROUPS: MuscleGroup[] = [
   // Upper body front
-  { id: 'upper_chest', name: 'Upper Chest', displayName: 'Upper Chest', region: 'upper_front' },
-  { id: 'lower_chest', name: 'Lower Chest', displayName: 'Lower Chest', region: 'upper_front' },
-  { id: 'front_delt', name: 'Front Delts', displayName: 'Front Shoulders', region: 'upper_front' },
-  { id: 'side_delt', name: 'Side Delts', displayName: 'Side Shoulders', region: 'upper_front' },
-  { id: 'rear_delt', name: 'Rear Delts', displayName: 'Rear Shoulders', region: 'upper_front' },
-  { id: 'traps', name: 'Traps', displayName: 'Traps', region: 'upper_front' },
-  { id: 'biceps', name: 'Biceps', displayName: 'Biceps', region: 'upper_front' },
-  { id: 'forearms', name: 'Forearms', displayName: 'Forearms', region: 'upper_front' },
-  { id: 'upper_abs', name: 'Upper Abs', displayName: 'Upper Abs', region: 'upper_front' },
-  { id: 'lower_abs', name: 'Lower Abs', displayName: 'Lower Abs', region: 'upper_front' },
-  { id: 'obliques', name: 'Obliques', displayName: 'Obliques', region: 'upper_front' },
+  {
+    id: 'upper_chest',
+    name: 'Upper Chest',
+    displayName: 'Upper Chest',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1' // Placeholder - will be updated with actual SVG paths
+  },
+  {
+    id: 'lower_chest',
+    name: 'Lower Chest',
+    displayName: 'Lower Chest',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'front_delt',
+    name: 'Front Delts',
+    displayName: 'Front Shoulders',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'side_delt',
+    name: 'Side Delts',
+    displayName: 'Side Shoulders',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'rear_delt',
+    name: 'Rear Delts',
+    displayName: 'Rear Shoulders',
+    region: 'upper_front',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'traps',
+    name: 'Traps',
+    displayName: 'Traps',
+    region: 'upper_front',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'biceps',
+    name: 'Biceps',
+    displayName: 'Biceps',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'forearms',
+    name: 'Forearms',
+    displayName: 'Forearms',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'upper_abs',
+    name: 'Upper Abs',
+    displayName: 'Upper Abs',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'lower_abs',
+    name: 'Lower Abs',
+    displayName: 'Lower Abs',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'obliques',
+    name: 'Obliques',
+    displayName: 'Obliques',
+    region: 'upper_front',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
 
   // Upper body back
-  { id: 'lats', name: 'Lats', displayName: 'Lats', region: 'upper_back' },
-  { id: 'mid_back', name: 'Mid Back', displayName: 'Mid Back', region: 'upper_back' },
-  { id: 'lower_back', name: 'Lower Back', displayName: 'Lower Back', region: 'upper_back' },
+  {
+    id: 'lats',
+    name: 'Lats',
+    displayName: 'Lats',
+    region: 'upper_back',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'mid_back',
+    name: 'Mid Back',
+    displayName: 'Mid Back',
+    region: 'upper_back',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'lower_back',
+    name: 'Lower Back',
+    displayName: 'Lower Back',
+    region: 'upper_back',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
 
   // Lower body
-  { id: 'quads', name: 'Quads', displayName: 'Quadriceps', region: 'lower_body' },
-  { id: 'hamstrings', name: 'Hamstrings', displayName: 'Hamstrings', region: 'lower_body' },
-  { id: 'glutes', name: 'Glutes', displayName: 'Glutes', region: 'lower_body' },
-  { id: 'calves', name: 'Calves', displayName: 'Calves', region: 'lower_body' },
-  { id: 'adductors', name: 'Adductors', displayName: 'Adductors', region: 'lower_body' },
-  { id: 'abductors', name: 'Abductors', displayName: 'Abductors', region: 'lower_body' },
+  {
+    id: 'quads',
+    name: 'Quads',
+    displayName: 'Quadriceps',
+    region: 'lower_body',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'hamstrings',
+    name: 'Hamstrings',
+    displayName: 'Hamstrings',
+    region: 'lower_body',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'glutes',
+    name: 'Glutes',
+    displayName: 'Glutes',
+    region: 'lower_body',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'calves',
+    name: 'Calves',
+    displayName: 'Calves',
+    region: 'lower_body',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'adductors',
+    name: 'Adductors',
+    displayName: 'Adductors',
+    region: 'lower_body',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'abductors',
+    name: 'Abductors',
+    displayName: 'Abductors',
+    region: 'lower_body',
+    side: 'front',
+    svgPath: 'M 0 0 L 1 1'
+  },
 ];
 
 /**
@@ -275,14 +439,14 @@ export const EXERCISE_MUSCLE_MAPS: Record<string, ExerciseMuscleMap> = {
   },
   hammer_curl: {
     exerciseId: 'hammer_curl',
-    primary: ['biceps', 'forearms', 'brachialis'],
+    primary: ['biceps', 'forearms'],
     secondary: ['side_delt'],
     tertiary: [],
   },
   preacher_curl: {
     exerciseId: 'preacher_curl',
     primary: ['biceps'],
-    secondary: ['forearms', 'brachialis'],
+    secondary: ['forearms'],
     tertiary: [],
   },
   tricep_pushdown: {
@@ -376,7 +540,7 @@ export const EXERCISE_MUSCLE_MAPS: Record<string, ExerciseMuscleMap> = {
   situp: {
     exerciseId: 'situp',
     primary: ['upper_abs', 'lower_abs'],
-    secondary: ['hip_flexors', 'quads'],
+    secondary: ['hip_flexors'],
     tertiary: [],
   },
   leg_raise: {
