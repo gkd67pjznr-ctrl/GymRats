@@ -130,6 +130,7 @@ logs/
 # Deployment & CI/CD
 .claude/skills/*/*/*secret*
 coverage.json
+coverage/
 *.log
 *-backup/
 # Skill-specific credentials
