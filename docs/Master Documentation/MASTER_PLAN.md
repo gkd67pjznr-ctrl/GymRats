@@ -5,8 +5,8 @@
 
 ## Document Info
 - **Created:** 2026-01-25
-- **Last Updated:** 2026-01-29
-- **Status:** Active — Updated from brainstorm interview
+- **Last Updated:** 2026-01-30
+- **Status:** Active — Updated from brainstorm interview and documentation organization
 
 ---
 
@@ -519,6 +519,13 @@ What keeps users coming back when they're not lifting:
 
 # DECISION LOG
 
+## 2026-01-30: Documentation Organization
+Key decisions:
+- **Documentation structure:** Organized into clear directories for better navigation
+- **Feature files:** Moved to subdirectories by category (Auth, Avatar, Workout, Social, etc.)
+- **Master documentation:** Updated all file paths to reflect new organization
+- **README files:** Created for all directories to explain contents
+
 ## 2026-01-29: Feature Brainstorm Interview
 Full transcript: `docs/AskUQ/2026-01-29-feature-brainstorm.md`
 
@@ -555,6 +562,6 @@ Key decisions:
 
 ---
 
-**End of Master Plan v2.0**
+**End of Master Plan v2.1**
 *This document is the source of truth for Forgerank's vision and strategy.*
-*Updated from brainstorm interview on 2026-01-29.*
+*Updated from documentation organization on 2026-01-30.*

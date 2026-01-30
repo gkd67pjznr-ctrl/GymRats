@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-Forgerank has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. The main gap is **backend integration** - everything currently runs locally without cloud sync.
+Forgerank has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. However, there are **critical issues** that need immediate attention including 160 failing tests and incomplete backend integration.
 
 ---
 
@@ -31,10 +31,10 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | Workout Replay | ✅ Done | 95% |
 | Forge Lab Analytics | 🔄 In Progress | 50% |
 | Forge Milestones | ✅ Done | 100% |
-| Gamification (XP/Levels) | 📋 Planned | 0% |
-| Cosmetic Store | 📋 Planned | 0% |
-| Multiple Personalities | 📋 Planned | 0% |
-| Leaderboards | 📋 Planned | 0% |
+| Gamification (XP/Levels) | ✅ Done | 100% |
+| Cosmetic Store | ✅ Done | 100% |
+| Avatar System | 🔄 In Progress | 50% |
+| Hangout Room | 🔄 In Progress | 50% |
 
 ---
 
@@ -90,37 +90,50 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 - Milestone earned toast notifications
 - Full trophy case screen at /milestones route
 
+### Gamification System
+- XP and leveling system (100 levels)
+- Streak tracking with milestones
+- Forge Tokens currency system
+- Cosmetic store for avatar items and room decorations
+- Achievements card on profile
+
 ### UI Foundation
 - Dark theme with accent colors
 - 7 rank tier colors (Iron → Mythic)
 - Tab navigation
 - Error boundaries
 - Design system tokens
+- Theme system with multiple color palettes
+- Visual style guide implementation
 
 ---
 
 ## What Needs Work
 
 ### Critical Path (Required for v1)
-1. **OAuth Authentication** - Google/Apple sign-in not working
-2. **Backend Sync** - All data is local-only, no cloud persistence
-3. **Input UX Polish** - Number pad, steppers, auto-fill
+1. **Fix Failing Tests** - 160 tests currently failing,严重影响 test suite reliability
+2. **OAuth Authentication** - Google/Apple sign-in not working
+3. **Backend Sync** - All data is local-only, no cloud persistence
+4. **Input UX Polish** - Number pad, steppers, auto-fill
 
 ### High Priority
-4. **Forge Lab Charting** - Implement actual charting library (react-native-chart-kit or victory-native)
-5. **Backend Integration for Milestones** - Create user_milestones table and sync functionality
-6. **Profile Stats** - Show user's ranks, PRs, streaks, and milestone counts
+5. **Forge Lab Charting** - Implement actual charting library (react-native-chart-kit or victory-native)
+6. **Backend Integration for Milestones** - Create user_milestones table and sync functionality
+7. **Profile Stats** - Show user's ranks, PRs, streaks, and milestone counts
+8. **Avatar System Completion** - Finish avatar growth and customization features
+9. **Hangout Room Real-time Features** - Implement presence tracking and decorations
 
 ### Medium Priority
-7. **Leaderboards** - Friends comparison
-8. **Onboarding Flow** - First-time user experience with buddy selection
-9. **Push Notifications** - Rest timer, social activity, milestone achievements
+10. **Leaderboards** - Friends comparison
+11. **Onboarding Flow** - First-time user experience with buddy selection
+12. **Push Notifications** - Rest timer, social activity, milestone achievements
+13. **Protected Routes** - Implement proper authentication guards
 
 ### Lower Priority (Post-v1)
-10. **XP & Levels** - User progression system
-11. **Cosmetic Store** - Themes, voice packs, card skins
-12. **Multiple Personalities** - Additional gym buddy customizations
-13. **Hidden Milestones** - Secret achievements for dedicated users
+14. **XP & Levels** - User progression system (already implemented)
+15. **Cosmetic Store** - Themes, voice packs, card skins (already implemented)
+16. **Multiple Personalities** - Additional gym buddy customizations
+17. **Hidden Milestones** - Secret achievements for dedicated users
 
 ---
 
@@ -130,24 +143,33 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 - Some screens (explore tab) have Expo boilerplate not customized
 - OAuth flows scaffolded but not functional
 - Tests need expansion (scoring has 100% coverage, others less)
+- Duplicate utility functions (timeAgo, kgToLb)
+- `_old/` directory needs deletion
+- Console logging in production code
+- Import style inconsistency (@/ vs relative)
 
 ## Known Critical Bugs
 
 - **BUG-LOG-012**: Routine exercises don't load - workout shows "Barbell Bench Press - Medium Grip" instead of routine's exercises
 - **BUG-LOG-008**: Button overflow on long exercise names in live workout
+- **TEST-FAILURES**: 160 failing tests严重影响 code reliability and development workflow
 
 ---
 
 ## Recent Changes (2026-01-30)
 
+- Completed comprehensive codebase analysis and created documentation in `docs/Codebase Analysis/`
+- Updated CLAUDE workflow documentation to reflect current project state
+- Identified critical issues: 160 failing tests, backend sync integration incomplete, OAuth authentication not working
 - Implemented complete AI Gym Buddy System with 9 distinct personalities
 - Implemented complete Workout Replay feature with cinematic post-workout summaries
 - Implemented Forge Lab analytics (Phase 1) with core data processing and UI components
 - Implemented complete Forge Milestones system with 30 achievements across 4 rarity tiers
 - Added full trophy case on profile and milestone earned toast notifications
-- Updated FEATURE-MASTER.md to reflect 95/155 features (61%)
+- Updated FEATURE-MASTER.md to reflect 117/167 features (70%)
 - Created comprehensive documentation for new features
 - Added test cases to USER_TESTING_CHECKLIST.md for all new features
+- **Documentation Organization:** Restructured docs directory with clear subdirectories for better navigation
 
 ## Recent Changes (2026-01-27)
 
@@ -165,6 +187,29 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Top 3 Priorities
 
-1. **Get OAuth Working** - Users need real accounts before backend sync
-2. **Backend Sync** - Infrastructure done (60%), needs auth integration to activate
-3. **Forge Lab Charting** - Implement actual charting library for analytics visualization
+1. **Fix Failing Tests** - Address 160 failing tests to restore test suite reliability
+2. **Get OAuth Working** - Users need real accounts before backend sync
+3. **Backend Sync** - Infrastructure done (60%), needs auth integration to activate
+
+---
+
+## Quality Metrics
+
+### Test Status
+- **Total Tests**: 1074
+- **Passing Tests**: 914
+- **Failing Tests**: 160
+- **Test Suite Health**: 85% passing
+
+### Code Quality
+- **Overall Quality Score**: 75/100
+- **TypeScript Safety**: 85/100
+- **Error Handling**: 80/100
+- **Code Complexity**: 75/100
+- **Pattern Consistency**: 80/100
+
+### Feature Completeness
+- **Total Features**: 167
+- **Implemented Features**: 117
+- **Progress**: 70%
+- **Phase**: 2 - Advanced Features

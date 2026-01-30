@@ -1,7 +1,7 @@
 # FORGERANK FEATURE MASTER
 
-**Last Updated:** 2026-01-29
-**Version:** v0.2 (Pre-launch, post-brainstorm)
+**Last Updated:** 2026-01-30
+**Version:** v0.3 (Post-organization)
 
 ---
 
@@ -9,25 +9,25 @@
 
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
-| [Workout Core](#workout-core) | In Progress | 8/20 | [Details](features/feature-workouts.md) |
-| [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](features/feature-workout-logging-ux.md) |
-| [Exercise Library](#exercise-library) | Done | 3/3 | [Details](features/feature-exercises.md) |
-| [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](features/feature-scoring.md) |
-| [AI Gym Buddy](#ai-gym-buddy) | In Progress | 1/11 | [Details](features/feature-cue-system.md) |
-| [Body Model](#body-model) | Planned | 0/5 | [Details](features/feature-body-model.md) |
-| [Authentication](#authentication) | In Progress | 7/10 | [Details](features/feature-auth.md) |
-| [Social & Feed](#social--feed) | In Progress | 9/15 | [Details](features/feature-social.md) |
-| [Gamification](#gamification) | **Done** | 12/12 | [Details](features/feature-gamification.md) |
-| [Notifications](#notifications) | In Progress | 1/4 | [Details](features/feature-notifications.md) |
-| [UI & Design](#ui--design) | In Progress | 12/15 | [Details](features/feature-ui.md) |
-| [UI Themes & Visual Style](#ui-themes--visual-style) | Done | 12/12 | [Details](features/feature-ui-themes.md) |
-| [Backend & Sync](#backend--sync) | In Progress | 9/10 | [Details](features/feature-backend.md) |
-| [Onboarding](#onboarding) | In Progress | 3/7 | [Details](features/feature-onboarding.md) |
-| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](features/feature-avatars.md) |
-| [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](features/feature-workout-replay.md) |
-| [Forge DNA](#forge-dna) | ✅ Done | 4/4 | [Details](features/feature-forge-dna.md) |
-| [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 3/6 | [Details](features/feature-forge-lab.md) |
-| [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](features/feature-forge-milestones.md) |
+| [Workout Core](#workout-core) | In Progress | 8/20 | [Details](../features/Workout/feature-workouts.md) |
+| [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](../features/Workout/feature-workout-logging-ux.md) |
+| [Exercise Library](#exercise-library) | Done | 3/3 | [Details](../features/Workout/feature-exercises.md) |
+| [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](../features/Workout/feature-scoring.md) |
+| [AI Gym Buddy](#ai-gym-buddy) | In Progress | 1/11 | [Details](../features/Workout/feature-cue-system.md) |
+| [Body Model](#body-model) | Planned | 0/5 | [Details](../features/Workout/feature-body-model.md) |
+| [Authentication](#authentication) | In Progress | 7/10 | [Details](../features/Auth/feature-auth.md) |
+| [Social & Feed](#social--feed) | In Progress | 9/15 | [Details](../features/Social/feature-social.md) |
+| [Gamification](#gamification) | **Done** | 12/12 | [Details](../features/Gamification/feature-gamification.md) |
+| [Notifications](#notifications) | In Progress | 1/4 | [Details](../features/Social/feature-notifications.md) |
+| [UI & Design](#ui--design) | In Progress | 12/15 | [Details](../features/UI/feature-ui.md) |
+| [UI Themes & Visual Style](#ui-themes--visual-style) | Done | 12/12 | [Details](../features/UI/feature-ui-themes.md) |
+| [Backend & Sync](#backend--sync) | In Progress | 9/10 | [Details](../features/Backend/feature-backend.md) |
+| [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/Misc/feature-onboarding.md) |
+| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](../features/Avatar/feature-avatars.md) |
+| [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](../features/Workout/feature-workout-replay.md) |
+| [Forge DNA](#forge-dna) | ✅ Done | 4/4 | [Details](../features/Analytics/feature-forge-dna.md) |
+| [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 3/6 | [Details](../features/Analytics/feature-forge-lab.md) |
+| [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](../features/Gamification/feature-forge-milestones.md) |
 
 **Launch Total:** 117/167 features (70%)
 
@@ -35,15 +35,15 @@
 
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
-| [Leaderboards & Competitions](#leaderboards--competitions) | Planned | 0/10 | [Details](features/feature-leaderboards.md) |
-| [Integrations](#integrations) | Planned | 0/5 | [Details](features/feature-integrations.md) |
-| [Online Competitions](#online-competitions) | Planned | 0/8 | [Details](features/feature-competitions.md) |
-| [Gym Finder / Map](#gym-finder--map) | Planned | 0/6 | [Details](features/feature-gym-finder.md) |
-| [Live Workout Together](#live-workout-together) | Planned | 0/4 | [Details](features/feature-live-together.md) |
-| [AI Coaching](#ai-coaching) | Planned | 0/4 | [Details](features/feature-ai-coaching.md) |
-| [Templates Marketplace](#templates-marketplace) | Planned | 0/4 | [Details](features/feature-templates-marketplace.md) |
-| [Training Journal](#training-journal) | Planned | 0/4 | [Details](features/feature-training-journal.md) |
-| [Forge Seasons](#forge-seasons) | Planned | 0/4 | [Details](features/feature-forge-seasons.md) |
+| [Leaderboards & Competitions](#leaderboards--competitions) | Planned | 0/10 | [Details](../features/Social/feature-leaderboards.md) |
+| [Integrations](#integrations) | Planned | 0/5 | [Details](../features/Misc/feature-integrations.md) |
+| [Online Competitions](#online-competitions) | Planned | 0/8 | [Details](../features/Social/feature-competitions.md) |
+| [Gym Finder / Map](#gym-finder--map) | Planned | 0/6 | [Details](../features/Misc/feature-gym-finder.md) |
+| [Live Workout Together](#live-workout-together) | Planned | 0/4 | [Details](../features/Live/feature-live-together.md) |
+| [AI Coaching](#ai-coaching) | Planned | 0/4 | [Details](../features/Misc/feature-ai-coaching.md) |
+| [Templates Marketplace](#templates-marketplace) | Planned | 0/4 | [Details](../features/Misc/feature-templates-marketplace.md) |
+| [Training Journal](#training-journal) | Planned | 0/4 | [Details](../features/Misc/feature-training-journal.md) |
+| [Forge Seasons](#forge-seasons) | Planned | 0/4 | [Details](../features/Misc/feature-forge-seasons.md) |
 
 **Post-Launch Total:** 0/49 features (0%)
 
@@ -377,7 +377,7 @@ Finch-inspired virtual gym avatar that grows as you work out, living in a shared
 
 ## Workout Replay
 **Status:** Implemented | **Progress:** 5/5 features
-**NEW — from 2026-01-29 brainstorm**
+**NEW — from 2026-01-29 brainstorm
 
 Cinematic post-workout summary — THE share moment.
 
@@ -392,7 +392,7 @@ Cinematic post-workout summary — THE share moment.
 
 ## Forge DNA
 **Status:** In Progress | **Progress:** 3/4 features
-**NEW — from 2026-01-29 brainstorm**
+**NEW — from 2026-01-29 brainstorm
 
 Visual fingerprint of your training identity — profile centerpiece.
 
@@ -409,7 +409,7 @@ Visual fingerprint of your training identity — profile centerpiece.
 
 ## Forge Lab (Analytics)
 **Status:** Planned | **Progress:** 0/6 features
-**NEW — from 2026-01-29 brainstorm**
+**NEW — from 2026-01-29 brainstorm
 
 Premium analytics dashboard for serious lifters.
 
@@ -429,7 +429,7 @@ Premium analytics dashboard for serious lifters.
 
 ## Forge Milestones
 **Status:** Done | **Progress:** 5/5 features
-**NEW — from 2026-01-29 brainstorm**
+**NEW — from 2026-01-29 brainstorm
 
 Non-repeatable lifetime achievements with tiered rarity — prestige markers.
 
@@ -463,7 +463,7 @@ Non-repeatable lifetime achievements with tiered rarity — prestige markers.
 - Tiered judging system (casual = community, ranked = panel, championship = AI + panel)
 - Seasonal events + always-open practice stage
 
-See [feature-leaderboards.md](features/feature-leaderboards.md) and [feature-competitions.md](features/feature-competitions.md)
+See [feature-leaderboards.md](../features/Social/feature-leaderboards.md) and [feature-competitions.md](../features/Social/feature-competitions.md)
 
 ---
 

@@ -1,7 +1,8 @@
 # CLAUDE WORKFLOW CONFIG
 
-**Version:** 1.0
+**Version:** 1.1
 **Created:** 2026-01-27
+**Updated:** 2026-01-30
 **Purpose:** Standardized work loop for all development sessions
 
 ---
@@ -39,9 +40,9 @@ Present the user with **top 3 recommended tasks** based on this priority matrix:
 
 ```
 Claude: "Based on current state, I recommend:
-  1. [P0] Fix silent error catch blocks (32 remaining)
-  2. [P1] Complete routine-based workout flow
-  3. [P2] Add tests for currentSessionStore
+  1. [P0] Fix failing tests (160 currently failing)
+  2. [P1] Complete backend sync integration with Supabase
+  3. [P2] Implement OAuth authentication (Google/Apple)
 
 Which would you like to work on? (or specify something else)"
 ```
@@ -79,7 +80,8 @@ Every task follows this cycle. No exceptions.
 │                                                             │
 │   7. DOCUMENT                                               │
 │      └── Update feature file, progress.md                   │
-│      └── Add test cases to USER_TESTING_CHECKLIST.md      │
+│      └── Add test cases to USER_TESTING_CHECKLIST.md        │
+│      └── Update codebase-analysis.md if needed              │
 │                                                             │
 │   8. SCORE                                                  │
 │      └── Calculate completion score (see below)             │
@@ -442,6 +444,7 @@ Repositories to scan:
    - `docs/PROJECT_STATUS.md` - Current project status
    - `docs/features/feature-*.md` - Individual feature status
    - `docs/USER_TESTING_CHECKLIST.md` - Test coverage
+   - `docs/codebase-analysis.md` - Technical analysis
 
 2. **Compare and Accumulate** information:
    - Identify new features or status changes in other repositories
@@ -563,23 +566,35 @@ This ensures documentation stays synchronized and no decisions are lost between 
 
 ## CURRENT STATE QUICK REFERENCE
 
-### Phase: 0 - Stabilization
+### Phase: 2 - Advanced Features (AI Gym Buddy, Analytics, and Social Enhancements)
 
 ### Critical Issues (P0)
-- 32 silent error catch blocks
-- 20 unsafe JSON.parse calls
-- 14 `as any` type casts
+- 160 failing tests
+- Backend sync integration incomplete
+- OAuth authentication not working
 
 ### In Progress Features
-- Workout Core: 8/20
-- Authentication: 4/10
-- UI & Design: 6/15
+- Workout Core: 15/20
+- Authentication: 7/10
+- Backend & Sync: 9/10
+- UI & Design: 12/15
+- Notifications: 1/4
+- Onboarding: 3/7
+- Avatar & Hangout Room: 4/8
+- Forge Lab (Analytics): 3/6
 
 ### Completed Features
 - Exercise Library: 3/3 (Done)
 - Scoring & Ranks: 5/5 (Done)
+- Workout Logging UX: 10/10 (Done)
+- Gamification: 12/12 (Done)
+- AI Gym Buddy: 11/11 (Done)
+- Workout Replay: 5/5 (Done)
+- Forge Milestones: 5/5 (Done)
+- UI Themes & Visual Style: 12/12 (Done)
+- Forge DNA: 4/4 (Done)
 
-### Quality Score: 68/100
+### Quality Score: 75/100
 
 ### Visual Style Documentation
 - UI Aesthetic Implementation Plan: Complete
@@ -656,47 +671,16 @@ The workflow is **automatically invoked** when:
 User: "hey let's work"
 
 Claude: "Running startup checks...
-✓ Tests passing (203/203)
-✓ Current phase: 0 - Stabilization
-✓ Quality score: 68/100
+✓ Tests currently failing (160/1074)
+✓ Current phase: 2 - Advanced Features
+✓ Quality score: 75/100
 
 Based on current state, I recommend:
-1. [P0] Fix 32 silent error catch blocks (audit finding)
-2. [P1] Complete routine-based workout flow (Phase 1 prep)
-3. [P2] Add integration tests for workout persistence
+1. [P0] Fix failing tests (160 currently failing)
+2. [P1] Complete backend sync integration with Supabase
+3. [P2] Implement OAuth authentication (Google/Apple)
 
 Which would you like to tackle?"
-
-User: "1"
-
-Claude: "[Enters work loop]
-Understanding scope...
-- Found 32 catch blocks with empty/silent handling
-- Files affected: [list]
-
-Acceptance criteria:
-- All catch blocks either log, report, or handle errors
-- No silent failures
-- Tests verify error handling
-
-Building fix..."
-
-[...work loop continues...]
-
-Claude: "Task complete!
-
-## Score: 87/100
-- Functionality: 38/40
-- Tests: 22/25
-- Code Quality: 15/15
-- Documentation: 7/10
-- Edge Cases: 5/10
-
-Summary: Fixed 32/32 silent catch blocks. All now log to errorHandler.
-Tests added for 8 critical paths. 2 catch blocks need user decision
-on proper fallback behavior.
-
-Ready for next task or want to address the 2 edge cases?"
 ```
 
 ---

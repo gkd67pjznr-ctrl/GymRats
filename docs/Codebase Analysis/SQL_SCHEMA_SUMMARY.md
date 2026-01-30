@@ -1,5 +1,7 @@
 # Live Workout Together SQL Schema
 
+**File Creation Timestamp:** 2026-01-30 05:30:00
+
 ## Overview
 
 This document describes the SQL schema for the Live Workout Together feature, which enables real-time shared workout experiences between users.

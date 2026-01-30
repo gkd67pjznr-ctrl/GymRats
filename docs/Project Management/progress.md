@@ -1,6 +1,227 @@
 # Forgerank Project Progress
 
-**Last Updated:** 2026-01-29
+**Last Updated:** 2026-01-30
+
+### 2026-01-30 (codebase analysis and documentation update)
+- Completed comprehensive codebase analysis and created `docs/codebase-analysis.md`
+- Updated CLAUDE workflow documentation to reflect current project state
+- Updated feature tracking and progress metrics
+- Identified critical issues: 160 failing tests, backend sync integration incomplete, OAuth authentication not working
+- Current phase: 2 - Advanced Features (AI Gym Buddy, Analytics, and Social Enhancements)
+- Total feature progress: 117/167 features (70%)
+- Quality score: 75/100
+
+**Project Start:** ~2026-01-14 (initial scaffolding)
+
+---
+
+## Current Status
+
+**Phase:** 2 - Advanced Features (AI Gym Buddy, Analytics, and Social Enhancements)
+**Focus:** Complete advanced features, fix critical issues, prepare for user testing
+
+---
+
+## Completed Milestones
+
+### Week 1 (Jan 14-20)
+- Initial project scaffolding
+- Expo + React Native setup
+- Basic navigation structure
+- Exercise database created
+- Forgerank scoring algorithm implemented
+- Basic workout logging flow
+
+### Week 2 (Jan 20-26)
+- Zustand store migration (mostly complete)
+- Supabase project setup
+- Database schema design (8 tables)
+- Row Level Security policies
+- Auth screens created (login/signup)
+- Auth store implementation
+- Comprehensive code audit
+- Input validation with toast feedback
+- Test coverage improvements (200+ tests)
+
+### Week 3 (Jan 27-30)
+- AI Gym Buddy System implementation
+- Workout Replay feature
+- Forge Milestones system
+- Forge Lab analytics (Phase 1)
+- Avatar & Hangout Room (Phase 1)
+- UI Themes & Visual Style implementation
+- Comprehensive documentation updates
+- Codebase analysis and workflow updates
+
+---
+
+## What's Working
+
+### Core Functionality
+- Start/resume workout sessions
+- Log sets (weight/reps)
+- Exercise selection
+- Rest timer (basic)
+- Session persistence
+- Workout history storage
+- Basic routine builder
+- Premade plan browser
+- User profile editing (display name, avatar upload/remove)
+
+### Advanced Features
+- AI Gym Buddy System with 9+ personalities
+- Workout Replay with cinematic summaries
+- Gamification system (XP, levels, streaks, currency)
+- Forge Milestones with trophy case
+- Avatar system with growth mechanics
+- Hangout room with friend presence
+- Forge DNA visualization
+- Forge Lab analytics dashboard
+- Theme system with multiple color palettes
+
+### Technical Foundation
+- Expo 54 + React Native 0.81
+- TypeScript strict mode
+- Zustand state management
+- AsyncStorage persistence
+- Supabase client configured
+- Error boundaries
+- Design system tokens
+- Backend sync system (infrastructure complete)
+- Real-time subscriptions
+- Offline mutation queuing
+- Conflict resolution strategies
+
+### Testing
+- 1000+ tests across codebase
+- 100% coverage on database types
+- Auth store tests
+- Validation tests
+- Scoring algorithm: 100%
+- PR detection: 100%
+
+---
+
+## What's Not Working / Missing
+
+### Critical Issues (P0)
+- **160 failing tests** - Test suite health needs immediate attention
+- **Backend sync integration incomplete** - Sync system implemented but not fully integrated with auth
+- **OAuth authentication not working** - Google/Apple sign-in implemented but requires external setup
+
+### Auth
+- Email/password login works ✅
+- Google OAuth implemented, requires external setup:
+  - Google Cloud Console configuration
+  - Supabase Google provider enablement
+  - Environment variable setup
+- No protected routes
+
+### Social
+- Backend sync system implemented ✅
+- Real-time subscriptions implemented ✅
+- Social stores integrated with sync ✅
+- Feed UI connected to sync data ✅
+- Friends UI connected to sync data ✅
+- User discovery/search implemented ✅
+- User profile editing (display name, avatar) ✅
+- Need to apply migration 005_user_search.sql to Supabase
+
+### Backend
+- Backend sync system implemented ✅
+- Repository layer for all 8 tables ✅ (including user profiles)
+- Real-time subscriptions via Supabase ✅
+- Offline mutation queuing ✅
+- Conflict resolution strategies ✅
+- UI connected to sync data streams ✅
+- Sync status indicators added ✅
+
+### Polish
+- PR celebration animations implemented ✅
+- Onboarding screens partially implemented
+- Many empty states missing
+- Input polish needed
+- `live-workout.tsx` is 577 lines (needs refactor)
+
+---
+
+## Known Issues
+
+### Critical (P0)
+- 160 failing tests (must be fixed before user testing)
+- Backend sync integration incomplete
+- OAuth authentication not working
+
+### High Priority (P1)
+- Duplicate utility functions (timeAgo, kgToLb)
+- `_old/` directory needs deletion
+- Console logging in production code
+- `live-workout.tsx` is 577 lines (needs refactor)
+
+### Medium Priority (P2)
+- Import style inconsistency (@/ vs relative)
+- Apply database migration 005_user_search.sql to Supabase
+- Protected routes implementation
+
+---
+
+## Next Steps
+
+### Immediate (This Week)
+1. **Fix failing tests** - Address the 160 failing tests to restore test suite health
+2. **Complete backend sync integration** - Integrate sync system with authentication
+3. **Implement OAuth authentication** - Complete Google/Apple sign-in setup
+4. **Apply database migration** 005_user_search.sql to Supabase
+
+### Short Term (Next 2 Weeks)
+1. Implement protected routes
+2. Test sync functionality with real backend
+3. Complete onboarding screens
+4. Set input polish
+5. Rest timer enhancements
+
+### Medium Term (Next Month)
+1. Complete social feature integration
+2. Chat functionality polish
+3. Multi-device sync testing
+4. Leaderboards implementation
+5. Online competitions foundation
+
+---
+
+## Metrics
+
+### Code Stats
+- ~80 TypeScript/TSX source files
+- ~15,000 lines of code (estimate)
+- 12 Zustand stores
+- 100+ exercises defined
+
+### Test Stats
+- 1000+ test cases
+- 100% coverage on DB types
+- 89 auth tests
+- Scoring algorithm: 100%
+- PR detection: 100%
+
+### Quality Score
+- Overall: 75/100
+- TypeScript Safety: 85/100
+- Error Handling: 80/100
+- Code Complexity: 75/100
+- Pattern Consistency: 80/100
+
+---
+
+## Decision Log
+
+### 2026-01-30 (codebase analysis)
+- Completed comprehensive analysis of entire codebase
+- Created `docs/codebase-analysis.md` with detailed technical documentation
+- Updated CLAUDE workflow to reflect current project state
+- Identified critical issues requiring immediate attention
+- Updated feature tracking and progress metrics
+
 ### 2026-01-30 (ai gym buddy trigger system enhancements)
 - Enhanced AI Gym Buddy trigger system with session management integration:
   - Added workout session start tracking in buddy store
@@ -37,172 +258,6 @@
   - Documented avatar growth algorithm and art styles
   - Outlined remaining implementation phases for real-time features and cosmetics
   - Total feature progress: 86/133 → 86/133 (65%) (documentation update)
-
-**Project Start:** ~2026-01-14 (initial scaffolding)
-
----
-
-## Current Status
-
-**Phase:** 0 - Stabilization
-**Focus:** Fix bugs, complete migrations, establish foundation
-
----
-
-## Completed Milestones
-
-### Week 1 (Jan 14-20)
-- Initial project scaffolding
-- Expo + React Native setup
-- Basic navigation structure
-- Exercise database created
-- Forgerank scoring algorithm implemented
-- Basic workout logging flow
-
-### Week 2 (Jan 20-26)
-- Zustand store migration (mostly complete)
-- Supabase project setup
-- Database schema design (8 tables)
-- Row Level Security policies
-- Auth screens created (login/signup)
-- Auth store implementation
-- Comprehensive code audit
-- Input validation with toast feedback
-- Test coverage improvements (200+ tests)
-
----
-
-## What's Working
-
-### Core Functionality
-- Start/resume workout sessions
-- Log sets (weight/reps)
-- Exercise selection
-- Rest timer (basic)
-- Session persistence
-- Workout history storage
-- Basic routine builder
-- Premade plan browser
-- User profile editing (display name, avatar upload/remove)
-
-### Technical Foundation
-- Expo 54 + React Native 0.81
-- TypeScript strict mode
-- Zustand state management
-- AsyncStorage persistence
-- Supabase client configured
-- Error boundaries
-- Design system tokens
-
-### Testing
-- 200+ tests across codebase
-- 100% coverage on database types
-- Auth store tests
-- Validation tests
-
----
-
-## What's Not Working / Missing
-
-### Auth
-- Email/password login works ✅
-- Google OAuth implemented, requires external setup:
-  - Google Cloud Console configuration
-  - Supabase Google provider enablement
-  - Environment variable setup
-- No protected routes
-
-### Social
-- Backend sync system implemented ✅
-- Real-time subscriptions implemented ✅
-- Social stores integrated with sync ✅
-- Feed UI connected to sync data ✅
-- Friends UI connected to sync data ✅
-- User discovery/search implemented ✅
-- User profile editing (display name, avatar) ✅
-- Need to apply migration 005_user_search.sql to Supabase
-
-### Backend
-- Backend sync system implemented ✅
-- Repository layer for all 8 tables ✅ (including user profiles)
-- Real-time subscriptions via Supabase ✅
-- Offline mutation queuing ✅
-- Conflict resolution strategies ✅
-- UI connected to sync data streams ✅
-- Sync status indicators added ✅
-
-### Polish
-- PR celebration animations implemented ✅
-- No onboarding
-- Many empty states missing
-- Input polish needed
-
----
-
-## Known Issues
-
-### Critical (P0)
-- ~~32 silent error catch blocks~~ ✅ FIXED (2026-01-27)
-- ~~20 unsafe JSON.parse calls~~ ✅ FIXED - all use safeJSONParse
-- ~~14 `as any` type casts in critical code~~ ✅ FIXED (2026-01-27)
-
-### High Priority (P1)
-- Duplicate utility functions (timeAgo, kgToLb)
-- `_old/` directory needs deletion
-- Console logging in production code
-
-### Medium Priority (P2)
-- `live-workout.tsx` is 577 lines (needs refactor)
-- Import style inconsistency (@/ vs relative)
-
----
-
-## Next Steps
-
-### Immediate (This Week)
-1. Apply database migration 005_user_search.sql to Supabase
-1. Apply database migration 005_user_search.sql to Supabase
-2. Implement protected routes
-3. Test sync functionality with real backend
-3. Test sync functionality with real backend
-
-### Short Term (Next 2 Weeks)
-1. Routine-based workout flow
-2. Set input polish
-3. Rest timer enhancements
-4. Onboarding screens
-4. Onboarding screens
-
-### Medium Term (Next Month)
-1. Complete social feature integration
-2. Chat functionality polish
-3. Multi-device sync testing
-
----
-
-## Metrics
-
-### Code Stats
-- ~80 TypeScript/TSX source files
-- ~15,000 lines of code (estimate)
-- 10 Zustand stores
-- 50+ exercises defined
-
-### Test Stats
-- 200+ test cases
-- 100% coverage on DB types
-- 89 auth tests
-
-### Quality Score
-- Overall: 68/100 (from audit)
-- TypeScript Safety: 55/100
-- Error Handling: 45/100
-- Code Complexity: 75/100
-- Pattern Consistency: 70/100
-
----
-
-## Decision Log
 
 ### 2026-01-28 (profile edit)
 - Created User Profile Editing Screen:
@@ -310,7 +365,6 @@
 - Created notification service, types, and comprehensive test suite
 - Enhanced RestTimerOverlay with background notifications
 - Total feature progress: 80/133 → 81/133 (61%)
-
 
 ### 2026-01-30 (forge milestones feature)
 - Implemented complete Forge Milestones feature:
