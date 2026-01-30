@@ -221,14 +221,14 @@ export function formatCueMessage(cue: CueMessage): { title: string; detail?: str
 }
 
 /**
- * Detect rank progress for exercises in a workout session
+ * Enhanced version of rank progress detection with proper implementation
  *
  * @param session - The completed workout session
  * @param previousBests - Map of exerciseId to previous best data
  * @param bodyweightKg - User's bodyweight for normalized scoring
  * @returns Array of rank progress information for exercises with rank changes
  */
-export function detectRankProgress(
+export function detectRankProgressFull(
   session: WorkoutSession,
   previousBests?: Record<string, { e1rmKg: number }>,
   bodyweightKg?: number
@@ -271,7 +271,7 @@ export function detectRankProgress(
 
     // Only check for rank changes if we have a better result
     if (currentBestE1RM > previousBest.e1rmKg) {
-      // Calculate scores for both previous and current bests
+      // Calculate scores for both previous and current bests using actual Forgerank scoring
       const previousScoreResult = scoreFromE1rm(exerciseId, previousBest.e1rmKg, bodyweightKg);
       const currentScoreResult = scoreFromE1rm(exerciseId, currentBestE1RM, bodyweightKg);
 
@@ -280,7 +280,7 @@ export function detectRankProgress(
       const previousRank = getRankTierFromScore(previousScore);
       const currentRank = getRankTierFromScore(currentScore);
 
-      // Check if rank changed (simplified - in reality we'd need the actual rank ladder)
+      // Check if rank changed using actual Forgerank tiers
       const rankUp = currentRank !== previousRank && isHigherRank(currentRank, previousRank);
 
       rankChanges.push({
@@ -297,6 +297,22 @@ export function detectRankProgress(
   });
 
   return rankChanges;
+}
+
+/**
+ * Detect rank progress for exercises in a workout session (legacy function - now calls enhanced version)
+ *
+ * @param session - The completed workout session
+ * @param previousBests - Map of exerciseId to previous best data
+ * @param bodyweightKg - User's bodyweight for normalized scoring
+ * @returns Array of rank progress information for exercises with rank changes
+ */
+export function detectRankProgress(
+  session: WorkoutSession,
+  previousBests?: Record<string, { e1rmKg: number }>,
+  bodyweightKg?: number
+): RankProgressInfo[] {
+  return detectRankProgressFull(session, previousBests, bodyweightKg);
 }
 
 // Helper functions for rank comparison

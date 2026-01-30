@@ -18,7 +18,7 @@
 | [Authentication](#authentication) | In Progress | 7/10 | [Details](features/feature-auth.md) |
 | [Social & Feed](#social--feed) | In Progress | 9/15 | [Details](features/feature-social.md) |
 | [Gamification](#gamification) | **Done** | 12/12 | [Details](features/feature-gamification.md) |
-| [Notifications](#notifications) | Planned | 0/4 | [Details](features/feature-notifications.md) |
+| [Notifications](#notifications) | In Progress | 1/4 | [Details](features/feature-notifications.md) |
 | [UI & Design](#ui--design) | In Progress | 8/15 | [Details](features/feature-ui.md) |
 | [Backend & Sync](#backend--sync) | In Progress | 9/10 | [Details](features/feature-backend.md) |
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](features/feature-onboarding.md) |
@@ -128,35 +128,31 @@ The visual interface for logging sets — complete redesign (Fitbod/Liftoff styl
 ---
 
 ## AI Gym Buddy
-**Status:** In Progress | **Progress:** 4/11 features
+**Status:** In Progress | **Progress:** 11/11 features
 **Previously:** Cue System
 
 The app's personality — reactive commentary that makes it feel alive. Like a sports announcer, not a chatbot.
 
 **Completed:**
 - Basic PR detection cues
-- 6 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Trash Talker)
+- 12 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Girl Power Fit, Mindful Movement, Goth Gym Rat, Action Hero, Drill Sergeant, Zen Master, Trash Talker, Legendary Mystery Buddy)
 - Tiered buddy system (Basic, Premium, Legendary)
 - Reactive commentary engine with message selection
 - Integrated session management (workout start, set recording, rest tracking)
 - Implemented trigger evaluation system (performance events, behavior patterns, session flow)
-- Added rank progress detection infrastructure
+- Added full rank progress detection with historical data integration
 - Enhanced buddy store with session memory tracking
+- Exercise completion tracking with skipping detection
+- Complete message pools for all personalities (70 messages each across 14 trigger types)
+- Voice line integration for premium buddies
+- Sound effects for legendary buddies
+- Theme transformations for legendary buddies
 
-**Planned (Launch):**
-- 8-12 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Girl Power Fit, Mindful Movement, Goth Gym Rat, Action Hero, Drill Sergeant, Zen Master, Trash Talker, etc.)
-- Tiered buddy system:
-  - **Basic** = text-only cues (2-3 free at launch)
-  - **Premium** = voice lines + text (IAP)
-  - **Legendary** = full theme transformation (IAP — accent color, card style, sounds, voice, cue text)
-- Reactive commentary — performance events (PRs, volume milestones) with rank-up infrastructure
-- Reactive commentary — behavior patterns (long rests, streaks, returning after absence) with skipping exercise infrastructure
-- Reactive commentary — session flow (start hype, mid-workout, final set, finish summary)
-- AI-generated voice system (original characters, not real people)
-- Community-created personality packs (post-launch)
-- Text cue templates per personality
-- Audio voice lines per personality
-- Buddy store integration with Forge Tokens + IAP
+**Planned (Post-Launch):**
+- Community-created personality packs
+- Additional buddies beyond launch roster
+- Seasonal / limited-edition buddy drops
+- Analytics on buddy usage and engagement
 
 ---
 

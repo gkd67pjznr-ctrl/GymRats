@@ -32,7 +32,8 @@ const DOCS_TO_SYNC = [
   'docs/USER_TESTING_CHECKLIST.md',
   'docs/features/feature-forge-milestones.md',
   'docs/features/feature-forge-lab.md',
-  'docs/features/feature-workouts.md'
+  'docs/features/feature-workouts.md',
+  'docs/features/feature-cue-system.md'
 ];
 
 interface FeatureProgress {
@@ -199,6 +200,17 @@ function mergeFeatureFiles(featureName: string, repos: RepositoryData[]): string
         }
       }
     }
+  } else if (featureName === 'feature-cue-system.md') {
+    // Find the most complete implementation for AI Gym Buddy
+    for (const repo of repos) {
+      if (repo.features.has(featureName)) {
+        const content = repo.features.get(featureName) || '';
+        if (content.includes('Implemented') && content.includes('[x]')) {
+          // This repo has a complete implementation
+          return content;
+        }
+      }
+    }
   }
 
   return mergedContent;
@@ -308,7 +320,7 @@ function mergeTestingFiles(repos: RepositoryData[]): string {
         if (mergedContent.includes('**End of Testing Checklist**')) {
           mergedContent = mergedContent.replace(
             '**End of Testing Checklist**',
-            `${testCase}\n\n**End of Testing Checklist**'
+            `${testCase}\n\n**End of Testing Checklist**`
           );
         } else {
           mergedContent += `\n\n${testCase}`;
@@ -420,7 +432,7 @@ ${REPOSITORIES.map(repo => `- ${repo}`).join('\n')}
 }
 
 // Run the synchronization
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   synchronizeRepositories();
 }
 

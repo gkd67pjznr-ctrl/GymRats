@@ -178,6 +178,78 @@ export const useWorkoutPlanStore = create<WorkoutPlanState>()(
 // Convenience Selectors
 // ============================================================================
 
+// Export selectors to check exercise completion
+export function useExerciseCompletionStatus(exerciseId: string): {
+  targetSets: number;
+  completedSets: number;
+  completionPercentage: number;
+} {
+  const plan = useWorkoutPlanStore(selectPlan);
+
+  if (!plan) {
+    return {
+      targetSets: 0,
+      completedSets: 0,
+      completionPercentage: 0
+    };
+  }
+
+  const exercise = plan.exercises.find(e => e.exerciseId === exerciseId);
+  const completedSets = plan.completedSetsByExerciseId[exerciseId] || 0;
+  const targetSets = exercise?.targetSets || 0;
+  const completionPercentage = targetSets > 0 ? (completedSets / targetSets) * 100 : 0;
+
+  return {
+    targetSets,
+    completedSets,
+    completionPercentage
+  };
+}
+
+export function useAllExerciseCompletionStatus(): Record<string, {
+  targetSets: number;
+  completedSets: number;
+  completionPercentage: number;
+  skipped: boolean;
+}> {
+  const plan = useWorkoutPlanStore(selectPlan);
+
+  if (!plan) {
+    return {};
+  }
+
+  const result: Record<string, {
+    targetSets: number;
+    completedSets: number;
+    completionPercentage: number;
+    skipped: boolean;
+  }> = {};
+
+  let foundCompleted = false;
+  for (let i = 0; i < plan.exercises.length; i++) {
+    const exercise = plan.exercises[i];
+    const completedSets = plan.completedSetsByExerciseId[exercise.exerciseId] || 0;
+    const targetSets = exercise.targetSets;
+    const completionPercentage = targetSets > 0 ? (completedSets / targetSets) * 100 : 0;
+
+    if (completedSets > 0) {
+      foundCompleted = true;
+    }
+
+    // Mark as skipped if it comes after completed exercises and has 0 sets
+    const skipped = foundCompleted && completedSets === 0;
+
+    result[exercise.exerciseId] = {
+      targetSets,
+      completedSets,
+      completionPercentage,
+      skipped
+    };
+  }
+
+  return result;
+}
+
 export const selectPlan = (state: WorkoutPlanState) => state.plan;
 export const selectIsHydrated = (state: WorkoutPlanState) => state.hydrated;
 

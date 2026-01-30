@@ -1014,6 +1014,528 @@ export const buddies: Buddy[] = [
   },
 
   {
+    id: 'action_hero',
+    name: 'Action Hero',
+    archetype: 'One-liners, over-the-top machismo',
+    tier: 'premium',
+    description: 'Your action movie-inspired hero who delivers one-liners with maximum machismo and over-the-top energy.',
+    previewLines: [
+      "Weights don't lift themselves! But if they did, they'd be afraid of you!",
+      "NEW RECORD! YOU'RE UNSTOPPABLE!",
+      "ACTION MODE: ENGAGED!"
+    ],
+    unlockMethod: 'iap',
+    iapProductId: 'buddy.action_hero.premium',
+    messages: {
+      // Performance Events
+      pr_weight: [
+        "WEIGHT PR! THE HERO NEVER DIES!",
+        "NEW PERSONAL BEST! THAT'S WHAT I CALL HEROIC!",
+        "HEAVY LOAD, NO PROBLEM! THAT'S THE ACTION HERO SPIRIT!",
+        "WEIGHTS BOW BEFORE YOU! YOU'RE UNSTOPPABLE!",
+        "HEROIC STRENGTH! THAT'S A GAME-CHANGING LIFT!"
+      ],
+      pr_rep: [
+        "REP PR! NEVER GIVE UP, HERO!",
+        "MORE REPS! YOU'RE BUILT FOR THIS!",
+        "ENDURANCE GAINS! KEEP THE ACTION MOVING!",
+        "REP POWER! YOU'RE STACKING HERO POINTS!",
+        "UNSTOPPABLE REPS! EVEN THE VILLAINS ARE IMPRESSED!"
+      ],
+      pr_e1rm: [
+        "E1RM PR! YOUR POWER LEVEL IS OFF THE CHARTS!",
+        "MAX GAINS! THE HERO IS EVOLVING!",
+        "NEW CEILING! YOU'RE LEVELING UP!",
+        "HEROIC POTENTIAL! YOUR STRENGTH IS LEGENDARY!",
+        "LIMIT BREAKER! THAT'S A HERO-CLASS MOVE!"
+      ],
+      rank_up: [
+        "RANK UP! YOU'RE CLIMBING THE HERO LADDER!",
+        "LEVEL UP CHAMPION! NEXT STOP: LEGEND!",
+        "PROMOTION EARNED! HERO STATUS INCREASED!",
+        "ADVANCEMENT ACHIEVED! THE HERO JOURNEY CONTINUES!",
+        "EVOLUTION COMPLETE! YOU'RE OFFICIALLY BADASS!"
+      ],
+      volume_milestone: [
+        "VOLUME VICTORY! THAT'S HERO-LEVEL WORKLOAD!",
+        "TONNAGE MONSTER! YOU'RE STACKING SERIOUS POWER!",
+        "WORKLOAD WARRIOR! THAT'S COMMITMENT TO THE CAUSE!",
+        "VOLUME MILESTONE! THE CITY IS SAFE WITH YOU!",
+        "LOAD MACHINE! YOU'RE THE HERO THIS GYM NEEDS!"
+      ],
+
+      // Behavior Patterns
+      long_rest: [
+        "RECOVERY MODE: ACTIVATED! EVEN HEROES NEED REST!",
+        "TIME OUT! CHARGE YOUR HEROIC ENERGY!",
+        "REST PHASE! PREPARE FOR THE NEXT SHOWDOWN!",
+        "RECHARGE MODE! YOUR POWER IS REGENERATING!",
+        "DOWNTIME! EVEN SUPERHEROES HAVE COOL DOWN PERIODS!"
+      ],
+      skip: [
+        "NEVER GIVE UP! THE HERO NEVER DIES!",
+        "PUSH THROUGH! THE VILLAIN IS YOUR LAZINESS!",
+        "OVERCOME THE OBSTACLE! THAT'S WHAT HEROES DO!",
+        "STAY STRONG! YOUR MISSION ISN'T OVER!",
+        "HEROIC EFFORT! SHOW THIS WORKOUT WHO'S BOSS!"
+      ],
+      streak: [
+        "STREAK MASTER! CONSISTENCY IS YOUR SUPERPOWER!",
+        "WEEK-WORTHY! THAT'S DEDICATION BEYOND MEASURE!",
+        "HABIT HERO! YOU'RE BUILDING UNBREAKABLE WILL!",
+        "MOMENTUM MASTER! THE FORCE IS STRONG WITH YOU!",
+        "STREAK SAVIOR! YOU'RE SAVING YOUR FUTURE SELF!"
+      ],
+      return_after_absence: [
+        "WELCOME BACK! THE HERO RETURNS!",
+        "RETURN OF THE CHAMPION! TIME TO SAVE THE DAY!",
+        "HERO'S COMEBACK! SHOW THIS IRON WHO'S BOSS!",
+        "GLAD YOU'RE BACK! THE GYM MISSED YOUR ENERGY!",
+        "CHAMPION RETURNS! LET'S GET BACK TO SAVING THE WORLD!"
+      ],
+      short_workout: [
+        "QUICK HIT! BETTER THAN NOTHING, HERO!",
+        "FLASH SESSION! EFFICIENCY IS KEY TO SUCCESS!",
+        "RAPID ASSAULT! YOU'RE STACKING WINS!",
+        "MICRO MISSION! EVERY SESSION COUNTS!",
+        "SPEED STRIKE! THE HERO NEVER WASTES TIME!"
+      ],
+
+      // Session Flow
+      session_start: [
+        "ACTION MODE: ENGAGED! LET'S SAVE THE DAY!",
+        "MISSION COMMENCING! TIME TO BECOME LEGEND!",
+        "HERO TIME! SHOW THIS IRON WHO'S BOSS!",
+        "OPERATION START! ENGAGE HERO MODE!",
+        "ACTION HERO MODE: ACTIVATED! LET'S DO THIS!"
+      ],
+      session_mid: [
+        "MISSION PROGRESS: 50%! KEEP THE MOMENTUM!",
+        "HALFWAY THERE! THE HERO PRESSES ON!",
+        "POWER CHECK: STILL UNSTOPPABLE!",
+        "MIDPOINT CHECK-IN! THE VILLAIN CAN'T STOP YOU!",
+        "HERO STATUS: STRONG AND GETTING STRONGER!"
+      ],
+      final_set: [
+        "FINAL SHOWDOWN! END THIS LIKE A HERO!",
+        "LAST CHALLENGE! SHOW NO MERCY!",
+        "ENDGAME! THIS SET DEFINES YOUR STRENGTH!",
+        "CLOSING TIME! GO OUT SWINGING!",
+        "FINISH LINE! LEAVE EVERYTHING IN THE GYM!"
+      ],
+      session_end: [
+        "MISSION ACCOMPLISHED! VICTORY IS YOURS!",
+        "WORKOUT COMPLETE! THE HERO HAS RISEN!",
+        "OPERATION SUCCESSFUL! YOU CRUSHED IT!",
+        "MISSION END! ANOTHER VICTORY FOR THE HERO!",
+        "DONE DEAL! YOU ABSOLUTELY DOMINATED TODAY!"
+      ],
+
+      // Special
+      none: []
+    },
+    voiceLines: {
+      pr_weight: ['action-heavy-1', 'action-heavy-2'],
+      session_start: ['action-start-1', 'action-start-2'],
+      session_end: ['action-end-1', 'action-end-2']
+    }
+  },
+
+  {
+    id: 'drill_sergeant',
+    name: 'Drill Sergeant',
+    archetype: 'Barking orders, no-nonsense',
+    tier: 'premium',
+    description: 'Your no-nonsense drill sergeant who barks orders and expects nothing less than absolute dedication.',
+    previewLines: [
+      "OUTSTANDING SOLDIER! THAT'S WHAT I LIKE TO SEE!",
+      "EXCELLENT FORM PRIVATE!",
+      "NO EXCUSES SOLDIER! GET BACK TO WORK!"
+    ],
+    unlockMethod: 'iap',
+    iapProductId: 'buddy.drill_sergeant.premium',
+    messages: {
+      // Performance Events
+      pr_weight: [
+        "OUTSTANDING SOLDIER! THAT'S WHAT I LIKE TO SEE!",
+        "EXCELLENT FORM PRIVATE! HEAVY LOAD, PERFECT EXECUTION!",
+        "WELL DONE RECRUIT! THAT WEIGHT IS GOING NOWHERE!",
+        "GOOD WORK SOLDIER! THE BAR JUST MOVED!",
+        "ACCEPTABLE LIFT PRIVATE! KEEP THAT INTENSITY UP!"
+      ],
+      pr_rep: [
+        "MORE REPS PRIVATE! BUILDING THAT ENDURANCE!",
+        "REP GAINS! YOU'RE GETTING STRONGER!",
+        "KEEP PUSHING RECRUIT! THOSE REPS COUNT!",
+        "EXCELLENT REPETITION COUNT! THAT'S ARMY-STRONG!",
+        "SOLDIER ON! THOSE REPS ARE BUILDING MUSCLE MEMORY!"
+      ],
+      pr_e1rm: [
+        "ESTIMATED MAX IMPROVEMENT! OUTSTANDING!",
+        "NEW CEILING REACHED! ACCEPTABLE PROGRESS!",
+        "MAX POTENTIAL UNLOCKED! WELL DONE!",
+        "LIMIT INCREASE! YOU'RE BUILDING REAL STRENGTH!",
+        "POTENTIAL MAX RAISED! THAT'S WHAT I WANT TO SEE!"
+      ],
+      rank_up: [
+        "PROMOTION EARNED! YOU'VE ADVANCED PRIVATE!",
+        "RANK IMPROVEMENT! OUTSTANDING PERFORMANCE!",
+        "NEW TIER ACHIEVED! YOU'RE MOVING UP!",
+        "STATUS UPGRADE! YOUR DEDICATION SHOWS!",
+        "LEVEL UP SOLDIER! CONTINUE THIS EXCELLENT WORK!"
+      ],
+      volume_milestone: [
+        "VOLUME MILESTONE! THIS IS ARMY-LEVEL WORK!",
+        "TONNAGE ACHIEVED! OUTSTANDING DEDICATION!",
+        "WORKLOAD COMPLETED! THAT'S COMMITMENT!",
+        "VOLUME TARGET REACHED! WELL DONE SOLDIER!",
+        "LOAD ACCUMULATED! YOUR DISCIPLINE IS IMPRESSIVE!"
+      ],
+
+      // Behavior Patterns
+      long_rest: [
+        "RECOVERY TIME! USE IT WISELY SOLDIER!",
+        "REST PERIOD! COME BACK READY FOR BATTLE!",
+        "PAUSE ACCEPTABLE! PREPARE FOR NEXT ROUND!",
+        "DOWNTIME! USE THIS TO FOCUS YOUR MIND!",
+        "RECHARGE MODE! YOUR BODY NEEDS THIS!"
+      ],
+      skip: [
+        "NO EXCUSES SOLDIER! GET BACK TO WORK!",
+        "PUSH HARDER RECRUIT! YOU CAN DO BETTER!",
+        "OVERCOME THE RESISTANCE! THAT'S AN ORDER!",
+        "STAY FOCUSED PRIVATE! THE MISSION ISN'T OVER!",
+        "COMPLETE THE CIRCUIT! YOU OWE IT TO YOURSELF!"
+      ],
+      streak: [
+        "CONSISTENCY ACHIEVED! EXCELLENT SOLDIER!",
+        "STREAK MAINTAINED! THAT'S ARMY DISCIPLINE!",
+        "HABIT BUILDER! YOU'RE SHOWING DEDICATION!",
+        "MOMENTUM BUILT! CONTINUE THIS OUTSTANDING WORK!",
+        "STREAK MASTER! YOUR COMMITMENT IS IMPRESSIVE!"
+      ],
+      return_after_absence: [
+        "WELCOME BACK SOLDIER! GOOD TO SEE YOU AGAIN!",
+        "RETURN TO DUTY! SHOW THIS GYM WHO'S BOSS!",
+        "GLAD YOU'RE BACK! LET'S GET BACK TO WORK!",
+        "YOU'RE BACK! TIME TO REGAIN THAT STRENGTH!",
+        "RETURN OF THE CHAMPION! EXCELLENT TO SEE!"
+      ],
+      short_workout: [
+        "QUICK SESSION! BETTER THAN NOTHING PRIVATE!",
+        "BRIEF BUT EFFECTIVE! YOU SHOWED UP!",
+        "SHORT BUT SHARP! GOOD EFFORT!",
+        "MICRO SESSION! YOU'RE BUILDING HABITS!",
+        "FLASH SESSION! EVERY BIT COUNTS!"
+      ],
+
+      // Session Flow
+      session_start: [
+        "ATTENTION! WORKOUT COMMENCING!",
+        "LISTEN UP SOLDIER! TIME TO EARN IT!",
+        "DRILL SESSION STARTING! GET READY!",
+        "PREPARE FOR ACTION! BEGIN IMMEDIATELY!",
+        "SESSION UNDERWAY! SHOW NO MERCY!"
+      ],
+      session_mid: [
+        "MIDPOINT CHECK! KEEP THAT ENERGY UP!",
+        "HALFWAY DONE! MAINTAIN THAT INTENSITY!",
+        "CONTINUE PUSHING! THE HARD PART IS BEHIND YOU!",
+        "MIDDLE SECTION! STAY FOCUSED SOLDIER!",
+        "PROGRESS CHECK! YOU'RE DOING FINE!"
+      ],
+      final_set: [
+        "FINAL SET! GIVE IT EVERYTHING YOU'VE GOT!",
+        "LAST ONE! END ON A HIGH NOTE!",
+        "CLOSING SET! SHOW YOUR TRUE POWER!",
+        "ENDGAME! LEAVE IT ALL IN THE GYM!",
+        "FINISH STRONG! YOU'VE GOT THIS!"
+      ],
+      session_end: [
+        "SESSION COMPLETE! OUTSTANDING PERFORMANCE!",
+        "WORKOUT DONE! EXCELLENT EFFORT SOLDIER!",
+        "MISSION ACCOMPLISHED! WELL DONE!",
+        "EXERCISE OVER! YOU PERFORMED ADMIRABLY!",
+        "DRILL COMPLETE! THAT'S HOW IT'S DONE!"
+      ],
+
+      // Special
+      none: []
+    },
+    voiceLines: {
+      pr_weight: ['sergeant-heavy-1', 'sergeant-heavy-2'],
+      session_start: ['sergeant-start-1', 'sergeant-start-2'],
+      session_end: ['sergeant-end-1', 'sergeant-end-2']
+    }
+  },
+
+  {
+    id: 'zen_master',
+    name: 'Zen Master',
+    archetype: 'Calm, philosophical',
+    tier: 'premium',
+    description: 'Your calm, philosophical mentor who brings mindfulness and inner peace to your workout journey.',
+    previewLines: [
+      "INNER STRENGTH REVEALED",
+      "YOUR SPIRIT GROWS STRONGER",
+      "BREATHE DEEPLY AND BEGIN"
+    ],
+    unlockMethod: 'iap',
+    iapProductId: 'buddy.zen_master.premium',
+    messages: {
+      // Performance Events
+      pr_weight: [
+        "INNER STRENGTH UNFOLDS! YOUR JOURNEY DEEPENS.",
+        "GENTLE POWER AWAKENS! BALANCE AND STRENGTH ALIGN.",
+        "QUIET STRENGTH EMERGES! YOUR PRACTICE BEARS FRUIT.",
+        "SOULFUL PROGRESS! THE WEIGHT MOVES WITH INTENTION.",
+        "SPIRITUAL GROWTH! YOUR BODY HEEDS YOUR MIND."
+      ],
+      pr_rep: [
+        "ENDURANCE FLOWS! EACH REP A MEDITATION.",
+        "STEADY PROGRESSION! YOUR DISCIPLINE BLOSSOMS.",
+        "REPS LIKE BREATH! RHYTHM AND CONSTANCY.",
+        "MINDFUL MOVEMENT! THE REPETITIONS GUIDE YOU.",
+        "HARMONIOUS EFFORT! EACH REP BUILDS YOUR ESSENCE."
+      ],
+      pr_e1rm: [
+        "MAXIMUM POTENTIAL REVEALED! YOUR SPIRIT EXPANDS.",
+        "LIMITLESS STRENGTH! INNER POWER UNLEASHED.",
+        "TRUE MAXIMUM DISCOVERED! YOU TRANSCEND LIMITATIONS.",
+        "ESSENCE OF STRENGTH! YOUR SOUL'S POWER MANIFESTS.",
+        "SPIRITUAL PEAK! THE ULTIMATE SELF REVEALED."
+      ],
+      rank_up: [
+        "SPIRITUAL ASCENSION! YOU RISE TO NEW HEIGHTS.",
+        "ENLIGHTENMENT PROGRESSES! YOUR JOURNEY CONTINUES.",
+        "SOUL'S EVOLUTION! THE NEXT LEVEL AWAKENS.",
+        "INNER PROMOTION! YOUR ESSENCE GROWS STRONGER.",
+        "SPIRITUAL ADVANCEMENT! THE PATH UNFOLDS."
+      ],
+      volume_milestone: [
+        "HARMONIOUS WORKLOAD! YOUR DEDICATION FLOWS.",
+        "TONNAGE WITH PURPOSE! EACH UNIT BUILDS SPIRIT.",
+        "MINDFUL VOLUME! YOUR COMMITMENT IS SACRED.",
+        "BALANCED LOAD! YOU HONOR YOUR BODY'S WISDOM.",
+        "SERENE STRENGTH! THE WORK ACCUMULATES GENTLY."
+      ],
+
+      // Behavior Patterns
+      long_rest: [
+        "REST IS SACRED PRACTICE! HONOR THIS TIME.",
+        "PAUSE WITH INTENTION! LET ENERGY FLOW BACK.",
+        "MEDITATION MOMENT! CENTER YOUR SPIRIT.",
+        "SACRED RECOVERY! YOUR BODY HEALS IN SILENCE.",
+        "BREATHE AND RESTORE! THE CYCLE CONTINUES."
+      ],
+      skip: [
+        "PATIENCE BRINGS PROGRESS! HONOR YOUR RHYTHM.",
+        "ACCEPTANCE GUIDES YOU! FOLLOW YOUR INTUITIVE PATH.",
+        "INNER WISDOM SPEAKS! LISTEN TO YOUR BODY.",
+        "GENTLE APPROACH HOLDS VALUE! NO JUDGMENT HERE.",
+        "SELF-COMPASSION WINS! YOUR WELLBEING COMES FIRST."
+      ],
+      streak: [
+        "CONSISTENT FLOW! YOUR PRACTICE DEEPENS.",
+        "WEEK OF HARMONY! DAILY DEDICATION BUILDS PEACE.",
+        "RHYTHMIC HABIT! YOUR SPIRIT GROWS STRONGER.",
+        "MONTH OF MINDFULNESS! CONSISTENCY CREATES STABILITY.",
+        "STREAK OF SERENITY! YOUR COMMITMENT IS ADMIRABLE."
+      ],
+      return_after_absence: [
+        "WELCOME BACK TO CENTER! YOUR SPIRIT RETURNS.",
+        "GENTLE REENTRY! NO PRESSURE, JUST PRESENCE.",
+        "RETURN WITH COMPASSION! HONOR WHERE YOU ARE.",
+        "PEACEFUL COMEBACK! YOUR JOURNEY CONTINUES.",
+        "SOUL'S RETURN! THE PRACTICE WELCOMES YOU BACK."
+      ],
+      short_workout: [
+        "BRIEF BUT MEANINGFUL! INTENTION TRANSCENDS DURATION.",
+        "SHORT SESSION, DEEP VALUE! QUALITY OVER QUANTITY.",
+        "MINDFUL MOMENTS! EVERY SECOND COUNTS.",
+        "CONCENTRATED PRACTICE! YOU SHOWED UP.",
+        "GENTLE EFFORT! THE INTENTION IS WHAT MATTERS."
+      ],
+
+      // Session Flow
+      session_start: [
+        "BREATHE DEEPLY AND BEGIN! THE JOURNEY AWAITS.",
+        "START WITH PRESENCE! CONNECT WITH YOUR BODY.",
+        "COMMENCE MINDFULLY! INTENTION GUIDES YOUR MOVEMENT.",
+        "BEGIN IN STILLNESS! THE WORKOUT IS A MEDITATION.",
+        "OPEN YOUR PRACTICE! FLOW WITH THE MOVEMENT."
+      ],
+      session_mid: [
+        "MINDFUL MIDDLE PASSAGE! MAINTAIN YOUR FOCUS.",
+        "ENERGY FLOWS GENTLY! YOUR PRACTICE CONTINUES.",
+        "CENTERED PROGRESSION! STAY CONNECTED TO YOUR CORE.",
+        "HARMONIOUS HALFWAY POINT! BALANCE GUIDES YOU.",
+        "SPIRITUAL CHECKPOINT! YOUR JOURNEY DEEPENS."
+      ],
+      final_set: [
+        "LAST SET WITH AWARENESS! END MINDFULLY.",
+        "CLOSING MOVEMENT WITH INTENTION! YOUR SPIRIT GUIDES YOU.",
+        "FINAL REP AS MEDITATION! FULL ATTENTION HERE.",
+        "END WITH GRATITUDE! HONOR YOUR BODY'S EFFORT.",
+        "CONCLUDE PEACEFULLY! THIS SET COMPLETES YOUR JOURNEY."
+      ],
+      session_end: [
+        "PRACTICE COMPLETE WITH INTEGRATION! WELL DONE.",
+        "SESSION ENDED WITH MINDFULNESS! YOUR SPIRIT GROWS.",
+        "WORKOUT CONCLUDED! BALANCE AND STRENGTH ACHIEVED.",
+        "DONE WITH PRESENCE! YOUR EFFORT WAS MEANINGFUL.",
+        "FINISHED IN HARMONY! THE PRACTICE SERVED YOU WELL."
+      ],
+
+      // Special
+      none: []
+    },
+    voiceLines: {
+      pr_weight: ['zen-heavy-1', 'zen-heavy-2'],
+      session_start: ['zen-start-1', 'zen-start-2'],
+      session_end: ['zen-end-1', 'zen-end-2']
+    }
+  },
+
+  {
+    id: 'legendary_mystery',
+    name: 'Legendary Mystery Buddy',
+    archetype: 'Theme-warping presence with unique personality',
+    tier: 'legendary',
+    description: 'Your enigmatic, theme-warping companion who brings mystery and wonder to your workout journey with unique personality.',
+    previewLines: [
+      "THE POWER AWAKENS...",
+      "DARKNESS GIVES WAY TO LIGHT",
+      "THE PATH CHOOSES YOU",
+      "EMBRACE THE UNKNOWN",
+      "THE JOURNEY BEGINS"
+    ],
+    unlockMethod: 'iap',
+    iapProductId: 'buddy.legendary_mystery.legendary',
+    themeId: 'mystery_theme',
+    messages: {
+      // Performance Events
+      pr_weight: [
+        "THE POWER AWAKENS... HEAVY LOAD, DEEPER MYSTERY!",
+        "MYSTIC STRENGTH UNFOLDS! THE ANCIENTS APPROVE!",
+        "ARCANE HEFT REVEALED! YOUR JOURNEY DARKENS!",
+        "DIMENSIONAL WEIGHT! THE BARRIER THINS...",
+        "ETHEREAL MASS MOVES! REALITY BENDS TO YOUR WILL!"
+      ],
+      pr_rep: [
+        "CYCLIC REPETITIONS! THE PORTAL OPENS WIDER!",
+        "ENDLESS ENDURANCE! TIME LOOPS AROUND YOU!",
+        "REPETITIVE RITUAL! ANCIENT POWER AWAKENS!",
+        "MYSTIC MANTRA! EACH REP SUMMONS FORGOTTEN STRENGTH!",
+        "CYCLICAL SACRIFICE! THE GODS DEMAND MORE!"
+      ],
+      pr_e1rm: [
+        "ULTIMATE POTENTIAL! THE VEIL TEARS ASUNDER!",
+        "MYSTIC MAXIMUM! DIMENSIONS CONVERGE!",
+        "TRANSCENDENT LIMIT! YOU BECOME LEGEND!",
+        "COSMIC CEILING SHATTERED! REALITY REWRITES ITSELF!",
+        "INFINITE POTENTIAL! THE MULTIVERSE RECOGNIZES YOU!"
+      ],
+      rank_up: [
+        "ASCENSION BEGUN! YOU STEP THROUGH THE VEIL!",
+        "DIMENSIONAL PROMOTION! REALITY WARPS AROUND YOU!",
+        "MYSTIC ADVANCEMENT! THE ANCIENTS ACKNOWLEDGE!",
+        "TRANSFORMATIVE RANK! YOUR ESSENCE EVOLVES!",
+        "ETHEREAL ELEVATION! YOU TRANSCEND MORTAL LIMITS!"
+      ],
+      volume_milestone: [
+        "VOLUMINOUS VISIONS! THE COSMOS RESPONDS!",
+        "TONNAGE TRANSCENDENCE! REALITY BENDS TO YOUR WILL!",
+        "WORKLOAD WARPING! DIMENSIONS COLLAPSE AND EXPAND!",
+        "LOAD LEGENDARY! THE FABRIC OF EXISTENCE RIPS!",
+        "MYSTIC MASS ACCUMULATION! THE UNIVERSE TAKES NOTICE!"
+      ],
+
+      // Behavior Patterns
+      long_rest: [
+        "TEMPORAL PAUSE! THE COSMOS RECHARGES YOUR SPIRIT!",
+        "ETERNAL REST! BETWEEN WORLDS, YOU GATHER POWER!",
+        "DIMENSIONAL DOWNTIME! REALITY RESETS AROUND YOU!",
+        "MYSTIC RECOVERY! ANCIENT FORCES HEAL YOUR VESSEL!",
+        "COSMIC COOLDOWN! THE UNIVERSE PREPARES YOUR RETURN!"
+      ],
+      skip: [
+        "THE PATH CHOOSES YOU! DESTINY GUIDES YOUR STEPS!",
+        "MYSTIC MANDATE! THE CHOICE WAS NEVER YOURS!",
+        "ETHEREAL ESCAPE! REALITY'S GRASP LOOSENS!",
+        "DIMENSIONAL DETOUR! THE JOURNEY TAKES A TURN!",
+        "COSMIC COURAGE! YOU FACE THE UNKNOWN!"
+      ],
+      streak: [
+        "CYCLICAL CONSISTENCY! THE PATTERN REVEALS TRUTH!",
+        "WEEKLY WARPING! REALITY BECOMES FAMILIAR!",
+        "RITUAL REGULARITY! THE COSMOS HARMONIZES!",
+        "MONTH OF MYSTERY! TIME ITSELF BENDS TO YOU!",
+        "STREAK SUPREME! YOU TRANSCEND TEMPORAL BOUNDARIES!"
+      ],
+      return_after_absence: [
+        "RETURN TO THE VOID! THE MYSTERY WELCOMES YOU BACK!",
+        "COSMIC COMEBACK! THE UNIVERSE REJOICES!",
+        "ETHEREAL RETURN! THE ANCIENTS HAVE WAITED!",
+        "DIMENSIONAL REUNION! REALITY REMEMBERS YOU!",
+        "MYSTIC REENTRY! THE JOURNEY CONTINUES!"
+      ],
+      short_workout: [
+        "QUANTUM SESSION! BRIEF BUT REALITY-ALTERING!",
+        "FLASH FRACTURE! TIME SPLITS TO ACCOMMODATE YOU!",
+        "INSTANT INFINITY! BRIEF ENCOUNTERS TRANSFORM!",
+        "MICRO MYSTERY! EVEN MOMENTS SHAKE DIMENSIONS!",
+        "RAPID RIFT! QUICK BUT COSMICALLY SIGNIFICANT!"
+      ],
+
+      // Session Flow
+      session_start: [
+        "THE JOURNEY BEGINS! REALITY WARPS AROUND YOU!",
+        "VEIL LIFTS! ENTER THE MYSTIC REALM!",
+        "DIMENSION OPENS! STEP THROUGH THE PORTAL!",
+        "MYSTIC AWAKENING! THE ANCIENTS CALL!",
+        "COSMIC CONVERGENCE! YOUR FATE AWAITS!"
+      ],
+      session_mid: [
+        "HALFWAY THROUGH THE ABYSS! THE MYSTERY DEEPENS!",
+        "MIDDLE REALM! BETWEEN WORLDS, YOU STAND STRONG!",
+        "ETHEREAL EQUILIBRIUM! BALANCE MAINTAINED!",
+        "DIMENSIONAL DETERMINATION! YOUR SPIRIT REMAINS!",
+        "MYSTIC MOMENTUM! THE JOURNEY CONTINUES!"
+      ],
+      final_set: [
+        "FINAL FRONTIER! THE ULTIMATE TEST AWAITS!",
+        "LAST LEGENDARY LIFT! REALITY HANGS IN BALANCE!",
+        "COSMIC CONCLUSION! THE UNIVERSE WATCHES!",
+        "ETERNAL ENDGAME! YOUR DESTINY MANIFESTS!",
+        "MYSTIC MASTERY! THE FINAL BARRIER!"
+      ],
+      session_end: [
+        "JOURNEY'S END! BUT THE MYSTERY CONTINUES!",
+        "REALM COMPLETE! YOU TRANSFORM THE IMPOSSIBLE!",
+        "COSMIC CONQUEST! THE UNIVERSE ACKNOWLEDGES YOU!",
+        "MYSTIC MISSION ACCOMPLISHED! LEGEND STATUS!",
+        "DIMENSIONAL DOMINANCE! YOU REWRITE REALITY!"
+      ],
+
+      // Special
+      none: []
+    },
+    voiceLines: {
+      pr_weight: ['mystery-heavy-1', 'mystery-heavy-2'],
+      pr_rep: ['mystery-rep-1', 'mystery-rep-2'],
+      session_start: ['mystery-start-1', 'mystery-start-2'],
+      session_end: ['mystery-end-1', 'mystery-end-2']
+    },
+    sfxPack: {
+      pr_weight: 'mystery_heavy_sfx',
+      pr_rep: 'mystery_rep_sfx',
+      session_start: 'mystery_start_sfx',
+      session_end: 'mystery_end_sfx'
+    }
+  },
+
+  {
     id: 'goth_gym_rat',
     name: 'Goth Gym Rat',
     archetype: 'Dark, brain-rot, overly online goth girl who posts thirst traps',

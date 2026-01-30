@@ -57,6 +57,15 @@ export interface WorkoutOrchestratorResult {
 
   // Utilities
   ensureExerciseState: (exerciseId: string) => ExerciseSessionState;
+
+  // Exercise completion tracking
+  trackExerciseCompletion: (exerciseId: string) => void;
+  checkForSkippedExercises: () => boolean;
+  getExerciseSkippingStatus: () => Record<string, {
+    targetSets: number;
+    completedSets: number;
+    skipped: boolean;
+  }>;
 }
 
 export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): WorkoutOrchestratorResult {
@@ -131,6 +140,21 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
 
     // Record the set in buddy store session memory
     useBuddyStore.getState().recordSet();
+
+    // Update workout plan completion tracking
+    const currentPlan = getCurrentPlan();
+    if (currentPlan) {
+      updateCurrentPlan((prevPlan) => {
+        const completedSets = prevPlan.completedSetsByExerciseId[exerciseId] || 0;
+        return {
+          ...prevPlan,
+          completedSetsByExerciseId: {
+            ...prevPlan.completedSetsByExerciseId,
+            [exerciseId]: completedSets + 1
+          }
+        };
+      });
+    }
 
     if (buddyCue) {
       setBuddyMessage(buddyCue);
@@ -272,45 +296,71 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       return total + (set.weightKg * set.reps);
     }, 0);
 
-    // Check for rank progress (this would need to be implemented based on actual rank calculation)
-    // For now, we'll pass null and can enhance this later with actual rank detection
-    const rankProgress = null;
+    // Check for rank progress using historical data
+    const previousBests = getPersonalBests(user?.id ?? 'anonymous');
+    const rankProgressArray = detectRankProgressFull(sessionObj, previousBests, undefined); // bodyweight would come from user profile
+    const rankProgress = rankProgressArray.length > 0 ? rankProgressArray[0] : null; // Take first rank progress for now
 
-    // Evaluate session completion triggers
-    const sessionCue = evaluateSessionTriggers({
-      session: sessionObj,
-      volumeKg,
-      rankProgress
+    // Check for skipped exercises
+    const isSkipping = checkForSkippedExercises();
+
+    // Evaluate behavior triggers including skipping detection
+    const behaviorTriggers = evaluateBehaviorTriggers({
+      restDurationMs: useBuddyStore.getState().sessionMemory.lastRestDuration || 0,
+      isSkipping,
+      streakDays: currentStreak,
+      absenceDays: 0, // This would need to be calculated from workout history
+      workoutDurationMs: now - start,
     });
 
-    if (sessionCue) {
-      // Set the session cue as the final message
-      const formatted = formatCueMessage(sessionCue);
+    // Show behavior trigger message if present
+    if (behaviorTriggers) {
+      const formatted = formatCueMessage(behaviorTriggers);
       setInstantCue({
         message: formatted.title,
         detail: formatted.detail,
-        intensity: sessionCue.intensity === "epic" ? "high" : sessionCue.intensity
+        intensity: behaviorTriggers.intensity === "epic" ? "high" : behaviorTriggers.intensity
       });
-
-      // Also set as buddy message for full experience
-      setBuddyMessage(sessionCue);
+      setBuddyMessage(behaviorTriggers);
+      onHaptic?.('light');
+      onSound?.('light');
     } else {
-      setInstantCue({
-        message: "Workout saved.",
-        detail: `Duration: ${formatDuration(now - start)}`,
-        intensity: "low"
+      // Evaluate session completion triggers
+      const sessionCue = evaluateSessionTriggers({
+        session: sessionObj,
+        volumeKg,
+        rankProgress
       });
-    }
 
-    onHaptic?.('light');
-    onSound?.('light');
+      if (sessionCue) {
+        // Set the session cue as the final message
+        const formatted = formatCueMessage(sessionCue);
+        setInstantCue({
+          message: formatted.title,
+          detail: formatted.detail,
+          intensity: sessionCue.intensity === "epic" ? "high" : sessionCue.intensity
+        });
+
+        // Also set as buddy message for full experience
+        setBuddyMessage(sessionCue);
+      } else {
+        setInstantCue({
+          message: "Workout saved.",
+          detail: `Duration: ${formatDuration(now - start)}`,
+          intensity: "low"
+        });
+      }
+
+      onHaptic?.('light');
+      onSound?.('light');
+    }
 
     clearCurrentSession();
     setCurrentPlan(null);
 
     // Notify that workout is finished with session ID for navigation
     onWorkoutFinished?.(sessionObj.id);
-  }, [hydrated, persisted, plan, unit, onHaptic, onSound, onWorkoutFinished, user]);
+  }, [hydrated, persisted, plan, unit, onHaptic, onSound, onWorkoutFinished, user, checkForSkippedExercises]);
 
   const saveAsRoutine = useCallback((exerciseBlocks: string[], sets: LoggedSet[]) => {
     // Before hydration, actions are no-ops
@@ -405,6 +455,83 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     setBuddyMessage(null);
   }, []);
 
+  // Track exercise completion for skipping detection
+  const trackExerciseCompletion = useCallback((exerciseId: string) => {
+    const currentPlan = getCurrentPlan();
+    if (currentPlan) {
+      updateCurrentPlan((prevPlan) => {
+        const completedSets = prevPlan.completedSetsByExerciseId[exerciseId] || 0;
+        return {
+          ...prevPlan,
+          completedSetsByExerciseId: {
+            ...prevPlan.completedSetsByExerciseId,
+            [exerciseId]: completedSets + 1
+          }
+        };
+      });
+    }
+  }, []);
+
+  // Check if any planned exercises were skipped
+  const checkForSkippedExercises = useCallback((): boolean => {
+    const currentPlan = getCurrentPlan();
+    if (!currentPlan) return false;
+
+    // Check if any exercise that comes after completed exercises has 0 sets
+    let foundCompleted = false;
+    for (let i = 0; i < currentPlan.exercises.length; i++) {
+      const exercise = currentPlan.exercises[i];
+      const completedSets = currentPlan.completedSetsByExerciseId[exercise.exerciseId] || 0;
+
+      if (completedSets > 0) {
+        foundCompleted = true;
+      } else if (foundCompleted && i > 0) {
+        // If we found a completed exercise before this one, and this one has 0 sets,
+        // it might be skipped
+        return true;
+      }
+    }
+
+    return false;
+  }, []);
+
+  // Get detailed skipping information for all exercises
+  const getExerciseSkippingStatus = useCallback((): Record<string, {
+    targetSets: number;
+    completedSets: number;
+    skipped: boolean;
+  }> => {
+    const currentPlan = getCurrentPlan();
+    if (!currentPlan) return {};
+
+    const result: Record<string, {
+      targetSets: number;
+      completedSets: number;
+      skipped: boolean;
+    }> = {};
+
+    let foundCompleted = false;
+    for (let i = 0; i < currentPlan.exercises.length; i++) {
+      const exercise = currentPlan.exercises[i];
+      const completedSets = currentPlan.completedSetsByExerciseId[exercise.exerciseId] || 0;
+
+      if (completedSets > 0) {
+        foundCompleted = true;
+      }
+
+      // Mark as skipped if it comes after completed exercises and has 0 sets
+      const skipped = foundCompleted && completedSets === 0;
+
+      result[exercise.exerciseId] = {
+        targetSets: exercise.targetSets,
+        completedSets,
+        skipped
+      };
+    }
+
+    return result;
+  }, []);
+
   // Return early with loading state if not yet hydrated
   // This prevents UI from rendering with stale/missing persisted data
   // All hooks have already been called above, so this is safe
@@ -421,6 +548,9 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       clearInstantCue,
       clearBuddyMessage,
       ensureExerciseState,
+      trackExerciseCompletion,
+      checkForSkippedExercises,
+      getExerciseSkippingStatus,
     };
   }
 
@@ -437,5 +567,8 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     clearInstantCue,
     clearBuddyMessage,
     ensureExerciseState,
+    trackExerciseCompletion,
+    checkForSkippedExercises,
+    getExerciseSkippingStatus,
   };
 }
