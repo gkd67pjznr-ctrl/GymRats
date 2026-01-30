@@ -59,7 +59,9 @@ export async function fetchAllExercisesFromAPI(
   const apiKey = process.env.EXPO_PUBLIC_EXERCISEDB_API_KEY;
 
   if (!apiKey) {
-    console.warn('[ExerciseDB] No API key found. Set EXPO_PUBLIC_EXERCISEDB_API_KEY in .env');
+    if (__DEV__) {
+      console.warn('[ExerciseDB] No API key found. Set EXPO_PUBLIC_EXERCISEDB_API_KEY in .env');
+    }
     return [];
   }
 
@@ -81,14 +83,18 @@ export async function fetchAllExercisesFromAPI(
     });
 
     if (!response.ok) {
-      console.error('[ExerciseDB] API error:', response.status, response.statusText);
+      if (__DEV__) {
+        console.error('[ExerciseDB] API error:', response.status, response.statusText);
+      }
       return [];
     }
 
     const data: ExerciseDBExercise[] = await response.json();
     return data;
   } catch (error) {
-    console.error('[ExerciseDB] Fetch error:', error);
+    if (__DEV__) {
+      console.error('[ExerciseDB] Fetch error:', error);
+    }
     return [];
   }
 }
@@ -109,7 +115,9 @@ export async function getBodyParts(): Promise<string[]> {
   const apiKey = process.env.EXPO_PUBLIC_EXERCISEDB_API_KEY;
 
   if (!apiKey) {
-    console.warn('[ExerciseDB] No API key found');
+    if (__DEV__) {
+      console.warn('[ExerciseDB] No API key found');
+    }
     return [];
   }
 
@@ -123,7 +131,9 @@ export async function getBodyParts(): Promise<string[]> {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('[ExerciseDB] Body parts error:', error);
+    if (__DEV__) {
+      console.error('[ExerciseDB] Body parts error:', error);
+    }
     return [];
   }
 }

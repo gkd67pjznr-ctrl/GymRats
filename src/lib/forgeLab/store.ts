@@ -40,7 +40,9 @@ export const useForgeLabStore = create<ForgeLabState>()(
 
           set({ data, loading: false });
         } catch (error) {
-          console.error('Error loading Forge Lab data:', error);
+          if (__DEV__) {
+            console.error('Error loading Forge Lab data:', error);
+          }
           set({
             error: error instanceof Error ? error.message : 'Failed to load analytics data',
             loading: false

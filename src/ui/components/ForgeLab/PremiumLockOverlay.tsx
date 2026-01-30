@@ -31,7 +31,6 @@ const PremiumLockOverlay: React.FC<PremiumLockOverlayProps> = ({ featureName }) 
             style={[styles.upgradeButton, { backgroundColor: ds.tone.accent }]}
             onPress={() => {
               // TODO: Navigate to subscription screen
-              console.log('Upgrade to Pro pressed');
             }}
           >
             <Text style={[styles.buttonText, { color: ds.tone.bg }]}>

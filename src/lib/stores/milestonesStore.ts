@@ -16,6 +16,13 @@ import { getNewlyEarnedMilestones, getMilestonesWithProgress } from '../mileston
 import { getUser } from './authStore';
 import type { SyncMetadata } from '../sync/syncTypes';
 import { networkMonitor } from '../sync/NetworkMonitor';
+import {
+  fetchEarnedMilestones,
+  pushEarnedMilestones,
+  pushSingleMilestone,
+  syncEarnedMilestones,
+  subscribeToMilestones,
+} from '../milestones/milestonesRepository';
 
 const STORAGE_KEY = 'milestones.v1';
 
@@ -29,6 +36,8 @@ interface MilestonesState {
   // ========== Hydration & Sync ==========
   hydrated: boolean;
   _sync: SyncMetadata;
+  /** Unsubscribe function for real-time subscription */
+  _unsubscribeRealtime: (() => void) | null;
 
   // ========== Actions ==========
   setHydrated: (value: boolean) => void;
@@ -49,6 +58,10 @@ interface MilestonesState {
   pullFromServer: () => Promise<void>;
   pushToServer: () => Promise<void>;
   sync: () => Promise<void>;
+
+  /** Real-time subscription actions */
+  setupRealtimeSubscription: () => void;
+  teardownRealtimeSubscription: () => void;
 }
 
 export const useMilestonesStore = create<MilestonesState>()(
@@ -64,6 +77,7 @@ export const useMilestonesStore = create<MilestonesState>()(
         syncError: null,
         pendingMutations: 0,
       },
+      _unsubscribeRealtime: null,
 
       setHydrated: (value) => set({ hydrated: value }),
 
@@ -92,6 +106,18 @@ export const useMilestonesStore = create<MilestonesState>()(
         set((state) => ({
           earnedMilestones: { ...state.earnedMilestones, ...newEarnedEntries },
         }));
+
+        // Auto-push new milestones to server (fire and forget)
+        const user = getUser();
+        if (user && networkMonitor.isOnline()) {
+          for (const milestone of newlyEarned) {
+            pushSingleMilestone(milestone.id, now).catch((err) => {
+              if (__DEV__) {
+                console.warn('[milestonesStore] Failed to push new milestone:', err);
+              }
+            });
+          }
+        }
 
         // Create celebrations for each new milestone
         const celebrations: MilestoneCelebration[] = newlyEarned.map(milestone => ({
@@ -158,15 +184,30 @@ export const useMilestonesStore = create<MilestonesState>()(
         set({ _sync: { ...get()._sync, syncStatus: 'syncing', syncError: null } });
 
         try {
-          // TODO: Implement fetch from Supabase when table is created
-          // For now, we'll use local-only storage
-          set({
-            _sync: {
-              ...get()._sync,
-              syncStatus: 'success',
-              lastSyncAt: Date.now(),
-            },
-          });
+          const serverMilestones = await fetchEarnedMilestones();
+
+          if (serverMilestones) {
+            // Merge with existing local milestones (keeping local takes precedence)
+            const state = get();
+            set({
+              earnedMilestones: { ...serverMilestones, ...state.earnedMilestones },
+              _sync: {
+                ...state._sync,
+                syncStatus: 'success',
+                lastSyncAt: Date.now(),
+              },
+            });
+          } else {
+            // Table doesn't exist or other error - keep local data
+            const state = get();
+            set({
+              _sync: {
+                ...state._sync,
+                syncStatus: 'success',
+                lastSyncAt: Date.now(),
+              },
+            });
+          }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           set({
@@ -199,15 +240,26 @@ export const useMilestonesStore = create<MilestonesState>()(
         });
 
         try {
-          // TODO: Implement push to Supabase when table is created
-          // For now, we'll use local-only storage
-          set({
-            _sync: {
-              ...get()._sync,
-              syncStatus: 'success',
-              lastSyncAt: Date.now(),
-            },
-          });
+          const state = get();
+          const success = await pushEarnedMilestones(state.earnedMilestones);
+
+          if (success) {
+            set({
+              _sync: {
+                ...state._sync,
+                syncStatus: 'success',
+                lastSyncAt: Date.now(),
+              },
+            });
+          } else {
+            set({
+              _sync: {
+                ...state._sync,
+                syncStatus: 'error',
+                syncError: 'Failed to push milestones to server',
+              },
+            });
+          }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           set({
@@ -235,11 +287,27 @@ export const useMilestonesStore = create<MilestonesState>()(
         });
 
         try {
-          // Pull first (server wins)
-          await get().pullFromServer();
+          const state = get();
+          const syncedMilestones = await syncEarnedMilestones(state.earnedMilestones);
 
-          // Then push local changes
-          await get().pushToServer();
+          if (syncedMilestones) {
+            set({
+              earnedMilestones: syncedMilestones,
+              _sync: {
+                ...state._sync,
+                syncStatus: 'success',
+                lastSyncAt: Date.now(),
+              },
+            });
+          } else {
+            set({
+              _sync: {
+                ...state._sync,
+                syncStatus: 'error',
+                syncError: 'Failed to sync milestones with server',
+              },
+            });
+          }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           set({
@@ -249,6 +317,36 @@ export const useMilestonesStore = create<MilestonesState>()(
               syncError: errorMessage,
             },
           });
+        }
+      },
+
+      /**
+       * Setup real-time subscription for milestone changes
+       */
+      setupRealtimeSubscription: () => {
+        const state = get();
+
+        // Clean up existing subscription if any
+        if (state._unsubscribeRealtime) {
+          state._unsubscribeRealtime();
+        }
+
+        const unsubscribe = subscribeToMilestones((milestones) => {
+          set({ earnedMilestones: milestones });
+        });
+
+        set({ _unsubscribeRealtime: unsubscribe });
+      },
+
+      /**
+       * Teardown real-time subscription
+       */
+      teardownRealtimeSubscription: () => {
+        const state = get();
+
+        if (state._unsubscribeRealtime) {
+          state._unsubscribeRealtime();
+          set({ _unsubscribeRealtime: null });
         }
       },
     }),

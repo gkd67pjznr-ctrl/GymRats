@@ -57,7 +57,9 @@ export async function getSyncState(): Promise<SyncState> {
       return { ...DEFAULT_SYNC_STATE, ...JSON.parse(data) };
     }
   } catch (error) {
-    console.error('[ExerciseDB Sync] Failed to get sync state:', error);
+    if (__DEV__) {
+      console.error('[ExerciseDB Sync] Failed to get sync state:', error);
+    }
   }
   return DEFAULT_SYNC_STATE;
 }
@@ -69,7 +71,9 @@ async function setSyncState(state: SyncState): Promise<void> {
   try {
     await AsyncStorage.setItem(SYNC_STATE_KEY, JSON.stringify(state));
   } catch (error) {
-    console.error('[ExerciseDB Sync] Failed to save sync state:', error);
+    if (__DEV__) {
+      console.error('[ExerciseDB Sync] Failed to save sync state:', error);
+    }
   }
 }
 
@@ -83,7 +87,9 @@ export async function getCachedExercises(): Promise<ExerciseDBExercise[]> {
       return JSON.parse(data);
     }
   } catch (error) {
-    console.error('[ExerciseDB Sync] Failed to get cached exercises:', error);
+    if (__DEV__) {
+      console.error('[ExerciseDB Sync] Failed to get cached exercises:', error);
+    }
   }
   return [];
 }
@@ -95,7 +101,9 @@ async function setCachedExercises(exercises: ExerciseDBExercise[]): Promise<void
   try {
     await AsyncStorage.setItem(EXERCISE_CACHE_KEY, JSON.stringify(exercises));
   } catch (error) {
-    console.error('[ExerciseDB Sync] Failed to cache exercises:', error);
+    if (__DEV__) {
+      console.error('[ExerciseDB Sync] Failed to cache exercises:', error);
+    }
   }
 }
 
@@ -258,7 +266,9 @@ export async function syncBodyPart(
   const state = await getSyncState();
 
   if (state.syncInProgress) {
-    console.warn('[ExerciseDB Sync] Sync already in progress');
+    if (__DEV__) {
+      console.warn('[ExerciseDB Sync] Sync already in progress');
+    }
     return [];
   }
 
@@ -300,7 +310,9 @@ export async function syncBodyPart(
 
     return newExercises;
   } catch (error) {
-    console.error(`[ExerciseDB Sync] Failed to sync ${bodyPart}:`, error);
+    if (__DEV__) {
+      console.error(`[ExerciseDB Sync] Failed to sync ${bodyPart}:`, error);
+    }
 
     // Reset sync state
     const currentState = await getSyncState();
@@ -320,7 +332,9 @@ export async function initialSync(
   const state = await getSyncState();
 
   if (state.syncInProgress) {
-    console.warn('[ExerciseDB Sync] Sync already in progress');
+    if (__DEV__) {
+      console.warn('[ExerciseDB Sync] Sync already in progress');
+    }
     return { total: state.totalExercises, new: 0 };
   }
 

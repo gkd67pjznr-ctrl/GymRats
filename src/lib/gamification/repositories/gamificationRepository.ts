@@ -90,9 +90,13 @@ export async function fetchGamificationProfile(): Promise<GamificationProfile | 
     const msg = error.message ?? '';
     const isTableMissing = msg.includes('Could not find the') || msg.includes('does not exist');
     if (isTableMissing) {
-      console.warn('[gamificationRepository] Backend tables not set up yet, using local data');
+      if (__DEV__) {
+        console.warn('[gamificationRepository] Backend tables not set up yet, using local data');
+      }
     } else {
-      console.error('Error fetching gamification profile:', error);
+      if (__DEV__) {
+        console.error('Error fetching gamification profile:', error);
+      }
     }
     return null;
   }
@@ -126,9 +130,13 @@ export async function pushGamificationProfile(
     const msg = error.message ?? '';
     const isTableMissing = msg.includes('Could not find the') || msg.includes('does not exist');
     if (isTableMissing) {
-      console.warn('[gamificationRepository] Backend tables not set up yet, skipping push');
+      if (__DEV__) {
+        console.warn('[gamificationRepository] Backend tables not set up yet, skipping push');
+      }
     } else {
-      console.error('Error pushing gamification profile:', error);
+      if (__DEV__) {
+        console.error('Error pushing gamification profile:', error);
+      }
     }
     return false;
   }
@@ -153,7 +161,9 @@ export async function fetchUserGamificationProfile(
     .maybeSingle();
 
   if (error) {
-    console.error('Error fetching user gamification profile:', error);
+    if (__DEV__) {
+      console.error('Error fetching user gamification profile:', error);
+    }
     return null;
   }
 
