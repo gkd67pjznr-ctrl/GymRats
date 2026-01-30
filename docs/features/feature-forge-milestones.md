@@ -3,7 +3,7 @@
 ## Overview
 Non-repeatable lifetime achievements with tiered rarity. Prestige markers that show long-term dedication. Displayed as trophies on profile with special visual treatment by rarity.
 
-**Status:** Planned | **Progress:** 0/5 features
+**Status:** Done | **Progress:** 5/5 features
 **Priority:** Launch (v1)
 **Source:** 2026-01-29 brainstorm interview
 
@@ -11,54 +11,54 @@ Non-repeatable lifetime achievements with tiered rarity. Prestige markers that s
 
 ## Sub-Features
 
-### Planned - Common Tier Milestones
-- [ ] First workout completed
-- [ ] 10 workouts logged
-- [ ] First PR achieved
-- [ ] First rank-up
-- [ ] 7-day streak
-- [ ] 5 different exercises logged
-- [ ] First workout shared to feed
+### ✅ Done - Common Tier Milestones
+- [x] First workout completed
+- [x] 10 workouts logged
+- [x] First PR achieved
+- [x] First rank-up
+- [x] 7-day streak
+- [x] 5 different exercises logged
+- [x] First workout shared to feed
 
 **Visual:** Standard badge, subtle border
 
 ---
 
-### Planned - Rare Tier Milestones
-- [ ] 100 workouts logged
-- [ ] 30-day streak
-- [ ] 5 exercises ranked (any tier)
-- [ ] 50 PRs achieved
-- [ ] 10 different exercises logged
-- [ ] Level 10 reached
-- [ ] 1,000 total sets logged
+### ✅ Done - Rare Tier Milestones
+- [x] 100 workouts logged
+- [x] 30-day streak
+- [x] 5 exercises ranked (any tier)
+- [x] 50 PRs achieved
+- [x] 10 different exercises logged
+- [x] Level 10 reached
+- [x] 1,000 total sets logged
 
 **Visual:** Blue/purple tint, slight glow
 
 ---
 
-### Planned - Epic Tier Milestones
-- [ ] 1000lb club (squat + bench + deadlift total)
-- [ ] All exercises ranked Silver or above
-- [ ] Year-long streak (365 days)
-- [ ] 500 workouts logged
-- [ ] 100 PRs achieved
-- [ ] 3 exercises ranked Gold or above
-- [ ] Level 25 reached
-- [ ] 10,000 total sets logged
+### ✅ Done - Epic Tier Milestones
+- [x] 1000lb club (squat + bench + deadlift total)
+- [x] All exercises ranked Silver or above
+- [x] Year-long streak (365 days)
+- [x] 500 workouts logged
+- [x] 100 PRs achieved
+- [x] 3 exercises ranked Gold or above
+- [x] Level 25 reached
+- [x] 10,000 total sets logged
 
 **Visual:** Gold/orange glow, animated border
 
 ---
 
-### Planned - Legendary Tier Milestones
-- [ ] All exercises ranked Gold or above
-- [ ] 2-year streak
-- [ ] 1,000 workouts logged
-- [ ] Any exercise ranked Diamond
-- [ ] Any exercise ranked Mythic
-- [ ] 500 PRs achieved
-- [ ] Level 50 reached
+### ✅ Done - Legendary Tier Milestones
+- [x] All exercises ranked Gold or above
+- [x] 2-year streak
+- [x] 1,000 workouts logged
+- [x] Any exercise ranked Diamond
+- [x] Any exercise ranked Mythic
+- [x] 500 PRs achieved
+- [x] Level 50 reached
 
 **Visual:** Prismatic/rainbow glow, particle effects, special animation on profile
 
@@ -66,14 +66,14 @@ Non-repeatable lifetime achievements with tiered rarity. Prestige markers that s
 
 ---
 
-### Planned - Trophy Case on Profile
-- [ ] Dedicated section on user profile
-- [ ] Grid layout of earned milestones
-- [ ] Rarity-based visual treatment (border color, glow, animation)
-- [ ] Locked milestones shown as silhouettes with progress
-- [ ] Tap milestone to see details + date earned
-- [ ] Total milestone count displayed
-- [ ] Rarity breakdown (X common, Y rare, Z epic, W legendary)
+### ✅ Done - Trophy Case on Profile
+- [x] Dedicated section on user profile
+- [x] Grid layout of earned milestones
+- [x] Rarity-based visual treatment (border color, glow, animation)
+- [x] Locked milestones shown as silhouettes with progress
+- [x] Tap milestone to see details + date earned
+- [x] Total milestone count displayed
+- [x] Rarity breakdown (X common, Y rare, Z epic, W legendary)
 
 ---
 

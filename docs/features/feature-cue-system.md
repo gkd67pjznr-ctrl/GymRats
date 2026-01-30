@@ -71,29 +71,29 @@ All buddies are **original characters** inspired by familiar archetypes -- not l
 
 ---
 
-### Planned - Trigger System
+### Implemented - Trigger System
 
 Buddies react to three categories of in-session events:
 
 **Performance Events**
-- [ ] Weight PR detected
-- [ ] Rep PR detected
-- [ ] e1RM PR detected
-- [ ] Rank-up achieved
-- [ ] Volume milestone hit (e.g., 10,000 kg session volume)
+- [x] Weight PR detected
+- [x] Rep PR detected
+- [x] e1RM PR detected
+- [x] Rank-up achieved (infrastructure in place, requires previous data integration)
+- [x] Volume milestone hit (e.g., 10,000 kg session volume)
 
 **Behavior Patterns**
-- [ ] Long rest detected (configurable threshold)
+- [x] Long rest detected (configurable threshold)
 - [ ] Skipping exercises in a planned workout
-- [ ] Workout streak milestone (3, 7, 14, 30 days)
-- [ ] Returning after absence (3+ days, 7+ days, 14+ days)
-- [ ] Unusually short workout (bail-out detection)
+- [x] Workout streak milestone (3, 7, 14, 30 days)
+- [x] Returning after absence (3+ days, 7+ days, 14+ days)
+- [x] Unusually short workout (bail-out detection)
 
 **Session Flow**
-- [ ] Workout start (hype / tone-setting)
-- [ ] Mid-workout check-in (energy maintenance)
-- [ ] Final set of an exercise (push cue)
-- [ ] Workout finish (summary + sign-off)
+- [x] Workout start (hype / tone-setting)
+- [x] Mid-workout check-in (energy maintenance)
+- [x] Final set of an exercise (push cue)
+- [x] Workout finish (summary + sign-off)
 
 ---
 

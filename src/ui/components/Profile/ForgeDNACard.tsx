@@ -1,10 +1,24 @@
+import * as React from "react";
 import { useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
 import { makeDesignSystem } from "../../../ui/designSystem";
 import { useThemeColors } from "../../../ui/theme";
-import { useForgeDNAStore, useForgeDNA, useForgeDNALoading, useForgeDNAError } from "../../../lib/forgeDNA/store";
+import {
+  useForgeDNAStore,
+  useForgeDNA,
+  useForgeDNALoading,
+  useForgeDNAError,
+  useForgeDNAHistory,
+  useForgeDNAHistoryLoading,
+  useLoadDNAHistory,
+  useIsSharing,
+  useShareError,
+  useShareDNA
+} from "../../../lib/forgeDNA/store";
 import { ForgeDNAVisualization } from "../ForgeDNA/ForgeDNAVisualization";
+import { ShareButton } from "../ForgeDNA/ShareButton";
 import { useUser } from "../../../lib/stores/authStore";
+import { useIsPremiumUser } from "../../../lib/hooks/useIsPremiumUser";
 
 interface ForgeDNACardProps {
   onUpgradePress?: () => void;
@@ -21,8 +35,19 @@ export function ForgeDNACard(props: ForgeDNACardProps) {
   const error = useForgeDNAError();
   const generateDNA = useForgeDNAStore(state => state.generateDNA);
 
-  // For demo purposes, assume free user
-  const isPremium = false;
+  // Sharing hooks
+  const isSharing = useIsSharing();
+  const shareError = useShareError();
+  const shareDNA = useShareDNA();
+
+  // Sync hooks
+  const isSyncing = useIsSyncing();
+  const syncError = useSyncError();
+  const lastSynced = useLastSynced();
+  const syncWithServer = useSyncWithServer();
+
+  // Check if user has premium access
+  const isPremium = useIsPremiumUser();
 
   // Generate DNA on component mount if not already generated
   useEffect(() => {
@@ -31,12 +56,55 @@ export function ForgeDNACard(props: ForgeDNACardProps) {
     }
   }, [user?.id, dna, isLoading, generateDNA]);
 
+  // Load DNA history on component mount for premium users
+  const history = useForgeDNAHistory();
+  const isHistoryLoading = useForgeDNAHistoryLoading();
+  const loadDNAHistory = useLoadDNAHistory();
+
+  useEffect(() => {
+    if (user?.id && isPremium && !history && !isHistoryLoading) {
+      loadDNAHistory(user.id);
+    }
+  }, [user?.id, isPremium, history, isHistoryLoading, loadDNAHistory]);
+
+  // Load user comparison data for premium users
+  const averageUserDNA = useAverageUserDNA();
+  const isComparisonLoading = useComparisonLoading();
+  const loadUserComparison = useLoadUserComparison();
+
+  useEffect(() => {
+    if (user?.id && isPremium && !averageUserDNA && !isComparisonLoading) {
+      loadUserComparison(user.id);
+    }
+  }, [user?.id, isPremium, averageUserDNA, isComparisonLoading, loadUserComparison]);
+
+  // Handle sharing DNA to feed
+  const handleShare = async (caption: string, privacy: 'public' | 'friends') => {
+    if (user?.id) {
+      await shareDNA(user.id, caption, privacy);
+    }
+  };
+
+  // Handle syncing with server
+  const handleSync = async () => {
+    if (user?.id) {
+      await syncWithServer(user.id);
+    }
+  };
+
   // Regenerate DNA periodically or on user request
   const handleRefresh = () => {
     if (user?.id) {
       generateDNA(user.id);
     }
   };
+
+  // Sync with server when component mounts
+  React.useEffect(() => {
+    if (user?.id && isPremium) {
+      handleSync();
+    }
+  }, [user?.id, isPremium]);
 
   return (
     <View style={{
@@ -60,25 +128,55 @@ export function ForgeDNACard(props: ForgeDNACardProps) {
           Forge DNA
         </Text>
 
-        <Pressable
-          onPress={handleRefresh}
-          disabled={isLoading}
-          style={{
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            borderRadius: 8,
-            backgroundColor: isLoading ? c.border : ds.tone.accent,
-            opacity: isLoading ? 0.5 : 1,
-          }}
-        >
-          <Text style={{
-            color: c.bg,
-            fontSize: 12,
-            fontWeight: "600",
-          }}>
-            {isLoading ? "Generating..." : "Refresh"}
-          </Text>
-        </Pressable>
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          {isPremium && dna && (
+            <ShareButton
+              onShare={handleShare}
+              isSharing={isSharing}
+              shareError={shareError}
+            />
+          )}
+
+          <Pressable
+            onPress={handleSync}
+            disabled={isSyncing}
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 8,
+              backgroundColor: isSyncing ? c.border : ds.tone.accent,
+              opacity: isSyncing ? 0.5 : 1,
+            }}
+          >
+            <Text style={{
+              color: c.bg,
+              fontSize: 12,
+              fontWeight: "600",
+            }}>
+              {isSyncing ? "Syncing..." : "Sync"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={handleRefresh}
+            disabled={isLoading || isSharing || isSyncing}
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 8,
+              backgroundColor: (isLoading || isSharing || isSyncing) ? c.border : ds.tone.accent,
+              opacity: (isLoading || isSharing || isSyncing) ? 0.5 : 1,
+            }}
+          >
+            <Text style={{
+              color: c.bg,
+              fontSize: 12,
+              fontWeight: "600",
+            }}>
+              {isLoading ? "Generating..." : "Refresh"}
+            </Text>
+          </Pressable>
+        </View>
       </View>
 
       {error ? (
@@ -115,7 +213,12 @@ export function ForgeDNACard(props: ForgeDNACardProps) {
           </Pressable>
         </View>
       ) : dna ? (
-        <ForgeDNAVisualization dna={dna} isPremium={isPremium} />
+        <ForgeDNAVisualization
+          dna={dna}
+          isPremium={isPremium}
+          history={history || []}
+          averageUserDNA={averageUserDNA || undefined}
+        />
       ) : isLoading ? (
         <View style={{
           padding: 32,

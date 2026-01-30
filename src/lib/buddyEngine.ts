@@ -1,8 +1,10 @@
 import type { UnitSystem } from "./buckets";
 import type { LoggedSet } from "./loggerTypes";
 import type { WorkoutSession } from "./workoutModel";
-import type { Buddy, BuddyTier, CueMessage, TriggerType } from "./buddyTypes";
+import type { Buddy, BuddyTier, CueMessage, TriggerType, RankProgressInfo } from "./buddyTypes";
 import { buddies } from "./buddyData";
+import { scoreFromE1rm } from "./forgerankScoring";
+import { EXERCISES_V1 } from "../data/exercises";
 
 /**
  * Buddy Engine - Core system for AI Gym Buddy personality system
@@ -14,44 +16,31 @@ import { buddies } from "./buddyData";
  * 4. Tier-based feature gating (text/voice/theme)
  */
 
-// Mock current user data - in real implementation this would come from stores
-let currentUserBuddyId: string | null = 'coach'; // Default to Coach buddy
-let currentUserUnlockedBuddies: Record<string, boolean> = {};
-let currentUserTier: BuddyTier = 'basic';
-
-// For demo purposes, unlock a few buddies
-currentUserUnlockedBuddies = {
-  'coach': true,
-  'hype': true,
-  'chill': true,
-};
+// Import store functions to get real user data
+import { useBuddyStore } from './stores/buddyStore';
 
 /**
  * Get the currently equipped buddy
  */
 export function getCurrentBuddy(): Buddy | null {
-  if (!currentUserBuddyId) return buddies.find(b => b.id === 'coach') ?? null;
-  return buddies.find(b => b.id === currentUserBuddyId) ?? null;
+  const buddyId = useBuddyStore.getState().currentBuddyId;
+  if (!buddyId) return buddies.find(b => b.id === 'coach') ?? null;
+  return buddies.find(b => b.id === buddyId) ?? null;
 }
 
 /**
  * Get all unlocked buddies for the user
  */
 export function getUnlockedBuddies(): Buddy[] {
-  return buddies.filter(buddy => currentUserUnlockedBuddies[buddy.id]);
+  const unlocked = useBuddyStore.getState().unlockedBuddies;
+  return buddies.filter(buddy => unlocked[buddy.id]);
 }
 
 /**
  * Equip a buddy (must be unlocked)
  */
 export function equipBuddy(buddyId: string): boolean {
-  const buddy = buddies.find(b => b.id === buddyId);
-  if (!buddy || !currentUserUnlockedBuddies[buddyId]) {
-    return false;
-  }
-
-  currentUserBuddyId = buddyId;
-  return true;
+  return useBuddyStore.getState().equipBuddy(buddyId);
 }
 
 /**
@@ -150,7 +139,7 @@ export function evaluateBehaviorTriggers(args: {
 export function evaluateSessionTriggers(args: {
   session: WorkoutSession;
   volumeKg: number;
-  rankProgress: any; // TODO: proper type
+  rankProgress: RankProgressInfo | null;
 }): CueMessage | null {
   const buddy = getCurrentBuddy();
   if (!buddy) return null;
@@ -229,4 +218,104 @@ export function formatCueMessage(cue: CueMessage): { title: string; detail?: str
     title: cue.text,
     detail: cue.buddyId ? `— ${buddies.find(b => b.id === cue.buddyId)?.name ?? 'Buddy'}` : undefined
   };
+}
+
+/**
+ * Detect rank progress for exercises in a workout session
+ *
+ * @param session - The completed workout session
+ * @param previousBests - Map of exerciseId to previous best data
+ * @param bodyweightKg - User's bodyweight for normalized scoring
+ * @returns Array of rank progress information for exercises with rank changes
+ */
+export function detectRankProgress(
+  session: WorkoutSession,
+  previousBests?: Record<string, { e1rmKg: number }>,
+  bodyweightKg?: number
+): RankProgressInfo[] {
+  if (!previousBests || Object.keys(previousBests).length === 0) {
+    // No previous data to compare against
+    return [];
+  }
+
+  const rankChanges: RankProgressInfo[] = [];
+
+  // Group sets by exercise
+  const setsByExercise: Record<string, LoggedSet[]> = {};
+  session.sets.forEach(set => {
+    if (!setsByExercise[set.exerciseId]) {
+      setsByExercise[set.exerciseId] = [];
+    }
+    setsByExercise[set.exerciseId].push(set);
+  });
+
+  // For each exercise with previous data, check for rank changes
+  Object.keys(previousBests).forEach(exerciseId => {
+    const previousBest = previousBests[exerciseId];
+    const exerciseSets = setsByExercise[exerciseId];
+
+    if (!exerciseSets || exerciseSets.length === 0) {
+      // No sets logged for this exercise in current workout
+      return;
+    }
+
+    // Find best e1RM in current workout for this exercise
+    let currentBestE1RM = 0;
+    exerciseSets.forEach(set => {
+      // Using Epley formula to estimate 1RM
+      const estimatedE1RM = set.weightKg * (1 + set.reps / 30);
+      if (estimatedE1RM > currentBestE1RM) {
+        currentBestE1RM = estimatedE1RM;
+      }
+    });
+
+    // Only check for rank changes if we have a better result
+    if (currentBestE1RM > previousBest.e1rmKg) {
+      // Calculate scores for both previous and current bests
+      const previousScoreResult = scoreFromE1rm(exerciseId, previousBest.e1rmKg, bodyweightKg);
+      const currentScoreResult = scoreFromE1rm(exerciseId, currentBestE1RM, bodyweightKg);
+
+      const previousScore = previousScoreResult.total;
+      const currentScore = currentScoreResult.total;
+      const previousRank = getRankTierFromScore(previousScore);
+      const currentRank = getRankTierFromScore(currentScore);
+
+      // Check if rank changed (simplified - in reality we'd need the actual rank ladder)
+      const rankUp = currentRank !== previousRank && isHigherRank(currentRank, previousRank);
+
+      rankChanges.push({
+        exerciseId,
+        exerciseName: EXERCISES_V1.find(e => e.id === exerciseId)?.name || exerciseId,
+        previousRank: getRankNumberFromTier(previousRank),
+        newRank: getRankNumberFromTier(currentRank),
+        previousScore,
+        newScore: currentScore,
+        rankUp,
+        scoreIncrease: currentScore - previousScore
+      });
+    }
+  });
+
+  return rankChanges;
+}
+
+// Helper functions for rank comparison
+function getRankTierFromScore(score: number): string {
+  if (score >= 900) return "Mythic";
+  if (score >= 770) return "Diamond";
+  if (score >= 620) return "Platinum";
+  if (score >= 470) return "Gold";
+  if (score >= 320) return "Silver";
+  if (score >= 180) return "Bronze";
+  return "Iron";
+}
+
+function getRankNumberFromTier(tier: string): number {
+  const tiers = ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Mythic"];
+  return tiers.indexOf(tier) + 1;
+}
+
+function isHigherRank(current: string, previous: string): boolean {
+  const tiers = ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Mythic"];
+  return tiers.indexOf(current) > tiers.indexOf(previous);
 }

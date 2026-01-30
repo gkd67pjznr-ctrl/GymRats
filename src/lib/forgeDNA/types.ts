@@ -71,6 +71,15 @@ export type ForgeDNAMetrics = {
   consistencyScore: number;   // 0-100, higher = more consistent
 };
 
+export type ForgeDNAHistoryEntry = {
+  id: string;
+  userId: string;
+  generatedAt: number; // milliseconds since epoch
+  dnaData: ForgeDNA;
+  createdAt: string; // ISO timestamp
+  updatedAt: string; // ISO timestamp
+};
+
 export type ForgeDNAVisualization = {
   // SVG path data for the DNA visualization
   muscleBalanceShape: {
@@ -98,11 +107,7 @@ export type ForgeDNAVisualization = {
 export type ForgeDNAForDisplay = {
   basic: ForgeDNA;
   premium?: {
-    historicalComparison: Array<{
-      date: number;
-      muscleBalance: Record<MuscleGroup, number>;
-      trainingStyle: ForgeDNA['trainingStyle'];
-    }>;
+    historicalComparison: ForgeDNAHistoryEntry[];
     userComparison: {
       averageUser: ForgeDNA;
       differences: string[];

@@ -18,7 +18,7 @@ import { formatDuration, uid as uid2, type WorkoutSession, type WorkoutSet } fro
 import { setCurrentPlan } from "../workoutPlanStore";
 import { uid as routineUid, type Routine, type RoutineExercise } from "../routinesModel";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine } from "../stores";
+import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine, useUser } from "../stores";
 // Gamification integration
 import { toWorkoutForCalculation } from "../hooks/useGamificationWorkoutFinish";
 import { useGamificationStore, processGamificationWorkout } from "../stores/gamificationStore";
@@ -128,6 +128,9 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       setIndex: currentSetCount,
       totalSets: currentSetCount + 1,
     });
+
+    // Record the set in buddy store session memory
+    useBuddyStore.getState().recordSet();
 
     if (buddyCue) {
       setBuddyMessage(buddyCue);
@@ -264,11 +267,40 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
 
     setRecapCues(all);
 
-    setInstantCue({
-      message: "Workout saved.",
-      detail: `Duration: ${formatDuration(now - start)}`,
-      intensity: "low"
+    // Calculate total volume in kg
+    const volumeKg = sessionObj.sets.reduce((total, set) => {
+      return total + (set.weightKg * set.reps);
+    }, 0);
+
+    // Check for rank progress (this would need to be implemented based on actual rank calculation)
+    // For now, we'll pass null and can enhance this later with actual rank detection
+    const rankProgress = null;
+
+    // Evaluate session completion triggers
+    const sessionCue = evaluateSessionTriggers({
+      session: sessionObj,
+      volumeKg,
+      rankProgress
     });
+
+    if (sessionCue) {
+      // Set the session cue as the final message
+      const formatted = formatCueMessage(sessionCue);
+      setInstantCue({
+        message: formatted.title,
+        detail: formatted.detail,
+        intensity: sessionCue.intensity === "epic" ? "high" : sessionCue.intensity
+      });
+
+      // Also set as buddy message for full experience
+      setBuddyMessage(sessionCue);
+    } else {
+      setInstantCue({
+        message: "Workout saved.",
+        detail: `Duration: ${formatDuration(now - start)}`,
+        intensity: "low"
+      });
+    }
 
     onHaptic?.('light');
     onSound?.('light');

@@ -15,8 +15,9 @@ When a new session begins, Claude will:
 1. Read docs/progress.md - current state
 2. Read docs/FEATURE-MASTER.md - feature status
 3. Read all files in docs/features
-3. Run `npm test` - verify test suite passes
-4. Check for any blocking issues
+4. Run `npm test` - verify test suite passes
+5. Check for any blocking issues
+6. [Maestro] Check if feature documentation sync needed
 ```
 
 ### 2. Priority Assessment
@@ -410,6 +411,70 @@ Update `docs/progress.md` when:
 
 ---
 
+## MAESTRO DUTIES
+
+**Purpose:** Synchronize feature documentation across all Forgerank worktrees to maintain a single source of truth for feature implementation status.
+
+### Routine Scanning Protocol
+
+Maestro will periodically scan all Forgerank repositories to accumulate feature implementation information:
+
+```
+Repositories to scan:
+- /projects/forgerank (main)
+- /projects/forgerank-devs
+- /projects/forgerank-qwen (current)
+- /projects/forgerank-glm
+```
+
+### Documentation Synchronization Process
+
+1. **Read Key Documentation Files** from each repository:
+   - `docs/FEATURE-MASTER.md` - Overall feature progress
+   - `docs/progress.md` - Implementation timeline
+   - `docs/PROJECT_STATUS.md` - Current project status
+   - `docs/features/feature-*.md` - Individual feature status
+   - `docs/USER_TESTING_CHECKLIST.md` - Test coverage
+
+2. **Compare and Accumulate** information:
+   - Identify new features or status changes in other repositories
+   - Preserve all existing information without deletion
+   - Only add information that advances feature status (never go backwards)
+   - Maintain consistency in documentation style
+
+3. **Update Current Repository** (`/projects/forgerank-qwen`):
+   - Update `docs/FEATURE-MASTER.md` with accumulated feature status
+   - Update individual feature files in `docs/features/`
+   - Update `docs/progress.md` with new implementation entries
+   - Update `docs/PROJECT_STATUS.md` with current phase and feature status
+   - Add test cases to `docs/USER_TESTING_CHECKLIST.md` for new features
+   - Create summary documentation files when appropriate
+
+4. **Create Summary Documentation:**
+   - `docs/feature-synchronization-summary.md` - Track all changes made
+   - `docs/project-status-update-summary.md` - Summarize PROJECT_STATUS.md updates
+   - Implementation summary files for major feature groups
+
+### Key Principles
+
+- **Only Update Current Repository**: Make changes only to files in the current repository (Forgerank-qwen)
+- **No Deletions**: Preserve all existing content without removing any information
+- **Accumulate Forward**: Only add information that advances feature status, never go backwards
+- **Consistency**: Maintain consistent documentation style and structure
+- **Completeness**: Ensure all feature implementations are properly documented
+
+### Verification Process
+
+After synchronization, verify:
+- No existing information was deleted
+- Only additive changes were made
+- Documentation remains consistent and accurate
+- All implemented features are properly tracked
+- Testing documentation is comprehensive
+- Project status reflects current development state
+
+---
+
 ## USER INTERACTION POINTS
 
 ### Mandatory Check-ins
@@ -522,6 +587,7 @@ The workflow is **automatically invoked** when:
 - "Let's work" → Start session startup protocol
 - "What should we do?" → Priority assessment only
 - "Start [task]" → Skip to task with that focus
+- "Maestro scan" → Run feature documentation synchronization across all worktrees
 
 ---
 

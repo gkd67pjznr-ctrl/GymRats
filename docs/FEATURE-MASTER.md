@@ -24,11 +24,11 @@
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](features/feature-onboarding.md) |
 | [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](features/feature-avatar-hangout.md) |
 | [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](features/feature-workout-replay.md) |
-| [Forge DNA](#forge-dna) | Planned | 0/4 | [Details](features/feature-forge-dna.md) |
-| [Forge Lab (Analytics)](#forge-lab-analytics) | Planned | 0/6 | [Details](features/feature-forge-lab.md) |
-| [Forge Milestones](#forge-milestones) | Planned | 0/5 | [Details](features/feature-forge-milestones.md) |
+| [Forge DNA](#forge-dna) | ✅ Done | 4/4 | [Details](features/feature-forge-dna.md) |
+| [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 3/6 | [Details](features/feature-forge-lab.md) |
+| [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](features/feature-forge-milestones.md) |
 
-**Launch Total:** 90/155 features (58%)
+**Launch Total:** 95/155 features (61%)
 
 ## Quick Summary — Post-Launch
 
@@ -138,6 +138,10 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 - 6 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Trash Talker)
 - Tiered buddy system (Basic, Premium, Legendary)
 - Reactive commentary engine with message selection
+- Integrated session management (workout start, set recording, rest tracking)
+- Implemented trigger evaluation system (performance events, behavior patterns, session flow)
+- Added rank progress detection infrastructure
+- Enhanced buddy store with session memory tracking
 
 **Planned (Launch):**
 - 8-12 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Girl Power Fit, Mindful Movement, Goth Gym Rat, Action Hero, Drill Sergeant, Zen Master, Trash Talker, etc.)
@@ -145,8 +149,8 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
   - **Basic** = text-only cues (2-3 free at launch)
   - **Premium** = voice lines + text (IAP)
   - **Legendary** = full theme transformation (IAP — accent color, card style, sounds, voice, cue text)
-- Reactive commentary — performance events (PRs, rank-ups, volume milestones)
-- Reactive commentary — behavior patterns (long rests, skipping, streaks, returning after absence)
+- Reactive commentary — performance events (PRs, volume milestones) with rank-up infrastructure
+- Reactive commentary — behavior patterns (long rests, streaks, returning after absence) with skipping exercise infrastructure
 - Reactive commentary — session flow (start hype, mid-workout, final set, finish summary)
 - AI-generated voice system (original characters, not real people)
 - Community-created personality packs (post-launch)
@@ -385,7 +389,7 @@ Premium analytics dashboard for serious lifters.
 ---
 
 ## Forge Milestones
-**Status:** Implemented | **Progress:** 5/5 features
+**Status:** Done | **Progress:** 5/5 features
 **NEW — from 2026-01-29 brainstorm**
 
 Non-repeatable lifetime achievements with tiered rarity — prestige markers.

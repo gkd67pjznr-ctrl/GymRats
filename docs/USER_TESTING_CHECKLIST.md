@@ -548,3 +548,203 @@ After testing, please provide feedback on:
 
 **End of Testing Checklist**
 *Add new test sessions above as features are completed*
+
+---
+### Latest Testing Session
+
+### Forge Milestones Feature
+**Date:** 2026-01-30
+**Features Tested:**
+- Access Trophy Case from profile
+- View earned milestones with rarity styling
+- View locked milestones with progress indicators
+- Tap milestone to see details
+- Milestone earned toast notifications
+- Full trophy case screen
+
+---
+## Test Cases
+
+### TC-FM1: Access Trophy Case from profile
+**Steps:**
+1. Open the app and navigate to your profile
+2. Look for the "Milestones" section
+3. Verify the trophy case is visible
+
+**Expected:** Trophy case section is visible on profile with earned milestone count
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+### TC-FM2: View earned milestones with rarity styling
+**Steps:**
+1. Navigate to the trophy case on your profile
+2. Observe earned milestones
+3. Check visual treatment for different rarities (common, rare, epic, legendary)
+
+**Expected:** Earned milestones show appropriate visual styling based on rarity
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+### TC-FM3: View locked milestones with progress indicators
+**Steps:**
+1. Navigate to the trophy case on your profile
+2. Observe locked milestones
+3. Check for progress indicators on locked milestones
+
+**Expected:** Locked milestones are visible as silhouettes with progress bars
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+### TC-FM4: Tap milestone to see details
+**Steps:**
+1. Navigate to the trophy case on your profile
+2. Tap on any earned milestone
+3. Verify detail modal appears
+4. Check that details include name, description, date earned, and rarity
+
+**Expected:** Detail modal shows complete milestone information
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+### TC-FM5: Milestone earned toast notifications
+**Steps:**
+1. Complete an action that triggers a milestone (if possible)
+2. Observe if a toast notification appears
+3. Check visual styling matches milestone rarity
+
+**Expected:** Toast notification appears for earned milestones with appropriate styling
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+### TC-FM6: Full trophy case screen
+**Steps:**
+1. Navigate to the trophy case on your profile
+2. Look for a "View All" or similar button
+3. Tap to navigate to full trophy case screen
+4. Verify full screen displays all milestones
+
+**Expected:** Full trophy case screen shows all milestones in a detailed view
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+
+### Forge Lab Analytics Feature
+**Date:** 2026-01-30
+**Features Tested:**
+- Access Forge Lab from navigation
+- View weight graph (free feature)
+- Access premium features (strength curves, volume trends, muscle balance, rank progression, integration data)
+- Date range filtering
+- Exercise selection in strength curves
+
+---
+
+## Test Cases
+
+### TC-FL1: Access Forge Lab from navigation
+**Steps:**
+1. Open the app and ensure you're logged in
+2. Look for "Forge Lab" in the bottom navigation bar
+3. Tap on the "Forge Lab" tab
+
+**Expected:** Forge Lab screen opens with analytics dashboard
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+
+### TC-FL2: View weight graph (free feature)
+**Steps:**
+1. Navigate to Forge Lab screen
+2. Scroll to the "Weight Trend" card
+3. Verify the card is visible and not blurred
+
+**Expected:** Weight graph card is visible without premium lock overlay
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+
+### TC-FL3: Access premium features (strength curves)
+**Steps:**
+1. Navigate to Forge Lab screen
+2. Scroll to the "Strength Curves" card
+3. Observe if the card is blurred with a lock icon
+
+**Expected:** Strength curves card is blurred with premium lock overlay
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+
+### TC-FL4: Date range filtering
+**Steps:**
+1. Navigate to Forge Lab screen
+2. Tap on different date range buttons (1W, 1M, 3M, etc.)
+3. Observe if the UI responds to the selection
+
+**Expected:** Date range buttons are selectable and change appearance when active
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+
+### TC-FL5: Exercise selection in strength curves
+**Steps:**
+1. Navigate to Forge Lab screen
+2. Find the strength curves card
+3. Try to select different exercises (even if blurred)
+
+**Expected:** Exercise selection buttons are visible and interactive
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```

@@ -12,6 +12,7 @@ import { useIsGamificationHydrated, usePendingLevelUp } from "../../src/lib/stor
 import { StatsAndRanksCard } from "../../src/ui/components/Gamification";
 import { LevelUpModal } from "../../src/ui/components/Gamification";
 import type { LevelUpCelebration } from "../../src/lib/gamification/types";
+import { ForgeDNACard } from "../../src/ui/components/Profile/ForgeDNACard";
 
 export default function ProfileTab() {
   const c = useThemeColors();
@@ -287,6 +288,9 @@ export default function ProfileTab() {
 
         {/* Gamification Stats & Ranks Card */}
         <StatsAndRanksCard profile={profile} />
+
+        {/* Forge DNA Card */}
+        <ForgeDNACard />
 
         {/* Level Up Modal */}
         <LevelUpModal

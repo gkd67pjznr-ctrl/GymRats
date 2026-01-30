@@ -25,6 +25,17 @@ export type TriggerType =
   // Special
   | 'none';
 
+export interface RankProgressInfo {
+  exerciseId: string;
+  exerciseName: string;
+  previousRank: number;
+  newRank: number;
+  previousScore: number;
+  newScore: number;
+  rankUp: boolean;
+  scoreIncrease: number;
+}
+
 export interface CueMessage {
   buddyId: string;
   buddyTier: BuddyTier;
