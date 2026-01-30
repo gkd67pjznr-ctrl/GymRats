@@ -12,10 +12,22 @@ import { useIsGamificationHydrated, usePendingLevelUp } from "../../src/lib/stor
 import { StatsAndRanksCard } from "../../src/ui/components/Gamification";
 import { LevelUpModal } from "../../src/ui/components/Gamification";
 import type { LevelUpCelebration } from "../../src/lib/gamification/types";
+// Milestones imports
+import {
+  TrophyCard,
+  MilestoneEarnedToast,
+} from "../../src/ui/components/Milestones";
+import {
+  useMilestonesStore,
+  useIsMilestonesHydrated,
+  usePendingMilestoneCelebration,
+} from "../../src/lib/stores/milestonesStore";
+import { useRouter } from "expo-router";
 
 export default function ProfileTab() {
   const c = useThemeColors();
   const devMode = useDevMode();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [tapCount, setTapCount] = useState(0);
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
@@ -27,6 +39,12 @@ export default function ProfileTab() {
   const pendingLevelUp = usePendingLevelUp();
   const dismissLevelUp = useGamificationStore((s) => s.dismissLevelUp);
   const syncToServer = useGamificationStore((s) => s.sync);
+
+  // Milestones state
+  const isMilestonesHydrated = useIsMilestonesHydrated();
+  const earnedMilestones = useMilestonesStore((s) => s.earnedMilestones);
+  const pendingMilestone = usePendingMilestoneCelebration();
+  const dismissMilestone = useMilestonesStore((s) => s.dismissCelebration);
 
   const DEV_PASSWORD = "62136213";
 
@@ -74,8 +92,8 @@ export default function ProfileTab() {
     setPassword("");
   };
 
-  // Show loading spinner briefly (or waiting for gamification to hydrate)
-  if (isLoading || !isHydrated) {
+  // Show loading spinner briefly (or waiting for gamification/milestones to hydrate)
+  if (isLoading || !isHydrated || !isMilestonesHydrated) {
     return (
       <View style={{ 
         flex: 1, 
@@ -288,11 +306,25 @@ export default function ProfileTab() {
         {/* Gamification Stats & Ranks Card */}
         <StatsAndRanksCard profile={profile} />
 
+        {/* Milestones Trophy Card */}
+        <TrophyCard
+          earnedCount={Object.keys(earnedMilestones).length}
+          totalCount={30} // Total milestones defined
+          onShowFull={() => router.push('/milestones')}
+        />
+
         {/* Level Up Modal */}
         <LevelUpModal
           visible={pendingLevelUp !== null}
           celebration={pendingLevelUp}
           onDismiss={dismissLevelUp}
+        />
+
+        {/* Milestone Earned Toast */}
+        <MilestoneEarnedToast
+          celebration={pendingMilestone}
+          onDismiss={dismissMilestone}
+          onViewTrophyCase={() => router.push('/milestones')}
         />
 
         {/* Dev tools (only shown when dev mode enabled) */}

@@ -279,6 +279,52 @@
   4. Old UX shows the traditional ExerciseBlocksCard interface
   5. Toggle persists across app restarts
 
+### 2026-01-30 (forge milestones feature)
+- Implemented complete Forge Milestones feature:
+  - Created milestone types system with tiered rarity (common, rare, epic, legendary)
+  - Implemented 30 milestone definitions across all rarity tiers
+  - Built milestone checker for calculating progress and detecting earned milestones
+  - Created Zustand store with AsyncStorage persistence and sync infrastructure
+  - Built Trophy Case UI components (full screen, detail modal, compact card)
+  - Implemented Milestone Earned Toast with rarity-based animations
+  - Integrated trophy card into profile screen
+  - Added trophy case screen at /milestones route
+  - Created comprehensive unit tests (48 tests passing)
+  - Updated feature tracking documentation:
+    - Marked Forge Milestones as Done in FEATURE-MASTER.md (0/5 → 5/5)
+    - Updated main feature file with implementation details
+  - Total feature progress: 80/133 → 85/133 (64%)
+- Implemented complete Workout Replay feature:
+  - Added `replayAutoPlay` setting to settingsStore with UI toggle
+  - Created `WorkoutReplay` data models and TypeScript types
+  - Implemented replay data preparation service with PR detection and rank change analysis
+  - Created `useWorkoutReplay` hook for replay functionality
+  - Built complete UI component set for cinematic replay experience:
+    - `StatCard` - Animated workout statistics display
+    - `PRHighlight` - Personal record celebration cards with visual effects
+    - `RankChangeDisplay` - Rank progression visualization
+    - `BuddySignOff` - Personality-driven closing messages
+    - `ReplayControls` - Action buttons for sharing/completion
+  - Created main `workout-replay.tsx` screen with animations
+  - Integrated conditional navigation in `live-workout.tsx` based on settings
+  - Added manual replay trigger to `workout-summary.tsx`
+  - Updated feature tracking documentation:
+    - Marked Workout Replay as Implemented in FEATURE-MASTER.md (0/5 → 5/5)
+    - Updated main feature file with implementation details
+    - Added comprehensive test cases to USER_TESTING_CHECKLIST.md
+  - Total feature progress: 75/133 → 80/133 (60%)
+
+**Files Created (Phase 3):**
+  - `src/ui/components/LiveWorkout/UXToggle.tsx` - Toggle button component
+  - Integration into `app/live-workout.tsx` - Conditional rendering with settings check
+
+**How to Test:**
+  1. Start a workout via the app
+  2. Tap the "Old UX" / "New UX" toggle button (near timer bar)
+  3. New UX shows exercise cards with inline set entry (weight | reps | ✓)
+  4. Old UX shows the traditional ExerciseBlocksCard interface
+  5. Toggle persists across app restarts
+
 ### 2026-01-29 (test fixing)
 - Fixed 33 failing tests across 7 test suites (97 failed → 64 failed)
 - **Test suite health: 93.6% passing** (937/1001 tests)

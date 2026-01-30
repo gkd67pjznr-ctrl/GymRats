@@ -28,7 +28,7 @@
 | [Forge Lab (Analytics)](#forge-lab-analytics) | Planned | 0/6 | [Details](features/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](features/feature-forge-milestones.md) |
 
-**Launch Total:** 90/155 features (58%)
+**Launch Total:** 95/155 features (61%)
 
 ## Quick Summary — Post-Launch
 
@@ -46,7 +46,7 @@
 
 **Post-Launch Total:** 0/49 features (0%)
 
-**Grand Total:** 86/204 features (42%)
+**Grand Total:** 91/204 features (45%)
 
 ---
 
@@ -385,17 +385,20 @@ Premium analytics dashboard for serious lifters.
 ---
 
 ## Forge Milestones
-**Status:** Implemented | **Progress:** 5/5 features
+**Status:** Done | **Progress:** 5/5 features
 **NEW — from 2026-01-29 brainstorm**
 
 Non-repeatable lifetime achievements with tiered rarity — prestige markers.
 
-**Planned:**
+**Completed:**
 - Common tier (10 workouts, first PR, first rank-up)
 - Rare tier (100 workouts, 30-day streak, 5 exercises ranked)
 - Epic tier (1000lb club, all exercises Silver+, year-long streak)
 - Legendary tier (top 1% achievements — genuinely hard)
 - Trophy case on profile with special visual treatment by rarity
+- Milestone earned toast with rarity-based animations
+- Full trophy case screen at /milestones
+- Zustand store with AsyncStorage persistence
 
 ---
 

@@ -522,6 +522,52 @@ The workflow is **automatically invoked** when:
 - "Let's work" → Start session startup protocol
 - "What should we do?" → Priority assessment only
 - "Start [task]" → Skip to task with that focus
+- "Exercise DB sync" → Run daily exercise database sync
+
+---
+
+## DIRECTIVE: EXERCISE DB SYNC
+
+**Trigger:** User says "exercise db sync" or "sync exercises"
+
+**Purpose:** Incrementally sync exercises from ExerciseDB API to expand the exercise database
+
+**What to do:**
+
+1. **Check sync state**
+   - Import and call `getSyncProgress()` from `src/lib/exerciseAPI/syncService`
+   - Display current progress (completed/total body parts, percentage)
+
+2. **Determine next body part to sync**
+   - Import `BODY_PARTS` from `src/lib/exerciseAPI/exerciseDBService`
+   - Import `getSyncState()` to see which body parts are completed
+   - Find first uncompleted body part
+
+3. **Sync the body part**
+   - Import `syncBodyPart()` from `src/lib/exerciseAPI/syncService`
+   - Call with the body part name and progress callback
+   - Wait for completion
+
+4. **Report results**
+   - Number of new exercises fetched
+   - Total exercises now in database
+   - Updated sync progress percentage
+
+5. **Repeat or finish**
+   - If sync quota remaining (~500/day free tier), ask to sync another body part
+   - If quota exhausted, report completion and suggest returning tomorrow
+
+**Notes:**
+- API key must be set in `.env`: `EXPO_PUBLIC_EXERCISEDB_API_KEY`
+- Free tier: 500 requests/day = ~14 body parts full sync, or daily incremental sync
+- Target: 3,000+ exercises within 60 days
+- Name simplification automatically removes verbose descriptors
+
+**Files involved:**
+- `src/lib/exerciseAPI/syncService.ts` - Sync functions
+- `src/lib/exerciseAPI/exerciseDBService.ts` - API client
+- `src/lib/exerciseAPI/nameSimplifier.ts` - Name cleanup
+- `docs/exercise-db-api.md` - Full documentation
 
 ---
 
