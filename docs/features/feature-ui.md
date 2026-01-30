@@ -269,6 +269,19 @@ FR.card({ card: c.card, border: c.border })
 - Accent color pops
 - Premium feel
 
+**Enhanced with Forgerank-Specific Aesthetic:**
+- Layered approach: PURE's emotional personality over LIFTOFF's functional efficiency
+- Multiple color palette options with emotional meaning
+- Hand-drawn illustration style with surreal/psychedelic elements
+- Typography system balancing functional clarity with personality
+- Emotional language/copy for key moments
+
+**Complete Visual Style Documentation:**
+See `docs/visual-style/` directory for comprehensive visual design specifications:
+- `ui-aesthetic-implementation.md` - Complete implementation strategy
+- `visual-style-guide.md` - Detailed design specifications
+- `implementation-roadmap.md` - Phased approach with timelines
+
 **Color Palette:**
 ```
 Background: #0a0a0a (near black)

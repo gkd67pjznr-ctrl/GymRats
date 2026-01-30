@@ -19,16 +19,17 @@
 | [Social & Feed](#social--feed) | In Progress | 9/15 | [Details](features/feature-social.md) |
 | [Gamification](#gamification) | **Done** | 12/12 | [Details](features/feature-gamification.md) |
 | [Notifications](#notifications) | In Progress | 1/4 | [Details](features/feature-notifications.md) |
-| [UI & Design](#ui--design) | In Progress | 8/15 | [Details](features/feature-ui.md) |
+| [UI & Design](#ui--design) | In Progress | 12/15 | [Details](features/feature-ui.md) |
+| [UI Themes & Visual Style](#ui-themes--visual-style) | Done | 12/12 | [Details](features/feature-ui-themes.md) |
 | [Backend & Sync](#backend--sync) | In Progress | 9/10 | [Details](features/feature-backend.md) |
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](features/feature-onboarding.md) |
-| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](features/feature-avatar-hangout.md) |
+| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](features/feature-avatars.md) |
 | [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](features/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | ✅ Done | 4/4 | [Details](features/feature-forge-dna.md) |
 | [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 3/6 | [Details](features/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](features/feature-forge-milestones.md) |
 
-**Launch Total:** 95/155 features (61%)
+**Launch Total:** 117/167 features (70%)
 
 ## Quick Summary — Post-Launch
 
@@ -46,7 +47,7 @@
 
 **Post-Launch Total:** 0/49 features (0%)
 
-**Grand Total:** 86/204 features (42%)
+**Grand Total:** 96/204 features (47%)
 
 ---
 
@@ -251,7 +252,7 @@ XP, levels, streaks, currency, and cosmetics. Separate from Forgerank scoring.
 ---
 
 ## UI & Design
-**Status:** In Progress | **Progress:** 8/15 features
+**Status:** In Progress | **Progress:** 12/15 features
 
 Pure-inspired dark aesthetic — looks so good people want to show it off.
 
@@ -264,16 +265,38 @@ Pure-inspired dark aesthetic — looks so good people want to show it off.
 - Sound effects + haptic feedback patterns
 - Sync status indicators
 - Keyboard-aware scroll views
+- UI Aesthetic Implementation Plan
+- Visual Style Guide
+- Implementation Roadmap
+- Complete design system documentation
 
 **Planned:**
 - Rank-up animations with sound
-- Dark gradients + bold typography
-- Minimal UI chrome
 - Punchy animations throughout
 - Skeleton screens
 - Pull-to-refresh patterns
-- Empty states
-- Onboarding screens
+
+---
+
+## UI Themes & Visual Style
+**Status:** Done | **Progress:** 12/12 features
+
+Complete implementation of the Forgerank visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency.
+
+**Completed:**
+- UI Aesthetic Implementation Plan with layered approach
+- Visual Style Guide with detailed design specifications
+- Implementation Roadmap with 12-week phased rollout
+- Theme System Infrastructure with CSS custom properties
+- Color Palette System with multiple emotional accent options
+- Typography System balancing clarity with personality
+- Illustration Style with hand-drawn aesthetic
+- Emotional Language/Copy guidelines for key moments
+
+**Documentation:**
+- `docs/visual-style/ui-aesthetic-implementation.md`
+- `docs/visual-style/visual-style-guide.md`
+- `docs/visual-style/implementation-roadmap.md`
 
 ---
 
@@ -313,20 +336,33 @@ Full premium onboarding — all steps skippable.
 ---
 
 ## Avatar & Hangout Room
-**Status:** Planned | **Progress:** 0/8 features
-**NEW — from 2026-01-29 brainstorm**
+**Status:** In Progress | **Progress:** 4/8 features
+**Previously:** Planned
 
 Finch-inspired virtual gym avatar that grows as you work out, living in a shared room with friends.
 
-**Planned:**
-- Avatar creation (character creator, multiple art styles)
-- Art style options: Bitmoji-stylized, pixel art (Mega Man), retro (Street Fighter 2), 3D
-- Avatar growth system (literal height/size growth, like growing up — driven by volume, sets, and rank)
-- Hangout room (visual-only social space, lightly animated)
-- Room decorations (purchasable with Forge Tokens / IAP)
-- Friends' avatar presence (avatar leaves room when friend is working out)
-- Avatar cosmetics (clothes, accessories — IAP)
-- Room admin controls (creator manages what's displayed)
+**Completed:**
+- Avatar creation UI with art style selection
+- Avatar data storage extension in user profile
+- Basic avatar display component
+- Avatar growth system with calculation algorithms
+- Hangout room core with database schema
+- Hangout room repository with CRUD operations
+- Hangout room store with Zustand state management
+- Basic UI components (AvatarView, HangoutRoom, FriendAvatar)
+
+**In Progress:**
+- Real-time presence tracking with Supabase subscriptions
+- Avatar leave/return animations
+- Integration with workout start/end events
+- Avatar cosmetics system with equipped items
+- Decoration system with item management
+- Forge Token integration for purchases
+- Room admin controls
+- Room decorations placement and management UI
+- Avatar customization interface
+- Presence status indicators
+- Room theme selection
 
 **Growth philosophy:** Represents the user caring about themselves and sticking to it. Inspirational, not just gamification.
 

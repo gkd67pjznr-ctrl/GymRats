@@ -213,6 +213,13 @@ For each instruction section, include:
 5. **Code examples** - where helpful
 6. **Reference tables** - for keys, options, etc.
 
+### Visual Style Documentation
+
+When working on UI/UX features, always reference the visual style documentation:
+- `docs/visual-style/ui-aesthetic-implementation.md` - Complete implementation strategy
+- `docs/visual-style/visual-style-guide.md` - Detailed design specifications
+- `docs/visual-style/implementation-roadmap.md` - Phased approach and timeline
+
 ### Template
 
 ```markdown
@@ -573,6 +580,12 @@ This ensures documentation stays synchronized and no decisions are lost between 
 - Scoring & Ranks: 5/5 (Done)
 
 ### Quality Score: 68/100
+
+### Visual Style Documentation
+- UI Aesthetic Implementation Plan: Complete
+- Visual Style Guide: Complete
+- Implementation Roadmap: Complete
+- Located in: `docs/visual-style/`
 
 ---
 

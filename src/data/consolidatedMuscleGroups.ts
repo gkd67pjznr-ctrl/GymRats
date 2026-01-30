@@ -19,6 +19,7 @@ export type MuscleId =
   | 'biceps'
   | 'forearms'
   | 'traps'
+  | 'triceps'
   // Upper body back
   | 'lats'
   | 'mid_back'
@@ -43,6 +44,7 @@ export const CORE_MUSCLE_IDS: MuscleId[] = [
   'biceps',
   'forearms',
   'traps',
+  'triceps',
   'lats',
   'mid_back',
   'lower_back',
@@ -115,6 +117,14 @@ export const MUSCLE_GROUPS: MuscleGroup[] = [
     id: 'traps',
     name: 'Traps',
     displayName: 'Traps',
+    region: 'upper_front',
+    side: 'back',
+    svgPath: 'M 0 0 L 1 1'
+  },
+  {
+    id: 'triceps',
+    name: 'Triceps',
+    displayName: 'Triceps',
     region: 'upper_front',
     side: 'back',
     svgPath: 'M 0 0 L 1 1'
@@ -540,19 +550,19 @@ export const EXERCISE_MUSCLE_MAPS: Record<string, ExerciseMuscleMap> = {
   situp: {
     exerciseId: 'situp',
     primary: ['upper_abs', 'lower_abs'],
-    secondary: ['hip_flexors'],
+    secondary: ['quads'],
     tertiary: [],
   },
   leg_raise: {
     exerciseId: 'leg_raise',
     primary: ['lower_abs'],
-    secondary: ['upper_abs', 'hip_flexors'],
+    secondary: ['upper_abs', 'quads'],
     tertiary: [],
   },
   plank: {
     exerciseId: 'plank',
     primary: ['upper_abs', 'lower_abs'],
-    secondary: ['lower_back', 'shoulders'],
+    secondary: ['lower_back', 'traps'],
     tertiary: ['obliques'],
   },
   russian_twist: {
@@ -570,7 +580,7 @@ export const EXERCISE_MUSCLE_MAPS: Record<string, ExerciseMuscleMap> = {
   hanging_knee_raise: {
     exerciseId: 'hanging_knee_raise',
     primary: ['lower_abs', 'upper_abs'],
-    secondary: ['obliques', 'hip_flexors'],
+    secondary: ['obliques', 'quads'],
     tertiary: ['forearms'],
   },
 };

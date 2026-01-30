@@ -10,14 +10,22 @@ import {
 } from './consolidatedMuscleGroups';
 
 // Type for externally synced data
-export interface ExternalMuscleGroup extends Partial<MuscleGroup> {
+export interface ExternalMuscleGroup {
   id: string;
+  name?: string;
+  displayName?: string;
+  region?: 'upper_front' | 'upper_back' | 'lower_body';
+  side?: 'front' | 'back';
+  svgPath?: string;
   source?: string;
   lastSynced?: number;
 }
 
-export interface ExternalExerciseMap extends Partial<ExerciseMuscleMap> {
+export interface ExternalExerciseMap {
   exerciseId: string;
+  primary?: string[];
+  secondary?: string[];
+  tertiary?: string[];
   source?: string;
   lastSynced?: number;
 }
@@ -49,7 +57,7 @@ export function getMuscleGroups(): MuscleGroup[] {
       // Only use external data if it has the required properties
       if (externalMuscle.id && externalMuscle.name && externalMuscle.displayName) {
         result[id] = {
-          id: externalMuscle.id,
+          id: externalMuscle.id as MuscleId,
           name: externalMuscle.name,
           displayName: externalMuscle.displayName,
           region: externalMuscle.region || 'upper_front',

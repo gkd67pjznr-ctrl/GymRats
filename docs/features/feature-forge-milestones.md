@@ -7,12 +7,6 @@ Non-repeatable lifetime achievements with tiered rarity. Prestige markers that s
 **Priority:** Launch (v1)
 **Source:** 2026-01-29 brainstorm interview
 
-## Recent Updates (2026-01-30)
-- Added comprehensive implementation with 30 milestone definitions
-- Implemented full UI with Trophy Case and earned toast notifications
-- Completed unit testing with 48/48 tests passing
-- Added visual effects for all rarity tiers (common, rare, epic, legendary)
-
 ---
 
 ## Implementation Summary (2026-01-30)
