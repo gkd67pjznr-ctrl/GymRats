@@ -68,7 +68,6 @@ Forgerank has reached a significant milestone with 117 of 167 planned features i
 **Required Action**:
 - Refactor `app/live-workout.tsx` (577+ lines)
 - Standardize import patterns (@/ vs relative)
-- Remove deprecated `_old/` directory
 
 ---
 

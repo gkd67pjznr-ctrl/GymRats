@@ -144,7 +144,6 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 - OAuth flows scaffolded but not functional
 - Tests need expansion (scoring has 100% coverage, others less)
 - Duplicate utility functions (timeAgo, kgToLb)
-- `_old/` directory needs deletion
 - Console logging in production code
 - Import style inconsistency (@/ vs relative)
 

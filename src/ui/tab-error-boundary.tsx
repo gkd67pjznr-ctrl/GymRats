@@ -55,18 +55,20 @@ class TabErrorBoundaryInternal extends Component<TabErrorBoundaryProps, TabError
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const { screenName } = this.props;
 
-    // Enhanced logging with tab context
-    console.error(`[TabErrorBoundary] Error in "${screenName}" tab:`, {
-      timestamp: new Date().toISOString(),
-      errorName: error.name,
-      errorMessage: error.message,
-      componentStack: errorInfo.componentStack,
-      screenName,
-    });
+    // Enhanced logging with tab context (development only)
+    if (__DEV__) {
+      console.error(`[TabErrorBoundary] Error in "${screenName}" tab:`, {
+        timestamp: new Date().toISOString(),
+        errorName: error.name,
+        errorMessage: error.message,
+        componentStack: errorInfo.componentStack,
+        screenName,
+      });
 
-    // Log component stack separately for better readability
-    if (errorInfo.componentStack) {
-      console.error(`[TabErrorBoundary] Component stack for "${screenName}":`, errorInfo.componentStack);
+      // Log component stack separately for better readability
+      if (errorInfo.componentStack) {
+        console.error(`[TabErrorBoundary] Component stack for "${screenName}":`, errorInfo.componentStack);
+      }
     }
 
     // TODO: Send to error tracking service with tab context

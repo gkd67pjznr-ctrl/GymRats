@@ -150,7 +150,6 @@ export function DetailedAnalysis({
         style={[styles.actionButton, { backgroundColor: ds.tone.accent }]}
         onPress={() => {
           // TODO: Navigate to personalized workout plan based on analysis
-          console.log("Generate personalized plan based on DNA analysis");
         }}
       >
         <Text style={[styles.actionButtonText, { color: c.bg }]}>

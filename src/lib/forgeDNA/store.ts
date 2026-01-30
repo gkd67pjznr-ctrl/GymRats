@@ -117,7 +117,9 @@ export const useForgeDNAStore = create<ForgeDNAState>()(
             });
           }
         } catch (error) {
-          console.error("Error generating Forge DNA:", error);
+          if (__DEV__) {
+            console.error("Error generating Forge DNA:", error);
+          }
           set({
             isLoading: false,
             error: "Failed to generate Forge DNA. Please try again.",
@@ -148,7 +150,9 @@ export const useForgeDNAStore = create<ForgeDNAState>()(
             historyError: null
           });
         } catch (error) {
-          console.error("Error loading DNA history:", error);
+          if (__DEV__) {
+            console.error("Error loading DNA history:", error);
+          }
           set({
             isHistoryLoading: false,
             historyError: "Failed to load DNA history. Please try again."
@@ -179,7 +183,9 @@ export const useForgeDNAStore = create<ForgeDNAState>()(
             comparisonError: null
           });
         } catch (error) {
-          console.error("Error loading user comparison data:", error);
+          if (__DEV__) {
+            console.error("Error loading user comparison data:", error);
+          }
           set({
             isComparisonLoading: false,
             comparisonError: "Failed to load comparison data. Please try again."
@@ -210,7 +216,9 @@ export const useForgeDNAStore = create<ForgeDNAState>()(
 
           return result;
         } catch (error) {
-          console.error("Error sharing DNA:", error);
+          if (__DEV__) {
+            console.error("Error sharing DNA:", error);
+          }
           const errorMessage = error instanceof Error ? error.message : "Failed to share DNA";
           set({ isSharing: false, shareError: errorMessage });
           return { success: false, error: errorMessage };
@@ -250,7 +258,9 @@ export const useForgeDNAStore = create<ForgeDNAState>()(
             });
           }
         } catch (error) {
-          console.error("Error syncing with server:", error);
+          if (__DEV__) {
+            console.error("Error syncing with server:", error);
+          }
           const errorMessage = error instanceof Error ? error.message : "Failed to sync with server";
           set({
             isSyncing: false,

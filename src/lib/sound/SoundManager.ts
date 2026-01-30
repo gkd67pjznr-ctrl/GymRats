@@ -73,7 +73,9 @@ class SoundManagerClass {
 
       this.initialized = true;
     } catch (error) {
-      console.warn('[SoundManager] Failed to initialize:', error);
+      if (__DEV__) {
+        console.warn('[SoundManager] Failed to initialize:', error);
+      }
     }
   }
 
@@ -128,7 +130,9 @@ class SoundManagerClass {
         }
       });
     } catch (error) {
-      console.warn(`[SoundManager] Failed to preload sound "${key}":`, error);
+      if (__DEV__) {
+        console.warn(`[SoundManager] Failed to preload sound "${key}":`, error);
+      }
     }
   }
 
@@ -164,7 +168,9 @@ class SoundManagerClass {
 
       cached.status = 'playing';
     } catch (error) {
-      console.warn(`[SoundManager] Failed to play sound "${key}":`, error);
+      if (__DEV__) {
+        console.warn(`[SoundManager] Failed to play sound "${key}":`, error);
+      }
     }
   }
 
@@ -198,7 +204,9 @@ class SoundManagerClass {
       await cached.sound.unloadAsync();
       this.cache.delete(key);
     } catch (error) {
-      console.warn(`[SoundManager] Failed to unload sound "${key}":`, error);
+      if (__DEV__) {
+        console.warn(`[SoundManager] Failed to unload sound "${key}":`, error);
+      }
     }
   }
 

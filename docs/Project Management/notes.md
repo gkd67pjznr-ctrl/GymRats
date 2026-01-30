@@ -160,17 +160,8 @@ Create `.env` file (gitignored).
 
 ---
 
-## Deprecated Code
-
-`src/lib/_old/` contains deprecated stores. Do NOT import from this directory. These are kept for reference only.
-
-Should be deleted once fully migrated.
-
----
-
 ## TODO Reminders
 
-- [ ] Delete `_old/` directory after confirming no references
 - [ ] Extract `timeAgo` function to shared utility
 - [ ] Extract `kgToLb` usage to import from `units.ts`
 - [ ] Refactor `live-workout.tsx` (577 lines)

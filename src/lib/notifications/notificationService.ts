@@ -31,9 +31,13 @@ export const initializeNotificationService = async (): Promise<void> => {
       await setupNotificationChannels();
     }
 
-    console.log('Notification service initialized');
+    if (__DEV__) {
+      console.log('Notification service initialized');
+    }
   } catch (error) {
-    console.error('Failed to initialize notification service:', error);
+    if (__DEV__) {
+      console.error('Failed to initialize notification service:', error);
+    }
   }
 };
 
@@ -63,7 +67,9 @@ const setupNotificationChannels = async (): Promise<void> => {
       sound: 'default',
     });
   } catch (error) {
-    console.error('Failed to set up notification channels:', error);
+    if (__DEV__) {
+      console.error('Failed to set up notification channels:', error);
+    }
   }
 };
 
@@ -76,7 +82,9 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
     const { status } = await Notifications.requestPermissionsAsync();
     return status === 'granted';
   } catch (error) {
-    console.error('Failed to request notification permissions:', error);
+    if (__DEV__) {
+      console.error('Failed to request notification permissions:', error);
+    }
     return false;
   }
 };
@@ -93,14 +101,18 @@ const registerForPushNotificationsAsync = async (): Promise<void> => {
       // Request permissions
       const { status } = await Notifications.requestPermissionsAsync();
       if (status !== 'granted') {
-        console.log('Notification permissions not granted');
+        if (__DEV__) {
+          console.log('Notification permissions not granted');
+        }
         return;
       }
     }
 
     // Get push token
     const token = await Notifications.getExpoPushTokenAsync();
-    console.log('Expo push token:', token.data);
+    if (__DEV__) {
+      console.log('Expo push token:', token.data);
+    }
 
     // Set notification handler
     Notifications.setNotificationHandler({
@@ -111,7 +123,9 @@ const registerForPushNotificationsAsync = async (): Promise<void> => {
       }),
     });
   } catch (error) {
-    console.error('Failed to register for push notifications:', error);
+    if (__DEV__) {
+      console.error('Failed to register for push notifications:', error);
+    }
   }
 };
 
@@ -128,7 +142,9 @@ export const scheduleLocalNotification = async (
     const prefs = settings.notificationPrefs;
 
     if (!shouldShowNotification(payload.type, prefs)) {
-      console.log(`Notification of type ${payload.type} is disabled by user preferences`);
+      if (__DEV__) {
+        console.log(`Notification of type ${payload.type} is disabled by user preferences`);
+      }
       return null;
     }
 
@@ -143,10 +159,14 @@ export const scheduleLocalNotification = async (
       },
     });
 
-    console.log(`Scheduled notification ${notificationId} for ${triggerSeconds} seconds`);
+    if (__DEV__) {
+      console.log(`Scheduled notification ${notificationId} for ${triggerSeconds} seconds`);
+    }
     return notificationId;
   } catch (error) {
-    console.error('Failed to schedule local notification:', error);
+    if (__DEV__) {
+      console.error('Failed to schedule local notification:', error);
+    }
     return null;
   }
 };
@@ -157,9 +177,13 @@ export const scheduleLocalNotification = async (
 export const cancelScheduledNotification = async (notificationId: string): Promise<void> => {
   try {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
-    console.log(`Cancelled scheduled notification ${notificationId}`);
+    if (__DEV__) {
+      console.log(`Cancelled scheduled notification ${notificationId}`);
+    }
   } catch (error) {
-    console.error('Failed to cancel scheduled notification:', error);
+    if (__DEV__) {
+      console.error('Failed to cancel scheduled notification:', error);
+    }
   }
 };
 
@@ -169,9 +193,13 @@ export const cancelScheduledNotification = async (notificationId: string): Promi
 export const cancelAllScheduledNotifications = async (): Promise<void> => {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    console.log('Cancelled all scheduled notifications');
+    if (__DEV__) {
+      console.log('Cancelled all scheduled notifications');
+    }
   } catch (error) {
-    console.error('Failed to cancel all scheduled notifications:', error);
+    if (__DEV__) {
+      console.error('Failed to cancel all scheduled notifications:', error);
+    }
   }
 };
 
@@ -185,7 +213,9 @@ export const showImmediateNotification = async (payload: NotificationPayload): P
     const prefs = settings.notificationPrefs;
 
     if (!shouldShowNotification(payload.type, prefs)) {
-      console.log(`Notification of type ${payload.type} is disabled by user preferences`);
+      if (__DEV__) {
+        console.log(`Notification of type ${payload.type} is disabled by user preferences`);
+      }
       return;
     }
 
@@ -195,7 +225,9 @@ export const showImmediateNotification = async (payload: NotificationPayload): P
       data: payload.data || {},
     });
   } catch (error) {
-    console.error('Failed to show immediate notification:', error);
+    if (__DEV__) {
+      console.error('Failed to show immediate notification:', error);
+    }
   }
 };
 
@@ -245,7 +277,9 @@ export const scheduleRestTimerNotification = async (seconds: number): Promise<st
     const prefs = settings.notificationPrefs;
 
     if (!prefs.restTimer) {
-      console.log('Rest timer notifications are disabled by user preferences');
+      if (__DEV__) {
+        console.log('Rest timer notifications are disabled by user preferences');
+      }
       return null;
     }
 
@@ -264,7 +298,9 @@ export const scheduleRestTimerNotification = async (seconds: number): Promise<st
 
     return notificationId;
   } catch (error) {
-    console.error('Failed to schedule rest timer notification:', error);
+    if (__DEV__) {
+      console.error('Failed to schedule rest timer notification:', error);
+    }
     return null;
   }
 };
@@ -275,9 +311,13 @@ export const scheduleRestTimerNotification = async (seconds: number): Promise<st
 export const cancelRestTimerNotification = async (): Promise<void> => {
   try {
     await cancelAllScheduledNotifications();
-    console.log('Cancelled rest timer notification');
+    if (__DEV__) {
+      console.log('Cancelled rest timer notification');
+    }
   } catch (error) {
-    console.error('Failed to cancel rest timer notification:', error);
+    if (__DEV__) {
+      console.error('Failed to cancel rest timer notification:', error);
+    }
   }
 };
 
@@ -295,7 +335,9 @@ export const sendFriendRequestNotification = async (
     const prefs = settings.notificationPrefs;
 
     if (!prefs.friendRequests) {
-      console.log('Friend request notifications disabled for user', receiverId);
+      if (__DEV__) {
+        console.log('Friend request notifications disabled for user', receiverId);
+      }
       return;
     }
 
@@ -317,7 +359,9 @@ export const sendFriendRequestNotification = async (
     // Also create in-app notification
     await createInAppNotification(receiverId, payload);
   } catch (error) {
-    console.error('Failed to send friend request notification:', error);
+    if (__DEV__) {
+      console.error('Failed to send friend request notification:', error);
+    }
   }
 };
 
@@ -337,7 +381,9 @@ export const sendDirectMessageNotification = async (
     const prefs = settings.notificationPrefs;
 
     if (!prefs.directMessages) {
-      console.log('Direct message notifications disabled for user', receiverId);
+      if (__DEV__) {
+        console.log('Direct message notifications disabled for user', receiverId);
+      }
       return;
     }
 
@@ -360,7 +406,9 @@ export const sendDirectMessageNotification = async (
     // Also create in-app notification
     await createInAppNotification(receiverId, payload);
   } catch (error) {
-    console.error('Failed to send direct message notification:', error);
+    if (__DEV__) {
+      console.error('Failed to send direct message notification:', error);
+    }
   }
 };
 
@@ -374,11 +422,15 @@ const createInAppNotification = async (
 ): Promise<void> => {
   try {
     // This would call the Supabase client to insert into notifications table
-    console.log(`Creating in-app notification for user ${userId}:`, payload);
+    if (__DEV__) {
+      console.log(`Creating in-app notification for user ${userId}:`, payload);
+    }
     // For now, we'll just log it since we don't have the backend
     // implementation for in-app notifications yet
   } catch (error) {
-    console.error('Failed to create in-app notification:', error);
+    if (__DEV__) {
+      console.error('Failed to create in-app notification:', error);
+    }
   }
 };
 
@@ -390,18 +442,23 @@ export const registerPushToken = async (): Promise<void> => {
   try {
     const { status } = await Notifications.getPermissionsAsync();
     if (status !== 'granted') {
-      console.log('Notification permissions not granted');
+      if (__DEV__) {
+        console.log('Notification permissions not granted');
+      }
       return;
     }
 
     const token = await Notifications.getExpoPushTokenAsync();
-    console.log('Expo push token:', token.data);
-
-    // In a real implementation, this would save the token to the user's record
-    // For now, we'll just log it
-    console.log('Would save push token to user record:', token.data);
+    if (__DEV__) {
+      console.log('Expo push token:', token.data);
+      // In a real implementation, this would save the token to the user's record
+      // For now, we'll just log it
+      console.log('Would save push token to user record:', token.data);
+    }
   } catch (error) {
-    console.error('Failed to register push token:', error);
+    if (__DEV__) {
+      console.error('Failed to register push token:', error);
+    }
   }
 };
 
@@ -416,11 +473,14 @@ export const sendPushNotification = async (
   try {
     // In a real implementation, this would call the backend API
     // to send a push notification to the user's device
-    console.log(`Would send push notification to user ${userId}:`, payload);
-
-    // For now, we'll just log it since we don't have the backend
-    // implementation for sending push notifications yet
+    if (__DEV__) {
+      console.log(`Would send push notification to user ${userId}:`, payload);
+      // For now, we'll just log it since we don't have the backend
+      // implementation for sending push notifications yet
+    }
   } catch (error) {
-    console.error('Failed to send push notification:', error);
+    if (__DEV__) {
+      console.error('Failed to send push notification:', error);
+    }
   }
 };

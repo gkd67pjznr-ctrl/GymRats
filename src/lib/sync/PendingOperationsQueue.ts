@@ -43,7 +43,9 @@ class PendingOperationsQueueClass {
       }
       this.hydrated = true;
     } catch (error) {
-      console.error('[PendingOperationsQueue] Failed to initialize:', error);
+      if (__DEV__) {
+        console.error('[PendingOperationsQueue] Failed to initialize:', error);
+      }
       this.queue = [];
       this.hydrated = true;
     }
@@ -68,7 +70,9 @@ class PendingOperationsQueueClass {
     // Auto-process if online
     if (networkMonitor.isOnline() && !this.isProcessing) {
       this.processNext().catch(err => {
-        console.error('[PendingOperationsQueue] Auto-process error:', err);
+        if (__DEV__) {
+          console.error('[PendingOperationsQueue] Auto-process error:', err);
+        }
       });
     }
   }
@@ -120,7 +124,9 @@ class PendingOperationsQueueClass {
 
         if (mutation.retryCount >= MAX_RETRY_COUNT) {
           // Max retries reached - remove from queue
-          console.error('[PendingOperationsQueue] Max retries reached, dropping:', mutation);
+          if (__DEV__) {
+            console.error('[PendingOperationsQueue] Max retries reached, dropping:', mutation);
+          }
           this.queue.shift();
         } else {
           // Move to end of queue to try other mutations first
@@ -230,7 +236,9 @@ class PendingOperationsQueueClass {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.queue));
     } catch (error) {
-      console.error('[PendingOperationsQueue] Failed to persist:', error);
+      if (__DEV__) {
+        console.error('[PendingOperationsQueue] Failed to persist:', error);
+      }
     }
   }
 

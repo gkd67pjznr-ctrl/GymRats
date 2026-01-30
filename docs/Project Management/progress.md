@@ -154,7 +154,6 @@
 
 ### High Priority (P1)
 - Duplicate utility functions (timeAgo, kgToLb)
-- `_old/` directory needs deletion
 - Console logging in production code
 - `live-workout.tsx` is 577 lines (needs refactor)
 

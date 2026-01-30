@@ -121,7 +121,9 @@ class NetworkMonitorClass {
       try {
         listener(this.currentState);
       } catch (error) {
-        console.error('[NetworkMonitor] Listener error:', error);
+        if (__DEV__) {
+          console.error('[NetworkMonitor] Listener error:', error);
+        }
       }
     });
   }

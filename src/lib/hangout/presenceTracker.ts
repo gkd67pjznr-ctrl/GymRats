@@ -13,7 +13,9 @@ import { logError } from "../errorHandler";
  * @returns Cleanup function to unsubscribe
  */
 export function subscribeToRoomPresence(roomId: string): () => void {
-  console.log('[PresenceTracker] Setting up presence subscription for room:', roomId);
+  if (__DEV__) {
+    console.log('[PresenceTracker] Setting up presence subscription for room:', roomId);
+  }
 
   const subscription = supabase
     .channel(`room_presence:${roomId}`)
@@ -26,7 +28,9 @@ export function subscribeToRoomPresence(roomId: string): () => void {
         filter: `room_id=eq.${roomId}`
       },
       (payload) => {
-        console.log('[PresenceTracker] New presence INSERT:', payload);
+        if (__DEV__) {
+          console.log('[PresenceTracker] New presence INSERT:', payload);
+        }
         const presence: UserPresence = {
           id: payload.new.id,
           userId: payload.new.user_id,
@@ -54,7 +58,9 @@ export function subscribeToRoomPresence(roomId: string): () => void {
         filter: `room_id=eq.${roomId}`
       },
       (payload) => {
-        console.log('[PresenceTracker] Presence UPDATE:', payload);
+        if (__DEV__) {
+          console.log('[PresenceTracker] Presence UPDATE:', payload);
+        }
         const presence: UserPresence = {
           id: payload.new.id,
           userId: payload.new.user_id,
@@ -82,7 +88,9 @@ export function subscribeToRoomPresence(roomId: string): () => void {
         filter: `room_id=eq.${roomId}`
       },
       (payload) => {
-        console.log('[PresenceTracker] Presence DELETE:', payload);
+        if (__DEV__) {
+          console.log('[PresenceTracker] Presence DELETE:', payload);
+        }
         const userId = payload.old.user_id;
 
         // Remove from store
@@ -92,10 +100,13 @@ export function subscribeToRoomPresence(roomId: string): () => void {
       }
     )
     .subscribe((status) => {
-      console.log('[PresenceTracker] Subscription status changed:', status);
-      if (status === 'SUBSCRIBED') {
-        console.log('[PresenceTracker] Successfully subscribed to presence updates');
-      } else if (status === 'CHANNEL_ERROR') {
+      if (__DEV__) {
+        console.log('[PresenceTracker] Subscription status changed:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('[PresenceTracker] Successfully subscribed to presence updates');
+        }
+      }
+      if (status === 'CHANNEL_ERROR') {
         logError({
           context: "PresenceTracker.subscribeToRoomPresence",
           error: new Error("Channel error"),
@@ -112,7 +123,9 @@ export function subscribeToRoomPresence(roomId: string): () => void {
 
   // Return cleanup function
   return () => {
-    console.log('[PresenceTracker] Cleaning up presence subscription');
+    if (__DEV__) {
+      console.log('[PresenceTracker] Cleaning up presence subscription');
+    }
     subscription.unsubscribe();
   };
 }
@@ -124,7 +137,9 @@ export function subscribeToRoomPresence(roomId: string): () => void {
  * @returns Cleanup function to unsubscribe
  */
 export function subscribeToRoomDecorations(roomId: string): () => void {
-  console.log('[PresenceTracker] Setting up decoration subscription for room:', roomId);
+  if (__DEV__) {
+    console.log('[PresenceTracker] Setting up decoration subscription for room:', roomId);
+  }
 
   const subscription = supabase
     .channel(`room_decorations:${roomId}`)
@@ -137,7 +152,9 @@ export function subscribeToRoomDecorations(roomId: string): () => void {
         filter: `room_id=eq.${roomId}`
       },
       (payload) => {
-        console.log('[PresenceTracker] New decoration INSERT:', payload);
+        if (__DEV__) {
+          console.log('[PresenceTracker] New decoration INSERT:', payload);
+        }
         const decoration = {
           id: payload.new.id,
           roomId: payload.new.room_id,
@@ -167,7 +184,9 @@ export function subscribeToRoomDecorations(roomId: string): () => void {
         filter: `room_id=eq.${roomId}`
       },
       (payload) => {
-        console.log('[PresenceTracker] Decoration UPDATE:', payload);
+        if (__DEV__) {
+          console.log('[PresenceTracker] Decoration UPDATE:', payload);
+        }
         const decoration = {
           id: payload.new.id,
           roomId: payload.new.room_id,
@@ -199,7 +218,9 @@ export function subscribeToRoomDecorations(roomId: string): () => void {
         filter: `room_id=eq.${roomId}`
       },
       (payload) => {
-        console.log('[PresenceTracker] Decoration DELETE:', payload);
+        if (__DEV__) {
+          console.log('[PresenceTracker] Decoration DELETE:', payload);
+        }
         const decorationId = payload.old.id;
 
         // Remove from store
@@ -209,10 +230,13 @@ export function subscribeToRoomDecorations(roomId: string): () => void {
       }
     )
     .subscribe((status) => {
-      console.log('[PresenceTracker] Decoration subscription status changed:', status);
-      if (status === 'SUBSCRIBED') {
-        console.log('[PresenceTracker] Successfully subscribed to decoration updates');
-      } else if (status === 'CHANNEL_ERROR') {
+      if (__DEV__) {
+        console.log('[PresenceTracker] Decoration subscription status changed:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('[PresenceTracker] Successfully subscribed to decoration updates');
+        }
+      }
+      if (status === 'CHANNEL_ERROR') {
         logError({
           context: "PresenceTracker.subscribeToRoomDecorations",
           error: new Error("Channel error"),
@@ -229,7 +253,9 @@ export function subscribeToRoomDecorations(roomId: string): () => void {
 
   // Return cleanup function
   return () => {
-    console.log('[PresenceTracker] Cleaning up decoration subscription');
+    if (__DEV__) {
+      console.log('[PresenceTracker] Cleaning up decoration subscription');
+    }
     subscription.unsubscribe();
   };
 }

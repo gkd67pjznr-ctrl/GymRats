@@ -79,16 +79,18 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       boundaryName: name,
     };
 
-    // Enhanced logging with [ErrorBoundary] prefix
-    console.error('[ErrorBoundary] Error caught:', {
-      ...errorLogData,
-      originalError: error,
-      errorInfo,
-    });
+    // Enhanced logging with [ErrorBoundary] prefix (development only)
+    if (__DEV__) {
+      console.error('[ErrorBoundary] Error caught:', {
+        ...errorLogData,
+        originalError: error,
+        errorInfo,
+      });
 
-    // Log component stack separately for better readability
-    if (errorInfo.componentStack) {
-      console.error('[ErrorBoundary] Component stack trace:', errorInfo.componentStack);
+      // Log component stack separately for better readability
+      if (errorInfo.componentStack) {
+        console.error('[ErrorBoundary] Component stack trace:', errorInfo.componentStack);
+      }
     }
 
     // TODO: Send to error tracking service (Sentry, etc.)

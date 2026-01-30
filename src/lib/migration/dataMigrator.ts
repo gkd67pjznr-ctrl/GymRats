@@ -256,7 +256,9 @@ async function readLocalData(): Promise<LocalData> {
       data.routines = parsed.state?.routines || [];
     }
   } catch (err) {
-    console.error("[DataMigrator] Error reading local data:", err);
+    if (__DEV__) {
+      console.error("[DataMigrator] Error reading local data:", err);
+    }
   }
 
   return data;

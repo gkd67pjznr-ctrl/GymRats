@@ -52,7 +52,9 @@ const scheduleBackgroundNotification = async (secondsLeft: number) => {
       setScheduledNotificationId(notificationId);
     }
   } catch (error) {
-    console.error('Failed to schedule background notification:', error);
+    if (__DEV__) {
+      console.error('Failed to schedule background notification:', error);
+    }
   }
 };
 

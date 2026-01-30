@@ -45,14 +45,18 @@ export async function shareDNAToFeed(params: ShareDNAToFeedParams): Promise<{ su
       .single();
 
     if (error) {
-      console.error('Error sharing DNA to feed:', error);
+      if (__DEV__) {
+        console.error('Error sharing DNA to feed:', error);
+      }
       return { success: false, error: error.message };
     }
 
     return { success: true, postId: data.id };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Error sharing DNA to feed:', errorMessage);
+    if (__DEV__) {
+      console.error('Error sharing DNA to feed:', errorMessage);
+    }
     return { success: false, error: errorMessage };
   }
 }
@@ -105,7 +109,9 @@ export async function generateDNAImage(dna: ForgeDNA): Promise<{ data: string | 
     return { data: placeholderImage };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Error generating DNA image:', errorMessage);
+    if (__DEV__) {
+      console.error('Error generating DNA image:', errorMessage);
+    }
     return { data: null, error: errorMessage };
   }
 }
@@ -130,14 +136,18 @@ export async function shareDNAToFriends(userId: string, dna: ForgeDNA, friendIds
       .insert(notifications);
 
     if (error) {
-      console.error('Error sharing DNA to friends:', error);
+      if (__DEV__) {
+        console.error('Error sharing DNA to friends:', error);
+      }
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Error sharing DNA to friends:', errorMessage);
+    if (__DEV__) {
+      console.error('Error sharing DNA to friends:', errorMessage);
+    }
     return { success: false, error: errorMessage };
   }
 }
