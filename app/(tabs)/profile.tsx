@@ -23,7 +23,7 @@ import {
   usePendingMilestoneCelebration,
 } from "../../src/lib/stores/milestonesStore";
 import { useRouter } from "expo-router";
-import { ForgeDNACard } from "../../src/ui/components/Profile/ForgeDNACard";
+import { ForgeDNACard, ProfileStatsCard } from "../../src/ui/components/Profile";
 
 export default function ProfileTab() {
   const c = useThemeColors();
@@ -306,6 +306,9 @@ export default function ProfileTab() {
 
         {/* Gamification Stats & Ranks Card */}
         <StatsAndRanksCard profile={profile} />
+
+        {/* Profile Stats Card - Exercise Ranks & PRs */}
+        <ProfileStatsCard limit={5} />
 
         {/* Milestones Trophy Card */}
         <TrophyCard

@@ -14,14 +14,14 @@
  */
 
 import { renderHook, act } from '@testing-library/react-native';
-import { useWorkoutOrchestrator } from '../../src/lib/hooks/useWorkoutOrchestrator';
-import { detectCueForWorkingSet, makeEmptyExerciseState } from '../../src/lib/perSetCue';
-import type { LoggedSet } from '../../src/lib/loggerTypes';
-import type { WorkoutPlan } from '../../src/lib/workoutPlanModel';
-import { useCurrentSessionStore } from '../../src/lib/stores';
+import { useWorkoutOrchestrator } from '@/src/lib/hooks/useWorkoutOrchestrator';
+import { detectCueForWorkingSet, makeEmptyExerciseState } from '@/src/lib/perSetCue';
+import type { LoggedSet } from '@/src/lib/loggerTypes';
+import type { WorkoutPlan } from '@/src/lib/workoutPlanModel';
+import { useUser, useCurrentSessionStore } from '@/src/lib/stores';
 
 // Mock the perSetCue module
-jest.mock('../../src/lib/perSetCue', () => ({
+jest.mock('@/src/lib/perSetCue', () => ({
   detectCueForWorkingSet: jest.fn(),
   makeEmptyExerciseState: jest.fn(() => ({
     bestWeightKg: 0,

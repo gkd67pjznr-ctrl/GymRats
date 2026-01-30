@@ -431,8 +431,13 @@ describe('currentSessionStore - Error boundary (TASK-008)', () => {
     mockAsyncStorage.getItem.mockResolvedValueOnce(null);
     mockAsyncStorage.setItem.mockRejectedValue(writeError);
 
-    act(() => {
-      ensureCurrentSession();
+    // Use waitFor with error handling to avoid unhandled rejection
+    await act(async () => {
+      try {
+        ensureCurrentSession();
+      } catch {
+        // Expected - setItem will reject
+      }
     });
 
     // Wait for error to be logged
