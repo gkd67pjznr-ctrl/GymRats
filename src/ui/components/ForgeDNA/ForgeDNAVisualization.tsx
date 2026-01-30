@@ -1,18 +1,47 @@
-import { View, Text, StyleSheet } from "react-native";
+import * as React from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { makeDesignSystem } from "../../../ui/designSystem";
 import { useThemeColors } from "../../../ui/theme";
-import type { ForgeDNA } from "../../../lib/forgeDNA/types";
+import type { ForgeDNA, ForgeDNAHistoryEntry } from "../../../lib/forgeDNA/types";
+import { HistoricalComparison } from "./HistoricalComparison";
+import { UserComparison } from "./UserComparison";
+import { DetailedAnalysis } from "./DetailedAnalysis";
+import { SVGVisualization } from "./SVGVisualization";
+import { analyzeMuscleImbalances, analyzeTrainingStyle, generateProgressionSuggestions } from "../../../lib/forgeDNA/imbalanceAnalyzer";
 
 interface ForgeDNAVisualizationProps {
   dna: ForgeDNA;
   isPremium: boolean;
+  history?: ForgeDNAHistoryEntry[];
+  averageUserDNA?: ForgeDNA;
+  differences?: string[];
+  insights?: string[];
+  detailedAnalysis?: {
+    imbalanceRecommendations: string[];
+    trainingStyleInsights: string[];
+    progressionSuggestions: string[];
+  };
 }
 
 export function ForgeDNAVisualization(props: ForgeDNAVisualizationProps) {
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
 
-  const { dna, isPremium } = props;
+  const { dna, isPremium, history, averageUserDNA, differences = [], insights = [], detailedAnalysis } = props;
+
+  // Calculate detailed analysis if not provided
+  const analysisData = React.useMemo(() => {
+    if (!dna) return null;
+
+    const imbalanceAnalysis = analyzeMuscleImbalances(dna);
+    const trainingStyleAnalysis = analyzeTrainingStyle(dna);
+
+    return {
+      ...imbalanceAnalysis,
+      trainingStyleInsights: trainingStyleAnalysis.insights,
+      progressionSuggestions: generateProgressionSuggestions(dna)
+    };
+  }, [dna]);
 
   // Find top 3 muscle groups by volume
   const topMuscleGroups = Object.entries(dna.muscleBalance)
@@ -28,7 +57,7 @@ export function ForgeDNAVisualization(props: ForgeDNAVisualizationProps) {
   const dominantStyle = trainingStyles[0];
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={[styles.title, { color: c.text }]}>Forge DNA</Text>
@@ -36,6 +65,13 @@ export function ForgeDNAVisualization(props: ForgeDNAVisualizationProps) {
           Your unique training identity
         </Text>
       </View>
+
+      {/* SVG Visualization for Premium Users */}
+      {isPremium && dna && (
+        <View style={styles.section}>
+          <SVGVisualization dna={dna} />
+        </View>
+      )}
 
       {/* Muscle Balance Radar Chart Visualization */}
       <View style={styles.visualizationSection}>
@@ -144,6 +180,45 @@ export function ForgeDNAVisualization(props: ForgeDNAVisualizationProps) {
         </View>
       </View>
 
+      {/* Historical Comparison for Premium Users */}
+      {isPremium && history && history.length > 1 && (
+        <View style={styles.section}>
+          <HistoricalComparison
+            history={history}
+            userDNA={dna}
+            averageUserDNA={averageUserDNA}
+            differences={differences}
+            insights={insights}
+          />
+        </View>
+      )}
+
+      {/* User Comparison for Premium Users */}
+      {isPremium && averageUserDNA && (
+        <View style={styles.section}>
+          <UserComparison
+            userDNA={dna}
+            averageDNA={averageUserDNA}
+            differences={differences}
+            insights={insights}
+          />
+        </View>
+      )}
+
+      {/* Detailed Analysis for Premium Users */}
+      {isPremium && dna && analysisData && (
+        <View style={styles.section}>
+          <DetailedAnalysis
+            dna={dna}
+            imbalances={analysisData.muscleImbalances}
+            overallBalanceScore={analysisData.overallBalanceScore}
+            recommendations={analysisData.recommendations}
+            trainingStyleInsights={analysisData.trainingStyleInsights}
+            progressionSuggestions={analysisData.progressionSuggestions}
+          />
+        </View>
+      )}
+
       {/* Premium Blur Overlay */}
       {!isPremium && (
         <View style={styles.blurOverlay}>
@@ -162,7 +237,7 @@ export function ForgeDNAVisualization(props: ForgeDNAVisualizationProps) {
           </View>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 

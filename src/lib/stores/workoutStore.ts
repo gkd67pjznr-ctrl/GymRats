@@ -163,6 +163,88 @@ export function getWorkoutSessions(): WorkoutSession[] {
   return useWorkoutStore.getState().sessions;
 }
 
+// Get user's all-time best e1RM for each exercise
+export function getPersonalBests(userId: string): Record<string, {
+  e1rmKg: number;
+  timestampMs: number;
+  exerciseName: string;
+}> {
+  const sessions = useWorkoutStore.getState().sessions.filter(s => s.userId === userId);
+
+  const personalBests: Record<string, {
+    e1rmKg: number;
+    timestampMs: number;
+    exerciseName: string;
+  }> = {};
+
+  // Process all sessions to find best e1RM for each exercise
+  for (const session of sessions) {
+    for (const set of session.sets) {
+      // Calculate e1RM using Epley formula
+      const e1rmKg = set.weightKg * (1 + set.reps / 30);
+
+      if (!personalBests[set.exerciseId] || e1rmKg > personalBests[set.exerciseId].e1rmKg) {
+        personalBests[set.exerciseId] = {
+          e1rmKg,
+          timestampMs: set.timestampMs,
+          exerciseName: set.exerciseId // This should be mapped to actual name
+        };
+      }
+    }
+  }
+
+  return personalBests;
+}
+
+// Get historical rank progression data
+export function getRankHistory(userId: string, exerciseId: string): {
+  date: string;
+  rank: number;
+  score: number;
+  e1rmKg: number;
+}[] {
+  const sessions = useWorkoutStore.getState().sessions
+    .filter(s => s.userId === userId)
+    .sort((a, b) => a.startedAtMs - b.startedAtMs);
+
+  const rankHistory: {
+    date: string;
+    rank: number;
+    score: number;
+    e1rmKg: number;
+  }[] = [];
+
+  // For each session, calculate rank for the specified exercise
+  for (const session of sessions) {
+    // Find sets for the specified exercise in this session
+    const exerciseSets = session.sets.filter(s => s.exerciseId === exerciseId);
+
+    if (exerciseSets.length > 0) {
+      // Find best set for this exercise in this session
+      let bestE1RM = 0;
+      for (const set of exerciseSets) {
+        const e1rmKg = set.weightKg * (1 + set.reps / 30);
+        if (e1rmKg > bestE1RM) {
+          bestE1RM = e1rmKg;
+        }
+      }
+
+      // Calculate rank/score (simplified - would need actual Forgerank scoring)
+      const score = Math.min(1000, Math.round(bestE1RM * 10)); // Placeholder calculation
+      const rank = Math.min(7, Math.floor(score / 150) + 1); // Placeholder rank calculation
+
+      rankHistory.push({
+        date: new Date(session.startedAtMs).toISOString().split('T')[0],
+        rank,
+        score,
+        e1rmKg: bestE1RM
+      });
+    }
+  }
+
+  return rankHistory;
+}
+
 export function getWorkoutSessionById(id: string): WorkoutSession | undefined {
   return useWorkoutStore.getState().getSessionById(id);
 }

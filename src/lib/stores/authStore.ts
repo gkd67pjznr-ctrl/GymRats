@@ -17,22 +17,24 @@ export interface UserProfile {
   avatarUrl: string | null;
   createdAt: string;
   updatedAt: string;
-  // Avatar properties
-  avatarArtStyle: string | null;
-  avatarGrowthStage: number | null;
-  avatarHeightScale: number | null;
-  avatarCosmetics: {
+  // Subscription tier
+  subscriptionTier: 'basic' | 'premium' | 'legendary';
+  // Avatar properties (optional for backward compatibility)
+  avatarArtStyle?: string | null;
+  avatarGrowthStage?: number | null;
+  avatarHeightScale?: number | null;
+  avatarCosmetics?: {
     top: string | null;
     bottom: string | null;
     shoes: string | null;
     accessory: string | null;
   } | null;
-  // Growth metrics
-  totalVolumeKg: number | null;
-  totalSets: number | null;
-  // Hangout room properties
-  hangoutRoomId: string | null;
-  hangoutRoomRole: "owner" | "member" | null;
+  // Growth metrics (optional for backward compatibility)
+  totalVolumeKg?: number | null;
+  totalSets?: number | null;
+  // Hangout room properties (optional for backward compatibility)
+  hangoutRoomId?: string | null;
+  hangoutRoomRole?: "owner" | "member" | null;
 }
 
 /**
@@ -76,6 +78,8 @@ function toUserProfile(user: DatabaseUser): UserProfile {
     avatarUrl: user.avatar_url,
     createdAt: user.created_at,
     updatedAt: user.updated_at,
+    // Subscription tier (default to basic for now, dev user gets legendary)
+    subscriptionTier: user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
     // Avatar properties
     avatarArtStyle: user.avatar_art_style,
     avatarGrowthStage: user.avatar_growth_stage,
@@ -153,6 +157,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               avatarUrl: data.user.user_metadata?.avatar_url ?? null,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
+              subscriptionTier: data.user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
+              // Optional fields with defaults
+              avatarArtStyle: null,
+              avatarGrowthStage: null,
+              avatarHeightScale: null,
+              avatarCosmetics: null,
+              totalVolumeKg: null,
+              totalSets: null,
+              hangoutRoomId: null,
+              hangoutRoomRole: null,
             },
             session: data.session,
             loading: false,
@@ -211,6 +225,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               avatarUrl: data.user.user_metadata?.avatar_url ?? null,
               createdAt: data.user.created_at ?? new Date().toISOString(),
               updatedAt: data.user.updated_at ?? new Date().toISOString(),
+              subscriptionTier: data.user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
+              // Optional fields with defaults
+              avatarArtStyle: null,
+              avatarGrowthStage: null,
+              avatarHeightScale: null,
+              avatarCosmetics: null,
+              totalVolumeKg: null,
+              totalSets: null,
+              hangoutRoomId: null,
+              hangoutRoomRole: null,
             },
             session: data.session,
             loading: false,
@@ -622,6 +646,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             avatarUrl: profileData.avatar_url,
             createdAt: profileData.created_at,
             updatedAt: profileData.updated_at,
+            subscriptionTier: 'legendary', // Dev user gets legendary tier
+            // Optional fields with defaults
+            avatarArtStyle: profileData.avatar_art_style,
+            avatarGrowthStage: profileData.avatar_growth_stage,
+            avatarHeightScale: profileData.avatar_height_scale,
+            avatarCosmetics: profileData.avatar_cosmetics,
+            totalVolumeKg: profileData.total_volume_kg,
+            totalSets: profileData.total_sets,
+            hangoutRoomId: profileData.hangout_room_id,
+            hangoutRoomRole: profileData.hangout_room_role,
           } : {
             id: signInData.user.id,
             email: signInData.user.email ?? devEmail,
@@ -629,6 +663,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             avatarUrl: signInData.user.user_metadata?.avatar_url ?? null,
             createdAt: signInData.user.created_at ?? new Date().toISOString(),
             updatedAt: signInData.user.updated_at ?? new Date().toISOString(),
+            subscriptionTier: 'legendary', // Dev user gets legendary tier
+            // Optional fields with defaults
+            avatarArtStyle: null,
+            avatarGrowthStage: null,
+            avatarHeightScale: null,
+            avatarCosmetics: null,
+            totalVolumeKg: null,
+            totalSets: null,
+            hangoutRoomId: null,
+            hangoutRoomRole: null,
           },
           session: signInData.session,
           loading: false,
@@ -661,6 +705,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             avatarUrl: null,
             createdAt: signUpData.user.created_at ?? new Date().toISOString(),
             updatedAt: signUpData.user.updated_at ?? new Date().toISOString(),
+            subscriptionTier: 'legendary', // Dev user gets legendary tier
+            // Optional fields with defaults
+            avatarArtStyle: null,
+            avatarGrowthStage: null,
+            avatarHeightScale: null,
+            avatarCosmetics: null,
+            totalVolumeKg: null,
+            totalSets: null,
+            hangoutRoomId: null,
+            hangoutRoomRole: null,
           },
           session: signUpData.session,
           loading: false,
@@ -794,6 +848,16 @@ export function setupAuthListener(
             avatarUrl: session.user.user_metadata?.avatar_url ?? null,
             createdAt: session.user.created_at ?? new Date().toISOString(),
             updatedAt: session.user.updated_at ?? new Date().toISOString(),
+            subscriptionTier: session.user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
+            // Optional fields with defaults
+            avatarArtStyle: null,
+            avatarGrowthStage: null,
+            avatarHeightScale: null,
+            avatarCosmetics: null,
+            totalVolumeKg: null,
+            totalSets: null,
+            hangoutRoomId: null,
+            hangoutRoomRole: null,
           };
         }
       } else {

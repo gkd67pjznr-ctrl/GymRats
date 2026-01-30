@@ -66,10 +66,18 @@ It's not just a logging tool — it's a gym buddy with personality, a ranking sy
 
 **Visual direction:**
 - **Mysterious/exclusive** — like a members-only club
+- **Layered approach** — PURE's emotional personality over LIFTOFF's functional efficiency
+- **Multiple color palette options** — with emotional meaning rather than semantic state
+- **Hand-drawn illustration style** — surreal/psychedelic elements for unique brand identity
+- **Typography system** — balancing functional clarity with personality-driven treatments
 - **Dark gradients + accent colors** — almost monochromatic with pops of color
 - **Bold typography** — confident, makes statements
 - **Minimal UI chrome** — lots of negative space, content-focused
 - **Punchy animations** — PRs, rank-ups, streaks get visual reactions
+- **Emotional language/copy** — for key workout moments and user interactions
+
+**Complete visual implementation:**
+See `docs/visual-style/` for comprehensive documentation including UI Aesthetic Implementation Plan, Visual Style Guide, and Implementation Roadmap.
 
 **Why this wins:** Young lifters care about aesthetics. If the app looks cool, they'll use it.
 

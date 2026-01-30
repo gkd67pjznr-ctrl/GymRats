@@ -1,12 +1,18 @@
 // src/ui/designSystem.ts
 /**
  * FORGERANK — Design System (v1)
- * A "Pure"-adjacent aesthetic: dark UI, sharp contrast, neon accents,
- * minimal UI chrome, and punchy micro-feedback.
+ * A layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.
+ * Dark UI with sharp contrast, neon accents, minimal UI chrome, and punchy micro-feedback.
+ * Enhanced with multiple color palette options with emotional meaning.
  *
  * This file is intentionally framework-agnostic.
  * - You can use these tokens in RN StyleSheet or inline styles.
  * - Keep theme.ts free to map these into your existing useThemeColors().
+ *
+ * For complete visual style documentation, see:
+ * - docs/visual-style/ui-aesthetic-implementation.md
+ * - docs/visual-style/visual-style-guide.md
+ * - docs/visual-style/implementation-roadmap.md
  */
 
 export type DSMode = "dark" | "light";

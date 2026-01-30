@@ -23,6 +23,7 @@ import {
   usePendingMilestoneCelebration,
 } from "../../src/lib/stores/milestonesStore";
 import { useRouter } from "expo-router";
+import { ForgeDNACard } from "../../src/ui/components/Profile/ForgeDNACard";
 
 export default function ProfileTab() {
   const c = useThemeColors();
@@ -312,6 +313,9 @@ export default function ProfileTab() {
           totalCount={30} // Total milestones defined
           onShowFull={() => router.push('/milestones')}
         />
+
+        {/* Forge DNA Card */}
+        <ForgeDNACard />
 
         {/* Level Up Modal */}
         <LevelUpModal

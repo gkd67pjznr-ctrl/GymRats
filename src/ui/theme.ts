@@ -1,5 +1,14 @@
 import { useColorScheme } from "react-native";
 
+/**
+ * Forgerank Theme System
+ *
+ * Provides color and radius tokens for the UI.
+ *
+ * Enhanced with layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.
+ * See docs/visual-style/ for complete visual style documentation.
+ */
+
 export interface ThemeColors {
   bg: string;
   card: string;

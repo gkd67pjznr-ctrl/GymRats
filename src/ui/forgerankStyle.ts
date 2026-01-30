@@ -5,6 +5,9 @@ import type { TextStyle, ViewStyle } from "react-native";
  * Single source of truth for the "Forgerank" aesthetic.
  * Use this instead of ad-hoc numbers when possible.
  *
+ * Enhanced with layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.
+ * For complete visual style documentation, see docs/visual-style/
+ *
  * NOTE: React Native only supports fontWeight up to "900".
  * Avoid "950"/"750" etc — those will error.
  */

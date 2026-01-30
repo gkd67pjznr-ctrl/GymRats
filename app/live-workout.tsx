@@ -50,6 +50,9 @@ import {
   useCurrentSession,
 } from "../src/lib/stores";
 import { getSettings as getSettingsV2 } from "../src/lib/stores/settingsStore";
+import { useBuddyStore } from "../src/lib/stores/buddyStore";
+import { evaluateBehaviorTriggers } from "../src/lib/buddyEngine";
+import { useGamificationStore } from "../src/lib/stores/gamificationStore";
 
 // Utils
 import { randomHighlightDurationMs } from "../src/lib/perSetCue";
@@ -117,6 +120,18 @@ function onRestTimerDoneFeedback() {
   }
 }
 
+function onRestTimerDone() {
+  // Record rest duration in buddy store
+  if (restStartTime) {
+    const durationMs = Date.now() - restStartTime;
+    useBuddyStore.getState().recordRest(durationMs);
+    setRestStartTime(null);
+  }
+
+  // Call original feedback function
+  onRestTimerDoneFeedback();
+}
+
 function hapticLight() {
   const s = getSettings();
   if (!s.hapticsEnabled || !Haptics) return;
@@ -151,6 +166,7 @@ export default function LiveWorkout() {
   const [restVisible, setRestVisible] = useState(false);
   const [showTimerDetails, setShowTimerDetails] = useState(false);
   const notificationPermissionRequestedRef = useRef(false);
+  const [restStartTime, setRestStartTime] = useState<number | null>(null);
 
   // PR celebration state
   const [celebration, setCelebration] = useState<SelectedCelebration | null>(null);
@@ -250,6 +266,38 @@ export default function LiveWorkout() {
       exerciseBlocks: pickerState.planMode ? pickerState.plannedExerciseIds.slice() : [first],
       done: pickerState.planMode ? new Set() : new Set([first]),
     });
+
+    // Start buddy workout session
+    useBuddyStore.getState().startWorkoutSession();
+
+    // Check for behavior pattern triggers (streak, return after absence)
+    const gamificationProfile = useGamificationStore.getState().profile;
+    const streakDays = gamificationProfile.currentStreak;
+    const lastWorkoutDate = gamificationProfile.lastWorkoutDate;
+
+    let absenceDays = 0;
+    if (lastWorkoutDate) {
+      const lastWorkout = new Date(lastWorkoutDate);
+      const today = new Date();
+      const diffTime = Math.abs(today.getTime() - lastWorkout.getTime());
+      absenceDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    // Evaluate behavior pattern triggers
+    const behaviorCue = evaluateBehaviorTriggers({
+      restDurationMs: 0, // Not applicable at start
+      isSkipping: false, // Not applicable at start
+      streakDays,
+      absenceDays,
+      workoutDurationMs: 0 // Not applicable at start
+    });
+
+    if (behaviorCue) {
+      // We would need to pass this to the orchestrator to display it
+      // For now, let's just log it
+      console.log("Behavior cue at start:", behaviorCue);
+    }
+
     initializedRef.current = true;
 
     // Initialize notification service
@@ -371,6 +419,8 @@ export default function LiveWorkout() {
       notificationPermissionRequestedRef.current = true;
     }
 
+    // Record rest start time
+    setRestStartTime(Date.now());
     setRestVisible(true);
   }
 

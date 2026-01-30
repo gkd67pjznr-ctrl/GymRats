@@ -1,0 +1,58 @@
+/**
+ * Tests for Forge Lab Store
+ */
+import { useForgeLabStore } from '../store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { resetGlobalPersistQueue } from '../../utils/PersistQueue';
+
+// Mock the dependencies
+jest.mock('@/src/lib/stores/workoutStore', () => ({
+  getWorkoutHistory: jest.fn().mockResolvedValue([])
+}));
+
+jest.mock('@/src/lib/stores/settingsStore', () => ({
+  getUserBodyweight: jest.fn().mockReturnValue(70)
+}));
+
+// Mock AsyncStorage
+const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
+
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+}));
+
+describe('Forge Lab Store', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    resetGlobalPersistQueue();
+    // Reset store state between tests using setState without triggering persistence
+    useForgeLabStore.setState({
+      data: null,
+      loading: false,
+      error: null,
+      dateRange: '3M'
+    }, true); // true = replace state instead of merging
+  });
+
+  it('should have initial state', () => {
+    const state = useForgeLabStore.getState();
+    expect(state.data).toBeNull();
+    expect(state.loading).toBe(false);
+    expect(state.error).toBeNull();
+    expect(state.dateRange).toBe('3M');
+  });
+
+  it('should set date range', () => {
+    useForgeLabStore.getState().setDateRange('1M');
+
+    const state = useForgeLabStore.getState();
+    expect(state.dateRange).toBe('1M');
+  });
+
+  it('should maintain loading state initially', () => {
+    const state = useForgeLabStore.getState();
+    expect(state.loading).toBe(false);
+  });
+});

@@ -3,7 +3,7 @@
 ## Overview
 Premium analytics dashboard for serious lifters. Deep training insights, trends, and data visualization. Weight graph is free; everything else is behind Pro subscription.
 
-**Status:** Planned | **Progress:** 0/6 features
+**Status:** In Progress | **Progress:** 3/6 features
 **Priority:** Launch (v1)
 **Source:** 2026-01-29 brainstorm interview
 
@@ -11,55 +11,55 @@ Premium analytics dashboard for serious lifters. Deep training insights, trends,
 
 ## Sub-Features
 
-### Planned - Weight Graph (FREE)
-- [ ] Bodyweight trend over time
-- [ ] Manual entry or imported from Apple Health
-- [ ] Line chart with date range selector
-- [ ] Goal weight line (optional)
-- [ ] Available to all users — not behind paywall
+### ✅ Done - Weight Graph (FREE)
+- [x] Bodyweight trend over time
+- [x] Manual entry or imported from Apple Health
+- [x] Line chart with date range selector
+- [x] Goal weight line (optional)
+- [x] Available to all users — not behind paywall
 
 ---
 
-### Planned - Strength Curves (PREMIUM)
-- [ ] e1RM trend per exercise over time
-- [ ] Line chart with date selector
-- [ ] Compare multiple exercises on same chart
-- [ ] Highlight PR dates on the curve
-- [ ] Show rank tier thresholds as horizontal lines
+### ✅ Done - Strength Curves (PREMIUM)
+- [x] e1RM trend per exercise over time
+- [x] Line chart with date selector
+- [x] Compare multiple exercises on same chart
+- [x] Highlight PR dates on the curve
+- [x] Show rank tier thresholds as horizontal lines
 
 ---
 
-### Planned - Volume Trends (PREMIUM)
-- [ ] Weekly/monthly total volume graphs
-- [ ] Volume per muscle group breakdown
-- [ ] Volume per exercise trend
-- [ ] Compare periods (this week vs last week)
-- [ ] Identify volume peaks and valleys
+### ✅ Done - Volume Trends (PREMIUM)
+- [x] Weekly/monthly total volume graphs
+- [x] Volume per muscle group breakdown
+- [x] Volume per exercise trend
+- [x] Compare periods (this week vs last week)
+- [x] Identify volume peaks and valleys
 
 ---
 
-### Planned - Muscle Group Balance (PREMIUM)
-- [ ] Heatmap or radar chart of volume distribution
-- [ ] Identify undertrained muscle groups
-- [ ] Recommended adjustments based on imbalances
-- [ ] Tied to Forge DNA visualization
-- [ ] Historical balance shifts over time
+### ✅ Done - Muscle Group Balance (PREMIUM)
+- [x] Heatmap or radar chart of volume distribution
+- [x] Identify undertrained muscle groups
+- [x] Recommended adjustments based on imbalances
+- [x] Tied to Forge DNA visualization
+- [x] Historical balance shifts over time
 
 ---
 
-### Planned - Rank Progression Graphs (PREMIUM)
-- [ ] Rank history per exercise (rank number over time)
-- [ ] Score progression (0-1000 over time)
-- [ ] Tier breakthrough markers
-- [ ] Projected rank trajectory (based on recent trend)
-- [ ] Multi-exercise rank comparison
+### ✅ Done - Rank Progression Graphs (PREMIUM)
+- [x] Rank history per exercise (rank number over time)
+- [x] Score progression (0-1000 over time)
+- [x] Tier breakthrough markers
+- [x] Projected rank trajectory (based on recent trend)
+- [x] Multi-exercise rank comparison
 
 ---
 
-### Planned - Integration Data Display (PREMIUM)
-- [ ] Apple Health data (weight, BMI) displayed inline
-- [ ] MyFitnessPal data (nutrition, macros) if integrated
-- [ ] Whoop data (recovery, strain) if integrated
+### In Progress - Integration Data Display (PREMIUM)
+- [x] Apple Health data (weight, BMI) displayed inline
+- [x] MyFitnessPal data (nutrition, macros) if integrated
+- [x] Whoop data (recovery, strain) if integrated
 - [ ] Correlation insights (sleep vs performance, nutrition vs volume)
 - [ ] Data import status and last sync time
 

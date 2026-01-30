@@ -5,10 +5,12 @@ import { useWorkoutSessions } from "@/src/lib/stores/workoutStore";
 import { useBodyStatStore } from "@/src/lib/stores/bodyStatStore";
 import { calculateMuscleVolumes } from "@/src/lib/volumeCalculator";
 import { BodyModel } from "@/src/ui/components/BodyModel";
-import { MUSCLE_GROUPS } from "@/src/data/muscleGroups";
+import { getMuscleGroups } from "@/src/data/muscleGroupsManager";
 import { makeDesignSystem } from "@/src/ui/designSystem";
 import { useColorScheme } from "react-native";
 import { useSettings } from "@/src/lib/stores/settingsStore";
+
+const MUSCLE_GROUPS = getMuscleGroups();
 
 const useDesignSystem = () => {
   const { accent } = useSettings();
