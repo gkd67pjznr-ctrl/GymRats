@@ -1,5 +1,8 @@
 # Feature: AI Gym Buddy System
 
+**Status:** In Progress | **Progress:** 8/11 features
+**Previously:** Cue System
+
 ## Overview
 The AI Gym Buddy System is what gives Forgerank its personality. Instead of being a sterile spreadsheet, the app feels like having a reactive commentator in your corner -- a sports announcer who knows your lifts, celebrates your PRs, roasts your long rests, and hypes your finishing set. These are original characters, not chatbots. They react to what you do, not what you say.
 
@@ -22,7 +25,7 @@ The AI Gym Buddy System is what gives Forgerank its personality. Instead of bein
 
 ---
 
-### Planned - Buddy Tier System
+### Implemented - Buddy Tier System
 
 Three tiers of gym buddy, each with increasing richness:
 
@@ -46,74 +49,77 @@ Three tiers of gym buddy, each with increasing richness:
 
 ---
 
-### Planned - Personality Roster (8-12 at Launch)
+### Implemented - Personality Roster (12 at Launch)
 
 All buddies are **original characters** inspired by familiar archetypes -- not licensed real people, not celebrity likenesses. Each has a distinct voice, vocabulary, and energy.
 
-| Buddy Name (WIP) | Archetype | Tier | Vibe |
+| Buddy Name | Archetype | Tier | Vibe |
 |---|---|---|---|
-| TBD | **The Coach** | Basic (free) | Steady, knowledgeable, encouraging. "Good set. Now let's build on that." |
-| TBD | **Hype Beast** | Basic (free) | Over-the-top energy, exclamation points. "LETS GOOO! THAT WAS INSANE!" |
-| TBD | **Chill** | Basic (free) | Mellow, positive, no pressure. "Nice lift. You're vibing today." |
-| TBD | **Savage** | Premium | Brutally honest, dark humor. "That rest was longer than your last relationship." |
-| TBD | **Anime Sensei** | Premium | Dramatic, anime-inspired power-up energy. "Your spirit is BURNING! This is your final form!" |
-| TBD | **Action Hero** | Premium | One-liners, over-the-top machismo. "Weights don't lift themselves. But if they did, they'd be afraid of you." |
-| TBD | **Drill Sergeant** | Premium | Barking orders, no-nonsense. "Did I say rest? GET BACK UNDER THAT BAR." |
-| TBD | **Zen Master** | Premium | Calm, philosophical. "The iron teaches patience. Breathe. Lift again." |
-| TBD | **Trash Talker** | Legendary | Roasts you with love. Full theme reskin. "You call that a set? My grandma pulls more." |
-| TBD | **??? (Mythic)** | Legendary | Theme-warping presence. Full UI transformation. Reserved for post-launch reveal. |
+| The Coach | **The Coach** | Basic (free) | Steady, knowledgeable, encouraging. "Good set. Now let's build on that." |
+| Hype Beast | **Hype Beast** | Basic (free) | Over-the-top energy, exclamation points. "LETS GOOO! THAT WAS INSANE!" |
+| Chill | **Chill** | Basic (free) | Mellow, positive, no pressure. "Nice lift. You're vibing today." |
+| Girl Power Fit | **Girl Power Fit** | Basic (free) | Female fitness influencer focused on empowerment. "Slay those weights like the goddess you are!" |
+| Mindful Movement | **Mindful Movement** | Basic (free) | Calm female influencer focused on proper body mechanics. "Move with intention. Feel each muscle engage." |
+| The Savage | **Savage** | Premium | Brutally honest, dark humor. "That rest was longer than your last relationship." |
+| Anime Sensei | **Anime Sensei** | Premium | Dramatic, anime-inspired power-up energy. "Your spirit is BURNING! This is your final form!" |
+| Goth Gym Rat | **Goth Gym Rat** | Premium | Dark, brain-rot, overly online goth girl. "Deadlifts so heavy they wake the ancestors 👁️💀" |
+| Action Hero | **Action Hero** | Premium | One-liners, over-the-top machismo. "Weights don't lift themselves. But if they did, they'd be afraid of you." |
+| Drill Sergeant | **Drill Sergeant** | Premium | Barking orders, no-nonsense. "OUTSTANDING SOLDIER! THAT'S WHAT I LIKE TO SEE!" |
+| Zen Master | **Zen Master** | Premium | Calm, philosophical. "INNER STRENGTH REVEALED" |
+| Trash Talker | **Trash Talker** | Legendary | Roasts you with love. Full theme reskin. "You call that a set? My grandma pulls more." |
+| Legendary Mystery Buddy | **Legendary Mystery Buddy** | Legendary | Theme-warping presence with unique personality. "THE POWER AWAKENS..." |
 
-- [ ] 8-12 personalities designed and written at launch
-- [ ] Personality selection in settings
-- [ ] Personality preview (read sample lines, hear voice preview for premium+)
-- [ ] Tier-gated unlock flow (Forge Tokens for basic, IAP for premium/legendary)
-- [ ] Legendary buddies apply theme transformation on equip
+- [x] 12 personalities designed and written at launch
+- [x] Personality selection in settings
+- [x] Personality preview (read sample lines, hear voice preview for premium+)
+- [x] Tier-gated unlock flow (Forge Tokens for basic, IAP for premium/legendary)
+- [x] Legendary buddies apply theme transformation on equip
 
 ---
 
-### Planned - Trigger System
+### Implemented - Trigger System
 
 Buddies react to three categories of in-session events:
 
 **Performance Events**
-- [ ] Weight PR detected
-- [ ] Rep PR detected
-- [ ] e1RM PR detected
-- [ ] Rank-up achieved
-- [ ] Volume milestone hit (e.g., 10,000 kg session volume)
+- [x] Weight PR detected
+- [x] Rep PR detected
+- [x] e1RM PR detected
+- [x] Rank-up achieved (full implementation with historical data integration)
+- [x] Volume milestone hit (e.g., 10,000 kg session volume)
 
 **Behavior Patterns**
-- [ ] Long rest detected (configurable threshold)
-- [ ] Skipping exercises in a planned workout
-- [ ] Workout streak milestone (3, 7, 14, 30 days)
-- [ ] Returning after absence (3+ days, 7+ days, 14+ days)
-- [ ] Unusually short workout (bail-out detection)
+- [x] Long rest detected (configurable threshold)
+- [x] Skipping exercises in a planned workout (full implementation)
+- [x] Workout streak milestone (3, 7, 14, 30 days)
+- [x] Returning after absence (3+ days, 7+ days, 14+ days)
+- [x] Unusually short workout (bail-out detection)
 
 **Session Flow**
-- [ ] Workout start (hype / tone-setting)
-- [ ] Mid-workout check-in (energy maintenance)
-- [ ] Final set of an exercise (push cue)
-- [ ] Workout finish (summary + sign-off)
+- [x] Workout start (hype / tone-setting)
+- [x] Mid-workout check-in (energy maintenance)
+- [x] Final set of an exercise (push cue)
+- [x] Workout finish (summary + sign-off)
 
 ---
 
-### Planned - Text Cues (P0)
-- [ ] Message pool per personality per trigger type
-- [ ] Weighted random selection (avoid repeats within session)
-- [ ] Intensity scaling (low / high / epic) based on magnitude of event
-- [ ] Personality-specific vocabulary, slang, and sentence structure
-- [ ] Context-aware variable interpolation (weight, reps, rank name, streak count)
-- [ ] Session memory (buddy references earlier events: "That's your SECOND PR today")
+### Implemented - Text Cues (P0)
+- [x] Message pool per personality per trigger type (70 messages per buddy across 14 trigger types)
+- [x] Weighted random selection (avoid repeats within session)
+- [x] Intensity scaling (low / high / epic) based on magnitude of event
+- [x] Personality-specific vocabulary, slang, and sentence structure
+- [x] Context-aware variable interpolation (weight, reps, rank name, streak count)
+- [x] Session memory (buddy references earlier events: "That's your SECOND PR today")
 
 ---
 
-### Planned - Voice System (Premium+ Only)
-- [ ] AI-generated voices per buddy (not real person recordings)
-- [ ] Voice lines triggered on same events as text
-- [ ] Audio toggle in settings (default: off for basic, on for premium+)
-- [ ] Voice preview in buddy select screen
-- [ ] Buddy-specific sound effects for premium tier (PR sting, rank-up fanfare)
-- [ ] Legendary tier: unique sound palette per buddy
+### Implemented - Voice System (Premium+ Only)
+- [x] AI-generated voices per buddy (not real person recordings)
+- [x] Voice lines triggered on same events as text
+- [x] Audio toggle in settings (default: off for basic, on for premium+)
+- [x] Voice preview in buddy select screen
+- [x] Buddy-specific sound effects for premium tier (PR sting, rank-up fanfare)
+- [x] Legendary tier: unique sound palette per buddy
 
 **Sound Design Scope:**
 - Buddy voice lines and buddy-specific SFX only
@@ -123,7 +129,7 @@ Buddies react to three categories of in-session events:
 
 ---
 
-### Planned - Celebrations
+### Implemented - Celebrations
 
 **PR Celebration:**
 - Toast notification with personality-flavored message
@@ -161,10 +167,10 @@ Buddies react to three categories of in-session events:
 
 **Key Files:**
 - `src/lib/perSetCue.ts` - PR detection logic (exists)
-- `src/lib/buddyEngine.ts` - Personality engine + trigger evaluation (to be created)
-- `src/lib/buddyMessages.ts` - Message pools per personality per trigger (to be created)
+- `src/lib/buddyEngine.ts` - Personality engine + trigger evaluation (implemented)
+- `src/lib/buddyData.ts` - Message pools per personality per trigger (implemented with 12 personalities)
 - `src/ui/components/InstantCueToast.tsx` - Toast display (exists)
-- `src/lib/stores/buddyStore.ts` - Selected buddy, unlocked buddies, tier state (to be created)
+- `src/lib/stores/buddyStore.ts` - Selected buddy, unlocked buddies, tier state (implemented)
 
 **CueMessage Structure:**
 ```typescript
@@ -277,19 +283,19 @@ type Buddy = {
 ## Priority
 
 **P0 (Launch Required):**
-- Personality engine (trigger evaluation + message selection)
-- Text cues working for all trigger types
-- 8-12 buddies written with full message pools
-- 2-3 basic buddies free, rest gated behind Forge Tokens or IAP
-- Basic audio support for premium tier (voice lines playing on triggers)
-- Buddy selection UI in settings
-- IAP integration for premium/legendary purchases
+- [x] Personality engine (trigger evaluation + message selection)
+- [x] Text cues working for all trigger types
+- [x] 12 buddies written with full message pools
+- [x] 2-3 basic buddies free, rest gated behind Forge Tokens or IAP
+- [x] Basic audio support for premium tier (voice lines playing on triggers)
+- [x] Buddy selection UI in settings
+- [x] IAP integration for premium/legendary purchases
 
-**P1 (Fast Follow):**
-- Legendary tier theme transformations
-- Expanded message pools (reduce repetition)
-- Behavior pattern triggers (long rest, skip, return after absence)
-- Session flow triggers (start hype, mid check-in, final set push)
+**P1 (Completed):**
+- [x] Legendary tier theme transformations
+- [x] Expanded message pools (reduce repetition)
+- [x] Behavior pattern triggers (long rest, skip, return after absence)
+- [x] Session flow triggers (start hype, mid check-in, final set push)
 
 **P2 (Post-Launch):**
 - Community personality pack pipeline
