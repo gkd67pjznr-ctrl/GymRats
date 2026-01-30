@@ -18,6 +18,22 @@ export interface UserProfile {
   avatarUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  // Avatar properties
+  avatarArtStyle: string | null;
+  avatarGrowthStage: number | null;
+  avatarHeightScale: number | null;
+  avatarCosmetics: {
+    top: string | null;
+    bottom: string | null;
+    shoes: string | null;
+    accessory: string | null;
+  } | null;
+  // Growth metrics
+  totalVolumeKg: number | null;
+  totalSets: number | null;
+  // Hangout room properties
+  hangoutRoomId: string | null;
+  hangoutRoomRole: "owner" | "member" | null;
 }
 
 /**
@@ -61,6 +77,17 @@ function toUserProfile(user: DatabaseUser): UserProfile {
     avatarUrl: user.avatar_url,
     createdAt: user.created_at,
     updatedAt: user.updated_at,
+    // Avatar properties
+    avatarArtStyle: user.avatar_art_style,
+    avatarGrowthStage: user.avatar_growth_stage,
+    avatarHeightScale: user.avatar_height_scale,
+    avatarCosmetics: user.avatar_cosmetics,
+    // Growth metrics
+    totalVolumeKg: user.total_volume_kg,
+    totalSets: user.total_sets,
+    // Hangout room properties
+    hangoutRoomId: user.hangout_room_id,
+    hangoutRoomRole: user.hangout_room_role,
   };
 }
 

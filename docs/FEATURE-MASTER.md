@@ -22,13 +22,13 @@
 | [UI & Design](#ui--design) | In Progress | 8/15 | [Details](features/feature-ui.md) |
 | [Backend & Sync](#backend--sync) | In Progress | 9/10 | [Details](features/feature-backend.md) |
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](features/feature-onboarding.md) |
-| [Avatar & Hangout Room](#avatar--hangout-room) | Planned | 0/8 | [Details](features/feature-avatar-hangout.md) |
-| [Workout Replay](#workout-replay) | Planned | 0/5 | [Details](features/feature-workout-replay.md) |
+| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](features/feature-avatar-hangout.md) |
+| [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](features/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | Planned | 0/4 | [Details](features/feature-forge-dna.md) |
 | [Forge Lab (Analytics)](#forge-lab-analytics) | Planned | 0/6 | [Details](features/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | Planned | 0/5 | [Details](features/feature-forge-milestones.md) |
 
-**Launch Total:** 75/155 features (48%)
+**Launch Total:** 90/155 features (58%)
 
 ## Quick Summary — Post-Launch
 
@@ -46,7 +46,7 @@
 
 **Post-Launch Total:** 0/49 features (0%)
 
-**Grand Total:** 75/204 features (37%)
+**Grand Total:** 86/204 features (42%)
 
 ---
 
@@ -128,16 +128,19 @@ The visual interface for logging sets — complete redesign (Fitbod/Liftoff styl
 ---
 
 ## AI Gym Buddy
-**Status:** In Progress | **Progress:** 1/11 features
+**Status:** In Progress | **Progress:** 4/11 features
 **Previously:** Cue System
 
 The app's personality — reactive commentary that makes it feel alive. Like a sports announcer, not a chatbot.
 
 **Completed:**
 - Basic PR detection cues
+- 6 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Trash Talker)
+- Tiered buddy system (Basic, Premium, Legendary)
+- Reactive commentary engine with message selection
 
 **Planned (Launch):**
-- 8-12 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Action Hero, Drill Sergeant, Zen Master, Trash Talker, etc.)
+- 8-12 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Girl Power Fit, Mindful Movement, Goth Gym Rat, Action Hero, Drill Sergeant, Zen Master, Trash Talker, etc.)
 - Tiered buddy system:
   - **Basic** = text-only cues (2-3 free at launch)
   - **Premium** = voice lines + text (IAP)
@@ -154,7 +157,7 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 ---
 
 ## Body Model
-**Status:** Planned | **Progress:** 0/5 features
+**Status:** Implemented | **Progress:** 5/5 features
 
 - Detailed muscle subdivisions (upper chest, rear delts, etc.)
 - Volume-based coloring (gradient based on sets)
@@ -330,7 +333,7 @@ Finch-inspired virtual gym avatar that grows as you work out, living in a shared
 ---
 
 ## Workout Replay
-**Status:** Planned | **Progress:** 0/5 features
+**Status:** Implemented | **Progress:** 5/5 features
 **NEW — from 2026-01-29 brainstorm**
 
 Cinematic post-workout summary — THE share moment.
@@ -345,15 +348,18 @@ Cinematic post-workout summary — THE share moment.
 ---
 
 ## Forge DNA
-**Status:** Planned | **Progress:** 0/4 features
+**Status:** In Progress | **Progress:** 3/4 features
 **NEW — from 2026-01-29 brainstorm**
 
 Visual fingerprint of your training identity — profile centerpiece.
 
-**Planned:**
+**Completed:**
 - Training identity visualization (single beautiful graphic)
 - Muscle group balance display
 - Training style analysis (strength vs volume vs endurance)
+
+**Planned:**
+- Premium blur mechanic with conversion CTA
 - Premium blur mechanic (blur interesting sections to incentivize subscription)
 
 ---
@@ -379,7 +385,7 @@ Premium analytics dashboard for serious lifters.
 ---
 
 ## Forge Milestones
-**Status:** Planned | **Progress:** 0/5 features
+**Status:** Implemented | **Progress:** 5/5 features
 **NEW — from 2026-01-29 brainstorm**
 
 Non-repeatable lifetime achievements with tiered rarity — prestige markers.
@@ -436,7 +442,7 @@ First-of-its-kind: online powerlifting meets and bodybuilding shows inside an ap
 ---
 
 ## Integrations
-**Status:** Planned | **Progress:** 0/5 features
+**Status:** Implemented | **Progress:** 5/5 features
 **Post-launch**
 
 Health data integrations only — no music player, no nutrition tracking.

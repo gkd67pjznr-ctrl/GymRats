@@ -268,6 +268,21 @@ export default function WorkoutSummary() {
         </Pressable>
 
         <Pressable
+          onPress={() => router.push(`/workout-replay?sessionId=${sessionId}` as any)}
+          style={({ pressed }) => ({
+            paddingVertical: FR.space.x4,
+            borderRadius: FR.radius.button,
+            backgroundColor: c.card,
+            borderWidth: 1,
+            borderColor: c.border,
+            alignItems: "center",
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Text style={[FR.type.h3, { color: c.text }]}>Replay Workout</Text>
+        </Pressable>
+
+        <Pressable
           onPress={handleDone}
           style={({ pressed }) => ({
             paddingVertical: FR.space.x4,

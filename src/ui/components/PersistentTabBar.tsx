@@ -19,7 +19,7 @@ const TABS: TabConfig[] = [
   { name: "Home", href: "/(tabs)", icon: "home-outline", iconFocused: "home" },
   { name: "Friends", href: "/(tabs)/feed", icon: "people-outline", iconFocused: "people" },
   { name: "Workout", href: "/(tabs)/workout", icon: "barbell-outline", iconFocused: "barbell" },
-  { name: "Ranks", href: "/(tabs)/leaderboard", icon: "trophy-outline", iconFocused: "trophy" },
+  { name: "Hangout", href: "/hangout", icon: "chatbubbles-outline", iconFocused: "chatbubbles" },
   { name: "Profile", href: "/(tabs)/profile", icon: "person-outline", iconFocused: "person" },
 ];
 

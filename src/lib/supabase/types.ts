@@ -95,6 +95,22 @@ export type DatabaseUser = {
   tokens_earned_total: number;
   tokens_spent_total: number;
   milestones_completed: string[];
+  // Avatar columns
+  avatar_art_style: string | null;
+  avatar_growth_stage: number | null;
+  avatar_height_scale: number | null;
+  avatar_cosmetics: {
+    top: string | null;
+    bottom: string | null;
+    shoes: string | null;
+    accessory: string | null;
+  } | null;
+  // Growth metrics
+  total_volume_kg: number | null;
+  total_sets: number | null;
+  // Hangout room columns
+  hangout_room_id: string | null;
+  hangout_room_role: "owner" | "member" | null;
 };
 
 /**
@@ -254,6 +270,22 @@ export type DatabaseUserInsert = Omit<
   tokens_earned_total?: number;
   tokens_spent_total?: number;
   milestones_completed?: string[];
+  // Avatar fields
+  avatar_art_style?: string | null;
+  avatar_growth_stage?: number | null;
+  avatar_height_scale?: number | null;
+  avatar_cosmetics?: {
+    top: string | null;
+    bottom: string | null;
+    shoes: string | null;
+    accessory: string | null;
+  } | null;
+  // Growth metrics
+  total_volume_kg?: number | null;
+  total_sets?: number | null;
+  // Hangout room fields
+  hangout_room_id?: string | null;
+  hangout_room_role?: "owner" | "member" | null;
 };
 
 export type DatabaseRoutineInsert = Pick<
@@ -319,6 +351,17 @@ export type DatabaseUserUpdate = Partial<
     | "tokens_earned_total"
     | "tokens_spent_total"
     | "milestones_completed"
+    // Avatar fields
+    | "avatar_art_style"
+    | "avatar_growth_stage"
+    | "avatar_height_scale"
+    | "avatar_cosmetics"
+    // Growth metrics
+    | "total_volume_kg"
+    | "total_sets"
+    // Hangout room fields
+    | "hangout_room_id"
+    | "hangout_room_role"
   >
 >;
 

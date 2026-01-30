@@ -14,6 +14,7 @@ import { useCurrentPlan } from "../src/lib/workoutPlanStore";
 import { ExerciseBlocksCard } from "../src/ui/components/LiveWorkout/ExerciseBlocksCard";
 import { ExercisePicker } from "../src/ui/components/LiveWorkout/ExercisePicker";
 import { InstantCueToast } from "../src/ui/components/LiveWorkout/InstantCueToast";
+import { BuddyMessageToast } from "../src/ui/components/LiveWorkout/BuddyMessageToast";
 import { QuickAddSetCard } from "../src/ui/components/LiveWorkout/QuickAddSetCard";
 import { RestTimerOverlay } from "../src/ui/components/RestTimerOverlay";
 import { ValidationToast } from "../src/ui/components/LiveWorkout/ValidationToast";
@@ -154,8 +155,15 @@ export default function LiveWorkout() {
       // Sound logic can be added here if needed
     },
     onWorkoutFinished: (sessionId) => {
-      // Navigate to workout summary screen
-      router.push(`/workout-summary?sessionId=${sessionId}` as any);
+      // Check replay auto-play setting
+      const settings = getSettings();
+      if (settings.replayAutoPlay) {
+        // Navigate to workout replay screen
+        router.push(`/workout-replay?sessionId=${sessionId}` as any);
+      } else {
+        // Navigate to workout summary screen
+        router.push(`/workout-summary?sessionId=${sessionId}` as any);
+      }
     },
     onPRCelebration: (params) => {
       // Select and show celebration for PR
@@ -263,6 +271,12 @@ export default function LiveWorkout() {
       <InstantCueToast
         cue={orchestrator.instantCue}
         onClear={orchestrator.clearInstantCue}
+        randomHoldMs={randomHighlightDurationMs}
+      />
+
+      <BuddyMessageToast
+        message={orchestrator.buddyMessage}
+        onClear={orchestrator.clearBuddyMessage}
         randomHoldMs={randomHighlightDurationMs}
       />
 

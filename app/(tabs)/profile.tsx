@@ -251,6 +251,20 @@ export default function ProfileTab() {
           subtitle="Browse your saved workout sessions by day/time/duration (real data)."
         />
 
+        {/* Avatar: virtual gym companion */}
+        <CardLink
+          href="/avatar"
+          title="Avatar"
+          subtitle="Customize your gym companion and track its growth."
+        />
+
+        {/* Hangout Room: social space with friends */}
+        <CardLink
+          href="/hangout"
+          title="Hangout Room"
+          subtitle="Visit your virtual gym hangout space with friends."
+        />
+
         <View style={{ height: 6 }} />
 
         <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Coming next</Text>

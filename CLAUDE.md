@@ -171,6 +171,26 @@ Detects three types of PRs per working set:
 
 Priority: Weight > Rep > e1RM. Returns cue with intensity level (low/high).
 
+### AI Gym Buddy System (`src/lib/buddyEngine.ts`)
+
+The app's personality — reactive commentary that makes it feel alive. Like a sports announcer, not a chatbot.
+
+**Core Components:**
+- **Buddy Engine** (`src/lib/buddyEngine.ts`): Core logic for evaluating triggers and selecting messages
+- **Buddy Data** (`src/lib/buddyData.ts`): Personality definitions with message pools
+- **Buddy Store** (`src/lib/stores/buddyStore.ts`): Zustand store for buddy state management
+- **Buddy Message Toast** (`src/ui/components/LiveWorkout/BuddyMessageToast.tsx`): UI component for displaying buddy messages
+
+**Buddy Tiers:**
+- **Basic** (Free): Text-only commentary with 2-3 starter buddies
+- **Premium** (IAP): Voice lines + text with richer message pools
+- **Legendary** (IAP): Full theme transformation with unique visual flair
+
+**Trigger Types:**
+- **Performance Events**: Weight PR, Rep PR, e1RM PR, Rank-ups, Volume milestones
+- **Behavior Patterns**: Long rests, Skipping exercises, Streaks, Return after absence
+- **Session Flow**: Workout start, Mid-workout check-in, Final set, Workout finish
+
 ### e1RM Calculation (`src/lib/e1rm.ts`)
 
 Uses Epley formula: `e1RM = weight × (1 + reps/30)`

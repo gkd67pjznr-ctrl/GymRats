@@ -1,208 +1,158 @@
-# Feature: Avatar & Hangout Room
+# Feature: Avatar & Hangout Room - Implementation Progress
 
 ## Overview
 A Finch-inspired virtual gym avatar that grows as the user works out, living in a shared hangout room with friends. The avatar represents the user's commitment to self-care and fitness journey — not just gamification, but emotional investment.
 
-**Status:** Planned | **Progress:** 0/8 features
-**Priority:** Launch (v1)
-**Source:** 2026-01-29 brainstorm interview
+## Current Implementation Status
+**Status:** In Progress | **Progress:** 4/8 features
 
----
+### Completed Features (P0 - MVP)
+✅ **Avatar Creation**
+- Avatar creation UI with art style selection
+- Avatar data storage extension in user profile
+- Basic avatar display component
 
-## Sub-Features
+✅ **Avatar Growth System**
+- Growth calculation algorithms
+- Avatar growth state management
+- Growth visualization with height scaling
 
-### Planned - Avatar Creation
-- [ ] Character creator with basic customization
-- [ ] Multiple art styles available at launch
-- [ ] Onboarding step (skippable, default assigned if skipped)
-- [ ] Avatar stored in user profile
+✅ **Hangout Room Core**
+- Database schema for hangout rooms, decorations, and presence
+- Hangout room repository with CRUD operations
+- Hangout room store with Zustand state management
 
-**Art Style Options:**
-- Bitmoji-but-stylized (cute, approachable — wide appeal)
-- Old school pixel art (Mega Man style — nostalgic, charming)
-- Slightly newer retro (Street Fighter 2 style — iconic)
-- 3D low-poly (Monument Valley / Crossy Road feel — premium)
-- Eventually: fully customizable character creator
+✅ **Basic UI Components**
+- AvatarView component for displaying avatars
+- HangoutRoom component for main room view
+- FriendAvatar component for friends' avatars
 
-**Key Design Decision:** Different art styles mix together in the same hangout room. A pixel art avatar can stand next to a Bitmoji avatar — this is intentional and fun.
+## Remaining Features (P1 - Polish)
 
----
+### Real-time Presence System
+- [ ] Real-time presence tracking with Supabase subscriptions
+- [ ] Avatar leave/return animations
+- [ ] Integration with workout start/end events
 
-### Planned - Avatar Growth System
-- [ ] Physical height/size growth over time
-- [ ] Growth driven by: volume logged + sets completed + rank progression
-- [ ] Growth is gradual (not instant) — feels like "growing up"
-- [ ] Visual milestone markers (noticeable size changes at key thresholds)
-- [ ] Muscles grow proportionally but aren't the main focus
+### Cosmetics & Decorations
+- [ ] Avatar cosmetics system with equipped items
+- [ ] Decoration system with item management
+- [ ] Forge Token integration for purchases
+- [ ] Room admin controls
 
-**Growth Philosophy:**
-Inspired by the **Finch** app. The avatar's growth represents the user sticking to their fitness journey and caring about themselves. It's inspirational and emotional — not just a game mechanic. Users should feel proud watching their avatar grow.
+### UI/UX Polish
+- [ ] Room decorations placement and management UI
+- [ ] Avatar customization interface
+- [ ] Presence status indicators
+- [ ] Room theme selection
 
-**Growth Formula (Draft):**
-```typescript
-type AvatarGrowth = {
-  stage: number;         // 1-20 growth stages
-  heightScale: number;   // 0.3 (baby) to 1.0 (full grown)
-  volumeTotal: number;   // Lifetime volume logged
-  setsTotal: number;     // Lifetime sets completed
-  avgRank: number;       // Average rank across exercises
-};
+## Technical Implementation
+
+### File Structure
+```
+src/
+├── lib/
+│   ├── avatar/
+│   │   ├── avatarTypes.ts         # Avatar types and interfaces
+│   │   ├── avatarStore.ts         # Zustand store for avatar state
+│   │   ├── avatarRepository.ts    # Supabase database operations
+│   │   ├── growthCalculator.ts    # Avatar growth algorithms
+│   │   └── avatarUtils.ts         # Utility functions
+│   ├── hangout/
+│   │   ├── hangoutTypes.ts        # Hangout room types
+│   │   ├── hangoutStore.ts        # Zustand store for room state
+│   │   ├── hangoutRepository.ts   # Supabase database operations
+│   │   ├── presenceTracker.ts     # Real-time presence tracking
+│   │   └── decorationManager.ts   # Decoration system
+├── ui/
+│   ├── components/
+│   │   ├── Avatar/
+│   │   │   ├── AvatarView.tsx     # Avatar display component
+│   │   │   ├── AvatarCreator.tsx  # Avatar creation UI
+│   │   │   └── AvatarCustomizer.tsx # Cosmetic customization
+│   │   └── Hangout/
+│   │       ├── HangoutRoom.tsx    # Main hangout room view
+│   │       ├── FriendAvatar.tsx   # Individual friend avatar
+│   │       └── RoomDecoration.tsx # Room decoration component
+│   └── screens/
+│       ├── AvatarScreen.tsx       # Avatar management screen
+│       └── HangoutScreen.tsx      # Hangout room screen
+└── app/
+    ├── avatar/
+    │   └── index.tsx              # Avatar main screen route
+    └── hangout/
+        └── index.tsx              # Hangout room screen route
 ```
 
----
+### Database Schema
 
-### Planned - Hangout Room
-- [ ] Visual-only social space (no chat, no text)
-- [ ] Lightly animated background (subtle movement, not distracting)
-- [ ] Room displays all friends' avatars
-- [ ] Status indicators for each avatar (resting / working out)
-- [ ] When a friend is working out, their avatar leaves the room with a message
+#### Updated Users Table
+Added columns to existing `users` table:
+- `avatar_art_style` (TEXT)
+- `avatar_growth_stage` (INTEGER)
+- `avatar_height_scale` (REAL)
+- `avatar_cosmetics` (JSONB)
+- `total_volume_kg` (REAL)
+- `total_sets` (INTEGER)
+- `hangout_room_id` (TEXT)
+- `hangout_room_role` (TEXT)
 
-**Room Behavior:**
-- Default room created for each user
-- Friends' avatars appear automatically
-- Avatar "walks out" when friend starts a workout (with status: "Bench pressing...")
-- Avatar returns when friend finishes workout
-- Room is always accessible from the main navigation
+#### New Tables
+1. **hangout_rooms**
+   - `id` (UUID)
+   - `owner_id` (UUID)
+   - `name` (TEXT)
+   - `theme` (TEXT)
+   - `members` (UUID[])
+   - `created_at` (TIMESTAMP)
+   - `updated_at` (TIMESTAMP)
 
----
+2. **room_decorations**
+   - `id` (UUID)
+   - `room_id` (UUID)
+   - `item_id` (TEXT)
+   - `item_type` (TEXT)
+   - `position_x` (REAL)
+   - `position_y` (REAL)
+   - `contributed_by` (UUID)
+   - `approved` (BOOLEAN)
+   - `created_at` (TIMESTAMP)
 
-### Planned - Room Decorations
-- [ ] Purchasable decorations with Forge Tokens / IAP
-- [ ] All room members can contribute decorations
-- [ ] Room creator has admin control over what's displayed
-- [ ] Categories: furniture, posters, equipment, trophies, plants, etc.
-- [ ] Seasonal decorations (tied to Forge Seasons)
+3. **user_presence**
+   - `id` (UUID)
+   - `user_id` (UUID)
+   - `room_id` (UUID)
+   - `status` (TEXT)
+   - `activity` (TEXT)
+   - `updated_at` (TIMESTAMP)
 
-**Monetization:** IAP + Forge Tokens for individual decoration items.
-
----
-
-### Planned - Friends' Avatar Presence
-- [ ] See all friends' avatars in your room
-- [ ] Real-time status updates (working out / resting / offline)
-- [ ] Avatar customization visible to friends
-- [ ] Avatar size/growth visible to friends (can see progression)
-
----
-
-### Planned - Avatar Cosmetics
-- [ ] Gym clothes (shirts, shorts, shoes)
-- [ ] Accessories (headbands, wrist wraps, belts, glasses)
-- [ ] Equipment props (dumbbells, shaker bottles)
-- [ ] Unlockable via Forge Tokens or IAP
-- [ ] Art-style-specific cosmetics
-
-**Monetization:** IAP for premium cosmetics, Forge Tokens for basic items.
-
----
-
-### Planned - Room Admin Controls
-- [ ] Room creator can approve/remove decorations
-- [ ] Room creator can set room theme/background
-- [ ] Option to make room invite-only vs open to all friends
-
----
-
-### Planned - Art Style Packs (IAP)
-- [ ] Additional art styles beyond the launch set
-- [ ] Users can switch art style anytime
-- [ ] Art style affects avatar appearance but not growth progress
-
----
-
-## Technical Notes
-
-**Data Model:**
-```typescript
-type Avatar = {
-  userId: string;
-  artStyleId: string;      // "bitmoji" | "pixel" | "retro" | "3d"
-  growthStage: number;      // 1-20
-  heightScale: number;      // 0.3 - 1.0
-  equippedCosmetics: {
-    top: string | null;
-    bottom: string | null;
-    shoes: string | null;
-    accessory: string | null;
-  };
-  createdAt: number;
-};
-
-type HangoutRoom = {
-  ownerId: string;
-  decorations: Decoration[];
-  members: string[];        // friend user IDs
-  theme: string;
-};
-
-type Decoration = {
-  id: string;
-  itemId: string;
-  position: { x: number; y: number };
-  contributedBy: string;    // user ID who added it
-  approved: boolean;        // admin approval status
-};
-```
-
-**Rendering Approach:**
-- 2D avatar rendering using React Native canvas or SVG
-- Pre-rendered sprite sheets per art style per growth stage
-- Room rendered as layered 2D scene
-- Animations: idle breathing, walking in/out, light ambient motion
-
-**Storage:**
-- Avatar data synced to Supabase
-- Room state synced in real-time via Supabase subscriptions
-- Offline: show cached avatar, queue cosmetic changes
-
----
-
-## UI Design
-
-**Avatar Screen:**
-- Full view of user's avatar with growth progress bar
-- "Customize" button to edit cosmetics
-- "Change Style" to switch art style
-- Growth stage indicator (Stage 7/20)
-
-**Hangout Room Screen:**
-- Full-width room view with decorations
-- Friends' avatars with name labels
-- Status badges (working out / resting)
-- "Add Decoration" floating button
-- Tap avatar to see friend's profile summary
-
-**Room in Navigation:**
-- Accessible from profile tab or dedicated tab
-- Badge notification when friend starts working out (optional)
-
----
+## Testing
+- Unit tests for avatar growth calculation
+- Unit tests for avatar store actions
+- Unit tests for hangout store actions
+- Unit tests for utility functions
 
 ## Dependencies
-
 - Auth (user identity)
 - Friends system (room membership)
 - Backend sync (real-time avatar presence)
 - Gamification store (Forge Tokens for purchases)
 - Settings (equipped cosmetics)
 
----
+## Priority Implementation Order
 
-## Priority
+### Phase 1 (Completed - P0 - MVP)
+✅ Avatar extension to user profile
+✅ Basic creation UI
+✅ Avatar growth system implementation
+✅ Hangout room core with static avatars
 
-**P0 (Launch):**
-- Avatar creation with 2-3 art styles
-- Basic growth system
-- Hangout room (visual only)
+### Phase 2 (In Progress - P1 - Polish)
+🔄 Real-time presence tracking
+🔄 Basic cosmetics and decorations
+🔄 Room management and admin controls
 
-**P1 (Launch Polish):**
-- Room decorations
-- Avatar cosmetics (basic set)
-- Friend presence indicators
-
-**P2 (Post-Launch):**
-- Additional art styles (IAP)
-- Premium cosmetics
-- Seasonal decorations
-- Room admin controls
+### Phase 3 (Pending - P2 - Enhancement)
+🕒 Additional art styles (IAP)
+🕒 Premium cosmetics system
+🕒 Seasonal decorations and themes

@@ -219,6 +219,55 @@
   - Updated FEATURE-MASTER.md: Workout Logging UX 10/10 (Status: Done)
   - Total feature progress: 72/133 → 73/133 (55%)
 
+### 2026-01-29 (ai gym buddy system)
+- Implemented AI Gym Buddy System (Phase 1 - Core Implementation):
+  - Created `buddyEngine.ts` - Core system for buddy personality engine
+  - Created `buddyTypes.ts` - TypeScript types for buddy system
+  - Created `buddyData.ts` - Personality definitions with 6+ original characters
+  - Created `buddyStore.ts` - Zustand store for buddy state management
+  - Created `BuddyMessageToast.tsx` - UI component for displaying buddy messages
+  - Updated `useWorkoutOrchestrator.ts` - Integrated buddy system with workout flow
+  - Updated `live-workout.tsx` - Added buddy message display to workout screen
+  - Created `BuddySettingsScreen.tsx` - Settings UI for buddy selection
+  - Created 9 distinct buddy personalities with unique voices:
+    - The Coach (Basic, Free) - Steady, knowledgeable, encouraging
+    - Hype Beast (Basic, Free) - Over-the-top energy with exclamation points
+    - Chill (Basic, Free) - Mellow, positive, no pressure
+    - Girl Power Fit (Basic, Free) - Female fitness influencer focused on empowerment
+    - Mindful Movement (Basic, Free) - Calm female influencer focused on proper body mechanics
+    - Savage (Premium, IAP) - Brutally honest with dark humor
+    - Anime Sensei (Premium, IAP) - Dramatic, anime-inspired power-up energy
+    - Goth Gym Rat (Premium, IAP) - Dark, brain-rot, overly online goth girl who posts thirst traps
+    - Trash Talker (Legendary, IAP) - Roasts you with love and full theme reskin
+  - Implemented trigger system for Performance Events, Behavior Patterns, and Session Flow
+  - Created tier-based features (Basic text, Premium voice, Legendary themes)
+  - Added 3 new test cases to USER_TESTING_CHECKLIST.md
+  - Created feature documentation in `docs/features/feature-buddy-system.md`
+  - Updated CLAUDE.md with buddy system documentation
+  - Created unit tests (`__tests__/lib/buddyEngine.test.ts`)
+  - Total feature progress: 73/133 → 75/133 (56%)
+
+### 2026-01-30 (workout replay feature)
+- Implemented complete Workout Replay feature:
+  - Added `replayAutoPlay` setting to settingsStore with UI toggle
+  - Created `WorkoutReplay` data models and TypeScript types
+  - Implemented replay data preparation service with PR detection and rank change analysis
+  - Created `useWorkoutReplay` hook for replay functionality
+  - Built complete UI component set for cinematic replay experience:
+    - `StatCard` - Animated workout statistics display
+    - `PRHighlight` - Personal record celebration cards with visual effects
+    - `RankChangeDisplay` - Rank progression visualization
+    - `BuddySignOff` - Personality-driven closing messages
+    - `ReplayControls` - Action buttons for sharing/completion
+  - Created main `workout-replay.tsx` screen with animations
+  - Integrated conditional navigation in `live-workout.tsx` based on settings
+  - Added manual replay trigger to `workout-summary.tsx`
+  - Updated feature tracking documentation:
+    - Marked Workout Replay as Implemented in FEATURE-MASTER.md (0/5 → 5/5)
+    - Updated main feature file with implementation details
+    - Added comprehensive test cases to USER_TESTING_CHECKLIST.md
+  - Total feature progress: 75/133 → 80/133 (60%)
+
 **Files Created (Phase 3):**
   - `src/ui/components/LiveWorkout/UXToggle.tsx` - Toggle button component
   - Integration into `app/live-workout.tsx` - Conditional rendering with settings check
@@ -233,6 +282,58 @@
 ### 2026-01-29 (test fixing)
 - Fixed 33 failing tests across 7 test suites (97 failed → 64 failed)
 - **Test suite health: 93.6% passing** (937/1001 tests)
+
+### 2026-01-29 (avatar & hangout room - phase 1)
+- Implemented Avatar & Hangout Room feature (Phase 1 - Core Implementation):
+  - Extended `DatabaseUser` type with avatar and hangout properties in `src/lib/supabase/types.ts`
+  - Updated `UserProfile` interface in `src/lib/stores/authStore.ts` with avatar fields
+  - Created avatar system (`src/lib/avatar/`):
+    - `avatarTypes.ts` - Avatar types and interfaces
+    - `avatarStore.ts` - Zustand store for avatar state management
+    - `avatarRepository.ts` - Supabase database operations for avatars
+    - `growthCalculator.ts` - Avatar growth algorithms
+    - `avatarUtils.ts` - Utility functions for avatar handling
+  - Created hangout room system (`src/lib/hangout/`):
+    - `hangoutTypes.ts` - Hangout room types
+    - `hangoutStore.ts` - Zustand store for room state management
+    - `hangoutRepository.ts` - Supabase database operations for hangout rooms
+    - `presenceTracker.ts` - Real-time presence tracking
+    - `decorationManager.ts` - Decoration system
+  - Created UI components:
+    - `AvatarView.tsx` - Avatar display component
+    - `AvatarCreator.tsx` - Avatar creation UI
+    - `HangoutRoom.tsx` - Main hangout room view
+    - `FriendAvatar.tsx` - Individual friend avatar
+    - `RoomDecoration.tsx` - Room decoration component
+  - Created screens:
+    - `AvatarScreen.tsx` - Avatar management screen
+    - `HangoutScreen.tsx` - Hangout room screen
+  - Created app routes:
+    - `app/avatar/index.tsx` - Avatar main screen route
+    - `app/hangout/index.tsx` - Hangout room screen route
+  - Updated navigation:
+    - Added hangout room tab to `PersistentTabBar.tsx`
+    - Added avatar and hangout links to profile screen
+  - Created database migration script `supabase/migrations/20260129_add_avatar_hangout_tables.sql`
+  - Created unit tests for avatar and hangout systems
+  - Updated feature documentation in `docs/features/feature-avatar-hangout.md`
+  - Updated feature master in `docs/FEATURE-MASTER.md`
+  - Total feature progress: 75/133 → 82/133 (62%)
+
+### 2026-01-29 (forge dna - phase 1)
+- Implemented Forge DNA feature (Phase 1 - Core Implementation):
+  - Created `forgeDNA/types.ts` - TypeScript types for Forge DNA system
+  - Created `forgeDNA/calculator.ts` - Core DNA calculation algorithms
+  - Created `forgeDNA/store.ts` - Zustand store for DNA state management
+  - Created `ForgeDNAVisualization.tsx` - UI component for DNA visualization
+  - Created `ForgeDNACard.tsx` - Profile card component
+  - Created unit tests (`__tests__/lib/forgeDNA/calculator.test.ts`)
+  - Implemented muscle balance calculation algorithm
+  - Implemented training style analysis (strength/volume/endurance)
+  - Implemented lift preference detection (compound-heavy, push/pull focus, etc.)
+  - Created premium blur mechanic for freemium conversion
+  - Added profile display with refresh capability
+  - Total feature progress: 82/133 → 85/133 (64%)
 - **OAuthButton** (18/18 passing ✅):
   - Added testID="activity-indicator" to ActivityIndicator
   - Added accessibilityRole="button" to Pressable

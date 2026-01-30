@@ -32,13 +32,16 @@
 
 ## Latest Testing Session
 
-### Routine-Based Workout Flow
-**Date:** 2026-01-27
+### AI Gym Buddy System
+**Date:** 2026-01-29
 **Features Tested:**
-- P0: Start workout from routine
-- P1: Routine progress indicator
-- P2: Workout summary screen
-- P3: Quick-start from list
+- Buddy message display
+- Buddy selection
+- Tier-based features
+
+---
+
+## Test Cases
 
 ---
 
@@ -340,6 +343,206 @@ After testing, please provide feedback on:
 3. **Suggestions:**
    - What would make this better?
    - Any missing features?
+
+---
+
+### TC-B1: Buddy message display
+**Steps:**
+1. Open the app and start a workout
+2. Log a set that triggers a PR
+3. Verify that a buddy message is displayed
+4. Check that the message matches the equipped buddy's personality
+
+**Expected:** Buddy message appears with appropriate content based on buddy personality
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-B2: Buddy selection
+**Steps:**
+1. Navigate to Settings > Buddies
+2. View the list of available buddies
+3. Select a different buddy to equip
+4. Return to workout and log a set
+
+**Expected:** New buddy's personality is reflected in messages
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-B3: Tier-based features
+**Steps:**
+1. Check that basic buddies show text only
+2. Verify that premium buddies have additional visual elements
+3. Confirm that legendary buddies have special styling
+
+**Expected:** Visual treatment matches buddy tier
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### Latest Testing Session
+
+### Workout Replay Feature
+**Date:** 2026-01-30
+**Features Tested:**
+- Auto-play workout replay after completion
+- Manual replay from workout summary
+- Stat cards with workout metrics
+- PR highlights with buddy commentary
+- Rank changes display
+- Buddy sign-off messages
+- Share to feed functionality
+
+---
+
+## Test Cases
+
+### TC-WR1: Auto-play workout replay
+**Steps:**
+1. Navigate to Settings > Workout Replay
+2. Ensure "Auto-play" toggle is enabled
+3. Start and complete a workout with at least one set
+4. Tap "Finish Workout" button
+5. Verify workout replay screen appears automatically
+
+**Expected:** Workout replay screen automatically appears after workout completion when auto-play is enabled
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-WR2: Manual replay from summary
+**Steps:**
+1. Navigate to Settings > Workout Replay
+2. Disable "Auto-play" toggle
+3. Start and complete a workout with at least one set
+4. Tap "Finish Workout" button
+5. Verify workout summary screen appears
+6. Tap "Replay Workout" button
+7. Verify workout replay screen appears
+
+**Expected:** Workout replay screen appears when manually triggered from summary screen
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-WR3: Stat cards display
+**Steps:**
+1. Complete a workout with multiple exercises and sets
+2. Navigate to workout replay screen
+3. Verify duration, sets, and volume stat cards are displayed
+4. Verify values match actual workout data
+
+**Expected:** Stat cards show accurate workout metrics with proper formatting
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-WR4: PR highlights
+**Steps:**
+1. Complete a workout with a new personal record (log a heavier weight)
+2. Navigate to workout replay screen
+3. Verify PR highlight card appears for the achieved PR
+4. Verify PR type and value are displayed correctly
+
+**Expected:** PR highlights appear for achieved personal records with accurate information
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-WR5: Rank changes display
+**Steps:**
+1. Complete a workout that results in a rank change (heavy enough set)
+2. Navigate to workout replay screen
+3. Verify rank change card appears showing before/after rank
+4. Verify visual styling matches rank tier colors
+
+**Expected:** Rank changes are displayed with before/after visualization and proper tier styling
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-WR6: Buddy sign-off
+**Steps:**
+1. Complete any workout
+2. Navigate to workout replay screen
+3. Scroll to the bottom to find buddy sign-off message
+4. Verify message matches equipped buddy's personality
+
+**Expected:** Buddy sign-off message appears with personality-appropriate content
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
+
+---
+
+### TC-WR7: Share to feed
+**Steps:**
+1. Complete any workout
+2. Navigate to workout replay screen
+3. Tap "Share to Feed" button
+4. Verify sharing confirmation or navigation to feed
+
+**Expected:** Sharing functionality works and posts workout replay to feed
+
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[User's feedback here]
+```
 
 ---
 

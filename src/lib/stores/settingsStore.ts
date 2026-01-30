@@ -20,6 +20,8 @@ export interface Settings {
   bodyweight: number; // Always stored in kg internally
   experienceLevel: ExperienceLevel;
   personalityId: string;
+  accent: Accent;
+  replayAutoPlay: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -31,6 +33,8 @@ const DEFAULTS: Settings = {
   bodyweight: 70, // default kg (~154 lb)
   experienceLevel: "intermediate",
   personalityId: "coach",
+  accent: "toxic",
+  replayAutoPlay: true,
 };
 
 interface SettingsState extends Settings {
@@ -70,6 +74,8 @@ export const useSettingsStore = create<SettingsState>()(
         bodyweight: state.bodyweight,
         experienceLevel: state.experienceLevel,
         personalityId: state.personalityId,
+        accent: state.accent,
+        replayAutoPlay: state.replayAutoPlay,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
@@ -88,6 +94,8 @@ export const selectSettings = (state: SettingsState): Settings => ({
   bodyweight: state.bodyweight,
   experienceLevel: state.experienceLevel,
   personalityId: state.personalityId,
+  accent: state.accent,
+  replayAutoPlay: state.replayAutoPlay,
 });
 
 // Hook for accessing settings (matches old API)
@@ -101,6 +109,8 @@ export function useSettings(): Settings {
   const bodyweight = useSettingsStore((state) => state.bodyweight);
   const experienceLevel = useSettingsStore((state) => state.experienceLevel);
   const personalityId = useSettingsStore((state) => state.personalityId);
+  const accent = useSettingsStore((state) => state.accent);
+  const replayAutoPlay = useSettingsStore((state) => state.replayAutoPlay);
 
   // Memoize the settings object to prevent unnecessary re-renders
   return useMemo(
@@ -113,8 +123,10 @@ export function useSettings(): Settings {
       bodyweight,
       experienceLevel,
       personalityId,
+      accent,
+      replayAutoPlay,
     }),
-    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId]
+    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, accent, replayAutoPlay]
   );
 }
 
@@ -130,6 +142,8 @@ export function getSettings(): Settings {
     bodyweight: state.bodyweight,
     experienceLevel: state.experienceLevel,
     personalityId: state.personalityId,
+    accent: state.accent,
+    replayAutoPlay: state.replayAutoPlay,
   };
 }
 

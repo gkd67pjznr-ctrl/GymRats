@@ -20,8 +20,12 @@ import { uid as routineUid, type Routine, type RoutineExercise } from "../routin
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine } from "../stores";
 // Gamification integration
-import { processGamificationWorkout, toWorkoutForCalculation } from "../hooks/useGamificationWorkoutFinish";
-import { useGamificationStore } from "../stores/gamificationStore";
+import { toWorkoutForCalculation } from "../hooks/useGamificationWorkoutFinish";
+import { useGamificationStore, processGamificationWorkout } from "../stores/gamificationStore";
+// AI Gym Buddy integration
+import type { CueMessage } from "../buddyTypes";
+import { evaluateSetTriggers, evaluateSessionTriggers, formatCueMessage } from "../buddyEngine";
+import { useBuddyStore } from "../stores/buddyStore";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -39,6 +43,7 @@ export interface WorkoutOrchestratorOptions {
 export interface WorkoutOrchestratorResult {
   // State
   instantCue: InstantCue | null;
+  buddyMessage: CueMessage | null;
   recapCues: Cue[];
   sessionStateByExercise: Record<string, ExerciseSessionState>;
 
@@ -48,6 +53,7 @@ export interface WorkoutOrchestratorResult {
   saveAsRoutine: (exerciseBlocks: string[], sets: LoggedSet[]) => void;
   reset: (plannedExerciseIds: string[]) => void;
   clearInstantCue: () => void;
+  clearBuddyMessage: () => void;
 
   // Utilities
   ensureExerciseState: (exerciseId: string) => ExerciseSessionState;
@@ -57,6 +63,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
   const { plan, unit = 'lb', onHaptic, onSound, onWorkoutFinished, onPRCelebration } = options;
 
   const [instantCue, setInstantCue] = useState<InstantCue | null>(null);
+  const [buddyMessage, setBuddyMessage] = useState<CueMessage | null>(null);
   const [recapCues, setRecapCues] = useState<Cue[]>([]);
   const [sessionStateByExercise, setSessionStateByExercise] = useState<Record<string, ExerciseSessionState>>({});
   const [fallbackCountdownByExercise, setFallbackCountdownByExercise] = useState<Record<string, number>>({});
@@ -105,7 +112,42 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     const nextState = res.next;
     const meta = res.meta;
 
-    if (cue) {
+    // Get current set count for trigger evaluation
+    const currentSetCount = Object.values(sessionStateByExercise).reduce(
+      (total, state) => total + Object.keys(state.bestRepsAtWeight).length, 0
+    );
+
+    // Evaluate buddy triggers
+    const buddyCue = evaluateSetTriggers({
+      weightKg: wKg,
+      reps,
+      unit,
+      exerciseName: exerciseName(exerciseId),
+      prev,
+      setCue: res,
+      setIndex: currentSetCount,
+      totalSets: currentSetCount + 1,
+    });
+
+    if (buddyCue) {
+      setBuddyMessage(buddyCue);
+      // Also show the formatted buddy message as instant cue for backward compatibility
+      const formatted = formatCueMessage(buddyCue);
+      setInstantCue({
+        message: formatted.title,
+        detail: formatted.detail,
+        intensity: buddyCue.intensity === "epic" ? "high" : buddyCue.intensity
+      });
+
+      // Trigger haptics/sound for buddy messages
+      if (buddyCue.intensity === "high" || buddyCue.intensity === "epic") {
+        onHaptic?.('pr');
+        onSound?.('pr');
+      } else {
+        onHaptic?.('light');
+        onSound?.('light');
+      }
+    } else if (cue) {
       // PR detected!
       setSessionStateByExercise((p) => ({ ...p, [exerciseId]: nextState }));
 
@@ -147,7 +189,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
         setFallbackCountdownByExercise((p) => ({ ...p, [exerciseId]: current - 1 }));
       }
     }
-  }, [hydrated, ensureExerciseState, ensureCountdown, unit, onHaptic, onSound]);
+  }, [hydrated, ensureExerciseState, ensureCountdown, sessionStateByExercise, unit, onHaptic, onSound]);
 
   const finishWorkout = useCallback(() => {
     // Before hydration, actions are no-ops
@@ -318,6 +360,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
 
     setRecapCues([]);
     setInstantCue(null);
+    setBuddyMessage(null);
     setSessionStateByExercise({});
     setFallbackCountdownByExercise({});
   }, [hydrated]);
@@ -326,12 +369,17 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     setInstantCue(null);
   }, []);
 
+  const clearBuddyMessage = useCallback(() => {
+    setBuddyMessage(null);
+  }, []);
+
   // Return early with loading state if not yet hydrated
   // This prevents UI from rendering with stale/missing persisted data
   // All hooks have already been called above, so this is safe
   if (!hydrated) {
     return {
       instantCue: null,
+      buddyMessage: null,
       recapCues: [],
       sessionStateByExercise: {},
       addSetForExercise,
@@ -339,6 +387,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       saveAsRoutine,
       reset,
       clearInstantCue,
+      clearBuddyMessage,
       ensureExerciseState,
     };
   }
@@ -346,6 +395,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
   // Return the result when hydrated
   return {
     instantCue,
+    buddyMessage,
     recapCues,
     sessionStateByExercise,
     addSetForExercise,
@@ -353,6 +403,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     saveAsRoutine,
     reset,
     clearInstantCue,
+    clearBuddyMessage,
     ensureExerciseState,
   };
 }

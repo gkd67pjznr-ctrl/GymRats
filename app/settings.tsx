@@ -427,6 +427,21 @@ export default function SettingsScreen() {
           />
         </View>
 
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Row
+            title="Workout Replay"
+            subtitle="Auto-play workout summary after finishing a workout."
+            right={
+              <Toggle
+                value={settings.replayAutoPlay}
+                onChange={(v) => updateSettings({ replayAutoPlay: v })}
+                labelOn="Auto"
+                labelOff="Manual"
+              />
+            }
+          />
+        </View>
+
         {/* Dev Menu Link */}
         {__DEV__ && (
           <Link href="/dev-menu" asChild>

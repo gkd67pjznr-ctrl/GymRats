@@ -92,41 +92,15 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="auth/login"
-            options={{
-              headerShown: false,
-              presentation: 'card',
-            }}
-          />
-          <Stack.Screen
-            name="auth/signup"
-            options={{
-              headerShown: false,
-              presentation: 'card',
-            }}
-          />
-          <Stack.Screen
-            name="auth/forgot-password"
-            options={{
-              headerShown: false,
-              presentation: 'card',
-            }}
-          />
-          <Stack.Screen
-            name="auth/reset-password"
-            options={{
-              headerShown: false,
-              presentation: 'card',
-            }}
-          />
-          <Stack.Screen
-            name="auth/verify-email"
-            options={{
-              headerShown: false,
-              presentation: 'card',
-            }}
-          />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="live-workout" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/login" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="auth/signup" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="auth/forgot-password" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="auth/reset-password" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="auth/verify-email" options={{ headerShown: false, presentation: 'card' }} />
+          <Stack.Screen name="hangout" options={{ headerShown: false }} />
+          <Stack.Screen name="avatar" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
