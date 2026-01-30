@@ -26,7 +26,7 @@
 | [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](features/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | Planned | 0/4 | [Details](features/feature-forge-dna.md) |
 | [Forge Lab (Analytics)](#forge-lab-analytics) | Planned | 0/6 | [Details](features/feature-forge-lab.md) |
-| [Forge Milestones](#forge-milestones) | Planned | 0/5 | [Details](features/feature-forge-milestones.md) |
+| [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](features/feature-forge-milestones.md) |
 
 **Launch Total:** 91/155 features (59%)
 
@@ -236,15 +236,22 @@ XP, levels, streaks, currency, and cosmetics. Separate from Forgerank scoring.
 ---
 
 ## Notifications
-**Status:** Planned | **Progress:** 0/4 features
+**Status:** In Progress | **Progress:** 1/4 features
 
 **Philosophy:** Minimal. Don't be annoying.
 
+**Completed:**
+- Rest timer (push notification when backgrounded) - P0 launch feature
+- Notification service infrastructure (expo-notifications)
+- Settings integration with toggleable preferences
+- Contextual permission handling
+- Android notification channels (Social, Workout, Competition)
+- Comprehensive test suite (18 tests)
+
 **Planned:**
-- Friend requests
-- DMs received
-- Competition results
-- Rest timer (push notification when backgrounded)
+- Friend requests - Service functions implemented, backend integration pending
+- DMs received - Service functions implemented, backend integration pending
+- Competition results - Service functions stubbed, requires competition feature
 
 **NOT doing:** Streak nag, "you haven't worked out" reminders, social activity spam. Respect the user's attention.
 

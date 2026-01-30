@@ -546,5 +546,74 @@ After testing, please provide feedback on:
 
 ---
 
+### TC-A1: Avatar Creation and Customization
+**Steps:**
+1. Navigate to Profile tab
+2. Tap on "Avatar" card
+3. Select different art styles (bitmoji, pixel, retro)
+4. Verify avatar preview updates correctly
+5. Save avatar customization
+
+**Expected:** Users can select and preview different avatar art styles
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+
+
+### TC-A2: Avatar Growth Visualization
+**Steps:**
+1. Navigate to Avatar screen
+2. View avatar growth stage indicator
+3. Check avatar height scaling based on growth stage
+4. Verify growth stage descriptions are displayed
+
+**Expected:** Avatar visually grows based on workout activity
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+
+
+### TC-A3: Hangout Room Navigation
+**Steps:**
+1. Navigate to Profile tab
+2. Tap on "Hangout Room" card
+3. Verify hangout room screen loads
+4. Check room display with decorations
+5. Verify avatar placement in room
+
+**Expected:** Users can access and view hangout room
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+
+
+### TC-A4: Friend Presence Indicators
+**Steps:**
+1. Navigate to Hangout Room with friends
+2. Observe friend avatars in room
+3. Check status indicators (online, working out, etc.)
+4. Verify avatar placement updates in real-time
+
+**Expected:** Friend avatars appear with status indicators
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+
 **End of Testing Checklist**
 *Add new test sessions above as features are completed*

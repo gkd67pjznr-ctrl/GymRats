@@ -211,6 +211,25 @@ export {
   type ShopCategory,
 } from "./gamificationStore";
 
+// Live workout session state
+export {
+  useLiveWorkoutStore,
+  useLiveWorkoutSets,
+  useLiveWorkoutWeightLb,
+  useLiveWorkoutReps,
+  useLiveWorkoutWeightLbText,
+  useLiveWorkoutRepsText,
+  useLiveWorkoutWeightStep,
+  useLiveWorkoutDefaultsByExerciseId,
+  useLiveWorkoutDoneBySetId,
+  useLiveWorkoutFullState,
+  getLiveWorkoutSets,
+  getLiveWorkoutWeightLb,
+  getLiveWorkoutReps,
+  getLiveWorkoutSummary,
+  type LiveWorkoutState,
+} from "./liveWorkoutStore";
+
 // Body Model
 export {
   BodyModel,

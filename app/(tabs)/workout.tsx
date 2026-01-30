@@ -107,6 +107,16 @@ export default function WorkoutTab() {
 
         <View style={{ height: 6 }} />
 
+        {/* Workout with Friends Option */}
+        <BigButton
+          title="Start Workout with Friends"
+          subtitle="Work out together in real-time with reactions and presence."
+          onPress={() => router.push("/live-workout-with-friends")}
+          color="#4ECDC4"
+        />
+
+        <View style={{ height: 6 }} />
+
         {/* NEW: Browse Plans Section */}
         <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Premade Plans</Text>
 
@@ -134,6 +144,13 @@ export default function WorkoutTab() {
           title="Start From a Routine"
           subtitle="Pick a saved routine and begin."
           href="/workout/start"
+        />
+
+        <BigButton
+          title="Workout with Friends"
+          subtitle="Join friends for a live workout session."
+          href="/live-workout-together"
+          color="#FF6B6B"
         />
 
         <BigButton

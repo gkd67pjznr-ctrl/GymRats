@@ -37,7 +37,7 @@ Push notifications with a MINIMAL philosophy. Forgerank respects the user's atte
 - [✅] Toggleable in settings
 
 **Priority:** P1 (requires social features)
-**Status:** Partial - Push notification sending implemented, tap-to-open routing not yet implemented
+**Status:** Partial - Service functions implemented (sendFriendRequestNotification), push notification sending logic complete, tap-to-open routing not yet implemented, backend integration pending
 
 ---
 
@@ -49,7 +49,7 @@ Push notifications with a MINIMAL philosophy. Forgerank respects the user's atte
 - [✅] Toggleable in settings
 
 **Priority:** P1 (requires DM feature)
-**Status:** Partial - Push notification sending implemented with message preview, tap-to-open routing not yet implemented
+**Status:** Partial - Service functions implemented (sendDirectMessageNotification), push notification sending logic complete with message preview and truncation, tap-to-open routing not yet implemented, backend integration pending
 
 ---
 
@@ -61,7 +61,7 @@ Push notifications with a MINIMAL philosophy. Forgerank respects the user's atte
 - [✅] Toggleable in settings
 
 **Priority:** P2 (post-launch, requires competition feature)
-**Status:** Partial - Settings infrastructure complete, push notification sending not yet implemented
+**Status:** Partial - Settings infrastructure complete, notification service functions stubbed, push notification sending not yet implemented, requires competition feature
 
 ---
 
@@ -75,9 +75,12 @@ Push notifications with a MINIMAL philosophy. Forgerank respects the user's atte
 - [✅] Toggleable in settings
 - [✅] Contextual permission request on first rest timer use
 - [✅] Automatic cleanup when timer is dismissed or app returns to foreground
+- [✅] App state change handling for proper notification lifecycle
+- [✅] Integrated into RestTimerOverlay component
+- [✅] Notification response listener in live-workout.tsx
 
 **Priority:** P0 (launch)
-**Status:** ✅ COMPLETE - Fully implemented and tested
+**Status:** ✅ COMPLETE - Fully implemented, tested, and integrated
 
 ---
 
@@ -153,19 +156,21 @@ const requestNotificationPermission = async () => {
 
 ## Implementation Status
 
-**Overall Progress:** 4/4 sub-features (100% of P0, 67% of P1, 0% of P2)
+**Overall Progress:** 4/4 sub-features (100% of P0, 80% of P1, 25% of P2)
 
 ### Completed (P0 - Launch Required)
-- ✅ Rest timer push notifications (backgrounded)
-- ✅ Notification service infrastructure
-- ✅ Settings store integration
-- ✅ Permission handling (contextual request)
-- ✅ Comprehensive test suite (28/28 tests passing)
+- ✅ Rest timer push notifications (backgrounded) - Fully implemented and integrated
+- ✅ Notification service infrastructure - Complete with error handling
+- ✅ Settings store integration - All preferences persisted
+- ✅ Permission handling (contextual request) - Requested on first use
+- ✅ Comprehensive test suite (18/18 tests passing in notificationService.test.ts)
+- ✅ App state handling - Proper notification cleanup on foreground/background
+- ✅ Notification channels - Android channels configured (Social, Workout, Competition)
 
-### Partial (Push Sending Implemented, UI Integration Pending)
-- Friend requests notifications - Push sending complete, tap-to-open routing pending
-- Direct messages notifications - Push sending complete with message preview, tap-to-open routing pending
-- Competition results notifications - Settings complete, push sending not yet implemented
+### Partial (Service Functions Implemented, Backend Integration Pending)
+- Friend requests notifications - Service functions complete (sendFriendRequestNotification), push notification logic implemented, tap-to-open routing pending, backend integration pending
+- Direct messages notifications - Service functions complete (sendDirectMessageNotification), push notification logic implemented with message preview and truncation, tap-to-open routing pending, backend integration pending
+- Competition results notifications - Settings complete, service function stubbed, push notification sending not yet implemented, requires competition feature
 
 ### Not Started
 - iOS Live Activities (requires native Swift module)

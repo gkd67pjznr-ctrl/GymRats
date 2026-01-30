@@ -59,6 +59,78 @@ export type JsonWorkoutSnapshot = {
   topLines: JsonTopLine[];
 };
 
+/**
+ * JsonLiveSessionExercise - stored in live_sessions.planned_exercises jsonb column
+ * Matches LiveSession planned exercises structure
+ */
+export type JsonLiveSessionExercise = {
+  exerciseId: string;
+  targetSets: number;
+  targetRepsMin?: number;
+  targetRepsMax?: number;
+};
+
+/**
+ * JsonLiveSessionEventData - stored in live_session_events.event_data jsonb column
+ * Generic event data structure that can contain different event types
+ */
+export type JsonLiveSessionEventData =
+  | {
+      type: 'session_created' | 'session_started' | 'session_ended';
+      data?: Record<string, unknown>;
+    }
+  | {
+      type: 'user_joined' | 'user_left';
+      data: { displayName: string; avatarUrl?: string };
+    }
+  | {
+      type: 'set_completed';
+      data: {
+        setId: string;
+        exerciseId: string;
+        exerciseName: string;
+        setType: 'warmup' | 'working';
+        weightKg: number;
+        reps: number;
+        e1rmKg?: number;
+        isPR?: boolean;
+        intensityScore?: number;
+      };
+    }
+  | {
+      type: 'exercise_changed';
+      data: {
+        exerciseId: string;
+        exerciseName: string;
+        targetSets?: number;
+        targetRepsMin?: number;
+        targetRepsMax?: number;
+      };
+    }
+  | {
+      type: 'reaction';
+      data: {
+        targetUserId: string;
+        emote: string;
+        targetSetId?: string;
+      };
+    }
+  | {
+      type: 'status_update';
+      data: {
+        status: 'idle' | 'resting' | 'working_out' | 'finished';
+        currentExerciseId?: string;
+      };
+    }
+  | {
+      type: 'ready_status_changed';
+      data: { isReady: boolean };
+    }
+  | {
+      type: 'message';
+      data: { message: string };
+    };
+
 // ============================================================================
 // Database Table Types (snake_case from database)
 // ============================================================================
@@ -248,6 +320,193 @@ export type DatabaseNotification = {
   created_at: string; // ISO 8601 datetime
 };
 
+/**
+ * LiveSessionMode enum for live_sessions table
+ */
+export type DatabaseLiveSessionMode = 'shared' | 'guided';
+
+/**
+ * LiveSessionStatus enum for live_sessions table
+ */
+export type DatabaseLiveSessionStatus = 'pending' | 'active' | 'ended';
+
+/**
+ * ParticipantStatus enum for live_session_participants table
+ */
+export type DatabaseParticipantStatus = 'idle' | 'resting' | 'working_out' | 'finished';
+
+/**
+ * LiveSessionEventType enum for live_session_events table
+ */
+export type DatabaseLiveSessionEventType =
+  | 'session_created'
+  | 'session_started'
+  | 'session_ended'
+  | 'user_joined'
+  | 'user_left'
+  | 'set_completed'
+  | 'exercise_changed'
+  | 'reaction'
+  | 'status_update'
+  | 'ready_status_changed'
+  | 'message';
+
+/**
+ * SetType enum for live_session_sets table
+ */
+export type DatabaseSetType = 'warmup' | 'working';
+
+/**
+ * EmoteId enum for live_session_reactions and quick_reactions tables
+ */
+export type DatabaseEmoteId =
+  | 'like'
+  | 'fire'
+  | 'skull'
+  | 'crown'
+  | 'bolt'
+  | 'clap';
+
+/**
+ * InvitationStatus enum for live_session_invitations table
+ */
+export type DatabaseInvitationStatus = 'pending' | 'accepted' | 'declined' | 'expired';
+
+/**
+ * live_sessions table - live workout sessions
+ */
+export type DatabaseLiveSession = {
+  id: string;
+  host_id: string;
+  mode: DatabaseLiveSessionMode;
+  status: DatabaseLiveSessionStatus;
+  name: string | null;
+  theme: string | null;
+  created_at: string; // ISO 8601 datetime
+  started_at: string | null; // ISO 8601 datetime
+  ended_at: string | null; // ISO 8601 datetime
+  current_exercise_id: string | null;
+  planned_exercises: JsonLiveSessionExercise[];
+  participant_count: number;
+  total_sets_completed: number;
+};
+
+/**
+ * live_session_participants table - participants in live workout sessions
+ */
+export type DatabaseLiveSessionParticipant = {
+  id: string;
+  session_id: string;
+  user_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  status: DatabaseParticipantStatus;
+  joined_at: string; // ISO 8601 datetime
+  last_active_at: string; // ISO 8601 datetime
+  current_exercise_id: string | null;
+  sets_completed: number;
+  is_leader: boolean;
+  ready_for_next: boolean;
+  total_volume_kg: number;
+  pr_count: number;
+};
+
+/**
+ * live_session_events table - event log for live workout sessions
+ */
+export type DatabaseLiveSessionEvent = {
+  id: string;
+  session_id: string;
+  user_id: string;
+  type: DatabaseLiveSessionEventType;
+  event_data: JsonLiveSessionEventData;
+  created_at: string; // ISO 8601 datetime
+};
+
+/**
+ * live_session_sets table - individual sets logged during live sessions
+ */
+export type DatabaseLiveSessionSet = {
+  id: string;
+  session_id: string;
+  user_id: string;
+  exercise_id: string;
+  exercise_name: string;
+  set_type: DatabaseSetType;
+  weight_kg: number;
+  reps: number;
+  timestamp_ms: number; // milliseconds since epoch
+  e1rm_kg: number | null;
+  is_pr: boolean;
+  intensity_score: number | null;
+  created_at: string; // ISO 8601 datetime
+};
+
+/**
+ * live_session_reactions table - reactions/emotes sent during live sessions
+ */
+export type DatabaseLiveSessionReaction = {
+  id: string;
+  session_id: string;
+  from_user_id: string;
+  to_user_id: string;
+  emote: DatabaseEmoteId;
+  target_set_id: string | null;
+  created_at: string; // ISO 8601 datetime
+};
+
+/**
+ * live_session_messages table - chat messages sent during live sessions
+ */
+export type DatabaseLiveSessionMessage = {
+  id: string;
+  session_id: string;
+  user_id: string;
+  message: string;
+  created_at: string; // ISO 8601 datetime
+};
+
+/**
+ * live_session_invitations table - invitations to join live workout sessions
+ */
+export type DatabaseLiveSessionInvitation = {
+  id: string;
+  session_id: string;
+  host_id: string;
+  recipient_id: string;
+  status: DatabaseInvitationStatus;
+  created_at: string; // ISO 8601 datetime
+  expires_at: string; // ISO 8601 datetime
+};
+
+/**
+ * workout_presence table - real-time presence tracking for users working out
+ */
+export type DatabaseWorkoutPresence = {
+  id: string;
+  user_id: string;
+  is_in_live_session: boolean;
+  live_session_id: string | null;
+  current_exercise_id: string | null;
+  current_exercise_name: string | null;
+  workout_started_at: string; // ISO 8601 datetime
+  last_set_completed_at: string | null; // ISO 8601 datetime
+  status: DatabaseParticipantStatus;
+  last_updated_at: string; // ISO 8601 datetime
+};
+
+/**
+ * quick_reactions table - lightweight reactions for passive presence feature
+ */
+export type DatabaseQuickReaction = {
+  id: string;
+  from_user_id: string;
+  to_user_id: string;
+  emote: DatabaseEmoteId;
+  set_id: string | null;
+  created_at: string; // ISO 8601 datetime
+};
+
 // ============================================================================
 // Insert Types (for creating new records)
 // All fields are optional except required ones, id/db-generated fields omitted
@@ -402,6 +661,140 @@ export type DatabaseCommentUpdate = Partial<Pick<DatabaseCommentInsert, "text">>
 
 export type DatabaseNotificationUpdate = Partial<
   Pick<DatabaseNotificationInsert, "read_at">
+>;
+
+export type DatabaseLiveSessionInsert = Pick<
+  DatabaseLiveSession,
+  | "mode"
+  | "name"
+  | "theme"
+  | "planned_exercises"
+> & { host_id: string };
+
+export type DatabaseLiveSessionUpdate = Partial<
+  Pick<
+    DatabaseLiveSession,
+    | "mode"
+    | "name"
+    | "theme"
+    | "status"
+    | "started_at"
+    | "ended_at"
+    | "current_exercise_id"
+    | "planned_exercises"
+    | "participant_count"
+    | "total_sets_completed"
+  >
+>;
+
+export type DatabaseLiveSessionParticipantInsert = Pick<
+  DatabaseLiveSessionParticipant,
+  | "session_id"
+  | "user_id"
+  | "display_name"
+  | "avatar_url"
+  | "status"
+  | "current_exercise_id"
+  | "is_leader"
+  | "ready_for_next"
+>;
+
+export type DatabaseLiveSessionParticipantUpdate = Partial<
+  Pick<
+    DatabaseLiveSessionParticipant,
+    | "display_name"
+    | "avatar_url"
+    | "status"
+    | "current_exercise_id"
+    | "sets_completed"
+    | "is_leader"
+    | "ready_for_next"
+    | "total_volume_kg"
+    | "pr_count"
+  >
+>;
+
+export type DatabaseLiveSessionEventInsert = Pick<
+  DatabaseLiveSessionEvent,
+  | "session_id"
+  | "user_id"
+  | "type"
+  | "event_data"
+>;
+
+export type DatabaseLiveSessionSetInsert = Pick<
+  DatabaseLiveSessionSet,
+  | "session_id"
+  | "user_id"
+  | "exercise_id"
+  | "exercise_name"
+  | "set_type"
+  | "weight_kg"
+  | "reps"
+  | "timestamp_ms"
+  | "e1rm_kg"
+  | "is_pr"
+  | "intensity_score"
+>;
+
+export type DatabaseLiveSessionReactionInsert = Pick<
+  DatabaseLiveSessionReaction,
+  | "session_id"
+  | "from_user_id"
+  | "to_user_id"
+  | "emote"
+  | "target_set_id"
+>;
+
+export type DatabaseLiveSessionMessageInsert = Pick<
+  DatabaseLiveSessionMessage,
+  | "session_id"
+  | "user_id"
+  | "message"
+>;
+
+export type DatabaseLiveSessionInvitationInsert = Pick<
+  DatabaseLiveSessionInvitation,
+  | "session_id"
+  | "host_id"
+  | "recipient_id"
+  | "status"
+  | "expires_at"
+>;
+
+export type DatabaseLiveSessionInvitationUpdate = Partial<
+  Pick<DatabaseLiveSessionInvitation, "status">
+>;
+
+export type DatabaseWorkoutPresenceInsert = Pick<
+  DatabaseWorkoutPresence,
+  | "user_id"
+  | "is_in_live_session"
+  | "live_session_id"
+  | "current_exercise_id"
+  | "current_exercise_name"
+  | "status"
+>;
+
+export type DatabaseWorkoutPresenceUpdate = Partial<
+  Pick<
+    DatabaseWorkoutPresence,
+    | "is_in_live_session"
+    | "live_session_id"
+    | "current_exercise_id"
+    | "current_exercise_name"
+    | "workout_started_at"
+    | "last_set_completed_at"
+    | "status"
+  >
+>;
+
+export type DatabaseQuickReactionInsert = Pick<
+  DatabaseQuickReaction,
+  | "from_user_id"
+  | "to_user_id"
+  | "emote"
+  | "set_id"
 >;
 
 // ============================================================================
@@ -678,6 +1071,51 @@ export type Database = {
         Row: DatabaseNotification;
         Insert: DatabaseNotificationInsert;
         Update: DatabaseNotificationUpdate;
+      };
+      live_sessions: {
+        Row: DatabaseLiveSession;
+        Insert: DatabaseLiveSessionInsert;
+        Update: DatabaseLiveSessionUpdate;
+      };
+      live_session_participants: {
+        Row: DatabaseLiveSessionParticipant;
+        Insert: DatabaseLiveSessionParticipantInsert;
+        Update: DatabaseLiveSessionParticipantUpdate;
+      };
+      live_session_events: {
+        Row: DatabaseLiveSessionEvent;
+        Insert: DatabaseLiveSessionEventInsert;
+        Update: never; // Events are immutable
+      };
+      live_session_sets: {
+        Row: DatabaseLiveSessionSet;
+        Insert: DatabaseLiveSessionSetInsert;
+        Update: never; // Sets are immutable
+      };
+      live_session_reactions: {
+        Row: DatabaseLiveSessionReaction;
+        Insert: DatabaseLiveSessionReactionInsert;
+        Update: never; // Reactions are immutable
+      };
+      live_session_messages: {
+        Row: DatabaseLiveSessionMessage;
+        Insert: DatabaseLiveSessionMessageInsert;
+        Update: never; // Messages are immutable
+      };
+      live_session_invitations: {
+        Row: DatabaseLiveSessionInvitation;
+        Insert: DatabaseLiveSessionInvitationInsert;
+        Update: DatabaseLiveSessionInvitationUpdate;
+      };
+      workout_presence: {
+        Row: DatabaseWorkoutPresence;
+        Insert: DatabaseWorkoutPresenceInsert;
+        Update: DatabaseWorkoutPresenceUpdate;
+      };
+      quick_reactions: {
+        Row: DatabaseQuickReaction;
+        Insert: DatabaseQuickReactionInsert;
+        Update: never; // Quick reactions are immutable
       };
     };
   };

@@ -276,10 +276,13 @@
     - Local notification scheduling and management
     - Rest timer specific notification functionality
     - Comprehensive error handling and logging
+    - App state change handling for foreground/background transitions
+    - Notification response and received listeners
   - Created notification types and constants (`src/lib/notifications/types.ts`):
-    - NotificationType enum with all supported types
-    - NotificationPreferences interface
-    - Notification channel definitions for Android
+    - NotificationType enum with all supported types (friend_request, dm_received, competition_result, rest_timer, reaction, comment)
+    - NotificationPreferences interface with all toggleable preferences
+    - Notification channel definitions for Android (Social, Workout, Competition)
+    - REST_TIMER_NOTIFICATION_ID constant
   - Updated settings store to include notification preferences:
     - Added `notificationPrefs` field to Settings interface
     - Integrated with existing notification preferences system
@@ -288,21 +291,48 @@
     - Added background notification scheduling when app is backgrounded
     - App state change handling for proper notification cleanup
     - Workout ID support for notification data
+    - Automatic notification cancellation when timer completes or app returns to foreground
   - Updated live-workout.tsx:
     - Notification service initialization on workout start
     - Notification response listener setup
     - Contextual permission request on first rest timer use
-    - Notification tap handling
+    - Notification tap handling with screen routing
   - Created comprehensive test suite (`__tests__/lib/notifications/notificationService.test.ts`):
     - 18 tests covering all notification service functionality
     - Mock-based testing for expo-notifications
     - Settings store mocking for isolated testing
     - 100% test coverage for notification service
+  - Implemented service functions for social notifications (pending backend integration):
+    - sendFriendRequestNotification - Complete with payload construction
+    - sendDirectMessageNotification - Complete with message preview and truncation
+    - sendPushNotification - Stubbed for backend integration
+    - createInAppNotification - Stubbed for backend integration
+    - registerPushToken - Complete for device registration
   - Updated feature documentation:
     - Marked Rest Timer notifications as complete in feature-notifications.md
     - Updated FEATURE-MASTER.md (Notifications: 0/4 → 1/4)
     - Added implementation details and technical notes
+    - Documented service functions and backend integration points
   - Total feature progress: 80/133 → 81/133 (61%)
+
+**Files Created:**
+- `src/lib/notifications/types.ts` - Notification types and constants
+- `src/lib/notifications/notificationService.ts` - Core notification service
+- `__tests__/lib/notifications/notificationService.test.ts` - Comprehensive test suite
+
+**Files Modified:**
+- `src/lib/stores/settingsStore.ts` - Added notification preferences
+- `src/lib/notificationPrefs.ts` - Updated to match new structure
+- `src/ui/components/RestTimerOverlay.tsx` - Added background notifications
+- `app/live-workout.tsx` - Added notification initialization and permission handling
+
+**Implementation Details:**
+- Rest timer notifications fully functional and tested
+- Social notification service functions complete but await backend integration
+- All notification types respect user preferences from settings
+- Contextual permission request ensures good UX (not on first launch)
+- Android notification channels properly configured
+- Comprehensive error handling throughout the service
 
 **Files Created:**
 - `src/lib/notifications/types.ts` - Notification types and constants

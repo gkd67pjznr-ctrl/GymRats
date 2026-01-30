@@ -101,6 +101,8 @@ export default function RootLayout() {
           <Stack.Screen name="auth/verify-email" options={{ headerShown: false, presentation: 'card' }} />
           <Stack.Screen name="hangout" options={{ headerShown: false }} />
           <Stack.Screen name="avatar" options={{ headerShown: false }} />
+          <Stack.Screen name="live-workout-together" options={{ headerShown: false }} />
+          <Stack.Screen name="live-workout-with-friends" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

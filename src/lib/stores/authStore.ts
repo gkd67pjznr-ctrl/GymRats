@@ -6,7 +6,6 @@ import type { AuthError, Session } from "@supabase/supabase-js";
 import type { DatabaseUser, mapDatabaseUser } from "../supabase/types";
 import { syncOrchestrator } from "../sync/SyncOrchestrator";
 import { uploadAvatar, generateAvatarUrl } from "../supabase/storage";
-import { uploadAvatar, generateAvatarUrl } from "../supabase/storage";
 
 /**
  * User profile matching camelCase convention used in the app

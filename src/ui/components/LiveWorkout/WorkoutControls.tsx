@@ -17,17 +17,21 @@ import { useThemeColors } from "@/src/ui/theme";
 export interface WorkoutControlsProps {
   planMode: boolean;
   focusMode: boolean;
+  liveWorkoutTogether?: boolean;
   onAddExercise: () => void;
   onToggleFocus: () => void;
   onChangeSelected: () => void;
+  onToggleLiveWorkoutTogether?: () => void;
 }
 
 export function WorkoutControls({
   planMode,
   focusMode,
+  liveWorkoutTogether,
   onAddExercise,
   onToggleFocus,
   onChangeSelected,
+  onToggleLiveWorkoutTogether,
 }: WorkoutControlsProps) {
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
@@ -79,6 +83,18 @@ export function WorkoutControls({
           {focusMode ? "Focus ✓" : "Focus"}
         </Text>
       </Pressable>
+
+      {/* Live Workout Together toggle */}
+      {onToggleLiveWorkoutTogether && (
+        <Pressable
+          onPress={onToggleLiveWorkoutTogether}
+          style={({ pressed }) => buttonStyle(pressed, liveWorkoutTogether)}
+        >
+          <Text style={{ color: c.text, ...FR.type.h3 }}>
+            {liveWorkoutTogether ? "Friends ✓" : "Friends"}
+          </Text>
+        </Pressable>
+      )}
 
       {/* Pick button - only in free workout mode */}
       {!planMode && (
