@@ -309,8 +309,10 @@ describe('ErrorBoundary - Edge Cases', () => {
       </ErrorBoundary>
     );
 
-    // Shows fallback message
-    expect(getByText('An unexpected error occurred')).toBeTruthy();
+    // Shows empty error message (Error.message returns "" when deleted, not undefined)
+    expect(getByText('Something went wrong')).toBeTruthy();
+    // The error message is empty string, shown as "Error: "
+    expect(getByText('Error: ')).toBeTruthy();
   });
 
   it('handles errors without component stack', () => {

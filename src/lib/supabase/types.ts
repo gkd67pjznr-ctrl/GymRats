@@ -837,6 +837,20 @@ export function mapDatabaseUser(dbUser: DatabaseUser): {
   avatarUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  subscriptionTier: 'basic' | 'premium' | 'legendary';
+  avatarArtStyle: string | null;
+  avatarGrowthStage: number | null;
+  avatarHeightScale: number | null;
+  avatarCosmetics: {
+    top: string | null;
+    bottom: string | null;
+    shoes: string | null;
+    accessory: string | null;
+  } | null;
+  totalVolumeKg: number | null;
+  totalSets: number | null;
+  hangoutRoomId: string | null;
+  hangoutRoomRole: 'owner' | 'member' | null;
 } {
   return {
     id: dbUser.id,
@@ -845,6 +859,15 @@ export function mapDatabaseUser(dbUser: DatabaseUser): {
     avatarUrl: dbUser.avatar_url,
     createdAt: dbUser.created_at,
     updatedAt: dbUser.updated_at,
+    subscriptionTier: dbUser.subscription_tier ?? 'basic',
+    avatarArtStyle: dbUser.avatar_art_style ?? null,
+    avatarGrowthStage: dbUser.avatar_growth_stage ?? null,
+    avatarHeightScale: dbUser.avatar_height_scale ?? null,
+    avatarCosmetics: dbUser.avatar_cosmetics ?? null,
+    totalVolumeKg: dbUser.total_volume_kg ?? null,
+    totalSets: dbUser.total_sets ?? null,
+    hangoutRoomId: dbUser.hangout_room_id ?? null,
+    hangoutRoomRole: dbUser.hangout_room_role ?? null,
   };
 }
 

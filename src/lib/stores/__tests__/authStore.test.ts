@@ -22,6 +22,27 @@ import {
 } from '../authStore';
 import type { DatabaseUser } from '../../supabase/types';
 
+// Helper to convert DatabaseUser to UserProfile format
+function toUserProfile(dbUser: DatabaseUser) {
+  return {
+    id: dbUser.id,
+    email: dbUser.email,
+    displayName: dbUser.display_name,
+    avatarUrl: dbUser.avatar_url,
+    createdAt: dbUser.created_at,
+    updatedAt: dbUser.updated_at,
+    subscriptionTier: (dbUser as any).subscription_tier || 'basic',
+    avatarArtStyle: (dbUser as any).avatar_art_style || null,
+    avatarGrowthStage: (dbUser as any).avatar_growth_stage || null,
+    avatarHeightScale: (dbUser as any).avatar_height_scale || null,
+    avatarCosmetics: (dbUser as any).avatar_cosmetics || null,
+    totalVolumeKg: (dbUser as any).total_volume_kg || null,
+    totalSets: (dbUser as any).total_sets || null,
+    hangoutRoomId: (dbUser as any).hangout_room_id || null,
+    hangoutRoomRole: (dbUser as any).hangout_room_role || null,
+  };
+}
+
 // Mock supabase client
 jest.mock('../../supabase/client', () => ({
   supabase: {
@@ -42,7 +63,7 @@ jest.mock('../../supabase/client', () => ({
 }));
 
 describe('authStore', () => {
-  // Mock database user response
+  // Mock database user response (with all new UserProfile fields)
   const mockDatabaseUser: DatabaseUser = {
     id: 'user-123',
     email: 'test@example.com',
@@ -50,6 +71,15 @@ describe('authStore', () => {
     avatar_url: 'https://example.com/avatar.jpg',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
+    subscription_tier: 'basic',
+    avatar_art_style: null,
+    avatar_growth_stage: null,
+    avatar_height_scale: null,
+    avatar_cosmetics: null,
+    total_volume_kg: null,
+    total_sets: null,
+    hangout_room_id: null,
+    hangout_room_role: null,
   };
 
   // Helper to reset store state
@@ -129,14 +159,16 @@ describe('authStore', () => {
         const response = await result.current.signUp('test@example.com', 'password123', 'Test User');
       });
 
-      expect(result.current.user).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(result.current.user).toEqual(
+        expect.objectContaining({
+          id: 'user-123',
+          email: 'test@example.com',
+          displayName: 'Test User',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        })
+      );
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
     });
@@ -173,14 +205,16 @@ describe('authStore', () => {
         const response = await result.current.signUp('fallback@example.com', 'password123', 'Fallback User');
       });
 
-      expect(result.current.user).toEqual({
-        id: 'user-456',
-        email: 'fallback@example.com',
-        displayName: 'Fallback User',
-        avatarUrl: null,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
-      });
+      expect(result.current.user).toEqual(
+        expect.objectContaining({
+          id: 'user-456',
+          email: 'fallback@example.com',
+          displayName: 'Fallback User',
+          avatarUrl: null,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        })
+      );
       expect(result.current.loading).toBe(false);
     });
 
@@ -294,14 +328,16 @@ describe('authStore', () => {
         const response = await result.current.signIn('test@example.com', 'password123');
       });
 
-      expect(result.current.user).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(result.current.user).toEqual(
+        expect.objectContaining({
+          id: 'user-123',
+          email: 'test@example.com',
+          displayName: 'Test User',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        })
+      );
       expect(result.current.session).toEqual({ access_token: 'token-123' });
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
@@ -377,14 +413,16 @@ describe('authStore', () => {
         const response = await result.current.signIn('fallback@example.com', 'password123');
       });
 
-      expect(result.current.user).toEqual({
-        id: 'user-789',
-        email: 'fallback@example.com',
-        displayName: 'Fallback User',
-        avatarUrl: null,
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(result.current.user).toEqual(
+        expect.objectContaining({
+          id: 'user-789',
+          email: 'fallback@example.com',
+          displayName: 'Fallback User',
+          avatarUrl: null,
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        })
+      );
       expect(result.current.loading).toBe(false);
     });
 
@@ -423,7 +461,7 @@ describe('authStore', () => {
 
       // Set initial authenticated state
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: toUserProfile(mockDatabaseUser) as any,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,
@@ -444,11 +482,14 @@ describe('authStore', () => {
     });
 
     it('should still clear state when supabase signOut throws', async () => {
-      supabase.auth.signOut.mockRejectedValue(new Error('Sign out failed'));
+      // Mock signOut to throw an error
+      supabase.auth.signOut.mockImplementation(() => {
+        throw new Error('Sign out failed');
+      });
 
       // Set initial authenticated state
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: toUserProfile(mockDatabaseUser) as any,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,
@@ -607,7 +648,7 @@ describe('authStore', () => {
     it('should clear user and session on SIGNED_OUT event', async () => {
       // Set initial authenticated state
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: toUserProfile(mockDatabaseUser) as any,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,
@@ -634,7 +675,7 @@ describe('authStore', () => {
   describe('selectors and hooks', () => {
     beforeEach(() => {
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: toUserProfile(mockDatabaseUser) as any,
         session: { access_token: 'token-123' } as any,
         hydrated: true,
         loading: false,
@@ -644,14 +685,16 @@ describe('authStore', () => {
 
     it('selectUser should return user from state', () => {
       const state = useAuthStore.getState();
-      expect(selectUser(state)).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(selectUser(state)).toEqual(
+        expect.objectContaining({
+          id: 'user-123',
+          email: 'test@example.com',
+          displayName: 'Test User',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        })
+      );
     });
 
     it('selectSession should return session from state', () => {
@@ -690,21 +733,23 @@ describe('authStore', () => {
     it('useUser hook should return user profile', () => {
       const { result } = renderHook(() => useUser());
 
-      expect(result.current).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(result.current).toEqual(
+        expect.objectContaining({
+          id: 'user-123',
+          email: 'test@example.com',
+          displayName: 'Test User',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        })
+      );
     });
   });
 
   describe('imperative getters', () => {
     beforeEach(() => {
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: toUserProfile(mockDatabaseUser) as any,
         session: { access_token: 'token-123' } as any,
         hydrated: true,
         loading: false,
@@ -715,14 +760,16 @@ describe('authStore', () => {
     it('getUser should return current user', () => {
       const user = getUser();
 
-      expect(user).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(user).toEqual(
+        expect.objectContaining({
+          id: 'user-123',
+          email: 'test@example.com',
+          displayName: 'Test User',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        })
+      );
     });
 
     it('getSession should return current session', () => {
@@ -742,7 +789,7 @@ describe('authStore', () => {
   describe('additional hooks', () => {
     it('useIsAuthenticated should return authentication status', () => {
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: toUserProfile(mockDatabaseUser) as any,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,

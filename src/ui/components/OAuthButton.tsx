@@ -248,6 +248,7 @@ export function OAuthButton({
 
   return (
     <Pressable
+      role="button"
       onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
@@ -261,6 +262,7 @@ export function OAuthButton({
     >
       {isLoading ? (
         <ActivityIndicator
+          testID="activity-indicator"
           size="small"
           color={colors.text}
           style={styles.loading}

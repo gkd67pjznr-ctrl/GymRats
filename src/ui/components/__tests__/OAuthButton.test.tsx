@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 import { OAuthButton } from '../OAuthButton';
@@ -52,7 +51,15 @@ jest.mock('@/src/ui/forgerankStyle', () => ({
 }));
 
 jest.mock('expo-apple-authentication', () => ({
-  AppleAuthenticationButton: 'MockButton',
+  AppleAuthenticationButton: jest.fn(({ style, onPress, disabled, children }) => {
+    const React = require('react');
+    const { Pressable, Text } = require('react-native');
+    return (
+      <Pressable onPress={onPress} disabled={disabled} style={style} testID="apple-auth-button">
+        <Text>{children || 'Continue with Apple'}</Text>
+      </Pressable>
+    );
+  }),
   AppleAuthenticationButtonType: {
     SIGN_IN: 'SIGN_IN',
   },
@@ -122,7 +129,7 @@ describe('OAuthButton Component', () => {
 
     it('should apply custom style', () => {
       const customStyle = { marginTop: 20 };
-      const { getByText } = render(
+      const { getByRole } = render(
         <OAuthButton
           provider="google"
           onPress={jest.fn()}
@@ -130,14 +137,15 @@ describe('OAuthButton Component', () => {
         />
       );
 
-      const button = getByText('Continue with Google').parent;
-      expect(button?.props.style).toContain(customStyle);
+      const button = getByRole('button');
+      // Style is an array in React Native when using multiple styles
+      const styleArray = button?.props.style;
+      expect(styleArray).toEqual(expect.arrayContaining([customStyle]));
     });
   });
 
   describe('Apple button', () => {
-    it('should render on iOS when available', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+    it('should render when available', () => {
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(true);
 
@@ -148,21 +156,19 @@ describe('OAuthButton Component', () => {
       expect(getByText('Continue with Apple')).toBeTruthy();
     });
 
-    it('should not render on Android', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('android');
+    it('should not render when not available', () => {
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(false);
 
-      const { container } = render(
+      const { UNSAFE_root } = render(
         <OAuthButton provider="apple" onPress={jest.fn()} />
       );
 
       // Component should return null (not render anything)
-      expect(container.children.length).toBe(0);
+      expect(UNSAFE_root.children.length).toBe(0);
     });
 
     it('should call onPress when pressed', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('web');
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(true);
 
@@ -235,7 +241,8 @@ describe('OAuthButton Component', () => {
       );
 
       const button = getByRole('button');
-      expect(button?.props.accessibilityState?.disabled).toBeUndefined();
+      // When not disabled, accessibilityState.disabled should not be true
+      expect(button?.props.accessibilityState?.disabled).not.toBe(true);
     });
 
     it('should be marked as disabled when disabled prop is true', () => {

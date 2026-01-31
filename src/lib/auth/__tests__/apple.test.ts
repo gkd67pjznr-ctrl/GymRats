@@ -5,10 +5,14 @@ import { renderHook, act } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
-// Mock Platform module
+// Store OS value that can be modified by tests
+let mockOS = 'ios';
+
+// Mock Platform module with getter to allow OS modification
 jest.mock('react-native', () => ({
   Platform: {
-    OS: 'ios',
+    get OS() { return mockOS; },
+    set OS(value: string) { mockOS = value; },
     isPad: false,
     isTV: false,
     Version: 0,
@@ -18,9 +22,7 @@ jest.mock('react-native', () => ({
   // Add other exports if needed
 }));
 
-// Get the mocked Platform
-const MockedPlatform = Platform as jest.Mocked<typeof Platform>;
-
+// Import the functions after mocking react-native
 import {
   isAppleAuthAvailable,
   parseAppleCredential,
@@ -36,6 +38,13 @@ import {
   type OAuthUserProfile,
 } from '../apple';
 import { parseOAuthError, type OAuthError } from '../oauth';
+
+// Mock oauth module functions
+jest.mock('../oauth', () => ({
+  parseOAuthError: jest.fn(),
+  signInWithOAuthToken: jest.fn(),
+  extractAppleProfile: jest.fn(),
+}));
 
 // Mock expo-apple-authentication
 jest.mock('expo-apple-authentication', () => ({

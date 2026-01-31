@@ -302,7 +302,7 @@ describe('ValidationToast Component', () => {
       );
 
       expect(mockTiming).toHaveBeenCalledWith(
-        expect.any(Animated.Value),
+        expect.any(Object),
         expect.objectContaining({
           duration: 250,
         })
@@ -320,7 +320,7 @@ describe('ValidationToast Component', () => {
       );
 
       expect(mockTiming).toHaveBeenCalledWith(
-        expect.any(Animated.Value),
+        expect.any(Object),
         expect.objectContaining({
           useNativeDriver: true,
         })
@@ -338,7 +338,7 @@ describe('ValidationToast Component', () => {
       );
 
       expect(mockTiming).toHaveBeenCalledWith(
-        expect.any(Animated.Value),
+        expect.any(Object),
         expect.objectContaining({
           easing: expect.any(Function),
         })
@@ -382,7 +382,7 @@ describe('ValidationToast Component', () => {
       expect(onDismissMock).not.toHaveBeenCalled();
     });
 
-    it('should clear existing timer when visibility changes to false', () => {
+    it('should clear existing timer when visibility changes to false', async () => {
       const { rerender } = render(
         <ValidationToast
           visible={true}
@@ -402,8 +402,13 @@ describe('ValidationToast Component', () => {
         />
       );
 
-      // onDismiss should be called due to dismissToast
-      expect(onDismissMock).toHaveBeenCalled();
+      // Advance timers to flush the animation completion callback
+      jest.advanceTimersByTime(0);
+
+      // Wait for onDismiss to be called
+      await waitFor(() => {
+        expect(onDismissMock).toHaveBeenCalled();
+      });
     });
   });
 

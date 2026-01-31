@@ -91,6 +91,7 @@ jest.mock('../../src/lib/stores', () => ({
     sets: [] as LoggedSet[],
   })),
   useIsHydrated: jest.fn(() => true),
+  useUser: jest.fn(() => null), // Add missing useUser export
   upsertRoutine: jest.fn((...args) => mockUpsertRoutine(...args)),
   addWorkoutSession: jest.fn((...args) => mockAddWorkoutSession(...args)),
   clearCurrentSession: jest.fn((...args) => mockClearCurrentSession(...args)),

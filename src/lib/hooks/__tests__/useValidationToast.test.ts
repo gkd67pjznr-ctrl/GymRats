@@ -4,6 +4,17 @@
  * DDD PRESERVE Phase: Creating safety net for validation toast behavior
  */
 
+// Mock expo-haptics before importing the hook
+jest.mock('expo-haptics', () => ({
+  NotificationFeedbackType: {
+    Error: 'error',
+    Success: 'success',
+    Warning: 'warning',
+  },
+  notificationAsync: jest.fn().mockResolvedValue(undefined),
+  impactAsync: jest.fn().mockResolvedValue(undefined),
+}));
+
 import { renderHook, act } from '@testing-library/react-native';
 import { useValidationToast } from '../useValidationToast';
 
