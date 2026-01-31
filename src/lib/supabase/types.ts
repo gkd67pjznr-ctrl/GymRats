@@ -167,6 +167,7 @@ export type DatabaseUser = {
   tokens_earned_total: number;
   tokens_spent_total: number;
   milestones_completed: string[];
+  subscription_tier: 'basic' | 'premium' | 'legendary';
   // Avatar columns
   avatar_art_style: string | null;
   avatar_growth_stage: number | null;
@@ -357,17 +358,6 @@ export type DatabaseLiveSessionEventType =
 export type DatabaseSetType = 'warmup' | 'working';
 
 /**
- * EmoteId enum for live_session_reactions and quick_reactions tables
- */
-export type DatabaseEmoteId =
-  | 'like'
-  | 'fire'
-  | 'skull'
-  | 'crown'
-  | 'bolt'
-  | 'clap';
-
-/**
  * InvitationStatus enum for live_session_invitations table
  */
 export type DatabaseInvitationStatus = 'pending' | 'accepted' | 'declined' | 'expired';
@@ -529,6 +519,7 @@ export type DatabaseUserInsert = Omit<
   tokens_earned_total?: number;
   tokens_spent_total?: number;
   milestones_completed?: string[];
+  subscription_tier?: 'basic' | 'premium' | 'legendary';
   // Avatar fields
   avatar_art_style?: string | null;
   avatar_growth_stage?: number | null;
@@ -610,6 +601,7 @@ export type DatabaseUserUpdate = Partial<
     | "tokens_earned_total"
     | "tokens_spent_total"
     | "milestones_completed"
+    | "subscription_tier"
     // Avatar fields
     | "avatar_art_style"
     | "avatar_growth_stage"

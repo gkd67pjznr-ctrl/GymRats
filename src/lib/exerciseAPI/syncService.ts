@@ -177,7 +177,7 @@ function mapEquipment(equipment: string): string {
 /**
  * Map body part to category
  */
-function mapToCategory(bodyPart: string): 'strength' | 'stretching' | 'cardio' | 'plyometrics' {
+function mapToCategory(bodyPart: string): 'strength' | 'stretching' | 'cardio' | 'plyometrics' | 'strongman' | 'powerlifting' | 'olympic weightlifting' {
   const lowerBodyPart = bodyPart.toLowerCase();
 
   if (lowerBodyPart.includes('cardio')) return 'cardio';

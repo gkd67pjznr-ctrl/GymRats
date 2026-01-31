@@ -482,10 +482,8 @@ describe('authStore', () => {
     });
 
     it('should still clear state when supabase signOut throws', async () => {
-      // Mock signOut to throw an error
-      supabase.auth.signOut.mockImplementation(() => {
-        throw new Error('Sign out failed');
-      });
+      // Mock signOut to return a rejected promise
+      supabase.auth.signOut.mockRejectedValue(new Error('Sign out failed'));
 
       // Set initial authenticated state
       useAuthStore.setState({
@@ -502,10 +500,14 @@ describe('authStore', () => {
         await result.current.signOut();
       });
 
-      // State should still be cleared even if Supabase call fails
-      expect(result.current.user).toBeNull();
-      expect(result.current.session).toBeNull();
-      expect(result.current.loading).toBe(false);
+      // Verify that signOut was called
+      expect(supabase.auth.signOut).toHaveBeenCalled();
+
+      // Check state directly from store (not through hook)
+      const storeState = useAuthStore.getState();
+      expect(storeState.user).toBeNull();
+      expect(storeState.session).toBeNull();
+      expect(storeState.loading).toBe(false);
     });
   });
 

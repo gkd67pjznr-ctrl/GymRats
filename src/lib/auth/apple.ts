@@ -62,7 +62,7 @@ interface AppleCredential {
  * @returns True if Apple Sign In is available
  */
 export function isAppleAuthAvailable(): boolean {
-  return (
+  return !!(
     Platform.OS === 'ios' ||
     Platform.OS === 'macos' ||
     (typeof window !== 'undefined' && window.MSStream)

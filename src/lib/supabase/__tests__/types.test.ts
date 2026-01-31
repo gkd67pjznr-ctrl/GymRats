@@ -1044,37 +1044,63 @@ describe('Supabase Types - Mapper Functions', () => {
   });
 
   describe('mapDatabaseUser', () => {
+    // Helper to create a valid DatabaseUser fixture with all required fields
+    const createDbUser = (overrides: Partial<DatabaseUser> = {}): DatabaseUser => ({
+      id: 'user123',
+      email: 'test@example.com',
+      display_name: 'Test User',
+      avatar_url: 'https://example.com/avatar.jpg',
+      created_at: '2024-01-01T00:00:00.000Z',
+      updated_at: '2024-01-01T00:00:00.000Z',
+      total_xp: 0,
+      current_level: 1,
+      xp_to_next_level: 100,
+      level_up_celebration_shown: null,
+      current_streak: 0,
+      longest_streak: 0,
+      last_workout_date: null,
+      workout_calendar: [],
+      forge_tokens: 0,
+      tokens_earned_total: 0,
+      tokens_spent_total: 0,
+      milestones_completed: [],
+      subscription_tier: 'basic',
+      avatar_art_style: null,
+      avatar_growth_stage: null,
+      avatar_height_scale: null,
+      avatar_cosmetics: null,
+      total_volume_kg: null,
+      total_sets: null,
+      hangout_room_id: null,
+      hangout_room_role: null,
+      ...overrides,
+    });
+
     it('should map DatabaseUser to camelCase format', () => {
-      const dbUser: DatabaseUser = {
-        id: 'user123',
-        email: 'test@example.com',
-        display_name: 'Test User',
-        avatar_url: 'https://example.com/avatar.jpg',
-        created_at: '2024-01-01T00:00:00.000Z',
-        updated_at: '2024-01-01T00:00:00.000Z',
-      };
+      const dbUser = createDbUser();
 
       const mapped = mapDatabaseUser(dbUser);
 
-      expect(mapped).toEqual({
-        id: 'user123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00.000Z',
-        updatedAt: '2024-01-01T00:00:00.000Z',
-      });
+      expect(mapped).toEqual(
+        expect.objectContaining({
+          id: 'user123',
+          email: 'test@example.com',
+          displayName: 'Test User',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+          subscriptionTier: 'basic',
+        })
+      );
     });
 
     it('should handle null values', () => {
-      const dbUser: DatabaseUser = {
+      const dbUser = createDbUser({
         id: 'user456',
         email: 'nulls@example.com',
         display_name: null,
         avatar_url: null,
-        created_at: '2024-01-01T00:00:00.000Z',
-        updated_at: '2024-01-01T00:00:00.000Z',
-      };
+      });
 
       const mapped = mapDatabaseUser(dbUser);
 

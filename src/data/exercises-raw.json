@@ -844,7 +844,7 @@
   },
   {
     "name": "Balance Board",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": "other",
@@ -896,7 +896,7 @@
   },
   {
     "name": "Band Assisted Pull-Up",
-    "force": null,
+    "force": "pull",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": "other",
@@ -2288,7 +2288,7 @@
   },
   {
     "name": "Bicycling",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": "other",
@@ -2312,7 +2312,7 @@
   },
   {
     "name": "Bicycling, Stationary",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": "machine",
@@ -3706,7 +3706,7 @@
   },
   {
     "name": "Carioca Quick Step",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": null,
@@ -4672,7 +4672,7 @@
   },
   {
     "name": "Conan's Wheel",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": "compound",
     "equipment": "other",
@@ -6752,7 +6752,7 @@
   },
   {
     "name": "Elliptical Trainer",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": null,
     "equipment": "machine",
@@ -6943,7 +6943,7 @@
   },
   {
     "name": "Farmer's Walk",
-    "force": null,
+    "force": "pull",
     "level": "intermediate",
     "mechanic": "compound",
     "equipment": "other",
@@ -8672,7 +8672,7 @@
   },
   {
     "name": "Inchworm",
-    "force": null,
+    "force": "pull",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": "body only",
@@ -8961,7 +8961,7 @@
   },
   {
     "name": "Incline Inner Biceps Curl",
-    "force": null,
+    "force": "pull",
     "level": "beginner",
     "mechanic": "isolation",
     "equipment": "dumbbell",
@@ -9189,7 +9189,7 @@
   },
   {
     "name": "Internal Rotation with Band",
-    "force": null,
+    "force": "push",
     "level": "beginner",
     "mechanic": "isolation",
     "equipment": "bands",
@@ -9570,7 +9570,7 @@
   },
   {
     "name": "Jogging, Treadmill",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": "machine",
@@ -10943,7 +10943,7 @@
   },
   {
     "name": "Linear Acceleration Wall Drill",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": null,
@@ -11643,7 +11643,7 @@
   },
   {
     "name": "Lying Prone Quadriceps",
-    "force": null,
+    "force": "static",
     "level": "expert",
     "mechanic": null,
     "equipment": "body only",
@@ -12091,7 +12091,7 @@
   },
   {
     "name": "Moving Claw Series",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": null,
@@ -14524,7 +14524,7 @@
   },
   {
     "name": "Push-Up Wide",
-    "force": null,
+    "force": "push",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": "body only",
@@ -14950,7 +14950,7 @@
   },
   {
     "name": "Recumbent Bike",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": "machine",
@@ -15485,7 +15485,7 @@
   },
   {
     "name": "Rickshaw Carry",
-    "force": null,
+    "force": "pull",
     "level": "intermediate",
     "mechanic": "compound",
     "equipment": "other",
@@ -15757,7 +15757,7 @@
   },
   {
     "name": "Rope Jumping",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": null,
     "equipment": "other",
@@ -15829,7 +15829,7 @@
   },
   {
     "name": "Rowing, Stationary",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": null,
     "equipment": "machine",
@@ -15882,7 +15882,7 @@
   },
   {
     "name": "Running, Treadmill",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": "machine",
@@ -17621,7 +17621,7 @@
   },
   {
     "name": "Single Dumbbell Raise",
-    "force": null,
+    "force": "push",
     "level": "beginner",
     "mechanic": "isolation",
     "equipment": "dumbbell",
@@ -17772,7 +17772,7 @@
   },
   {
     "name": "Skating",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": null,
     "equipment": "other",
@@ -18138,7 +18138,7 @@
   },
   {
     "name": "Smith Machine Decline Press",
-    "force": null,
+    "force": "push",
     "level": "beginner",
     "mechanic": "compound",
     "equipment": "machine",
@@ -19181,7 +19181,7 @@
   },
   {
     "name": "Stairmaster",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": null,
     "equipment": "machine",
@@ -20404,7 +20404,7 @@
   },
   {
     "name": "Step Mill",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": null,
     "equipment": "machine",
@@ -21232,7 +21232,7 @@
   },
   {
     "name": "Trail Running/Walking",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": null,
@@ -21850,7 +21850,7 @@
   },
   {
     "name": "Walking, Treadmill",
-    "force": null,
+    "force": "static",
     "level": "beginner",
     "mechanic": null,
     "equipment": "machine",
@@ -22501,7 +22501,7 @@
   },
   {
     "name": "Yoke Walk",
-    "force": null,
+    "force": "static",
     "level": "intermediate",
     "mechanic": "compound",
     "equipment": "other",

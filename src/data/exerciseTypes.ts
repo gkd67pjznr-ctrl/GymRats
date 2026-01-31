@@ -18,7 +18,7 @@ export type RawExercise = {
   primaryMuscles: string[];
   secondaryMuscles: string[];
   instructions: string[];
-  category: 'strength' | 'stretching' | 'cardio' | 'plyometrics';
+  category: 'strength' | 'stretching' | 'cardio' | 'plyometrics' | 'strongman' | 'powerlifting' | 'olympic weightlifting';
   images: string[];
 };
 
@@ -57,7 +57,7 @@ export type ForgerankExercise = {
   primaryMuscles: MuscleGroup[];
   secondaryMuscles: MuscleGroup[];
   instructions: string[];
-  category: 'strength' | 'stretching' | 'cardio' | 'plyometrics';
+  category: 'strength' | 'stretching' | 'cardio' | 'plyometrics' | 'strongman' | 'powerlifting' | 'olympic weightlifting';
   images: string[];
 
   // Forgerank-specific fields

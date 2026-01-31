@@ -15,6 +15,7 @@ jest.mock('expo-constants', () => ({
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     from: jest.fn(),
+    rpc: jest.fn(),
     auth: {
       signUp: jest.fn(),
       signInWithPassword: jest.fn(),
@@ -28,6 +29,7 @@ jest.mock('@supabase/supabase-js', () => ({
 }));
 
 import Constants from 'expo-constants';
+import { createClient } from '@supabase/supabase-js';
 import { supabase, healthCheck, HealthCheckResult } from '../client';
 
 describe('Supabase Client', () => {
@@ -110,7 +112,7 @@ describe('Supabase Client', () => {
       }).toThrow('Missing Supabase anonymous key');
     });
 
-    it('should characterize: throw error when both credentials are missing', () => {
+    it('should characterize: create placeholder client when both credentials are missing', () => {
       // Mock Constants with missing both
       jest.doMock('expo-constants', () => ({
         expoConfig: {
@@ -118,9 +120,10 @@ describe('Supabase Client', () => {
         },
       }));
 
-      expect(() => {
-        require('../client');
-      }).toThrow('Missing Supabase URL');
+      // When both credentials are missing, client.ts creates a placeholder client
+      // instead of throwing an error (to allow local development)
+      const client = require('../client');
+      expect(client.supabase).toBeDefined();
     });
 
     it('should characterize: throw error when URL format is invalid', () => {
