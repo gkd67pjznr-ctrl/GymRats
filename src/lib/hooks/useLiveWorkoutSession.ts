@@ -48,6 +48,10 @@ export type UseLiveWorkoutSessionResult = {
   // edit existing set rows
   setWeightForSet: (setId: string, text: string) => void;
   setRepsForSet: (setId: string, text: string) => void;
+  incrementWeightForSet: (setId: string) => void;
+  decrementWeightForSet: (setId: string) => void;
+  incrementRepsForSet: (setId: string) => void;
+  decrementRepsForSet: (setId: string) => void;
 
   // "same as previous" helpers for exercise blocks
   getLastSetForExercise: (exerciseId: string) => LoggedSet | null;
@@ -141,6 +145,55 @@ export function useLiveWorkoutSession(
     },
     [updateSet, callbacks]
   );
+
+  // Smart weight increment: 2.5lb for lighter weights, 5lb for heavier
+  const getSmartWeightStep = useCallback((weightLb: number): number => {
+    return weightLb >= 200 ? 5 : 2.5;
+  }, []);
+
+  // Increment/decrement weight for a specific set
+  const incrementWeightForSet = useCallback((setId: string) => {
+    setSets((prev) => prev.map((s) => {
+      if (s.id === setId) {
+        const wLb = kgToLb(s.weightKg);
+        const step = getSmartWeightStep(wLb);
+        const next = Math.min(2000, wLb + step);
+        return { ...s, weightKg: lbToKg(next) };
+      }
+      return s;
+    }));
+  }, [getSmartWeightStep]);
+
+  const decrementWeightForSet = useCallback((setId: string) => {
+    setSets((prev) => prev.map((s) => {
+      if (s.id === setId) {
+        const wLb = kgToLb(s.weightKg);
+        const step = getSmartWeightStep(wLb);
+        const next = Math.max(0, wLb - step);
+        return { ...s, weightKg: lbToKg(next) };
+      }
+      return s;
+    }));
+  }, [getSmartWeightStep]);
+
+  // Increment/decrement reps for a specific set
+  const incrementRepsForSet = useCallback((setId: string) => {
+    setSets((prev) => prev.map((s) => {
+      if (s.id === setId) {
+        return { ...s, reps: Math.min(100, s.reps + 1) };
+      }
+      return s;
+    }));
+  }, []);
+
+  const decrementRepsForSet = useCallback((setId: string) => {
+    setSets((prev) => prev.map((s) => {
+      if (s.id === setId) {
+        return { ...s, reps: Math.max(1, s.reps - 1) };
+      }
+      return s;
+    }));
+  }, []);
 
   const onWeightText = useCallback((t: string) => {
     setWeightLbText(t);
@@ -347,6 +400,10 @@ export function useLiveWorkoutSession(
 
       setWeightForSet,
       setRepsForSet,
+      incrementWeightForSet,
+      decrementWeightForSet,
+      incrementRepsForSet,
+      decrementRepsForSet,
 
       kgToLb: kgToLbFn,
       estimateE1RMLb,
@@ -383,6 +440,10 @@ export function useLiveWorkoutSession(
       incReps,
       setWeightForSet,
       setRepsForSet,
+      incrementWeightForSet,
+      decrementWeightForSet,
+      incrementRepsForSet,
+      decrementRepsForSet,
       kgToLbFn,
       estimateE1RMLb,
       getDefaultsForExercise,

@@ -11,6 +11,7 @@ const os = require('os');
 
 const settingsPath = path.join('$PROJECT_DIR', '.claude', 'settings.local.json');
 const glmKeyPath = path.join(os.homedir(), '.config', 'forgerank', '.env.glm');
+const deepseekKeyPath = path.join(os.homedir(), '.config', 'forgerank', '.env.deepseek');
 const orKeyPath = path.join(os.homedir(), '.config', 'forgerank', '.env.openrouter');
 
 // Read settings
@@ -39,6 +40,11 @@ if (!baseUrl) {
   console.log('URL:      ' + baseUrl);
   console.log('Token:    ' + masked);
   console.log('Model:    ' + (env.ANTHROPIC_DEFAULT_SONNET_MODEL || 'default'));
+} else if (baseUrl.includes('api.deepseek.com')) {
+  console.log('Backend:  Deepseek');
+  console.log('URL:      ' + baseUrl);
+  console.log('Token:    ' + masked);
+  console.log('Model:    ' + (env.ANTHROPIC_DEFAULT_SONNET_MODEL || 'default'));
 } else {
   console.log('Backend:  Custom');
   console.log('URL:      ' + baseUrl);
@@ -47,5 +53,6 @@ if (!baseUrl) {
 console.log('');
 console.log('=== Saved Keys ===');
 console.log('GLM:         ' + (fs.existsSync(glmKeyPath) ? 'saved' : 'not found'));
+console.log('Deepseek:         ' + (fs.existsSync(deepseekKeyPath) ? 'saved' : 'not found'));
 console.log('OpenRouter:  ' + (fs.existsSync(orKeyPath) ? 'saved' : 'not found'));
 "

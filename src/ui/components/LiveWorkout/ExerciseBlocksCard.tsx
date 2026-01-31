@@ -5,6 +5,7 @@ import { FR } from "../../forgerankStyle";
 import { EXERCISES_V1 } from "../../../data/exercises";
 import type { LoggedSet } from "../../../lib/loggerTypes";
 import * as Haptics from "expo-haptics";
+import { NumberInput } from "./NumberInput";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -31,6 +32,10 @@ export type ExerciseBlocksCardProps = {
   // edit handlers
   setWeightForSet: (setId: string, text: string) => void;
   setRepsForSet: (setId: string, text: string) => void;
+  incrementWeight: (setId: string) => void;
+  decrementWeight: (setId: string) => void;
+  incrementReps: (setId: string) => void;
+  decrementReps: (setId: string) => void;
 
   // helpers
   kgToLb: (kg: number) => number;
@@ -314,63 +319,58 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
                         </View>
                       </View>
 
-                      {/* Input row - controlled inputs */}
-                      <View style={{ flexDirection: "row", gap: FR.space.x2, alignItems: "center" }}>
+                      {/* Input row - NumberInput with stepper buttons */}
+                      <View style={{ flexDirection: "row", gap: FR.space.x2, alignItems: "flex-end" }}>
                         {/* Weight */}
-                        <View style={{ flex: 1, gap: FR.space.x1 }}>
-                          <Text style={[FR.type.mono, { color: c.muted, fontSize: 11 }]}>Weight (lb)</Text>
-                          {done ? (
+                        {done ? (
+                          <View style={{ flex: 1, gap: FR.space.x1 }}>
+                            <Text style={[FR.type.mono, { color: c.muted, fontSize: 11 }]}>Weight (lb)</Text>
                             <Text style={[FR.type.h3, { color: c.text }]}>
                               {wLb.toFixed(1)}
                             </Text>
-                          ) : (
-                            <TextInput
-                              value={wLb.toFixed(1)}
-                              keyboardType="decimal-pad"
-                              onChangeText={(t) => props.setWeightForSet(s.id, t)}
-                              style={{
-                                borderWidth: 1,
-                                borderColor: c.border,
-                                borderRadius: FR.radius.input,
-                                paddingVertical: FR.space.x2,
-                                paddingHorizontal: FR.space.x2,
-                                color: c.text,
-                                backgroundColor: c.bg,
-                                fontWeight: "900",
-                                fontSize: 16,
-                              }}
+                          </View>
+                        ) : (
+                          <View style={{ flex: 1 }}>
+                            <NumberInput
+                              value={wLb}
+                              textValue={wLb.toFixed(1)}
+                              label="Weight"
+                              unit="lb"
+                              onTextChange={(t) => props.setWeightForSet(s.id, t)}
+                              onCommit={() => {}}
+                              onDecrement={() => props.decrementWeight(s.id)}
+                              onIncrement={() => props.incrementWeight(s.id)}
+                              min={0}
+                              max={2000}
                             />
-                          )}
-                        </View>
+                          </View>
+                        )}
 
                         {/* Reps */}
-                        <View style={{ width: 80, gap: FR.space.x1 }}>
-                          <Text style={[FR.type.mono, { color: c.muted, fontSize: 11 }]}>Reps</Text>
-                          {done ? (
+                        {done ? (
+                          <View style={{ width: 100, gap: FR.space.x1 }}>
+                            <Text style={[FR.type.mono, { color: c.muted, fontSize: 11 }]}>Reps</Text>
                             <Text style={[FR.type.h3, { color: c.text }]}>{s.reps}</Text>
-                          ) : (
-                            <TextInput
-                              value={String(s.reps)}
-                              keyboardType="number-pad"
-                              onChangeText={(t) => props.setRepsForSet(s.id, t)}
-                              style={{
-                                borderWidth: 1,
-                                borderColor: c.border,
-                                borderRadius: FR.radius.input,
-                                paddingVertical: FR.space.x2,
-                                paddingHorizontal: FR.space.x2,
-                                color: c.text,
-                                backgroundColor: c.bg,
-                                fontWeight: "900",
-                                fontSize: 16,
-                                textAlign: "center",
-                              }}
+                          </View>
+                        ) : (
+                          <View style={{ width: 100 }}>
+                            <NumberInput
+                              value={s.reps}
+                              textValue={String(s.reps)}
+                              label="Reps"
+                              unit=""
+                              onTextChange={(t) => props.setRepsForSet(s.id, t)}
+                              onCommit={() => {}}
+                              onDecrement={() => props.decrementReps(s.id)}
+                              onIncrement={() => props.incrementReps(s.id)}
+                              min={0}
+                              max={100}
                             />
-                          )}
-                        </View>
+                          </View>
+                        )}
 
                         {/* e1RM */}
-                        <View style={{ width: 70, alignItems: "flex-end", gap: FR.space.x1 }}>
+                        <View style={{ width: 50, alignItems: "flex-end", gap: FR.space.x1, paddingBottom: FR.space.x2 }}>
                           <Text style={[FR.type.mono, { color: c.muted, fontSize: 11 }]}>e1RM</Text>
                           <Text style={[FR.type.sub, { color: c.text }]}>
                             {e1rm > 0 ? `${Math.round(e1rm)}` : "—"}

@@ -54,7 +54,6 @@ import { getSettings as getSettingsV2 } from "../src/lib/stores/settingsStore";
 import { useBuddyStore } from "../src/lib/stores/buddyStore";
 import { useUser } from "../src/lib/stores/authStore";
 import { evaluateBehaviorTriggers } from "../src/lib/buddyEngine";
-import { useGamificationStore } from "../src/lib/stores/gamificationStore";
 
 // Utils
 import { randomHighlightDurationMs } from "../src/lib/perSetCue";
