@@ -46,16 +46,20 @@ export default function StartWorkout() {
       targetRepsMax: rx.targetRepsMax,
     }));
 
-    setCurrentPlan(
-      makePlanFromRoutine({
-        routineId: previewRoutine.id,
-        routineName: previewRoutine.name,
-        exercises: planned,
-      })
-    );
+    const plan = makePlanFromRoutine({
+      routineId: previewRoutine.id,
+      routineName: previewRoutine.name,
+      exercises: planned,
+    });
+
+    setCurrentPlan(plan);
 
     setPreviewRoutine(null);
-    router.push("/live-workout");
+    // Pass plan via params to ensure it's available on mount (avoid race condition with Zustand persist)
+    router.push({
+      pathname: "/live-workout",
+      params: { planData: JSON.stringify(plan) }
+    } as any);
   }
 
   function cancelPreview() {

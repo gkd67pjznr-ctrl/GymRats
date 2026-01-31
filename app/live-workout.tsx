@@ -1,14 +1,15 @@
 // app/live-workout.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 import { makeDesignSystem } from "../src/ui/designSystem";
 import { FR } from "../src/ui/forgerankStyle";
 import { useThemeColors } from "../src/ui/theme";
 
 import { getSettings } from "../src/lib/stores";
-import { useCurrentPlan } from "../src/lib/workoutPlanStore";
+import { useCurrentPlan, setCurrentPlan } from "../src/lib/workoutPlanStore";
+import type { WorkoutPlan } from "../src/lib/workoutPlanModel";
 
 // Components
 import { ExerciseBlocksCard } from "../src/ui/components/LiveWorkout/ExerciseBlocksCard";
@@ -51,6 +52,7 @@ import {
 } from "../src/lib/stores";
 import { getSettings as getSettingsV2 } from "../src/lib/stores/settingsStore";
 import { useBuddyStore } from "../src/lib/stores/buddyStore";
+import { useUser } from "../src/lib/stores/authStore";
 import { evaluateBehaviorTriggers } from "../src/lib/buddyEngine";
 import { useGamificationStore } from "../src/lib/stores/gamificationStore";
 
@@ -251,6 +253,23 @@ export default function LiveWorkout() {
     loggedSets: session.sets,
     startedAtMs: persisted?.startedAtMs,
   });
+
+  // Read plan from navigation params on mount (fix for race condition with Zustand persist)
+  const localParams = useLocalSearchParams();
+  useEffect(() => {
+    const planDataParam = localParams.planData as string | undefined;
+    if (planDataParam) {
+      try {
+        const planFromParams = JSON.parse(planDataParam) as WorkoutPlan;
+        // Update Zustand store with plan from params
+        setCurrentPlan(planFromParams);
+        // Clear params to avoid re-applying
+        router.setParams({ planData: undefined } as any);
+      } catch (e) {
+        console.error("Failed to parse planData from params:", e);
+      }
+    }
+  }, [localParams.planData]);
 
   // Initialize session on mount
   useEffect(() => {

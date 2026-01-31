@@ -66,6 +66,15 @@ jest.mock('../../src/data/exercises', () => ({
   ],
 }));
 
+// Mock buddyEngine
+jest.mock('../../src/lib/buddyEngine', () => ({
+  evaluateSetTriggers: jest.fn(() => null),
+  evaluateSessionTriggers: jest.fn(() => null),
+  evaluateBehaviorTriggers: jest.fn(() => null),
+  formatCueMessage: jest.fn((cue) => ({ title: cue.message, detail: cue.detail || '' })),
+  detectRankProgressFull: jest.fn(() => []),
+}));
+
 // Mock stores
 const mockAddWorkoutSession = jest.fn();
 const mockClearCurrentSession = jest.fn();
@@ -103,6 +112,37 @@ jest.mock('../../src/lib/stores', () => ({
   updateCurrentSession: jest.fn(),
   setCurrentSession: jest.fn(),
   flushPendingWrites: jest.fn(),
+  useBuddyStore: jest.fn(() => ({
+    personality: null,
+    selectedMessage: null,
+    sessionMemory: {
+      setsCompleted: 0,
+      currentExerciseId: null,
+      exerciseStartTimeMs: null,
+      totalRestTimeMs: 0,
+      lastSetTimestampMs: null,
+    },
+    hydrated: true,
+    setPersonality: jest.fn(),
+    setSelectedMessage: jest.fn(),
+    recordSet: jest.fn(),
+    recordExerciseStart: jest.fn(),
+    updateSessionMemory: jest.fn(),
+    clearSessionMemory: jest.fn(),
+    getState: jest.fn(() => ({
+      personality: null,
+      selectedMessage: null,
+      sessionMemory: {
+        setsCompleted: 0,
+        currentExerciseId: null,
+        exerciseStartTimeMs: null,
+        totalRestTimeMs: 0,
+        lastSetTimestampMs: null,
+      },
+      hydrated: true,
+    })),
+  })),
+  getPersonalBests: jest.fn(() => ({})),
 }));
 
 // Mock gamificationStore - properly mock Zustand store API

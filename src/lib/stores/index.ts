@@ -10,6 +10,7 @@ export {
   addWorkoutSession,
   clearWorkoutSessions,
   getWorkoutSyncStatus,
+  getPersonalBests,
 } from "./workoutStore";
 
 // Current active session

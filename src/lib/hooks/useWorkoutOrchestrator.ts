@@ -15,16 +15,16 @@ import { lbToKg } from "../units";
 import { EXERCISES_V1 } from "../../data/exercises";
 import type { WorkoutPlan } from "../workoutPlanModel";
 import { formatDuration, uid as uid2, type WorkoutSession, type WorkoutSet } from "../workoutModel";
-import { setCurrentPlan } from "../workoutPlanStore";
+import { getCurrentPlan, setCurrentPlan, updateCurrentPlan } from "../stores/workoutPlanStore";
 import { uid as routineUid, type Routine, type RoutineExercise } from "../routinesModel";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine, useUser } from "../stores";
+import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, getPersonalBests, useCurrentSession, useIsHydrated, upsertRoutine, useUser } from "../stores";
 // Gamification integration
 import { toWorkoutForCalculation } from "../hooks/useGamificationWorkoutFinish";
 import { useGamificationStore, processGamificationWorkout } from "../stores/gamificationStore";
 // AI Gym Buddy integration
 import type { CueMessage } from "../buddyTypes";
-import { evaluateSetTriggers, evaluateSessionTriggers, formatCueMessage } from "../buddyEngine";
+import { detectRankProgressFull, evaluateBehaviorTriggers, evaluateSetTriggers, evaluateSessionTriggers, formatCueMessage } from "../buddyEngine";
 import { useBuddyStore } from "../stores/buddyStore";
 
 function exerciseName(exerciseId: string) {
