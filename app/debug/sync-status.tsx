@@ -76,6 +76,7 @@ export default function SyncStatusScreen() {
   ];
 
   return (
+    <>
     <Stack.Screen
       options={{
         title: "Sync Status",
@@ -262,5 +263,6 @@ export default function SyncStatusScreen() {
         </View>
       </ScrollView>
     </View>
+  </>
   );
 }

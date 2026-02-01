@@ -49,7 +49,7 @@ You cannot switch directly because Claude Code would send Anthropic-formatted re
 However, you can use DeepSeek through OpenRouter:
 json
 {
-  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-chat"
+  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-r1-0528"
 }
 ```
 
@@ -96,7 +96,7 @@ json
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "sk-or-v1-<openrouter-key>",
     "ANTHROPIC_BASE_URL": "https://openrouter.ai/api/v1",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-chat",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-r1-0528",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "anthropic/claude-3.5-sonnet",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "anthropic/claude-opus-4"
   }

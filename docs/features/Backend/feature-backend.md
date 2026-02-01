@@ -155,9 +155,16 @@ Supabase backend integration for data persistence, cloud sync, and real-time fea
 - [ ] v1 to v2 data format converter
 - [ ] Import from other apps (Strong, etc.)
 
-### Planned - User Search Migration
+### Done - User Search Migration
 - [x] Migration file created (`005_user_search.sql`)
 - [ ] Apply to production Supabase
+
+### Done - Sync System Integration
+- [x] Sync orchestrator initialization in app layout
+- [x] Store registration system for all sync-enabled stores
+- [x] Auth integration triggers sync on sign in/sign out
+- [x] Network monitoring for online/offline sync
+- [x] Real-time subscription management
 
 ---
 

@@ -70,3 +70,4 @@ export { getFriendsSyncStatus, setupFriendsRealtime } from '../stores/friendsSto
 export { getSocialSyncStatus, setupPostsRealtime, setupReactionsRealtime, setupCommentsRealtime } from '../stores/socialStore';
 export { getFeedSyncStatus } from '../stores/feedStore';
 export { getChatSyncStatus, setupChatRealtime, setupTypingRealtime, broadcastTyping } from '../stores/chatStore';
+export { registerSyncStores } from './registerStores';

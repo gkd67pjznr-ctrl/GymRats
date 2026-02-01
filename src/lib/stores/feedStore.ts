@@ -18,6 +18,8 @@ import {
   areFriends as checkAreFriends,
   getFriendStatus,
 } from "./friendsStore";
+import { useMemo } from "react";
+import { shallow } from "zustand/shallow";
 
 const STORAGE_KEY = "feed.v2";
 
@@ -281,9 +283,14 @@ export function useVisibleFeed(viewerUserId: ID): {
   likeCount: (postId: ID) => number;
   liked: (postId: ID) => boolean;
 } {
-  const posts = useFeedStore(selectVisiblePostsForUser(viewerUserId));
-  const likeCount = useFeedStore((state) => (postId: ID) => selectLikeCount(postId)(state));
-  const liked = useFeedStore((state) => (postId: ID) => selectHasUserLiked(postId, viewerUserId)(state));
+  const postsSelector = useMemo(() => selectVisiblePostsForUser(viewerUserId), [viewerUserId]);
+  const posts = useFeedStore(postsSelector, shallow);
+
+  const likeCountSelector = useMemo(() => (state) => (postId: ID) => selectLikeCount(postId)(state), []);
+  const likeCount = useFeedStore(likeCountSelector, shallow);
+
+  const likedSelector = useMemo(() => (state) => (postId: ID) => selectHasUserLiked(postId, viewerUserId)(state), [viewerUserId]);
+  const liked = useFeedStore(likedSelector, shallow);
 
   return { posts, likeCount, liked };
 }

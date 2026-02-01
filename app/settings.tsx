@@ -7,6 +7,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { useThemeColors } from "../src/ui/theme";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { useSettings, updateSettings } from "../src/lib/stores";
+import { usePersonality, useAllPersonalities } from "../src/lib/stores";
 import { useAuthStore, useIsEmailVerified, useUser } from "../src/lib/stores/authStore";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { migrateLocalToCloud, importFromCSV } from "../src/lib/migration/dataMigrator";
@@ -73,9 +74,11 @@ export default function SettingsScreen() {
   const user = useUser();
   const { signOut, loading: authLoading, session, resendVerificationEmail, deleteAccount, updateAvatar, removeAvatar, loading: avatarLoading } = useAuthStore();
   const isEmailVerified = useIsEmailVerified();
+  const currentPersonality = usePersonality();
 
   // Delete account modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPersonalityModal, setShowPersonalityModal] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
@@ -605,7 +608,6 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-<<<<<<< HEAD
         {/* Dev Menu Link */}
         {__DEV__ && (
           <Link href="/dev-menu" asChild>
@@ -623,7 +625,7 @@ export default function SettingsScreen() {
             </Pressable>
           </Link>
         )}
-=======
+
         {/* Personality Selection */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
           <Pressable onPress={() => setShowPersonalityModal(true)}>
@@ -641,7 +643,6 @@ export default function SettingsScreen() {
             />
           </Pressable>
         </View>
->>>>>>> glm-work
 
         {/* Email Verification Status */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>

@@ -230,13 +230,13 @@ export {
   type LiveWorkoutState,
 } from "./liveWorkoutStore";
 
-// Body Model
-export {
-  BodyModel,
-  CompactBodyModel,
-  calculateMuscleVolume,
-  type MuscleVolumeData,
-} from "../lib/bodyModel";
+// Body Model (temporarily disabled due to missing module)
+// export {
+//   BodyModel,
+//   CompactBodyModel,
+//   calculateMuscleVolume,
+//   type MuscleVolumeData,
+// } from "../lib/bodyModel";
 
 // Shop Items (from gamification module)
 export {

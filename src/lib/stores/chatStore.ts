@@ -1,7 +1,7 @@
 // src/lib/stores/chatStore.ts
 // Zustand store for chat threads and messages with AsyncStorage persistence and Supabase sync/realtime
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
@@ -358,19 +358,23 @@ export function canUserMessageThread(thread: ChatThread, senderUserId: ID): bool
 // ============================================================================
 
 export function useThreads(myUserId: ID): ChatThread[] {
-  return useChatStore(selectThreadsForUser(myUserId));
+  const selector = useMemo(() => selectThreadsForUser(myUserId), [myUserId]);
+  return useChatStore(selector);
 }
 
 export function useThread(threadId: ID): ChatThread | null {
-  return useChatStore(selectThread(threadId));
+  const selector = useMemo(() => selectThread(threadId), [threadId]);
+  return useChatStore(selector);
 }
 
 export function useThreadMessages(threadId: ID): ChatMessage[] {
-  return useChatStore(selectMessagesForThread(threadId));
+  const selector = useMemo(() => selectMessagesForThread(threadId), [threadId]);
+  return useChatStore(selector);
 }
 
 export function useUnreadCount(threadId: ID, myUserId: ID): number {
-  return useChatStore(selectUnreadCount(threadId, myUserId));
+  const selector = useMemo(() => selectUnreadCount(threadId, myUserId), [threadId, myUserId]);
+  return useChatStore(selector);
 }
 
 export function useThreadOtherUserId(thread: ChatThread | null, myUserId: ID): ID | null {

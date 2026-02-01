@@ -1,5 +1,77 @@
 ---
 
+### Backend & Sync Features
+**Date:** 2026-01-31
+**Features Tested:**
+- Sync system initialization
+- Store registration with sync orchestrator
+- Auth-triggered sync (sign in/out)
+- Network monitoring for online/offline sync
+- Sync status indicators
+
+### TC-SYNC1: Sync Initialization on App Start
+**Steps:**
+1. Fresh install or clear app data
+2. Launch the app
+3. Open debug screen (if available) or check console logs
+4. Verify sync system initializes without errors
+
+**Expected:** Sync system initializes on app start, registers stores, and shows no errors
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+### TC-SYNC2: Auth-Triggered Sync
+**Steps:**
+1. Sign out of the app (if signed in)
+2. Sign in with email/password or dev login
+3. Check console logs for sync activation
+4. Verify sync status indicators show syncing then success
+
+**Expected:** Sync triggers automatically on user sign in, pulls data from server
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+### TC-SYNC3: Network Online/Offline Handling
+**Steps:**
+1. Ensure app is online and signed in
+2. Make a local change (e.g., create a post, log a workout set)
+3. Turn on airplane mode or disable network
+4. Make another change
+5. Re-enable network
+6. Verify changes sync to server once online
+
+**Expected:** Changes queue when offline, sync automatically when network restored
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+### TC-SYNC4: Store Registration & Sync Status
+**Steps:**
+1. Open app debug/sync status screen (if available)
+2. Verify all stores show as registered (workout, routines, friends, social, feed, chat, gamification)
+3. Check each store's sync status (idle, syncing, success, error)
+
+**Expected:** All sync-enabled stores appear in sync status with correct registration
+**Result:** ⬜ Pass / ❌ Fail / ⚠️ Issue
+
+**Notes:**
+```
+[Your notes here]
+```
+
+---
+
 ### UI Themes & Visual Style Features
 **Date:** 2026-01-30
 **Features Tested:**

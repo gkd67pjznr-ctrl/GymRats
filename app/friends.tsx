@@ -21,7 +21,7 @@ import type { ID, UserProfile } from "../src/lib/socialModel";
 import { useThemeColors } from "../src/ui/theme";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { SyncStatusIndicator } from "../src/ui/components/SyncStatusIndicator";
-import { FR } from "../../src/ui/forgerankStyle";
+import { FR } from "../src/ui/forgerankStyle";
 
 const ME: ID = "u_demo_me";
 

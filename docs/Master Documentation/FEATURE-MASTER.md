@@ -1,6 +1,6 @@
 # FORGERANK FEATURE MASTER
 
-**Last Updated:** 2026-01-30
+**Last Updated:** 2026-01-31
 **Version:** v0.3 (Post-organization)
 
 ---
@@ -21,7 +21,7 @@
 | [Notifications](#notifications) | In Progress | 1/4 | [Details](../features/Social/feature-notifications.md) |
 | [UI & Design](#ui--design) | In Progress | 12/15 | [Details](../features/UI/feature-ui.md) |
 | [UI Themes & Visual Style](#ui-themes--visual-style) | Done | 12/12 | [Details](../features/UI/feature-ui-themes.md) |
-| [Backend & Sync](#backend--sync) | In Progress | 9/10 | [Details](../features/Backend/feature-backend.md) |
+| [Backend & Sync](#backend--sync) | **Done** | 10/10 | [Details](../features/Backend/feature-backend.md) |
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/Misc/feature-onboarding.md) |
 | [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](../features/Avatar/feature-avatars.md) |
 | [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](../features/Workout/feature-workout-replay.md) |
@@ -29,7 +29,7 @@
 | [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 3/6 | [Details](../features/Analytics/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](../features/Gamification/feature-forge-milestones.md) |
 
-**Launch Total:** 117/167 features (70%)
+**Launch Total:** 118/167 features (71%)
 
 ## Quick Summary — Post-Launch
 
@@ -308,7 +308,7 @@ Complete implementation of the Forgerank visual identity with a layered approach
 ---
 
 ## Backend & Sync
-**Status:** In Progress | **Progress:** 9/10 features
+**Status:** Done | **Progress:** 10/10 features
 
 **Completed:**
 - Supabase client + 9-table schema + RLS policies
@@ -317,10 +317,11 @@ Complete implementation of the Forgerank visual identity with a layered approach
 - Offline mutation queuing + conflict resolution
 - Real-time subscriptions (feed, friends, chat)
 - File storage (avatar uploads)
+- Sync system integration with auth (initialization, store registration)
 
-**Remaining:**
-- Data migration script (local to cloud)
-- Apply user search migration to production
+**Post-Launch / Nice-to-Have:**
+- Data migration script (local to cloud) - for existing user data import
+- Apply user search migration (`005_user_search.sql`) to production Supabase
 
 ---
 

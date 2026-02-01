@@ -13,6 +13,7 @@ import ErrorBoundary from '@/src/ui/error-boundary';
 import { setupAuthListener, useAuthStore } from '@/src/lib/stores';
 import { supabase } from '@/src/lib/supabase/client';
 import { useIsOnboarding } from '@/src/lib/stores/onboardingStore';
+import { initializeSync, registerSyncStores } from '@/src/lib/sync';
 
 // Initialize WebBrowser for auth sessions
 WebBrowser.maybeCompleteAuthSession();
@@ -64,6 +65,19 @@ export default function RootLayout() {
       clearTimeout(fallbackTimer);
       authCleanup?.();
     };
+  }, []);
+
+  // Initialize sync system on mount
+  useEffect(() => {
+    const initSync = async () => {
+      try {
+        await initializeSync();
+        registerSyncStores();
+      } catch (err) {
+        console.error('[RootLayout] Failed to initialize sync:', err);
+      }
+    };
+    initSync();
   }, []);
 
   // Handle deep links for OAuth callbacks

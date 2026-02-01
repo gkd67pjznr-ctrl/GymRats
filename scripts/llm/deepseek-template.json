@@ -1,8 +1,8 @@
 {
-  "ANTHROPIC_AUTH_TOKEN": "__OPENROUTER_API_KEY__",
+  "ANTHROPIC_AUTH_TOKEN": "__DEEPSEEK_API_KEY__",
   "ANTHROPIC_API_KEY": "",
-  "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
-  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-chat",
-  "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek/deepseek-chat",
-  "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek/deepseek-chat"
+  "ANTHROPIC_BASE_URL": "https://api.deepseek.com/anthropic",
+  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-r1-0528",
+  "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek/deepseek-r1-0528",
+  "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek/deepseek-r1-0528"
 }

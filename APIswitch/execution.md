@@ -32,7 +32,7 @@ GLM exposes an **Anthropic-compatible proxy** at `https://api.z.ai/api/anthropic
     "ANTHROPIC_AUTH_TOKEN": "<your-openrouter-api-key>",
     "ANTHROPIC_API_KEY": "",
     "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-chat-v3-0324",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-r1-0528-v3-0324",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "anthropic/claude-sonnet-4",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "anthropic/claude-opus-4"
   }
@@ -135,14 +135,14 @@ Credential storage:
   "ANTHROPIC_AUTH_TOKEN": "__OPENROUTER_API_KEY__",
   "ANTHROPIC_API_KEY": "",
   "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
-  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-chat",
+  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek/deepseek-r1-0528",
   "ANTHROPIC_DEFAULT_SONNET_MODEL": "google/gemini-2.5-pro",
   "ANTHROPIC_DEFAULT_OPUS_MODEL": "anthropic/claude-opus-4"
 }
 ```
 
 **Recommended default configuration:**
-- **Haiku** → `deepseek/deepseek-chat` -- cheap, fast, handles exploration and simple tasks
+- **Haiku** → `deepseek/deepseek-r1-0528` -- cheap, fast, handles exploration and simple tasks
 - **Sonnet** → `google/gemini-2.5-pro` -- strong coding, 1M context window, best non-Claude tool use
 - **Opus** → `anthropic/claude-opus-4` -- top-tier reasoning, stays Claude through OpenRouter
 
@@ -152,8 +152,8 @@ The model names are customizable. Some alternative presets:
 
 | Tier | Cost-optimized | Quality-optimized | Balanced (recommended) |
 |------|---------------|-------------------|------------------------|
-| Haiku | `deepseek/deepseek-chat` | `anthropic/claude-3.5-haiku` | `deepseek/deepseek-chat` |
-| Sonnet | `deepseek/deepseek-chat` | `anthropic/claude-sonnet-4` | `google/gemini-2.5-pro` |
+| Haiku | `deepseek/deepseek-r1-0528` | `anthropic/claude-3.5-haiku` | `deepseek/deepseek-r1-0528` |
+| Sonnet | `deepseek/deepseek-r1-0528` | `anthropic/claude-sonnet-4` | `google/gemini-2.5-pro` |
 | Opus | `google/gemini-2.5-pro` | `anthropic/claude-opus-4` | `anthropic/claude-opus-4` |
 
 **Common pitfalls to avoid:**
@@ -424,7 +424,7 @@ OpenRouter acts as a universal adapter. Any model it supports can be used by set
 
 | Provider | Example Model Name | Notes |
 |----------|--------------------|-------|
-| DeepSeek | `deepseek/deepseek-chat-v3-0324` | Via OpenRouter translation |
+| DeepSeek | `deepseek/deepseek-r1-0528-v3-0324` | Via OpenRouter translation |
 | Google Gemini | `google/gemini-2.5-pro` | Via OpenRouter translation |
 | OpenAI | `openai/gpt-4o` | Via OpenRouter translation |
 | Meta Llama | `meta-llama/llama-3.1-405b-instruct` | Via OpenRouter translation |
