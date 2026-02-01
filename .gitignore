@@ -171,3 +171,4 @@ dist-ssr/
 *.sw?
 *-secret.*
 claude-settings-*.json
+.npm-cache-temp/
