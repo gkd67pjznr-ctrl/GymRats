@@ -54,7 +54,7 @@ let appStateSubscription: { remove: () => void } | null = null;
 
 function setupAppStateListener(): () => void {
   if (appStateSubscription) {
-    // Already setup
+    // Already setup - return cleanup function that will remove the existing subscription
     return () => {
       appStateSubscription?.remove();
       appStateSubscription = null;
