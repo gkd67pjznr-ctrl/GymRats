@@ -2,15 +2,12 @@ import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { TabErrorBoundary } from "@/src/ui/tab-error-boundary";
 import { useWorkoutSessions } from "@/src/lib/stores/workoutStore";
-import { useBodyStatStore } from "@/src/lib/stores/bodyStatStore";
 import { calculateMuscleVolumes } from "@/src/lib/volumeCalculator";
 import { BodyModel } from "@/src/ui/components/BodyModel";
-import { getMuscleGroups } from "@/src/data/muscleGroupsManager";
 import { makeDesignSystem } from "@/src/ui/designSystem";
 import { useColorScheme } from "react-native";
 import { useSettings } from "@/src/lib/stores/settingsStore";
 
-const MUSCLE_GROUPS = getMuscleGroups();
 
 const useDesignSystem = () => {
   const { accent } = useSettings();
@@ -21,13 +18,23 @@ const useDesignSystem = () => {
 export default function BodyTab() {
   const ds = useDesignSystem();
   const sessions = useWorkoutSessions();
-  const { muscleVolumes, updateMuscleVolumes } = useBodyStatStore();
   const [viewSide, setViewSide] = useState<'front' | 'back'>('front');
+  const [timeFilter, setTimeFilter] = useState<'week' | 'month' | 'all'>('week');
 
-  useEffect(() => {
-    const newVolumes = calculateMuscleVolumes(sessions);
-    updateMuscleVolumes(newVolumes);
-  }, [sessions, updateMuscleVolumes]);
+  // Compute filtered sessions based on time filter
+  const now = Date.now();
+  let filteredSessions = sessions;
+
+  if (timeFilter === 'week') {
+    const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+    filteredSessions = sessions.filter(s => s.startedAtMs >= oneWeekAgo);
+  } else if (timeFilter === 'month') {
+    const oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000);
+    filteredSessions = sessions.filter(s => s.startedAtMs >= oneMonthAgo);
+  }
+  // 'all' uses all sessions
+
+  const displayVolumes = calculateMuscleVolumes(filteredSessions);
 
   return (
     <TabErrorBoundary screenName="Body">
@@ -66,8 +73,62 @@ export default function BodyTab() {
             </View>
           </View>
 
+          {/* Time filter toggle */}
+          <View style={{ flexDirection: 'row', gap: 8, justifyContent: 'center' }}>
+            <Pressable
+              onPress={() => setTimeFilter('week')}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 8,
+                backgroundColor: timeFilter === 'week' ? ds.tone.accent : ds.tone.card,
+                borderWidth: 1,
+                borderColor: timeFilter === 'week' ? ds.tone.accent : ds.tone.border,
+              }}
+            >
+              <Text style={{
+                color: timeFilter === 'week' ? '#fff' : ds.tone.text,
+                fontWeight: 'bold',
+                fontSize: 12,
+              }}>Week</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setTimeFilter('month')}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 8,
+                backgroundColor: timeFilter === 'month' ? ds.tone.accent : ds.tone.card,
+                borderWidth: 1,
+                borderColor: timeFilter === 'month' ? ds.tone.accent : ds.tone.border,
+              }}
+            >
+              <Text style={{
+                color: timeFilter === 'month' ? '#fff' : ds.tone.text,
+                fontWeight: 'bold',
+                fontSize: 12,
+              }}>Month</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setTimeFilter('all')}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 8,
+                backgroundColor: timeFilter === 'all' ? ds.tone.accent : ds.tone.card,
+                borderWidth: 1,
+                borderColor: timeFilter === 'all' ? ds.tone.accent : ds.tone.border,
+              }}
+            >
+              <Text style={{
+                color: timeFilter === 'all' ? '#fff' : ds.tone.text,
+                fontWeight: 'bold',
+                fontSize: 12,
+              }}>All Time</Text>
+            </Pressable>
+          </View>
 
-          <BodyModel muscleVolumes={muscleVolumes} side={viewSide} />
+          <BodyModel muscleVolumes={displayVolumes} side={viewSide} />
 
         </View>
       </ScrollView>
