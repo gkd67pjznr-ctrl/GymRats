@@ -22,6 +22,7 @@ import { makeDesignSystem } from '@/src/ui/designSystem';
 import type { SelectedCelebration } from '@/src/lib/celebration';
 import { getAssetForKey, getPRTypeLabel, getTierLabel } from '@/src/lib/celebration';
 import { playSound, SoundManager } from '@/src/lib/sound';
+import { areSoundsEnabled, isAudioCueEnabled, areHapticsEnabled } from '@/src/lib/sound/soundUtils';
 
 interface PRCelebrationProps {
   /** Celebration data (null = hidden) */
@@ -154,43 +155,47 @@ export function PRCelebration({
   const playEffects = (celebration: SelectedCelebration) => {
     const { celebration: celeb } = celebration;
 
-    // Play sound
-    playSound(celeb.sound.key, celeb.sound.volume);
+    // Play sound if PR celebration audio cue is enabled
+    if (areSoundsEnabled() && isAudioCueEnabled('prCelebration')) {
+      playSound(celeb.sound.key, celeb.sound.volume);
+    }
 
-    // Haptic feedback
-    const hapticType = celeb.haptic.type;
-    const repeats = celeb.haptic.repeats ?? 1;
+    // Haptic feedback if global haptics are enabled
+    if (areHapticsEnabled()) {
+      const hapticType = celeb.haptic.type;
+      const repeats = celeb.haptic.repeats ?? 1;
 
-    const playHaptic = async () => {
-      for (let i = 0; i < repeats; i++) {
-        switch (hapticType) {
-          case 'success':
-            await Haptics.notificationAsync(
-              Haptics.NotificationFeedbackType.Success
+      const playHaptic = async () => {
+        for (let i = 0; i < repeats; i++) {
+          switch (hapticType) {
+            case 'success':
+              await Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Success
+              );
+              break;
+            case 'heavy':
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+              break;
+            case 'medium':
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              break;
+            case 'light':
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              break;
+            default:
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
+
+          if (i < repeats - 1 && celeb.haptic.delayMs) {
+            await new Promise((resolve) =>
+              setTimeout(resolve, celeb.haptic.delayMs)
             );
-            break;
-          case 'heavy':
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-            break;
-          case 'medium':
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            break;
-          case 'light':
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            break;
-          default:
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
         }
+      };
 
-        if (i < repeats - 1 && celeb.haptic.delayMs) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, celeb.haptic.delayMs)
-          );
-        }
-      }
-    };
-
-    playHaptic().catch(() => {});
+      playHaptic().catch(() => {});
+    }
   };
 
   const handleDismiss = () => {

@@ -56,4 +56,5 @@ export type ForgeLabState = {
   loading: boolean;
   error: string | null;
   dateRange: '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL';
+  lastHash?: string; // Hash of input data (sessions + bodyweight) used to compute current data
 };

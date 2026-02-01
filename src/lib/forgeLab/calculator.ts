@@ -165,8 +165,7 @@ export function calculateRankHistory(
  * Calculate muscle group volume distribution
  */
 export function calculateMuscleGroupVolume(
-  sessions: WorkoutSession[],
-  dateRange: string
+  sessions: WorkoutSession[]
 ): MuscleGroupVolumeData[] {
   const muscleGroupVolume: MuscleGroupVolumeData[] = [];
 
@@ -234,7 +233,7 @@ export function calculateMuscleGroupVolume(
 export function compileForgeLabData(
   sessions: WorkoutSession[],
   bodyweightKg: number,
-  dateRange: string
+  weightHistory: { date: string; weightKg: number }[] = []
 ): any {
   // Get all unique exercise IDs from the sessions
   const exerciseIds: string[] = [];
@@ -259,10 +258,10 @@ export function compileForgeLabData(
   });
 
   // Calculate muscle group volume distribution
-  const muscleGroupVolume = calculateMuscleGroupVolume(sessions, dateRange);
+  const muscleGroupVolume = calculateMuscleGroupVolume(sessions);
 
-  // Weight history would come from user settings or integration data
-  const weightHistory: { date: string; weightKg: number }[] = [];
+  // Weight history from user settings or integration data
+  // Uses the weightHistory parameter passed from store
 
   return {
     weightHistory,

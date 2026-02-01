@@ -18,14 +18,21 @@ import { formatDuration, uid as uid2, type WorkoutSession, type WorkoutSet } fro
 import { setCurrentPlan } from "../workoutPlanStore";
 import { uid as routineUid, type Routine, type RoutineExercise } from "../routinesModel";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine, useUser } from "../stores";
+import { addWorkoutSession, clearCurrentSession, ensureCurrentSession, useCurrentSession, useIsHydrated, upsertRoutine, useUser, getCurrentPlan, updateCurrentPlan, getPersonalBests } from "../stores";
 // Gamification integration
 import { toWorkoutForCalculation } from "../hooks/useGamificationWorkoutFinish";
 import { useGamificationStore, processGamificationWorkout } from "../stores/gamificationStore";
 // AI Gym Buddy integration
 import type { CueMessage } from "../buddyTypes";
-import { evaluateSetTriggers, evaluateSessionTriggers, formatCueMessage } from "../buddyEngine";
+import { evaluateSetTriggers, evaluateSessionTriggers, evaluateBehaviorTriggers, detectRankProgressFull, formatCueMessage } from "../buddyEngine";
 import { useBuddyStore } from "../stores/buddyStore";
+// Voice integration
+import { playVoiceLine } from "../voice/VoiceManager";
+import { playSound } from "../sound/SoundManager";
+import { areSoundsEnabled } from "../sound/soundUtils";
+// Journal integration
+import { createJournalEntry, getDateFromTimestamp } from "../journalModel";
+import { addJournalEntry } from "../stores";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -49,7 +56,12 @@ export interface WorkoutOrchestratorResult {
 
   // Actions
   addSetForExercise: (exerciseId: string, weightLb: number, reps: number) => void;
-  finishWorkout: () => void;
+  finishWorkout: (journalData?: {
+    text?: string;
+    mood?: number;
+    energy?: number;
+    soreness?: string[];
+  }) => void;
   saveAsRoutine: (exerciseBlocks: string[], sets: LoggedSet[]) => void;
   reset: (plannedExerciseIds: string[]) => void;
   clearInstantCue: () => void;
@@ -166,6 +178,19 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
         intensity: buddyCue.intensity === "epic" ? "high" : buddyCue.intensity
       });
 
+      // Play voice line if present (premium+ only)
+      if (buddyCue.voiceLine) {
+        playVoiceLine(buddyCue.voiceLine).catch(error => {
+          console.warn('[useWorkoutOrchestrator] Failed to play voice line:', error);
+        });
+      }
+      // Play buddy-specific SFX if present
+      if (buddyCue.sfx && areSoundsEnabled()) {
+        playSound('cheer').catch(error => { // Using 'cheer' as default SFX
+          console.warn('[useWorkoutOrchestrator] Failed to play SFX:', error);
+        });
+      }
+
       // Trigger haptics/sound for buddy messages
       if (buddyCue.intensity === "high" || buddyCue.intensity === "epic") {
         onHaptic?.('pr');
@@ -218,7 +243,12 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
     }
   }, [hydrated, ensureExerciseState, ensureCountdown, sessionStateByExercise, unit, onHaptic, onSound]);
 
-  const finishWorkout = useCallback(() => {
+  const finishWorkout = useCallback((journalData?: {
+    text?: string;
+    mood?: number;
+    energy?: number;
+    soreness?: string[];
+  }) => {
     // Before hydration, actions are no-ops
     if (!hydrated) return;
 
@@ -256,9 +286,28 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
         targetRepsMax: e.targetRepsMax,
       })),
       completionPct: undefined,
+      // Journal fields
+      notes: journalData?.text,
+      mood: journalData?.mood,
+      energy: journalData?.energy,
+      soreness: journalData?.soreness,
     };
 
     addWorkoutSession(sessionObj);
+
+    // Create journal entry if journal data is provided
+    if (journalData && user?.id) {
+      const journalEntry = createJournalEntry(
+        user.id,
+        getDateFromTimestamp(sessionObj.startedAtMs),
+        journalData.text || "",
+        sessionObj.id,
+        journalData.mood,
+        journalData.energy,
+        journalData.soreness
+      );
+      addJournalEntry(journalEntry);
+    }
 
     // Process gamification after workout is saved
     const currentStreak = useGamificationStore.getState().profile.currentStreak;
@@ -322,6 +371,20 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
         intensity: behaviorTriggers.intensity === "epic" ? "high" : behaviorTriggers.intensity
       });
       setBuddyMessage(behaviorTriggers);
+
+      // Play voice line if present (premium+ only)
+      if (behaviorTriggers.voiceLine) {
+        playVoiceLine(behaviorTriggers.voiceLine).catch(error => {
+          console.warn('[useWorkoutOrchestrator] Failed to play voice line:', error);
+        });
+      }
+      // Play buddy-specific SFX if present
+      if (behaviorTriggers.sfx && areSoundsEnabled()) {
+        playSound('cheer').catch(error => { // Using 'cheer' as default SFX
+          console.warn('[useWorkoutOrchestrator] Failed to play SFX:', error);
+        });
+      }
+
       onHaptic?.('light');
       onSound?.('light');
     } else {
@@ -343,6 +406,19 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
 
         // Also set as buddy message for full experience
         setBuddyMessage(sessionCue);
+
+        // Play voice line if present (premium+ only)
+        if (sessionCue.voiceLine) {
+          playVoiceLine(sessionCue.voiceLine).catch(error => {
+            console.warn('[useWorkoutOrchestrator] Failed to play voice line:', error);
+          });
+        }
+        // Play buddy-specific SFX if present
+        if (sessionCue.sfx && areSoundsEnabled()) {
+          playSound('cheer').catch(error => { // Using 'cheer' as default SFX
+            console.warn('[useWorkoutOrchestrator] Failed to play SFX:', error);
+          });
+        }
       } else {
         setInstantCue({
           message: "Workout saved.",

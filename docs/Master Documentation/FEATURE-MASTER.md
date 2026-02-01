@@ -9,7 +9,7 @@
 
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
-| [Workout Core](#workout-core) | In Progress | 11/20 | [Details](../features/Workout/feature-workouts.md) |
+| [Workout Core](#workout-core) | In Progress | 12/20 | [Details](../features/Workout/feature-workouts.md) |
 | [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](../features/Workout/feature-workout-logging-ux.md) |
 | [Exercise Library](#exercise-library) | Done | 3/3 | [Details](../features/Workout/feature-exercises.md) |
 | [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](../features/Workout/feature-scoring.md) |
@@ -29,7 +29,7 @@
 | [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 5/6 | [Details](../features/Analytics/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](../features/Gamification/feature-forge-milestones.md) |
 
-**Launch Total:** 130/167 features (78%)
+**Launch Total:** 131/167 features (78%)
 
 ## Quick Summary — Post-Launch
 

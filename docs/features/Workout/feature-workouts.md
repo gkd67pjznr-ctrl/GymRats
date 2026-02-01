@@ -78,28 +78,33 @@ The core workout logging experience - the heart of Forgerank. Users start workou
 - [ ] Track progress against routine
 - [ ] Completion percentage
 
-**Status:** BROKEN - exercises don't load from routine (see BUG-LOG-012)
-**Bug:** When starting workout from routine, shows only "Barbell Bench Press - Medium Grip" instead of routine's exercises
-**Next:** Fix routine loading before other enhancements
+**Status:** Basic functionality works
+**Next:** Polish UI and add progress tracking
 
-### In Progress - Set Input Polish
-- [ ] Calculator-style number pad
-- [ ] Stepper +/- buttons
-- [ ] Auto-fill from last workout
-- [ ] Smart weight increments
+### Done - Set Input Polish
+- [x] Calculator-style number pad
+- [x] Stepper +/- buttons
+- [x] Auto-fill from last workout
+- [x] Smart weight increments
 
-**Status:** Basic inputs exist, need polish
-**Next:** SPEC-012
+**Status:** Complete - All set input polish features implemented
 
-### In Progress - Rest Timer Enhancement
-- [ ] Auto-start after set
-- [ ] Push notification when backgrounded
-- [ ] Sound effects
-- [ ] Skip/add time buttons
-- [ ] Circular progress display
+### Done - Rest Timer Enhancement
+- [x] Auto-start after set
+- [x] Push notification when backgrounded
+- [x] Sound effects
+- [x] Skip/add time buttons
+- [x] Circular progress display
 
-**Status:** Basic timer works
-**Next:** SPEC-013
+**Status:** Complete - All rest timer enhancement features implemented
+
+### Done - Audio & Feedback Preferences
+- [x] Audio cue preferences (PR celebration, rest timer start/end, workout complete, rank up, level up)
+- [x] Rest timer feedback preferences (audio, haptic, voice, notification, visual progress)
+- [x] Settings UI with toggle controls for each preference
+- [x] Integration with sound system and haptic feedback
+
+**Implementation:** `src/lib/stores/settingsStore.ts`, `app/settings.tsx`, `src/lib/sound/soundUtils.ts`, `src/ui/components/RestTimerOverlay.tsx`, `src/ui/components/LiveWorkout/PRCelebration.tsx`
 
 ### Done - PR Detection & Celebration
 - [x] Weight PR detection
