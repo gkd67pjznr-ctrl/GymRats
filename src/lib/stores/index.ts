@@ -180,10 +180,13 @@ export {
   getPRCue,
   setPersonality,
   getAllPersonalitiesList,
-  type Personality,
-  type CueContext,
-  type CueIntensity,
 } from "./personalityStore";
+
+export type {
+  Personality,
+  CueContext,
+  CueIntensity,
+} from "../celebration/personalities";
 
 // Gamification (XP, Currency, Shop)
 export {
@@ -206,9 +209,6 @@ export {
   purchaseShopItem,
   equipShopItem,
   getUserInventory,
-  type UserInventory,
-  type ShopItem,
-  type ShopCategory,
 } from "./gamificationStore";
 
 // Live workout session state
@@ -244,4 +244,7 @@ export {
   getShopItemsByCategory,
   getShopItem,
   getRarityColor,
-} from "../lib/gamification/shop";
+  type UserInventory,
+  type ShopItem,
+  type ShopCategory,
+} from "../gamification/shop";

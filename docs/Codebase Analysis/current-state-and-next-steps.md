@@ -47,7 +47,7 @@ Forgerank has reached a significant milestone with 117 of 167 planned features i
 ## Critical Issues Requiring Immediate Attention
 
 ### 1. Test Suite Health (P0)
-**Problem**: 160 failing tests严重影响 development velocity and reliability
+**Problem**: 159 failing tests严重影响 development velocity and reliability
 **Impact**: Unable to confidently make changes or verify fixes
 **Required Action**:
 - Identify root causes of test failures

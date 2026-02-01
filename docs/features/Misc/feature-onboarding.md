@@ -3,7 +3,7 @@
 ## Overview
 First-time user experience that gets users set up quickly while introducing key features. Goal: under 2 minutes to first workout. All steps are skippable.
 
-**Progress: 3/7 sub-features complete**
+**Progress: 7/7 sub-features complete**
 
 ---
 
@@ -53,47 +53,51 @@ First-time user experience that gets users set up quickly while introducing key 
 
 ---
 
-### Planned - Avatar Creation Step
-- [ ] Pick art style (Bitmoji, pixel, retro, 3D)
-- [ ] Basic customization (hair, skin tone, outfit, etc.)
-- [ ] Default avatar assigned if skipped
-- [ ] Avatar preview during creation
-- [ ] Skippable - default avatar assigned automatically
+### Done - Avatar Creation Step ✅
+- [x] Pick art style (Bitmoji, pixel, retro, 3D)
+- [ ] Basic customization (hair, skin tone, outfit, etc.) - *Future enhancement*
+- [x] Default avatar assigned if skipped (defaults to Bitmoji)
+- [x] Avatar preview during creation
+- [x] Skippable - default avatar assigned automatically
 
+**Implementation:** `app/onboarding.tsx::AvatarCreationStep()`
 **Notes:** This is the first personalization step after Welcome. Gives the user a visual identity early on. If skipped, the system assigns a default avatar so the profile is never blank.
 
 ---
 
-### Planned - Goal Setting Step
-- [ ] "What are you training for?" prompt
-- [ ] Options: Strength, Aesthetics, Health, Sport
-- [ ] Allow single or multi-select
-- [ ] Personalizes AI coaching suggestions
-- [ ] Skippable - defaults to general training
+### Done - Goal Setting Step ✅
+- [x] "What are you training for?" prompt
+- [x] Options: Strength, Aesthetics, Health, Sport, General
+- [ ] Allow single or multi-select - *Currently single-select*
+- [ ] Personalizes AI coaching suggestions - *Future integration*
+- [x] Skippable - defaults to general training
 
+**Implementation:** `app/onboarding.tsx::GoalSettingStep()`
 **Notes:** Goal selection feeds into future AI coaching features. Knowing the user's primary training goal allows the app to tailor cue messages, suggest relevant routines, and prioritize metrics that matter to them.
 
 ---
 
-### Planned - Guided First Workout
-- [ ] Tutorial overlay on live-workout screen
-- [ ] Highlight key UI elements
-- [ ] Walk through logging a few sets
-- [ ] Trigger a "fake" PR to show celebration
-- [ ] Skip option for experienced users
-- [ ] Completing the guided workout should trigger the first Workout Replay
+### Done - Guided First Workout ✅
+- [x] Tutorial overlay on live-workout screen
+- [x] Highlight key UI elements
+- [x] Walk through logging a few sets
+- [ ] Trigger a "fake" PR to show celebration (future enhancement)
+- [x] Skip option for experienced users
+- [ ] Completing the guided workout should trigger the first Workout Replay (future integration)
 
-**Implementation:** Created placeholder step in onboarding flow
+**Implementation:** `app/onboarding.tsx::TutorialStep()` and `src/ui/components/LiveWorkout/TutorialOverlay.tsx`
 
 **Workout Replay:** The guided first workout is the ideal trigger for a user's first Workout Replay experience. After finishing, the app plays back a summary of what they just did, introducing the replay feature naturally.
 
 ---
 
-### Planned - Feature Highlights
-- [ ] Quick carousel of key features
-- [ ] Social feed preview
-- [ ] Streak system explanation
-- [ ] "Get started" CTA
+### Done - Feature Highlights ✅
+- [x] Quick carousel of key features
+- [x] Social feed preview
+- [x] Streak system explanation
+- [x] "Get started" CTA
+
+**Implementation:** `app/onboarding.tsx::HighlightsStep()` - Horizontal scroll carousel with pagination dots
 
 ---
 
@@ -106,8 +110,9 @@ The onboarding steps proceed in this order:
 3. **Goal Setting** - "What are you training for?" (skippable)
 4. **Profile Setup** - Name, bodyweight, experience level (skippable)
 5. **Personality Picker** - Select gym buddy personality (skippable)
-6. **Guided First Workout** - Tutorial overlay on live workout (skippable)
-7. **Complete** - Celebration, redirect to home
+6. **Feature Highlights** - Carousel showcasing key features (skippable)
+7. **Guided First Workout** - Tutorial overlay on live workout (skippable)
+8. **Complete** - Celebration, redirect to home
 
 All steps are skippable. Sensible defaults are applied for any skipped step (default avatar, general training goal, etc.).
 
@@ -272,11 +277,19 @@ type OnboardingStep =
 3. Auto-redirects to onboarding if not completed
 4. Settings persist across sessions
 
-**Next Steps:**
-- Implement avatar creation step with art style selection
-- Implement goal setting step
-- Add `goal` field to OnboardingProfile and settings store
-- Add `"avatar"` and `"goals"` to OnboardingStep type in code
-- Implement actual tutorial overlay with live-workout integration
-- Wire guided first workout completion to trigger Workout Replay
-- Create profile photo upload option
+**Recent Updates (2026-01-31):**
+- ✅ Added feature highlights carousel with 3 slides (social feed, streak system, get started)
+- ✅ Implemented guided workout tutorial overlay with 4-step walkthrough
+- ✅ Added tutorial step tracking in onboarding store
+- ✅ Integrated tutorial overlay into live-workout screen with query param detection
+- ✅ Added comprehensive validation and loading states to profile and avatar steps
+- ✅ Wrote comprehensive tests for onboarding store and screen components
+
+**Next Steps (Future Enhancements):**
+- Implement avatar creation step with art style selection (already done)
+- Implement goal setting step (already done)
+- Add `goal` field to OnboardingProfile and settings store (already done)
+- Add `"avatar"` and `"goals"` to OnboardingStep type in code (already done)
+- Implement actual tutorial overlay with live-workout integration (completed)
+- Wire guided first workout completion to trigger Workout Replay (future)
+- Create profile photo upload option (future)

@@ -6,7 +6,7 @@
 - Completed comprehensive codebase analysis and created `docs/codebase-analysis.md`
 - Updated CLAUDE workflow documentation to reflect current project state
 - Updated feature tracking and progress metrics
-- Identified critical issues: 160 failing tests, backend sync integration incomplete, OAuth authentication not working
+- Identified critical issues: 159 failing tests, backend sync integration complete, OAuth authentication not working
 - Current phase: 2 - Advanced Features (AI Gym Buddy, Analytics, and Social Enhancements)
 - Total feature progress: 117/167 features (70%)
 - Quality score: 75/100
@@ -105,7 +105,7 @@
 ## What's Not Working / Missing
 
 ### Critical Issues (P0)
-- **160 failing tests** - Test suite health needs immediate attention
+- **159 failing tests** - Test suite health needs immediate attention
 - **Backend sync integration complete** - Sync system now fully integrated with auth and initialized on app start
 - **OAuth authentication not working** - Google/Apple sign-in implemented but requires external setup
 
@@ -148,7 +148,7 @@
 ## Known Issues
 
 ### Critical (P0)
-- 160 failing tests (must be fixed before user testing)
+- 159 failing tests (must be fixed before user testing)
 - Backend sync integration incomplete → **COMPLETED** (sync system initialized, stores registered, auth integration working)
 - OAuth authentication not working
 
@@ -168,15 +168,15 @@
 ## Next Steps
 
 ### Immediate (This Week)
-1. **Fix failing tests** - Address the 160 failing tests to restore test suite health
-2. **Complete backend sync integration** - Integrate sync system with authentication
+1. **Fix failing tests** - Address the 159 failing tests to restore test suite health
+2. **Test backend sync functionality** - Verify sync system works with real backend
 3. **Implement OAuth authentication** - Complete Google/Apple sign-in setup
 4. **Apply database migration** 005_user_search.sql to Supabase
 
 ### Short Term (Next 2 Weeks)
 1. Implement protected routes
 2. Test sync functionality with real backend
-3. Complete onboarding screens
+3. Polish onboarding (guided workout, feature highlights)
 4. Set input polish
 5. Rest timer enhancements
 
@@ -198,7 +198,7 @@
 - 100+ exercises defined
 
 ### Test Stats
-- 1000+ test cases
+- 1219 test cases
 - 100% coverage on DB types
 - 89 auth tests
 - Scoring algorithm: 100%
@@ -419,7 +419,7 @@
   - Integrated sync initialization with auth state changes (already working via `syncOrchestrator.onSignIn/onSignOut`)
   - Updated backend feature documentation to mark sync integration as complete
 - Backend & Sync feature progress: 9/10 → 10/10 (Status: Done)
-- Remaining P0 issues: 160 failing tests and OAuth authentication setup
+- Remaining P0 issues: 159 failing tests and OAuth authentication setup
 
 **Files Created (Phase 3):**
   - `src/ui/components/LiveWorkout/UXToggle.tsx` - Toggle button component

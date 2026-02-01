@@ -1,7 +1,7 @@
 // app/live-workout.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 import { makeDesignSystem } from "../src/ui/designSystem";
 import { FR } from "../src/ui/forgerankStyle";
@@ -28,13 +28,13 @@ import { SelectedExerciseCard } from "../src/ui/components/LiveWorkout/SelectedE
 import { WorkoutActions } from "../src/ui/components/LiveWorkout/WorkoutActions";
 import { RecapCues } from "../src/ui/components/LiveWorkout/RecapCues";
 import { PRCelebration } from "../src/ui/components/LiveWorkout/PRCelebration";
+import { TutorialOverlay } from "../src/ui/components/LiveWorkout/TutorialOverlay";
 
 // Live Workout Together components
 import { LiveWorkoutTogether } from "../src/ui/components/LiveWorkoutTogether/LiveWorkoutTogether";
 // Gamification components
 import { LevelUpModal } from "../src/ui/components/Gamification";
-import { usePendingLevelUp } from "../src/lib/stores/gamificationStore";
-import { useGamificationStore } from "../src/lib/stores/gamificationStore";
+import { usePendingLevelUp, useGamificationStore } from "../src/lib/stores/gamificationStore";
 
 // Hooks
 import { useValidationToast } from "../src/lib/hooks/useValidationToast";
@@ -48,11 +48,12 @@ import {
   ensureCurrentSession,
   updateCurrentSession,
   useCurrentSession,
+  useUser,
 } from "../src/lib/stores";
 import { getSettings as getSettingsV2 } from "../src/lib/stores/settingsStore";
 import { useBuddyStore } from "../src/lib/stores/buddyStore";
+import { useOnboardingStore } from "../src/lib/stores/onboardingStore";
 import { evaluateBehaviorTriggers } from "../src/lib/buddyEngine";
-import { useGamificationStore } from "../src/lib/stores/gamificationStore";
 
 // Utils
 import { randomHighlightDurationMs } from "../src/lib/perSetCue";
@@ -120,17 +121,6 @@ function onRestTimerDoneFeedback() {
   }
 }
 
-function onRestTimerDone() {
-  // Record rest duration in buddy store
-  if (restStartTime) {
-    const durationMs = Date.now() - restStartTime;
-    useBuddyStore.getState().recordRest(durationMs);
-    setRestStartTime(null);
-  }
-
-  // Call original feedback function
-  onRestTimerDoneFeedback();
-}
 
 function hapticLight() {
   const s = getSettings();
@@ -168,6 +158,18 @@ export default function LiveWorkout() {
   const notificationPermissionRequestedRef = useRef(false);
   const [restStartTime, setRestStartTime] = useState<number | null>(null);
 
+  const onRestTimerDone = () => {
+    // Record rest duration in buddy store
+    if (restStartTime) {
+      const durationMs = Date.now() - restStartTime;
+      useBuddyStore.getState().recordRest(durationMs);
+      setRestStartTime(null);
+    }
+    // Call original feedback function
+    onRestTimerDoneFeedback();
+  };
+
+
   // PR celebration state
   const [celebration, setCelebration] = useState<SelectedCelebration | null>(null);
 
@@ -189,6 +191,12 @@ export default function LiveWorkout() {
     persisted,
   });
 
+  // Tutorial state
+  const params = useLocalSearchParams<{ tutorial?: string }>();
+  const isTutorialMode = params.tutorial === 'true';
+  const { tutorialStep, tutorialCompleted, advanceTutorialStep, completeTutorial } = useOnboardingStore();
+  const showTutorial = isTutorialMode && !tutorialCompleted;
+
   // Validation toast for error/success feedback
   const { toast, showError, showSuccess, dismiss } = useValidationToast();
 
@@ -197,6 +205,7 @@ export default function LiveWorkout() {
     onError: showError,
     onSuccess: showSuccess,
   });
+  const { syncQuickAddToExercise } = session;
 
   // Workout orchestrator with haptic/sound callbacks
   const orchestrator = useWorkoutOrchestrator({
@@ -398,6 +407,13 @@ export default function LiveWorkout() {
     }));
   }, [pickerState.selectedExerciseId, pickerState.exerciseBlocks]);
 
+  // Auto-fill weight/reps from last workout when exercise changes
+  useEffect(() => {
+    if (pickerState.selectedExerciseId && syncQuickAddToExercise) {
+      syncQuickAddToExercise(pickerState.selectedExerciseId);
+    }
+  }, [pickerState.selectedExerciseId, syncQuickAddToExercise]);
+
   // Add set to the workout
   function addSetInternal(exerciseId: string, source: "quick" | "block") {
     const result = session.addSet(exerciseId);
@@ -481,7 +497,7 @@ export default function LiveWorkout() {
         visible={restVisible}
         initialSeconds={DEFAULT_REST_SECONDS}
         onClose={() => setRestVisible(false)}
-        onDone={onRestTimerDoneFeedback}
+        onDone={onRestTimerDone}
         workoutId={persisted?.session?.id}
       />
 
@@ -499,6 +515,18 @@ export default function LiveWorkout() {
         celebration={pendingLevelUp}
         onDismiss={dismissLevelUp}
       />
+
+      {showTutorial && (
+        <TutorialOverlay
+          onComplete={() => {
+            // Optional: navigate away or show completion message
+            console.log('Tutorial completed');
+          }}
+          onSkip={() => {
+            console.log('Tutorial skipped');
+          }}
+        />
+      )}
 
       <ScrollView
         contentContainerStyle={{ padding: PAD, gap: GAP, paddingBottom: SCROLL_BOTTOM_PADDING }}

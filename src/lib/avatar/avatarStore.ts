@@ -70,98 +70,107 @@ export const useAvatarStore = create<AvatarStoreState & AvatarStoreActions>()(
       // Set avatar art style
       setArtStyle: async (style: AvatarArtStyle) => {
         const user = getUser();
-        if (!user) {
-          set({ error: "User not authenticated" });
-          return false;
-        }
 
-        set({ loading: true, error: null });
+        // Update local state immediately
+        set({ artStyle: style, error: null });
 
-        try {
-          const result = await updateAvatarStyle(user.id, style);
-
-          if (result.success) {
-            set({ artStyle: style, loading: false });
-            return true;
-          } else {
-            set({ error: result.error || "Failed to update avatar style", loading: false });
+        // Only sync to backend if user is authenticated
+        if (user) {
+          set({ loading: true });
+          try {
+            const result = await updateAvatarStyle(user.id, style);
+            if (result.success) {
+              set({ loading: false });
+              return true;
+            } else {
+              set({ error: result.error || "Failed to update avatar style", loading: false });
+              return false;
+            }
+          } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : "Unknown error";
+            set({ error: errorMessage, loading: false });
+            logError({ context: "AvatarStore.setArtStyle", error: err, userMessage: "Failed to set avatar style" });
             return false;
           }
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : "Unknown error";
-          set({ error: errorMessage, loading: false });
-          logError({ context: "AvatarStore.setArtStyle", error: err, userMessage: "Failed to set avatar style" });
-          return false;
         }
+
+        // Successfully updated locally
+        return true;
       },
 
       // Set avatar cosmetics
       setCosmetics: async (cosmetics: AvatarCosmetics) => {
         const user = getUser();
-        if (!user) {
-          set({ error: "User not authenticated" });
-          return false;
-        }
 
-        set({ loading: true, error: null });
+        // Update local state immediately
+        set({ cosmetics, error: null });
 
-        try {
-          const result = await updateAvatarCosmetics(user.id, cosmetics);
-
-          if (result.success) {
-            set({ cosmetics, loading: false });
-            return true;
-          } else {
-            set({ error: result.error || "Failed to update avatar cosmetics", loading: false });
+        // Only sync to backend if user is authenticated
+        if (user) {
+          set({ loading: true });
+          try {
+            const result = await updateAvatarCosmetics(user.id, cosmetics);
+            if (result.success) {
+              set({ loading: false });
+              return true;
+            } else {
+              set({ error: result.error || "Failed to update avatar cosmetics", loading: false });
+              return false;
+            }
+          } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : "Unknown error";
+            set({ error: errorMessage, loading: false });
+            logError({ context: "AvatarStore.setCosmetics", error: err, userMessage: "Failed to set avatar cosmetics" });
             return false;
           }
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : "Unknown error";
-          set({ error: errorMessage, loading: false });
-          logError({ context: "AvatarStore.setCosmetics", error: err, userMessage: "Failed to set avatar cosmetics" });
-          return false;
         }
+
+        // Successfully updated locally
+        return true;
       },
 
       // Update avatar growth
       updateGrowth: async (growth: AvatarGrowth) => {
         const user = getUser();
-        if (!user) {
-          set({ error: "User not authenticated" });
-          return false;
-        }
 
-        set({ loading: true, error: null });
+        // Update local state immediately
+        set({
+          growthStage: growth.stage,
+          heightScale: growth.heightScale,
+          volumeTotal: growth.volumeTotal,
+          setsTotal: growth.setsTotal,
+          avgRank: growth.avgRank,
+          error: null
+        });
 
-        try {
-          const result = await updateAvatarGrowth(
-            user.id,
-            growth.stage,
-            growth.heightScale,
-            growth.volumeTotal,
-            growth.setsTotal
-          );
-
-          if (result.success) {
-            set({
-              growthStage: growth.stage,
-              heightScale: growth.heightScale,
-              volumeTotal: growth.volumeTotal,
-              setsTotal: growth.setsTotal,
-              avgRank: growth.avgRank,
-              loading: false
-            });
-            return true;
-          } else {
-            set({ error: result.error || "Failed to update avatar growth", loading: false });
+        // Only sync to backend if user is authenticated
+        if (user) {
+          set({ loading: true });
+          try {
+            const result = await updateAvatarGrowth(
+              user.id,
+              growth.stage,
+              growth.heightScale,
+              growth.volumeTotal,
+              growth.setsTotal
+            );
+            if (result.success) {
+              set({ loading: false });
+              return true;
+            } else {
+              set({ error: result.error || "Failed to update avatar growth", loading: false });
+              return false;
+            }
+          } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : "Unknown error";
+            set({ error: errorMessage, loading: false });
+            logError({ context: "AvatarStore.updateGrowth", error: err, userMessage: "Failed to update avatar growth" });
             return false;
           }
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : "Unknown error";
-          set({ error: errorMessage, loading: false });
-          logError({ context: "AvatarStore.updateGrowth", error: err, userMessage: "Failed to update avatar growth" });
-          return false;
         }
+
+        // Successfully updated locally
+        return true;
       },
 
       // Calculate avatar growth based on metrics

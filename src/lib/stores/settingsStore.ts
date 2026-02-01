@@ -6,7 +6,7 @@ import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import { useMemo } from "react";
 
 // Import experience level type from onboarding store
-import type { ExperienceLevel } from "./onboardingStore";
+import type { ExperienceLevel, TrainingGoal } from "./onboardingStore";
 
 const STORAGE_KEY = "forgerank.settings.v2"; // New key for Zustand version
 
@@ -20,6 +20,7 @@ export interface Settings {
   bodyweight: number; // Always stored in kg internally
   experienceLevel: ExperienceLevel;
   personalityId: string;
+  goal: TrainingGoal;
   accent: Accent;
   replayAutoPlay: boolean;
   // Notification preferences
@@ -42,6 +43,7 @@ const DEFAULTS: Settings = {
   bodyweight: 70, // default kg (~154 lb)
   experienceLevel: "intermediate",
   personalityId: "coach",
+  goal: "general",
   accent: "toxic",
   replayAutoPlay: true,
   notificationPrefs: {
@@ -91,6 +93,7 @@ export const useSettingsStore = create<SettingsState>()(
         bodyweight: state.bodyweight,
         experienceLevel: state.experienceLevel,
         personalityId: state.personalityId,
+        goal: state.goal,
         accent: state.accent,
         replayAutoPlay: state.replayAutoPlay,
         notificationPrefs: state.notificationPrefs,
@@ -128,6 +131,7 @@ export function useSettings(): Settings {
   const bodyweight = useSettingsStore((state) => state.bodyweight);
   const experienceLevel = useSettingsStore((state) => state.experienceLevel);
   const personalityId = useSettingsStore((state) => state.personalityId);
+  const goal = useSettingsStore((state) => state.goal);
   const accent = useSettingsStore((state) => state.accent);
   const replayAutoPlay = useSettingsStore((state) => state.replayAutoPlay);
 
@@ -142,6 +146,7 @@ export function useSettings(): Settings {
       bodyweight,
       experienceLevel,
       personalityId,
+      goal,
       accent,
       replayAutoPlay,
       notificationPrefs: {
@@ -153,7 +158,7 @@ export function useSettings(): Settings {
         comments: true,
       },
     }),
-    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, accent, replayAutoPlay]
+    [hapticsEnabled, soundsEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, replayAutoPlay]
   );
 }
 
@@ -169,6 +174,7 @@ export function getSettings(): Settings {
     bodyweight: state.bodyweight,
     experienceLevel: state.experienceLevel,
     personalityId: state.personalityId,
+    goal: state.goal,
     accent: state.accent,
     replayAutoPlay: state.replayAutoPlay,
     notificationPrefs: state.notificationPrefs,
@@ -178,4 +184,11 @@ export function getSettings(): Settings {
 // Imperative action for non-React code
 export function updateSettings(patch: Partial<Settings>): void {
   useSettingsStore.getState().updateSettings(patch);
+}
+
+/**
+ * Get user bodyweight for analytics
+ */
+export function getUserBodyweight(): number {
+  return useSettingsStore.getState().bodyweight;
 }
