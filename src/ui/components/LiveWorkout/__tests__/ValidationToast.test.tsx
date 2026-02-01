@@ -301,12 +301,20 @@ describe('ValidationToast Component', () => {
         />
       );
 
-      expect(mockTiming).toHaveBeenCalledWith(
-        expect.any(Animated.Value),
-        expect.objectContaining({
-          duration: 250,
-        })
-      );
+      // Should be called twice (once for opacity, once for translateY) for the fade in animation
+      expect(mockTiming).toHaveBeenCalledTimes(2);
+
+      // Check that both calls have the correct duration
+      const firstCall = (mockTiming as jest.Mock).mock.calls[0];
+      const secondCall = (mockTiming as jest.Mock).mock.calls[1];
+
+      expect(firstCall[1]).toMatchObject({
+        duration: 250,
+      });
+
+      expect(secondCall[1]).toMatchObject({
+        duration: 250,
+      });
     });
 
     it('should use native driver for animations', () => {
@@ -319,12 +327,20 @@ describe('ValidationToast Component', () => {
         />
       );
 
-      expect(mockTiming).toHaveBeenCalledWith(
-        expect.any(Animated.Value),
-        expect.objectContaining({
-          useNativeDriver: true,
-        })
-      );
+      // Should be called twice (once for opacity, once for translateY) for the fade in animation
+      expect(mockTiming).toHaveBeenCalledTimes(2);
+
+      // Check that both calls have useNativeDriver set to true
+      const firstCall = (mockTiming as jest.Mock).mock.calls[0];
+      const secondCall = (mockTiming as jest.Mock).mock.calls[1];
+
+      expect(firstCall[1]).toMatchObject({
+        useNativeDriver: true,
+      });
+
+      expect(secondCall[1]).toMatchObject({
+        useNativeDriver: true,
+      });
     });
 
     it('should use easing functions for smooth animations', () => {
@@ -337,12 +353,20 @@ describe('ValidationToast Component', () => {
         />
       );
 
-      expect(mockTiming).toHaveBeenCalledWith(
-        expect.any(Animated.Value),
-        expect.objectContaining({
-          easing: expect.any(Function),
-        })
-      );
+      // Should be called twice (once for opacity, once for translateY) for the fade in animation
+      expect(mockTiming).toHaveBeenCalledTimes(2);
+
+      // Check that both calls have easing functions
+      const firstCall = (mockTiming as jest.Mock).mock.calls[0];
+      const secondCall = (mockTiming as jest.Mock).mock.calls[1];
+
+      expect(firstCall[1]).toMatchObject({
+        easing: expect.any(Function),
+      });
+
+      expect(secondCall[1]).toMatchObject({
+        easing: expect.any(Function),
+      });
     });
   });
 
@@ -382,7 +406,7 @@ describe('ValidationToast Component', () => {
       expect(onDismissMock).not.toHaveBeenCalled();
     });
 
-    it('should clear existing timer when visibility changes to false', () => {
+    it('should clear existing timer when visibility changes to false', async () => {
       const { rerender } = render(
         <ValidationToast
           visible={true}
@@ -402,8 +426,11 @@ describe('ValidationToast Component', () => {
         />
       );
 
-      // onDismiss should be called due to dismissToast
-      expect(onDismissMock).toHaveBeenCalled();
+      // Wait for animation callback to complete
+      await waitFor(() => {
+        // onDismiss should be called due to dismissToast
+        expect(onDismissMock).toHaveBeenCalled();
+      });
     });
   });
 

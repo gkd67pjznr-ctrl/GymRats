@@ -140,9 +140,13 @@ export const useCurrentSessionStore = create<CurrentSessionState>()(
       name: STORAGE_KEY,
       storage: createQueuedJSONStorage(),
       partialize: (state) => ({ session: state.session }),
-      onRehydrateStorage: () => (state) => {
-        // Mark as hydrated after loading from storage
-        state?.setHydrated(true);
+      onRehydrateStorage: (initialState) => (state, error) => {
+        if (error) {
+          if (__DEV__) console.error('[currentSessionStore] Hydration failed:', error);
+        } else {
+          // Mark as hydrated after loading from storage
+          state?.setHydrated(true);
+        }
       },
     }
   )

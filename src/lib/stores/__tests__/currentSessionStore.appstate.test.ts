@@ -93,11 +93,11 @@ describe('currentSessionStore - AppState Integration (TASK-001, TASK-002)', () =
       // First listener should not be removed yet
       expect(mockRemove1).not.toHaveBeenCalled();
 
-      // Cleanup second listener
+      // Cleanup second listener - should still remove the actual (single) listener
       cleanup2();
 
-      // Should remove the actual (single) listener
-      expect(mockRemove2).toHaveBeenCalled();
+      // Should remove the actual (single) listener from the first call
+      expect(mockRemove1).toHaveBeenCalled();
     });
 
     it('should flush PersistQueue when app goes to background', async () => {
@@ -241,7 +241,7 @@ describe('currentSessionStore - Hydration (TASK-003, TASK-004)', () => {
         doneBySetId: {},
       };
 
-      mockAsyncStorage.getItem.mockResolvedValueOnce(
+      mockAsyncStorage.getItem.mockResolvedValue(
         JSON.stringify({ session: persistedSession })
       );
 
