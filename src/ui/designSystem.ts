@@ -321,6 +321,158 @@ export function makeDesignSystem(mode: DSMode = "dark", accent: Accent = "toxic"
 }
 
 /**
+ * Create a design system from a ThemePalette object
+ * This function uses the extended color information from the theme palette
+ */
+export function makeDesignSystemFromPalette(mode: DSMode = "dark", palette: any): DesignSystem {
+  // Extract accent mapping from palette ID
+  let accent: Accent = "toxic";
+  switch (palette.id) {
+    case 'toxic-energy':
+      accent = 'toxic';
+      break;
+    case 'iron-forge':
+      accent = 'electric';
+      break;
+    case 'neon-glow':
+      accent = 'ember';
+      break;
+    case 'cosmic-strength':
+      accent = 'ice';
+      break;
+    case 'legendary-mystery':
+      accent = 'ultra';
+      break;
+    default:
+      accent = 'toxic';
+  }
+
+  // Use the extended color information from the palette
+  const tone: Tone = {
+    // core
+    bg: palette.colors?.background || "#0A0A0D",
+    card: palette.colors?.card || "#111118",
+    card2: "#151522", // Keep this as is since it's not in the extended palette
+    text: palette.colors?.text || "#F2F4FF",
+    muted: palette.colors?.muted || "#A9AEC7",
+    border: palette.colors?.border || "#26263A",
+    overlay: "rgba(0,0,0,0.55)",
+
+    // semantic
+    success: palette.colors?.success || "#20FF9A",
+    danger: palette.colors?.danger || "#FF2D55",
+    warn: palette.colors?.warning || "#FFB020",
+    info: palette.colors?.info || "#3A8DFF",
+
+    // accents
+    accent: palette.colors?.accent || ACCENTS[accent].accent,
+    accent2: palette.colors?.accent2 || ACCENTS[accent].accent2,
+    accentSoft: palette.colors?.soft || ACCENTS[accent].soft,
+
+    // rank hues
+    iron: palette.colors?.iron || "#7B7E8A",
+    bronze: palette.colors?.bronze || "#B07A4A",
+    silver: palette.colors?.silver || "#BFC7D5",
+    gold: palette.colors?.gold || "#FFCC4A",
+    platinum: palette.colors?.platinum || "#64E6C2",
+    diamond: palette.colors?.diamond || "#53A8FF",
+    mythic: palette.colors?.mythic || "#FF4DFF",
+  };
+
+  // Use the same type, radii, space, strokes, shadow, motion, and feedback as the standard function
+  const type: TypeScale = {
+    hero: { size: 34, lh: 38, w: "900", tracking: -0.6 },
+    h1: { size: 26, lh: 30, w: "900", tracking: -0.4 },
+    h2: { size: 20, lh: 24, w: "900", tracking: -0.2 },
+    h3: { size: 16, lh: 20, w: "800", tracking: -0.1 },
+    body: { size: 15, lh: 20, w: "700", tracking: 0 },
+    body2: { size: 13, lh: 18, w: "700", tracking: 0.1 },
+    caption: { size: 12, lh: 16, w: "800", tracking: 0.2 },
+    micro: { size: 11, lh: 14, w: "900", tracking: 0.3 },
+  };
+
+  const radii: Radii = {
+    xs: 8,
+    sm: 12,
+    md: 16,
+    lg: 20,
+    xl: 26,
+    pill: 999,
+  };
+
+  const space: Spacing = {
+    x0: 0,
+    x1: 4,
+    x2: 8,
+    x3: 12,
+    x4: 16,
+    x5: 20,
+    x6: 24,
+    x7: 32,
+    x8: 40,
+    x9: 56,
+  };
+
+  const strokes: Strokes = {
+    hairline: 1,
+    thin: 1.25,
+    medium: 1.5,
+    thick: 2,
+  };
+
+  const shadow = {
+    soft: { color: "#000000", opacity: 0.25, radius: 18, y: 10 },
+    lift: { color: "#000000", opacity: 0.35, radius: 24, y: 14 },
+    punch: { color: "#000000", opacity: 0.45, radius: 28, y: 18 },
+  };
+
+  const motion: Motion = {
+    fastMs: 120,
+    medMs: 180,
+    slowMs: 260,
+    spring: {
+      tension: 280,
+      friction: 22,
+    },
+    // cubic-bezier-ish values (for web parity later)
+    easeOut: [0.16, 1, 0.3, 1],
+  };
+
+  const feedback: Feedback = {
+    haptics: {
+      onSetLogged: "light",
+      onPR: "heavy",
+      onError: "warn",
+      onNav: "light",
+    },
+    sounds: {
+      onPR: "spark",
+      onComplete: "stamp",
+      onError: "thud",
+    },
+  };
+
+  return {
+    mode,
+    accent,
+    tone,
+    type,
+    radii,
+    space,
+    strokes,
+    shadow,
+    motion,
+    feedback,
+    rules: {
+      cardStyle: { borderWidth: strokes.hairline },
+      maxContentWidth: 520,
+      tapOpacity: 0.7,
+      subtleBorderAlpha: 0.6,
+    },
+  };
+}
+
+/**
  * Helpers: small utilities so screens stay consistent.
  * These are intentionally minimal.
  */

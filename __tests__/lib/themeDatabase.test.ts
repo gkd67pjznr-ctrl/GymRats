@@ -11,6 +11,8 @@ import {
   getPaletteById,
   getTypographyById,
   getIllustrationById,
+  getAudioById,
+  getMotionById,
   getActiveConfiguration,
   setActiveConfiguration,
   addConfiguration,
@@ -18,6 +20,8 @@ import {
   DEFAULT_PALETTES,
   DEFAULT_TYPOGRAPHY,
   DEFAULT_ILLUSTRATIONS,
+  DEFAULT_AUDIO,
+  DEFAULT_MOTION,
   DEFAULT_CONFIGURATIONS,
 } from '../../src/lib/themeDatabase';
 
@@ -36,6 +40,16 @@ describe('Theme Database', () => {
     it('should initialize with default illustrations', () => {
       const database = initializeThemeDatabase();
       expect(database.illustrations).toEqual(DEFAULT_ILLUSTRATIONS);
+    });
+
+    it('should initialize with default audio', () => {
+      const database = initializeThemeDatabase();
+      expect(database.audio).toEqual(DEFAULT_AUDIO);
+    });
+
+    it('should initialize with default motion', () => {
+      const database = initializeThemeDatabase();
+      expect(database.motion).toEqual(DEFAULT_MOTION);
     });
 
     it('should initialize with default configurations', () => {
@@ -89,6 +103,36 @@ describe('Theme Database', () => {
     });
   });
 
+  describe('getAudioById', () => {
+    it('should return audio by ID', () => {
+      const database = initializeThemeDatabase();
+      const audio = getAudioById(database, 'spark-pr');
+      expect(audio).toBeDefined();
+      expect(audio?.id).toBe('spark-pr');
+    });
+
+    it('should return undefined for non-existent audio', () => {
+      const database = initializeThemeDatabase();
+      const audio = getAudioById(database, 'non-existent');
+      expect(audio).toBeUndefined();
+    });
+  });
+
+  describe('getMotionById', () => {
+    it('should return motion by ID', () => {
+      const database = initializeThemeDatabase();
+      const motion = getMotionById(database, 'snappy-base');
+      expect(motion).toBeDefined();
+      expect(motion?.id).toBe('snappy-base');
+    });
+
+    it('should return undefined for non-existent motion', () => {
+      const database = initializeThemeDatabase();
+      const motion = getMotionById(database, 'non-existent');
+      expect(motion).toBeUndefined();
+    });
+  });
+
   describe('getActiveConfiguration', () => {
     it('should return the active configuration', () => {
       const database = initializeThemeDatabase();
@@ -117,6 +161,8 @@ describe('Theme Database', () => {
         paletteId: 'toxic-energy',
         typographyId: 'functional-base',
         illustrationId: 'hand-drawn-base',
+        audioId: 'spark-pr',
+        motionId: 'snappy-base',
       };
       const updatedDatabase = addConfiguration(database, newConfig);
       expect(updatedDatabase.configurations).toHaveLength(database.configurations.length + 1);
