@@ -393,7 +393,8 @@ describe('currentSessionStore - PersistQueue verification (TASK-005)', () => {
     mockAsyncStorage.getItem.mockResolvedValueOnce(null);
     mockAsyncStorage.setItem.mockImplementation(async (_key, value) => {
       const parsed = JSON.parse(value);
-      writeOrder.push(`write-${parsed.session.sets.length}`);
+      const setCount = parsed && parsed.session ? parsed.session.sets.length : 0;
+      writeOrder.push(`write-${setCount}`);
       await new Promise((resolve) => setTimeout(resolve, 10));
     });
 
