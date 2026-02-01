@@ -5,6 +5,7 @@ import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { WorkoutSession } from '../../workoutModel';
 import type { DatabaseWorkout, DatabaseWorkoutInsert, DatabaseWorkoutUpdate } from '../../supabase/types';
 import { RealtimeChannel } from '@supabase/supabase-js';
+declare const __DEV__: boolean | undefined;
 
 /**
  * Repository interface for workout sessions
@@ -91,7 +92,7 @@ export const workoutRepository: WorkoutRepository = {
   async fetchAll(userId: string): Promise<WorkoutSession[]> {
     // If Supabase is not configured, return empty array
     if (isSupabasePlaceholder) {
-      if (__DEV__) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
         console.log('[workoutRepository] Supabase placeholder detected, returning empty array');
       }
       return [];
@@ -215,6 +216,14 @@ export const workoutRepository: WorkoutRepository = {
    */
   async syncUp(workouts: WorkoutSession[], userId: string): Promise<void> {
     if (workouts.length === 0) return;
+
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[workoutRepository] Supabase placeholder detected, skipping syncUp');
+      }
+      return;
+    }
 
     const insertData = workouts.map(w => toDatabaseInsert(w, userId));
 

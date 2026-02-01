@@ -13,7 +13,14 @@ import {
   useLoadDNAHistory,
   useIsSharing,
   useShareError,
-  useShareDNA
+  useShareDNA,
+  useIsSyncing,
+  useSyncError,
+  useLastSynced,
+  useSyncWithServer,
+  useAverageUserDNA,
+  useComparisonLoading,
+  useLoadUserComparison
 } from "../../../lib/forgeDNA/store";
 import { ForgeDNAVisualization } from "../ForgeDNA/ForgeDNAVisualization";
 import { ShareButton } from "../ForgeDNA/ShareButton";
