@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Pressable, Text, TextInput, View, Platform } from "react-native";
+import { Modal, Pressable, Text, TextInput, View, Platform } from "react-native";
 import { useThemeColors } from "../../theme";
 import { FR } from "../../forgerankStyle";
 import * as Haptics from "expo-haptics";
+import { NumericKeypad } from "./NumericKeypad";
 
 type StepOption = {
   label: string;
@@ -29,6 +30,8 @@ type Props = {
   stepOptions?: StepOption[];
   presets?: PresetButton[];
   presetContainerStyle?: "row" | "scroll";
+  /** Whether to show calculator-style keypad instead of system keyboard */
+  keypadMode?: boolean;
 };
 
 /**
@@ -55,9 +58,11 @@ export function NumberInput({
   stepOptions,
   presets,
   presetContainerStyle = "row",
+  keypadMode = false,
 }: Props) {
   const c = useThemeColors();
   const [selectedStep, setSelectedStep] = useState(0);
+  const [keypadVisible, setKeypadVisible] = useState(false);
 
   const triggerHaptic = () => {
     if (Platform.OS === "ios") {
@@ -93,9 +98,21 @@ export function NumberInput({
     onCommit();
   };
 
+  const handleKeypadChange = (newValue: string) => {
+    onTextChange(newValue);
+  };
+
+  const handleKeypadDone = () => {
+    setKeypadVisible(false);
+    onCommit();
+  };
+
   const canDecrement = value > min;
   const canIncrement = value < max;
   const currentStep = stepOptions?.[selectedStep];
+  // Determine current step value for quick adjust buttons
+  const stepValue = currentStep?.value ?? 2.5;
+  const stepLabel = stepValue % 1 === 0 ? stepValue.toString() : stepValue.toFixed(1);
 
   // Determine container class for presets
   const PresetContainer = presetContainerStyle === "row" ? View : View;
@@ -105,10 +122,51 @@ export function NumberInput({
 
   return (
     <View style={{ gap: FR.space.x2 }}>
-      {/* Label with unit */}
-      <View style={{ flexDirection: "row", alignItems: "baseline", gap: FR.space.x1 }}>
-        <Text style={[FR.type.sub, { color: c.muted }]}>{label}</Text>
-        <Text style={[FR.type.mono, { color: c.muted, opacity: 0.7 }]}>({unit})</Text>
+      {/* Label with unit and quick adjust buttons */}
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", alignItems: "baseline", gap: FR.space.x1 }}>
+          <Text style={[FR.type.sub, { color: c.muted }]}>{label}</Text>
+          <Text style={[FR.type.mono, { color: c.muted, opacity: 0.7 }]}>({unit})</Text>
+        </View>
+        {/* Quick adjust buttons for weight */}
+        {unit === "lb" && (
+          <View style={{ flexDirection: "row", gap: FR.space.x1, alignItems: "center" }}>
+            <Pressable
+              onPress={handleDecrement}
+              disabled={!canDecrement}
+              style={({ pressed }) => ({
+                width: 28,
+                height: 28,
+                borderRadius: FR.radius.soft,
+                backgroundColor: c.card,
+                borderWidth: 1,
+                borderColor: c.border,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: pressed ? 0.7 : canDecrement ? 1 : 0.3,
+              })}
+            >
+              <Text style={[FR.type.mono, { color: canDecrement ? c.text : c.muted, fontSize: 14 }]}>-{stepLabel}</Text>
+            </Pressable>
+            <Pressable
+              onPress={handleIncrement}
+              disabled={!canIncrement}
+              style={({ pressed }) => ({
+                width: 28,
+                height: 28,
+                borderRadius: FR.radius.soft,
+                backgroundColor: c.card,
+                borderWidth: 1,
+                borderColor: c.border,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: pressed ? 0.7 : canIncrement ? 1 : 0.3,
+              })}
+            >
+              <Text style={[FR.type.mono, { color: canIncrement ? c.text : c.muted, fontSize: 14 }]}>+{stepLabel}</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
 
       {/* Main input row */}
@@ -134,24 +192,52 @@ export function NumberInput({
 
         {/* Text input */}
         <View style={{ flex: 1, justifyContent: "center" }}>
-          <TextInput
-            value={textValue}
-            keyboardType="decimal-pad"
-            onChangeText={onTextChange}
-            onBlur={onCommit}
-            style={{
-              borderWidth: 1,
-              borderColor: c.border,
-              borderRadius: FR.radius.input,
-              paddingVertical: FR.space.x3,
-              paddingHorizontal: FR.space.x3,
-              color: c.text,
-              backgroundColor: c.bg,
-              fontWeight: "900",
-              fontSize: 18,
-              textAlign: "center",
-            }}
-          />
+          {keypadMode ? (
+            <Pressable
+              onPress={() => setKeypadVisible(true)}
+              style={({ pressed }) => ({
+                borderWidth: 1,
+                borderColor: c.border,
+                borderRadius: FR.radius.input,
+                paddingVertical: FR.space.x3,
+                paddingHorizontal: FR.space.x3,
+                color: c.text,
+                backgroundColor: c.bg,
+                fontWeight: "900",
+                fontSize: 18,
+                textAlign: "center",
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text style={{
+                color: c.text,
+                fontWeight: "900",
+                fontSize: 18,
+                textAlign: "center",
+              }}>
+                {textValue || '0'}
+              </Text>
+            </Pressable>
+          ) : (
+            <TextInput
+              value={textValue}
+              keyboardType="decimal-pad"
+              onChangeText={onTextChange}
+              onBlur={onCommit}
+              style={{
+                borderWidth: 1,
+                borderColor: c.border,
+                borderRadius: FR.radius.input,
+                paddingVertical: FR.space.x3,
+                paddingHorizontal: FR.space.x3,
+                color: c.text,
+                backgroundColor: c.bg,
+                fontWeight: "900",
+                fontSize: 18,
+                textAlign: "center",
+              }}
+            />
+          )}
         </View>
 
         {/* Increment button */}
@@ -236,6 +322,40 @@ export function NumberInput({
           </PresetContainer>
         </View>
       )}
+
+      {/* Numeric Keypad Modal */}
+      <Modal
+        visible={keypadMode && keypadVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={handleKeypadDone}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: c.bg,
+              borderTopLeftRadius: FR.radius.card,
+              borderTopRightRadius: FR.radius.card,
+              padding: FR.space.x4,
+              paddingBottom: FR.space.x6,
+            }}
+          >
+            <NumericKeypad
+              value={textValue}
+              onChange={handleKeypadChange}
+              onDone={handleKeypadDone}
+              decimal={unit !== 'reps'}
+              maxLength={unit === 'reps' ? 3 : 6}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

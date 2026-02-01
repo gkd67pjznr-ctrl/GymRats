@@ -345,9 +345,7 @@ export default function LoginScreen() {
         {__DEV__ && (
           <Pressable
             onPress={async () => {
-              setIsGoogleLoading(true);
               const result = await authStore.devLogin();
-              setIsGoogleLoading(false);
               if (result.success) {
                 router.replace("/(tabs)");
               } else {

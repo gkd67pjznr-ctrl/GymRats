@@ -1,7 +1,7 @@
 // src/lib/sync/repositories/routineRepository.ts
 // Repository for user routines CRUD operations with Supabase
 
-import { supabase } from '../../supabase/client';
+import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { Routine } from '../../routinesModel';
 import type { DatabaseRoutine, DatabaseRoutineInsert, DatabaseRoutineUpdate } from '../../supabase/types';
 
@@ -81,6 +81,14 @@ export const routineRepository: RoutineRepository = {
    * Fetch all routines for a user
    */
   async fetchAll(userId: string): Promise<Routine[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (__DEV__) {
+        console.log('[routineRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('routines')
       .select('*')
@@ -99,6 +107,14 @@ export const routineRepository: RoutineRepository = {
    * Fetch routines since a given timestamp (incremental sync)
    */
   async fetchSince(userId: string, timestamp: number): Promise<Routine[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (__DEV__) {
+        console.log('[routineRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const sinceDate = new Date(timestamp).toISOString();
 
     const { data, error } = await supabase

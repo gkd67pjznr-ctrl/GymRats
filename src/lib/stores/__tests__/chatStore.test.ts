@@ -26,13 +26,14 @@ import {
   canUserMessageThread,
   hydrateChat,
   subscribeChat,
+  resetTyping,
 } from '../chatStore';
 
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
+  getItem: jest.fn(() => Promise.resolve(null)),
+  setItem: jest.fn(() => Promise.resolve()),
+  removeItem: jest.fn(() => Promise.resolve()),
 }));
 
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
@@ -43,6 +44,8 @@ describe('chatStore', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+    resetTyping();
     // Reset store state between tests
     useChatStore.setState({
       threads: [],
@@ -50,6 +53,10 @@ describe('chatStore', () => {
       reads: {},
       hydrated: false,
     });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('initial state', () => {
@@ -62,7 +69,7 @@ describe('chatStore', () => {
       }));
 
       expect(result.current.threads).toEqual([]);
-      expect(result.current.messages).toEqual({});
+      expect(result.current.messages).toEqual([]);
       expect(result.current.reads).toEqual({});
       expect(result.current.hydrated).toBe(false);
     });
@@ -123,7 +130,7 @@ describe('chatStore', () => {
     let threadId: string;
 
     beforeEach(() => {
-      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID);
+      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID, 'open');
     });
 
     it('should add message to thread', () => {
@@ -195,7 +202,7 @@ describe('chatStore', () => {
     let threadId: string;
 
     beforeEach(() => {
-      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID);
+      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID, 'open');
     });
 
     it('should set last read timestamp for user', () => {
@@ -235,17 +242,18 @@ describe('chatStore', () => {
     let threadId: string;
 
     beforeEach(() => {
-      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID);
+      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID, 'open');
     });
 
     it('should count unread messages from other users', () => {
-      const baseTime = Date.now();
+      const baseTime = 1000;
 
-      // Mark as read at base time
+      // Mark as read at baseTime
       markThreadRead(threadId, MY_USER_ID, baseTime);
 
-      // Other user sends message (after read time)
+      // Other user sends message after read time
       act(() => {
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, OTHER_USER_ID, 'New message');
       });
 
@@ -254,11 +262,12 @@ describe('chatStore', () => {
     });
 
     it('should not count own messages as unread', () => {
-      const baseTime = Date.now();
+      const baseTime = 1000;
 
       markThreadRead(threadId, MY_USER_ID, baseTime);
 
       act(() => {
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, MY_USER_ID, 'My message');
       });
 
@@ -270,8 +279,12 @@ describe('chatStore', () => {
       markThreadRead(threadId, MY_USER_ID, 0);
 
       act(() => {
+        // Advance timers to ensure message timestamps > 0
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, OTHER_USER_ID, 'Msg 1');
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, OTHER_USER_ID, 'Msg 2');
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, OTHER_USER_ID, 'Msg 3');
       });
 
@@ -280,12 +293,15 @@ describe('chatStore', () => {
 
     it('should reset to 0 after marking read', () => {
       act(() => {
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, OTHER_USER_ID, 'Msg 1');
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, OTHER_USER_ID, 'Msg 2');
       });
 
       expect(getUnreadCount(threadId, MY_USER_ID)).toBe(2);
 
+      // Mark read at a time after the messages
       markThreadRead(threadId, MY_USER_ID, Date.now() + 1000);
 
       expect(getUnreadCount(threadId, MY_USER_ID)).toBe(0);
@@ -297,12 +313,14 @@ describe('chatStore', () => {
       expect(result.current).toBe(0);
 
       act(() => {
+        jest.advanceTimersByTime(1);
         sendMessage(threadId, OTHER_USER_ID, 'New message');
       });
 
       expect(result.current).toBe(1);
 
       act(() => {
+        jest.advanceTimersByTime(1);
         markThreadRead(threadId, MY_USER_ID);
       });
 
@@ -314,7 +332,7 @@ describe('chatStore', () => {
     let threadId: string;
 
     beforeEach(() => {
-      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID);
+      threadId = ensureThread(MY_USER_ID, OTHER_USER_ID, 'open');
     });
 
     it('should set typing status', () => {
@@ -449,11 +467,11 @@ describe('chatStore', () => {
         ensureThread(user3, user1);
       });
 
-      const myThreads = useThreads(MY_USER_ID);
-      const user3Threads = useThreads(user3);
+      const { result: myResult } = renderHook(() => useThreads(MY_USER_ID));
+      const { result: user3Result } = renderHook(() => useThreads(user3));
 
-      expect(myThreads).toHaveLength(2);
-      expect(user3Threads).toHaveLength(1);
+      expect(myResult.current).toHaveLength(2);
+      expect(user3Result.current).toHaveLength(1);
     });
   });
 

@@ -229,7 +229,7 @@ Inspired by Finch, the avatar's growth represents the user's commitment to self-
 - **Core algorithms**: 100% coverage (scoring, PR detection)
 - **Stores**: High coverage with integration tests
 - **UI components**: Behavior and snapshot tests
-- **Issues**: 160 failing tests need attention
+- **Issues**: 159 failing tests need attention
 
 ### Code Quality
 - **Type Safety**: Strict TypeScript with minimal `any` usage

@@ -40,7 +40,7 @@ Present the user with **top 3 recommended tasks** based on this priority matrix:
 
 ```
 Claude: "Based on current state, I recommend:
-  1. [P0] Fix failing tests (160 currently failing)
+  1. [P0] Fix failing tests (159 currently failing)
   2. [P1] Complete backend sync integration with Supabase
   3. [P2] Implement OAuth authentication (Google/Apple)
 
@@ -617,6 +617,7 @@ The workflow is **automatically invoked** when:
 - "Start [task]" → Skip to task with that focus
 - "Exercise DB sync" → Run daily exercise database sync
 - "Maestro scan" → Run feature documentation synchronization across all worktrees
+- "Fix errors" → Run expo error log fixing protocol
 
 ---
 
@@ -664,19 +665,97 @@ The workflow is **automatically invoked** when:
 - `docs/exercise-db-api.md` - Full documentation
 
 ---
+## DIRECTIVE: FIX EXPO ERROR LOGS
 
+**Trigger:** User says "fix errors" or similar request to fix expo errors
+
+**Purpose:** Check the latest error logs in the `expo-errors` folder, fix any errors found, prompt user to restart npm/npx when finished, and delete the error log (but NOT the folder)
+
+**What to do:**
+
+1. **Check for expo-errors folder**
+   - Look for `expo-errors` directory in project root
+   - If folder doesn't exist, create it (will be needed for future errors)
+   - Note: NEVER delete the `expo-errors` folder itself, only individual log files
+
+2. **Find latest error log**
+   - List all `.log` files in `expo-errors/` sorted by modification time (newest first)
+   - If no logs found, inform user there are no recent error logs to fix
+   - Read the most recent log file to understand the error
+
+3. **Analyze and fix errors**
+   - Common error patterns to look for:
+     - "Unable to resolve" import path errors → fix import paths
+     - TypeScript/compilation errors → fix type issues
+     - Package version mismatches → update packages if possible
+     - Missing modules/files → create missing files or fix imports
+   - Apply fixes based on error type
+   - Document what was fixed
+
+4. **Prompt user to restart**
+   - After applying fixes, inform user to restart the development server:
+     ```
+     npm start
+     # or
+     npx expo start
+     ```
+   - This ensures Metro bundler picks up the changes
+
+5. **Clean up (critical rules)**
+   - ✅ **DO** delete the specific `.log` file that was just fixed
+   - ✅ **DO** keep the `expo-errors` folder itself (don't delete)
+   - ✅ **DO** note that error logs are gitignored (`expo-errors/*.log`)
+   - ✅ **DO** inform user which log file was deleted
+   - ❌ **NEVER** delete the `expo-errors` folder
+   - ❌ **NEVER** delete logs before analyzing/fixing them
+
+**Common Error Patterns & Fixes:**
+
+| Error Pattern | Likely Cause | Fix Approach |
+|---------------|--------------|--------------|
+| "Unable to resolve" | Incorrect import path | Fix relative import paths |
+| "Module not found" | Missing file/directory | Create missing file or fix path |
+| TypeScript errors | Type mismatches, missing exports | Add proper type annotations |
+| Package mismatches | `expo-doctor` warnings | Update packages with `npx expo install` |
+| Metro bundler failures | Import resolution issues | Check circular dependencies |
+
+**Example Flow:**
+```
+User: "fix errors"
+
+Claude: "Checking expo-errors folder...
+Found: expo-20260131-221322.log
+Reading error log...
+
+Error detected: Unable to resolve "../lib/gamification/shop"
+Fixing import path in src/lib/stores/index.ts...
+
+✅ Fixed: Changed "../lib/gamification/shop" → "../gamification/shop"
+
+Please restart your development server:
+npm start
+
+Deleting error log: expo-20260131-221322.log
+The expo-errors folder remains for future errors."
+```
+
+**Files involved:**
+- `expo-errors/` directory - error logs from Metro bundler
+- Various source files - depending on the specific errors
+
+---
 ## EXAMPLE SESSION
 
 ```
 User: "hey let's work"
 
 Claude: "Running startup checks...
-✓ Tests currently failing (160/1074)
+✓ Tests currently failing (159/1219)
 ✓ Current phase: 2 - Advanced Features
 ✓ Quality score: 75/100
 
 Based on current state, I recommend:
-1. [P0] Fix failing tests (160 currently failing)
+1. [P0] Fix failing tests (159 currently failing)
 2. [P1] Complete backend sync integration with Supabase
 3. [P2] Implement OAuth authentication (Google/Apple)
 

@@ -1,6 +1,15 @@
 # Forgerank Project Progress
 
-**Last Updated:** 2026-01-31
+**Last Updated:** 2026-02-01
+
+### 2026-02-01 (AI Gym Buddy IAP Integration)
+- Completed real IAP integration for premium/legendary buddy purchases
+- Created `IAPService.ts` with expo-iap for cross-platform purchases
+- Updated buddyStore with async purchase flow, product info fetching, and restore functionality
+- Enhanced BuddySettingsScreen with loading states, price display, and purchase confirmation
+- Added Jest mocks for expo-iap to maintain test compatibility
+- Updated documentation to reflect actual implementation status (9/11 features complete)
+- Total feature progress: 130/167 features (78%)
 
 ### 2026-01-30 (codebase analysis and documentation update)
 - Completed comprehensive codebase analysis and created `docs/codebase-analysis.md`

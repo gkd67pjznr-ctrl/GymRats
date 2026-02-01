@@ -21,6 +21,7 @@ import {
   isAuthenticated,
 } from '../authStore';
 import type { DatabaseUser } from '../../supabase/types';
+import { mapDatabaseUser } from '../../supabase/types';
 
 // Mock supabase client
 jest.mock('../../supabase/client', () => ({
@@ -51,6 +52,26 @@ describe('authStore', () => {
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
   };
+
+  // Convert to camelCase for store state (basic fields)
+  const mockUserProfile = mapDatabaseUser(mockDatabaseUser);
+
+  // Full user profile with all optional fields (matches toUserProfile output)
+  const fullMockUserProfile = {
+    ...mockUserProfile,
+    subscriptionTier: 'basic', // email is not dev@forgerank.app
+    avatarArtStyle: undefined,
+    avatarGrowthStage: undefined,
+    avatarHeightScale: undefined,
+    avatarCosmetics: undefined,
+    totalVolumeKg: undefined,
+    totalSets: undefined,
+    hangoutRoomId: undefined,
+    hangoutRoomRole: undefined,
+  };
+
+  // Alias for clarity
+  const expectedUserProfile = fullMockUserProfile;
 
   // Helper to reset store state
   beforeEach(() => {
@@ -129,14 +150,7 @@ describe('authStore', () => {
         const response = await result.current.signUp('test@example.com', 'password123', 'Test User');
       });
 
-      expect(result.current.user).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(result.current.user).toEqual(expectedUserProfile);
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
     });
@@ -180,6 +194,15 @@ describe('authStore', () => {
         avatarUrl: null,
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
+        subscriptionTier: 'basic',
+        avatarArtStyle: null,
+        avatarGrowthStage: null,
+        avatarHeightScale: null,
+        avatarCosmetics: null,
+        totalVolumeKg: null,
+        totalSets: null,
+        hangoutRoomId: null,
+        hangoutRoomRole: null,
       });
       expect(result.current.loading).toBe(false);
     });
@@ -294,14 +317,7 @@ describe('authStore', () => {
         const response = await result.current.signIn('test@example.com', 'password123');
       });
 
-      expect(result.current.user).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(result.current.user).toEqual(expectedUserProfile);
       expect(result.current.session).toEqual({ access_token: 'token-123' });
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
@@ -384,6 +400,15 @@ describe('authStore', () => {
         avatarUrl: null,
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
+        subscriptionTier: 'basic',
+        avatarArtStyle: null,
+        avatarGrowthStage: null,
+        avatarHeightScale: null,
+        avatarCosmetics: null,
+        totalVolumeKg: null,
+        totalSets: null,
+        hangoutRoomId: null,
+        hangoutRoomRole: null,
       });
       expect(result.current.loading).toBe(false);
     });
@@ -423,7 +448,7 @@ describe('authStore', () => {
 
       // Set initial authenticated state
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: fullMockUserProfile,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,
@@ -448,7 +473,7 @@ describe('authStore', () => {
 
       // Set initial authenticated state
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: fullMockUserProfile,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,
@@ -607,7 +632,7 @@ describe('authStore', () => {
     it('should clear user and session on SIGNED_OUT event', async () => {
       // Set initial authenticated state
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: fullMockUserProfile,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,
@@ -634,7 +659,7 @@ describe('authStore', () => {
   describe('selectors and hooks', () => {
     beforeEach(() => {
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: fullMockUserProfile,
         session: { access_token: 'token-123' } as any,
         hydrated: true,
         loading: false,
@@ -644,14 +669,7 @@ describe('authStore', () => {
 
     it('selectUser should return user from state', () => {
       const state = useAuthStore.getState();
-      expect(selectUser(state)).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(selectUser(state)).toEqual(expectedUserProfile);
     });
 
     it('selectSession should return session from state', () => {
@@ -690,21 +708,14 @@ describe('authStore', () => {
     it('useUser hook should return user profile', () => {
       const { result } = renderHook(() => useUser());
 
-      expect(result.current).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(result.current).toEqual(expectedUserProfile);
     });
   });
 
   describe('imperative getters', () => {
     beforeEach(() => {
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: fullMockUserProfile,
         session: { access_token: 'token-123' } as any,
         hydrated: true,
         loading: false,
@@ -715,14 +726,7 @@ describe('authStore', () => {
     it('getUser should return current user', () => {
       const user = getUser();
 
-      expect(user).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        displayName: 'Test User',
-        avatarUrl: 'https://example.com/avatar.jpg',
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-      });
+      expect(user).toEqual(expectedUserProfile);
     });
 
     it('getSession should return current session', () => {
@@ -742,7 +746,7 @@ describe('authStore', () => {
   describe('additional hooks', () => {
     it('useIsAuthenticated should return authentication status', () => {
       useAuthStore.setState({
-        user: mockDatabaseUser as any,
+        user: fullMockUserProfile,
         session: { access_token: 'token' } as any,
         hydrated: true,
         loading: false,

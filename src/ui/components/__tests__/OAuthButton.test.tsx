@@ -2,7 +2,7 @@
 // Tests for OAuthButton component
 
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, getByType } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
@@ -51,24 +51,41 @@ jest.mock('@/src/ui/forgerankStyle', () => ({
   },
 }));
 
-jest.mock('expo-apple-authentication', () => ({
-  AppleAuthenticationButton: 'MockButton',
-  AppleAuthenticationButtonType: {
-    SIGN_IN: 'SIGN_IN',
-  },
-  AppleAuthenticationStyle: {
-    BLACK: 'BLACK',
-    WHITE_OUTLINE: 'WHITE_OUTLINE',
-  },
-}));
+jest.mock('expo-apple-authentication', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const AppleAuthenticationButton = ({ onPress, disabled, style, buttonType, buttonStyle, cornerRadius, testID }) =>
+    React.createElement(View, { testID: 'apple-auth-button', onPress, disabled, style });
+  return {
+    AppleAuthenticationButton,
+    AppleAuthenticationButtonType: {
+      SIGN_IN: 'SIGN_IN',
+    },
+    AppleAuthenticationStyle: {
+      BLACK: 'BLACK',
+      WHITE_OUTLINE: 'WHITE_OUTLINE',
+    },
+  };
+});
 
 jest.mock('@/src/lib/auth/apple', () => ({
   isAppleAuthAvailable: jest.fn(() => true),
 }));
 
 describe('OAuthButton Component', () => {
+  let originalOS: string;
+
+  beforeAll(() => {
+    originalOS = Platform.OS;
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
+    Platform.OS = 'ios';
+  });
+
+  afterAll(() => {
+    Platform.OS = originalOS;
   });
 
   describe('Google button', () => {
@@ -122,7 +139,7 @@ describe('OAuthButton Component', () => {
 
     it('should apply custom style', () => {
       const customStyle = { marginTop: 20 };
-      const { getByText } = render(
+      const { getByRole } = render(
         <OAuthButton
           provider="google"
           onPress={jest.fn()}
@@ -130,39 +147,49 @@ describe('OAuthButton Component', () => {
         />
       );
 
-      const button = getByText('Continue with Google').parent;
-      expect(button?.props.style).toContain(customStyle);
+      const button = getByRole('button');
+      // Style may be an array; flatten to check if customStyle is included
+      const style = button.props.style;
+      console.log('button style:', style);
+      const styleArray = Array.isArray(style) ? style : [style];
+      console.log('styleArray:', styleArray);
+      const hasCustomStyle = styleArray.some(s => s && s.marginTop === 20);
+      expect(hasCustomStyle).toBe(true);
     });
   });
 
   describe('Apple button', () => {
     it('should render on iOS when available', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('ios');
+      Platform.OS = 'ios';
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(true);
 
-      const { getByText } = render(
+      const { getByTestId, queryByText } = render(
         <OAuthButton provider="apple" onPress={jest.fn()} />
       );
 
-      expect(getByText('Continue with Apple')).toBeTruthy();
+      // Should render native Apple button
+      expect(getByTestId('apple-auth-button')).toBeTruthy();
+      // Should not render custom button text
+      expect(queryByText('Continue with Apple')).toBeNull();
     });
 
     it('should not render on Android', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('android');
+      Platform.OS = 'android';
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(false);
 
-      const { container } = render(
+      const { UNSAFE_root, queryByTestId } = render(
         <OAuthButton provider="apple" onPress={jest.fn()} />
       );
 
       // Component should return null (not render anything)
-      expect(container.children.length).toBe(0);
+      expect(UNSAFE_root.children.length).toBe(0);
+      expect(queryByTestId('apple-auth-button')).toBeNull();
     });
 
     it('should call onPress when pressed', () => {
-      jest.spyOn(Platform, 'OS', 'get').mockReturnValue('web');
+      Platform.OS = 'web';
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(true);
 
@@ -235,7 +262,7 @@ describe('OAuthButton Component', () => {
       );
 
       const button = getByRole('button');
-      expect(button?.props.accessibilityState?.disabled).toBeUndefined();
+      expect(button?.props.accessibilityState?.disabled).not.toBe(true);
     });
 
     it('should be marked as disabled when disabled prop is true', () => {

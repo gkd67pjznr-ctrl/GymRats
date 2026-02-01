@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Animated, Easing, Text, View } from "react-native";
-import { makeDesignSystem } from "../../../ui/designSystem";
+import { makeDesignSystem } from "../../designSystem";
 import type { CueMessage } from "../../../lib/buddyTypes";
 import { buddies } from "../../../lib/buddyData";
 
@@ -123,7 +123,7 @@ export function BuddyMessageToast(props: BuddyMessageToastProps) {
                   props.message.intensity === "high" ? 24 : 28;
 
   // Legendary buddies get special styling
-  const accentColor = isLegendary ? ds.tone.purple : ds.tone.accent;
+  const accentColor = isLegendary ? ds.tone.accent2 : ds.tone.accent;
   const backgroundColor = isLegendary ? `${ds.tone.card}80` : ds.tone.card; // 50% opacity for legendary
 
   return (

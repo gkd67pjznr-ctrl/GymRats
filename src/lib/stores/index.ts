@@ -230,6 +230,20 @@ export {
   type LiveWorkoutState,
 } from "./liveWorkoutStore";
 
+// Training journal
+export {
+  useJournalStore,
+  useJournalEntries,
+  useJournalEntry,
+  useJournalEntriesForDate,
+  useJournalEntryForSession,
+  addJournalEntry,
+  updateJournalEntry,
+  removeJournalEntry,
+} from "./journalStore";
+
+export type { JournalEntry } from "../journalModel";
+
 // Body Model (temporarily disabled due to missing module)
 // export {
 //   BodyModel,

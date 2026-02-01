@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet, Animated } from "react-native";
-import { makeDesignSystem } from "../designSystem";
+import { makeDesignSystem } from "../../designSystem";
 
 export type ReactionType = 'fire' | 'muscle' | 'heart' | 'clap' | 'rocket' | 'thumbsup';
 

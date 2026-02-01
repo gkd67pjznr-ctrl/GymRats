@@ -3,26 +3,27 @@
 ## Overview
 Free-form workout notes for serious lifters. Track how you felt, what went well, injuries, and mood. Low effort to build, high value for dedicated users.
 
-**Status:** Planned | **Progress:** 0/4 features
+**Status:** Implemented | **Progress:** 4/4 features
 **Priority:** Post-launch
 **Source:** 2026-01-29 brainstorm interview
+**Implementation Date:** 2026-02-01
 
 ---
 
 ## Sub-Features
 
-### Planned - Per-Workout Notes
-- [ ] Free-form text field on workout completion
-- [ ] "How did this workout go?" prompt
-- [ ] Notes attached to workout session
-- [ ] Visible in workout history detail view
+### Implemented - Per-Workout Notes
+- [x] Free-form text field on workout completion (WorkoutNotesSection in workout summary)
+- [x] "How did this workout go?" prompt (JournalTextInput with placeholder)
+- [x] Notes attached to workout session (linked via sessionId in JournalEntry)
+- [x] Visible in workout history detail view (WorkoutNotesSection in workout-summary.tsx)
 
 ---
 
-### Planned - Per-Day Journal
-- [ ] Daily journal entry (independent of workouts)
-- [ ] Rest day notes, recovery thoughts, meal notes
-- [ ] Accessible from profile or calendar view
+### Implemented - Per-Day Journal
+- [x] Daily journal entry (independent of workouts) (app/journal.tsx)
+- [x] Rest day notes, recovery thoughts, meal notes (JournalEntryModal)
+- [x] Accessible from profile or calendar view (app/journal.tsx and calendar/day/[dayMs].tsx)
 
 ---
 

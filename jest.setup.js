@@ -34,6 +34,54 @@ jest.mock('expo-speech', () => ({
   stop: jest.fn(),
 }));
 
+// Mock expo-av
+jest.mock('expo-av', () => ({
+  Audio: {
+    Sound: jest.fn().mockImplementation(() => ({
+      loadAsync: jest.fn(),
+      playAsync: jest.fn(),
+      pauseAsync: jest.fn(),
+      stopAsync: jest.fn(),
+      unloadAsync: jest.fn(),
+      setPositionAsync: jest.fn(),
+      setVolumeAsync: jest.fn(),
+      setOnPlaybackStatusUpdate: jest.fn(),
+      getStatusAsync: jest.fn(() => Promise.resolve({ isLoaded: true, durationMillis: 1000 })),
+    })),
+    setAudioModeAsync: jest.fn(),
+  },
+}));
+
+// Mock expo-iap
+jest.mock('expo-iap', () => ({
+  connectAsync: jest.fn(() => Promise.resolve()),
+  disconnectAsync: jest.fn(() => Promise.resolve()),
+  setPurchaseListener: jest.fn(() => ({
+    remove: jest.fn(),
+  })),
+  getProductsAsync: jest.fn(() => Promise.resolve([])),
+  requestPurchaseAsync: jest.fn(() => Promise.resolve()),
+  getPurchaseHistoryAsync: jest.fn(() => Promise.resolve([])),
+  finishTransactionAsync: jest.fn(() => Promise.resolve()),
+}));
+
+// Mock expo-constants
+jest.mock('expo-constants', () => ({
+  expoConfig: {
+    extra: {
+      supabaseUrl: 'https://placeholder.supabase.co',
+      supabaseAnonKey: 'placeholder-key',
+    },
+    EXDevLauncher: undefined,
+  },
+  manifest: null,
+}));
+
+// Mock VoiceManager
+jest.mock('./src/lib/voice/VoiceManager');
+// Mock SoundManager
+jest.mock('./src/lib/sound/SoundManager');
+
 // Ignore React Native warning about act()
 const originalConsoleError = console.error;
 console.error = (...args) => {

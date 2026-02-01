@@ -14,9 +14,35 @@ export function hasTestSupabaseCredentials(): boolean {
   const supabaseUrl = url || process.env.EXPO_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = key || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-  return !!(supabaseUrl && supabaseAnonKey &&
-    !supabaseUrl.includes('placeholder') &&
-    !supabaseAnonKey.includes('placeholder'));
+  // Check if credentials exist and are not placeholder values
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return false;
+  }
+
+  // Common placeholder patterns
+  const placeholderPatterns = [
+    'placeholder',
+    'your-',
+    'test-project',
+    'example',
+    'change-me',
+    'insert-',
+    'supabase.co', // Default Supabase domain without project-specific subdomain
+  ];
+
+  const isPlaceholderUrl = placeholderPatterns.some(pattern =>
+    supabaseUrl.toLowerCase().includes(pattern)
+  );
+  const isPlaceholderKey = placeholderPatterns.some(pattern =>
+    supabaseAnonKey.toLowerCase().includes(pattern)
+  );
+
+  // Also check for obviously fake keys
+  const isFakeKey = supabaseAnonKey.includes('anon-key') ||
+                   supabaseAnonKey.includes('test-key') ||
+                   supabaseAnonKey.length < 20; // Real keys are long JWT tokens
+
+  return !isPlaceholderUrl && !isPlaceholderKey && !isFakeKey;
 }
 
 /**

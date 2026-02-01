@@ -86,6 +86,12 @@ export const supabase: SupabaseClient = createClient(
 );
 
 /**
+ * Check if Supabase is configured with real credentials
+ * Returns true if using placeholder values
+ */
+export const isSupabasePlaceholder = !supabaseUrl || !supabaseAnonKey;
+
+/**
  * Perform health check on Supabase connection
  * Tests connectivity by attempting a simple query
  *

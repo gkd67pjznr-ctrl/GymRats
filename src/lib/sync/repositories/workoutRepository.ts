@@ -1,7 +1,7 @@
 // src/lib/sync/repositories/workoutRepository.ts
 // Repository for workout sessions CRUD operations with Supabase
 
-import { supabase } from '../../supabase/client';
+import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { WorkoutSession } from '../../workoutModel';
 import type { DatabaseWorkout, DatabaseWorkoutInsert, DatabaseWorkoutUpdate } from '../../supabase/types';
 import { RealtimeChannel } from '@supabase/supabase-js';
@@ -89,6 +89,14 @@ export const workoutRepository: WorkoutRepository = {
    * Fetch all workouts for a user
    */
   async fetchAll(userId: string): Promise<WorkoutSession[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (__DEV__) {
+        console.log('[workoutRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('workouts')
       .select('*')

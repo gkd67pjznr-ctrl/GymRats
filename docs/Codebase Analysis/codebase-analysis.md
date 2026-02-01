@@ -425,7 +425,7 @@ type CurrentSession = {
 ## 12. Recommendations
 
 ### Immediate Priorities
-1. **Fix failing tests**: Address the 160 failing tests to restore confidence
+1. **Fix failing tests**: Address the 159 failing tests to restore confidence
 2. **Complete backend integration**: Enable cloud sync for all features
 3. **Implement OAuth**: Enable real user accounts and authentication
 4. **Complete onboarding**: Create first-time user experience

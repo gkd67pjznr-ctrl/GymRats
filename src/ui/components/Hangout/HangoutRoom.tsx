@@ -91,7 +91,6 @@ export function HangoutRoom(props: HangoutRoomProps) {
           <Pressable
             onPress={() => {
               // TODO: Implement create room functionality
-              console.log("Create room functionality not yet implemented");
             }}
             style={[
               styles.createButton,
@@ -172,7 +171,6 @@ export function HangoutRoom(props: HangoutRoomProps) {
               presence={presence}
               onPress={() => {
                 // TODO: Implement friend profile view
-                console.log("View friend profile:", presence.userId);
               }}
             />
           </View>

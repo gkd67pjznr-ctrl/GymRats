@@ -33,6 +33,7 @@ jest.mock('expo-notifications', () => ({
 jest.mock('react-native', () => ({
   Platform: {
     OS: 'ios',
+    Version: '16.0',
     select: jest.fn((obj) => obj.ios),
   },
 }));
@@ -41,6 +42,17 @@ jest.mock('react-native', () => ({
 jest.mock('@/src/lib/stores/settingsStore', () => ({
   getSettings: jest.fn(),
   updateSettings: jest.fn(),
+}));
+
+// Mock supabase client
+jest.mock('@/src/lib/supabase/client', () => ({
+  supabase: {
+    auth: {
+      getUser: jest.fn(),
+      getSession: jest.fn(),
+    },
+    supabaseUrl: 'https://test.supabase.co',
+  },
 }));
 
 describe('Notification Service', () => {
@@ -68,11 +80,28 @@ describe('Notification Service', () => {
     require('@/src/lib/stores/settingsStore').getSettings.mockReturnValue(mockSettings);
 
     // Mock updateSettings to update the mock
-    require('@/src/lib/stores/settingsStore').updateSettings.mockImplementation((updates) => {
+    require('@/src/lib/stores/settingsStore').updateSettings.mockImplementation((updates: any) => {
       Object.assign(mockSettings, updates);
       if (updates.notificationPrefs) {
         Object.assign(mockSettings.notificationPrefs, updates.notificationPrefs);
       }
+    });
+
+    // Mock supabase auth
+    require('@/src/lib/supabase/client').supabase.auth.getUser.mockResolvedValue({
+      data: { user: { id: 'test-user-id' } },
+      error: null,
+    });
+    require('@/src/lib/supabase/client').supabase.auth.getSession.mockResolvedValue({
+      data: { session: { access_token: 'test-token' } },
+      error: null,
+    });
+
+    // Mock fetch
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ success: true }),
+      text: async () => 'OK',
     });
   });
 
@@ -122,7 +151,7 @@ describe('Notification Service', () => {
       updateSettings({
         notificationPrefs: {
           restTimer: false,
-        },
+        } as any,
       });
 
       const notificationId = await scheduleLocalNotification({
@@ -190,7 +219,7 @@ describe('Notification Service', () => {
       updateSettings({
         notificationPrefs: {
           friendRequests: false,
-        },
+        } as any,
       });
 
       await showImmediateNotification({
@@ -228,7 +257,7 @@ describe('Notification Service', () => {
       updateSettings({
         notificationPrefs: {
           restTimer: false,
-        },
+        } as any,
       });
 
       const notificationId = await scheduleRestTimerNotification(90);
@@ -262,7 +291,7 @@ describe('Notification Service', () => {
       updateSettings({
         notificationPrefs: {
           friendRequests: false,
-        },
+        } as any,
       });
 
       await sendFriendRequestNotification('sender1', 'John Doe', 'receiver1');
@@ -307,7 +336,7 @@ describe('Notification Service', () => {
       updateSettings({
         notificationPrefs: {
           directMessages: false,
-        },
+        } as any,
       });
 
       await sendDirectMessageNotification('sender1', 'John Doe', 'receiver1', 'thread1', 'Hello there!');

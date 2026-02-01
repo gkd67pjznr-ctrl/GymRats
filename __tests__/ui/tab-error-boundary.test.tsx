@@ -283,9 +283,13 @@ describe('TabErrorBoundary - Edge Cases', () => {
   });
 
   it('handles undefined error.message', () => {
+    const originalDev = (global as any).__DEV__;
+    (global as any).__DEV__ = true;
+
     const ThrowErrorNoMessage = () => {
       const error = new Error();
-      delete (error as any).message;
+      // Set to undefined to test fallback (deleting doesn't work due to prototype)
+      (error as any).message = undefined;
       throw error;
     };
 
@@ -297,6 +301,8 @@ describe('TabErrorBoundary - Edge Cases', () => {
 
     // Shows fallback message
     expect(getByText('An unexpected error occurred')).toBeTruthy();
+
+    (global as any).__DEV__ = originalDev;
   });
 
   it('handles errors without component stack', () => {

@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { ScrollView, Text, View, Pressable, Alert } from "react-native";
-import { makeDesignSystem } from "../../../ui/designSystem";
+import { useState, useEffect } from "react";
+import { ScrollView, Text, View, Pressable, Alert, ActivityIndicator } from "react-native";
+import { makeDesignSystem } from "../../designSystem";
 import { useThemeColors } from "../../../ui/theme";
 import { useBuddyStore, useUnlockedBuddies, useCurrentBuddy } from "../../../lib/stores/buddyStore";
 import { buddies } from "../../../lib/buddyData";
 import type { Buddy } from "../../../lib/buddyTypes";
+import { VoiceManager } from "../../../lib/voice/VoiceManager";
 
 export function BuddySettingsScreen() {
   const c = useThemeColors();
@@ -15,9 +16,34 @@ export function BuddySettingsScreen() {
   const equipBuddy = useBuddyStore(state => state.equipBuddy);
   const unlockBuddy = useBuddyStore(state => state.unlockBuddy);
   const purchaseBuddy = useBuddyStore(state => state.purchaseBuddy);
+  const getProductInfo = useBuddyStore(state => state.getProductInfo);
+  const restorePurchases = useBuddyStore(state => state.restorePurchases);
   const forgeTokens = useBuddyStore(state => state.forgeTokens);
 
   const [selectedBuddy, setSelectedBuddy] = useState<Buddy | null>(currentBuddy);
+  const [purchasingBuddyId, setPurchasingBuddyId] = useState<string | null>(null);
+  const [productInfo, setProductInfo] = useState<Record<string, { title: string; price: string; currency: string; localizedPrice: string }>>({});
+  const [restoringPurchases, setRestoringPurchases] = useState(false);
+  const [playingPreviewId, setPlayingPreviewId] = useState<string | null>(null);
+
+  // Fetch product info for IAP buddies on mount
+  useEffect(() => {
+    const fetchProductInfo = async () => {
+      const iapBuddies = buddies.filter(b => b.unlockMethod === 'iap');
+      const info: Record<string, any> = {};
+
+      for (const buddy of iapBuddies) {
+        const product = await getProductInfo(buddy.id);
+        if (product) {
+          info[buddy.id] = product;
+        }
+      }
+
+      setProductInfo(info);
+    };
+
+    fetchProductInfo();
+  }, [getProductInfo]);
 
   const handleEquipBuddy = (buddyId: string) => {
     if (equipBuddy(buddyId)) {
@@ -31,7 +57,7 @@ export function BuddySettingsScreen() {
     }
   };
 
-  const handleUnlockBuddy = (buddy: Buddy) => {
+  const handleUnlockBuddy = async (buddy: Buddy) => {
     if (buddy.unlockMethod === 'forge_tokens' && buddy.unlockCost) {
       if (unlockBuddy(buddy.id)) {
         Alert.alert("Buddy Unlocked", `${buddy.name} has been unlocked with ${buddy.unlockCost} Forge Tokens!`);
@@ -39,19 +65,35 @@ export function BuddySettingsScreen() {
         Alert.alert("Not Enough Tokens", `You need ${buddy.unlockCost} Forge Tokens to unlock ${buddy.name}.`);
       }
     } else if (buddy.unlockMethod === 'iap') {
-      // In a real app, this would trigger the IAP flow
+      // Show purchase confirmation with price info
+      const product = productInfo[buddy.id];
+      const priceText = product ? ` for ${product.localizedPrice}` : '';
+
       Alert.alert(
-        "Purchase Required",
-        `${buddy.name} requires an in-app purchase to unlock.`,
+        "Purchase Buddy",
+        `Unlock ${buddy.name}${priceText}?`,
         [
           { text: "Cancel", style: "cancel" },
           {
-            text: "Purchase",
-            onPress: () => {
-              if (purchaseBuddy(buddy.id)) {
-                Alert.alert("Purchase Complete", `${buddy.name} has been unlocked!`);
-              } else {
-                Alert.alert("Purchase Failed", "Failed to complete the purchase. Please try again.");
+            text: `Purchase${priceText ? ` ${product.localizedPrice}` : ''}`,
+            onPress: async () => {
+              setPurchasingBuddyId(buddy.id);
+              try {
+                const success = await purchaseBuddy(buddy.id);
+                if (success) {
+                  // Purchase initiated successfully - actual unlock happens via callback
+                  Alert.alert(
+                    "Purchase Started",
+                    `Purchase of ${buddy.name} has been initiated. You'll be notified when it completes.`
+                  );
+                } else {
+                  Alert.alert("Purchase Failed", "Failed to start the purchase. Please try again.");
+                }
+              } catch (error) {
+                console.error(`Failed to purchase buddy ${buddy.id}:`, error);
+                Alert.alert("Purchase Error", "An error occurred during purchase. Please try again.");
+              } finally {
+                setPurchasingBuddyId(null);
               }
             }
           }
@@ -60,9 +102,80 @@ export function BuddySettingsScreen() {
     }
   };
 
+  const handleRestorePurchases = async () => {
+    setRestoringPurchases(true);
+    try {
+      await restorePurchases();
+      Alert.alert("Purchases Restored", "Your previous purchases have been restored.");
+    } catch (error) {
+      console.error("Failed to restore purchases:", error);
+      Alert.alert("Restore Failed", "Failed to restore purchases. Please try again.");
+    } finally {
+      setRestoringPurchases(false);
+    }
+  };
+
+  const handlePlayPreview = async (buddyId: string) => {
+    if (playingPreviewId) {
+      // Stop currently playing preview
+      VoiceManager.stopAll();
+      setPlayingPreviewId(null);
+      return;
+    }
+
+    // Ensure VoiceManager is initialized
+    try {
+      await VoiceManager.initialize();
+    } catch (error) {
+      console.warn('[BuddySettingsScreen] VoiceManager initialization failed:', error);
+    }
+
+    const buddy = buddies.find(b => b.id === buddyId);
+    if (!buddy) return;
+
+    // Check if buddy has preview voice
+    if (!buddy.previewVoice) {
+      // Fallback: try to get a voice line from voiceLines
+      const voiceLines = buddy.voiceLines;
+      if (voiceLines) {
+        // Pick first available voice line
+        const triggerTypes = Object.keys(voiceLines) as Array<keyof typeof voiceLines>;
+        if (triggerTypes.length > 0) {
+          const firstTrigger = triggerTypes[0];
+          const lines = voiceLines[firstTrigger];
+          if (lines && lines.length > 0) {
+            setPlayingPreviewId(buddyId);
+            try {
+              await VoiceManager.play(lines[0]);
+            } catch (error) {
+              console.error(`Failed to play preview for ${buddyId}:`, error);
+              Alert.alert("Playback Error", "Could not play voice preview.");
+            } finally {
+              setPlayingPreviewId(null);
+            }
+            return;
+          }
+        }
+      }
+      // No voice lines available
+      Alert.alert("No Preview", "This buddy doesn't have a voice preview yet.");
+      return;
+    }
+
+    setPlayingPreviewId(buddyId);
+    try {
+      await VoiceManager.play(buddy.previewVoice);
+    } catch (error) {
+      console.error(`Failed to play preview for ${buddyId}:`, error);
+      Alert.alert("Playback Error", "Could not play voice preview.");
+    } finally {
+      setPlayingPreviewId(null);
+    }
+  };
+
   const getTierColor = (tier: string) => {
     switch (tier) {
-      case 'premium': return ds.tone.purple;
+      case 'premium': return ds.tone.accent2;
       case 'legendary': return ds.tone.gold;
       default: return ds.tone.text;
     }
@@ -208,6 +321,8 @@ export function BuddySettingsScreen() {
       {buddies.map((buddy) => {
         const unlocked = isBuddyUnlocked(buddy.id);
         const isCurrent = currentBuddy?.id === buddy.id;
+        const product = productInfo[buddy.id];
+        const isPurchasing = purchasingBuddyId === buddy.id;
 
         return (
           <View
@@ -268,14 +383,31 @@ export function BuddySettingsScreen() {
               {buddy.description}
             </Text>
 
-            <Text style={{
-              color: c.text,
-              fontSize: 13,
-              fontWeight: "600",
-              marginBottom: 6,
-            }}>
-              Sample Lines:
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+              <Text style={{
+                color: c.text,
+                fontSize: 13,
+                fontWeight: "600",
+              }}>
+                Sample Lines:
+              </Text>
+              {(buddy.tier === 'premium' || buddy.tier === 'legendary') && (
+                <Pressable
+                  onPress={() => handlePlayPreview(buddy.id)}
+                  disabled={playingPreviewId === buddy.id}
+                  style={{
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 6,
+                    backgroundColor: playingPreviewId === buddy.id ? ds.tone.accent2 : c.border,
+                  }}
+                >
+                  <Text style={{ color: c.text, fontSize: 12, fontWeight: "700" }}>
+                    {playingPreviewId === buddy.id ? "⏹ Stop" : "▶ Preview Voice"}
+                  </Text>
+                </Pressable>
+              )}
+            </View>
 
             {buddy.previewLines.slice(0, 2).map((line, index) => (
               <Text key={index} style={{
@@ -349,21 +481,27 @@ export function BuddySettingsScreen() {
                   ) : (
                     <Pressable
                       onPress={() => handleUnlockBuddy(buddy)}
+                      disabled={isPurchasing}
                       style={{
-                        backgroundColor: ds.tone.purple,
+                        backgroundColor: ds.tone.accent2,
                         borderRadius: 12,
                         paddingHorizontal: 16,
                         paddingVertical: 10,
                         alignItems: "center",
+                        opacity: isPurchasing ? 0.7 : 1,
                       }}
                     >
-                      <Text style={{
-                        color: c.bg,
-                        fontSize: 14,
-                        fontWeight: "700",
-                      }}>
-                        Purchase IAP
-                      </Text>
+                      {isPurchasing ? (
+                        <ActivityIndicator size="small" color={c.bg} />
+                      ) : (
+                        <Text style={{
+                          color: c.bg,
+                          fontSize: 14,
+                          fontWeight: "700",
+                        }}>
+                          {product?.localizedPrice ? `Purchase ${product.localizedPrice}` : 'Purchase IAP'}
+                        </Text>
+                      )}
                     </Pressable>
                   )}
                 </View>
@@ -372,6 +510,34 @@ export function BuddySettingsScreen() {
           </View>
         );
       })}
+
+      {/* Restore Purchases */}
+      <Pressable
+        onPress={handleRestorePurchases}
+        disabled={restoringPurchases}
+        style={{
+          backgroundColor: c.border,
+          borderRadius: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          alignItems: "center",
+          marginTop: 24,
+          marginBottom: 32,
+          opacity: restoringPurchases ? 0.7 : 1,
+        }}
+      >
+        {restoringPurchases ? (
+          <ActivityIndicator size="small" color={c.text} />
+        ) : (
+          <Text style={{
+            color: c.text,
+            fontSize: 14,
+            fontWeight: "600",
+          }}>
+            Restore Previous Purchases
+          </Text>
+        )}
+      </Pressable>
     </ScrollView>
   );
 }

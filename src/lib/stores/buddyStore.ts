@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { Buddy, BuddyTier } from '../buddyTypes';
 import { buddies } from '../buddyData';
 import { createQueuedJSONStorage } from './storage/createQueuedAsyncStorage';
+import { IAPService, initializeIAPService } from '../iap/IAPService';
 
 /**
  * Buddy Store - Zustand store for AI Gym Buddy system state
@@ -55,7 +56,10 @@ export interface BuddyStoreActions {
   recordCue: (cueId: string) => void;
 
   // IAP integration
-  purchaseBuddy: (buddyId: string) => boolean;
+  purchaseBuddy: (buddyId: string) => Promise<boolean>;
+  initializeIAP: () => Promise<void>;
+  getProductInfo: (buddyId: string) => Promise<{ title: string; price: string; currency: string; localizedPrice: string } | null>;
+  restorePurchases: () => Promise<void>;
 
   // Forge tokens
   addForgeTokens: (amount: number) => void;
@@ -181,18 +185,74 @@ export const useBuddyStore = create<BuddyStoreState & BuddyStoreActions>()(
         };
       }),
 
-      // IAP purchase
-      purchaseBuddy: (buddyId: string) => {
+      // IAP purchase - real implementation with expo-iap
+      purchaseBuddy: async (buddyId: string) => {
         const buddy = buddies.find(b => b.id === buddyId);
         if (!buddy || buddy.unlockMethod !== 'iap') return false;
 
-        // In real implementation, this would integrate with IAP system
-        // For now, we'll simulate a successful purchase
-        set(state => ({
-          purchasedBuddies: { ...state.purchasedBuddies, [buddyId]: true },
-          unlockedBuddies: { ...state.unlockedBuddies, [buddyId]: true }
-        }));
-        return true;
+        try {
+          // Start purchase flow through IAPService
+          const success = await IAPService.purchaseBuddy(buddyId);
+          if (success) {
+            console.log(`[BuddyStore] Purchase initiated for ${buddyId}, awaiting completion...`);
+            // The actual unlock will happen via purchaseSuccessCallback
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error(`[BuddyStore] Failed to purchase buddy ${buddyId}:`, error);
+          return false;
+        }
+      },
+
+      // Initialize IAP service
+      initializeIAP: async () => {
+        try {
+          // Set up success callback that updates store when purchase completes
+          IAPService.setPurchaseSuccessCallback((buddyId: string) => {
+            set(state => ({
+              purchasedBuddies: { ...state.purchasedBuddies, [buddyId]: true },
+              unlockedBuddies: { ...state.unlockedBuddies, [buddyId]: true }
+            }));
+            console.log(`[BuddyStore] Buddy ${buddyId} unlocked via IAP`);
+          });
+
+          await initializeIAPService();
+          console.log('[BuddyStore] IAP service initialized');
+        } catch (error) {
+          console.error('[BuddyStore] Failed to initialize IAP service:', error);
+        }
+      },
+
+      // Get product info for display in UI
+      getProductInfo: async (buddyId: string) => {
+        const buddy = buddies.find(b => b.id === buddyId);
+        if (!buddy || !buddy.iapProductId) return null;
+
+        try {
+          const productInfo = await IAPService.getProductInfo(buddyId);
+          if (!productInfo) return null;
+
+          return {
+            title: productInfo.title,
+            price: productInfo.price,
+            currency: productInfo.currency,
+            localizedPrice: productInfo.localizedPrice,
+          };
+        } catch (error) {
+          console.error(`[BuddyStore] Failed to get product info for ${buddyId}:`, error);
+          return null;
+        }
+      },
+
+      // Restore previous purchases (important for iOS)
+      restorePurchases: async () => {
+        try {
+          await IAPService.restorePurchases();
+          console.log('[BuddyStore] Purchases restored');
+        } catch (error) {
+          console.error('[BuddyStore] Failed to restore purchases:', error);
+        }
       },
 
       // Forge tokens

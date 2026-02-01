@@ -2,7 +2,7 @@
 // Live workout screen with integrated Live Workout Together functionality
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
 import { makeDesignSystem } from "../src/ui/designSystem";
@@ -313,7 +313,6 @@ export default function LiveWorkoutWithFriends() {
     ensureCurrentSession({
       selectedExerciseId: first,
       exerciseBlocks: pickerState.planMode ? pickerState.plannedExerciseIds.slice() : [first],
-      done: pickerState.planMode ? new Set() : new Set([first]),
     });
     initializedRef.current = true;
 

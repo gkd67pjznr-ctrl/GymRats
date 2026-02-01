@@ -55,7 +55,6 @@ export default function HangoutScreen() {
       <HangoutRoom
         onAddDecoration={() => {
           // TODO: Implement decoration addition
-          console.log("Add decoration functionality not yet implemented");
         }}
         onCustomizeAvatar={() => {
           router.push("/avatar");

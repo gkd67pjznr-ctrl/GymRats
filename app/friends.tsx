@@ -15,13 +15,24 @@ import {
 } from "../src/lib/stores/friendsStore";
 import {
   useUserProfile,
+  useUserProfiles,
   searchUserProfiles,
 } from "../src/lib/stores/userProfileStore";
-import type { ID, UserProfile } from "../src/lib/socialModel";
+import type { ID } from "../src/lib/socialModel";
+import type { UserProfile } from "../src/lib/sync/repositories/userProfileRepository";
 import { useThemeColors } from "../src/ui/theme";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { SyncStatusIndicator } from "../src/ui/components/SyncStatusIndicator";
 import { FR } from "../src/ui/forgerankStyle";
+
+type DisplayUser = {
+  id: string;
+  displayName: string;
+  email: string;
+  avatarUrl: string | null;
+  createdAt: number;
+  updatedAt: number;
+};
 
 const ME: ID = "u_demo_me";
 
@@ -52,6 +63,8 @@ export default function FriendsScreen() {
 
   // Get friend edges from store (now sync-enabled)
   const friendEdges = useFriendEdges(userId);
+  const friendUserIds = friendEdges.map(e => e.otherUserId);
+  const friendProfiles = useUserProfiles(friendUserIds);
 
   // Setup realtime subscriptions for friends
   useEffect(() => {
@@ -97,17 +110,19 @@ export default function FriendsScreen() {
 
   // Combine search results with friends (show search results when searching)
   const showSearchResults = searchQuery.trim().length >= 2;
-  const displayedUsers = showSearchResults ? searchResults : friendEdges.map((e) => {
-    const profile = useUserProfile(e.otherUserId);
-    return {
-      id: e.otherUserId,
-      displayName: profile?.displayName ?? e.otherUserId,
-      email: "",
-      avatarUrl: profile?.avatarUrl ?? null,
-      createdAt: 0,
-      updatedAt: 0,
-    };
-  });
+  const displayedUsers: DisplayUser[] = showSearchResults
+    ? (searchResults as DisplayUser[])
+    : friendEdges.map((e) => {
+        const profile = friendProfiles[e.otherUserId];
+        return {
+          id: e.otherUserId,
+          displayName: profile?.displayName ?? e.otherUserId,
+          email: "",
+          avatarUrl: profile?.avatarUrl ?? null,
+          createdAt: 0,
+          updatedAt: 0,
+        };
+      });
 
   return (
     <ProtectedRoute>
@@ -148,7 +163,7 @@ export default function FriendsScreen() {
               placeholder="Search by name or email..."
               placeholderTextColor={c.muted}
               style={{
-                ...FR.card({ card: c.card, border: c.border }),
+                ...(FR.card({ card: c.card, border: c.border }) as any),
                 color: c.text,
                 ...FR.type.body,
                 paddingVertical: FR.space.x3,
@@ -267,7 +282,7 @@ export default function FriendsScreen() {
                     <Pressable
                       onPress={() => {
                         const t = ensureThread(userId, p.id, "friendsOnly");
-                        router.push((`/dm/${t.id}` as any) as any);
+                        router.push((`/dm/${t}` as any) as any);
                       }}
                       style={({ pressed }) => ({
                         paddingVertical: 10,

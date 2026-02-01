@@ -341,7 +341,7 @@ export default function LeaderboardTab() {
                   streakRankings.map((entry) => (
                     <View key={entry.userId}>
                       <UserRankRow entry={entry} />
-                      {entry.currentStreak > 0 && (
+                      {(entry.currentStreak ?? 0) > 0 && (
                         <Text style={{ color: c.primary, ...FR.type.sub, marginLeft: 54 }}>
                           🔥 {entry.currentStreak} day streak!
                         </Text>

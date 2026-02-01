@@ -69,8 +69,8 @@ export function useExercisePickerState({
     if (persisted?.exerciseBlocks && persisted.exerciseBlocks.length > 0) {
       return persisted.exerciseBlocks;
     }
-    if (planMode && currentPlannedExerciseId) {
-      return [currentPlannedExerciseId];
+    if (planMode) {
+      return plannedExerciseIds;
     }
     return [];
   });

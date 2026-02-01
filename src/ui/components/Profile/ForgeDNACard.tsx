@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
-import { makeDesignSystem } from "../../../ui/designSystem";
+import { makeDesignSystem } from "../../designSystem";
 import { useThemeColors } from "../../../ui/theme";
 import {
   useForgeDNAStore,

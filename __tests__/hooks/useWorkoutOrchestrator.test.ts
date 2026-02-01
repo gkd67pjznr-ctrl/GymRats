@@ -71,6 +71,9 @@ const mockAddWorkoutSession = jest.fn();
 const mockClearCurrentSession = jest.fn();
 const mockEnsureCurrentSession = jest.fn();
 const mockUpsertRoutine = jest.fn();
+const mockGetCurrentPlan = jest.fn();
+const mockUpdateCurrentPlan = jest.fn();
+const mockGetPersonalBests = jest.fn();
 
 jest.mock('../../src/lib/stores', () => ({
   useCurrentSessionStore: jest.fn((selector) => selector({
@@ -91,10 +94,15 @@ jest.mock('../../src/lib/stores', () => ({
     sets: [] as LoggedSet[],
   })),
   useIsHydrated: jest.fn(() => true),
+  useUser: jest.fn(() => ({ id: 'test-user', username: 'testuser' })),
   upsertRoutine: jest.fn((...args) => mockUpsertRoutine(...args)),
   addWorkoutSession: jest.fn((...args) => mockAddWorkoutSession(...args)),
+  addJournalEntry: jest.fn(),
   clearCurrentSession: jest.fn((...args) => mockClearCurrentSession(...args)),
   ensureCurrentSession: jest.fn((...args) => mockEnsureCurrentSession(...args)),
+  getCurrentPlan: jest.fn((...args) => mockGetCurrentPlan(...args)),
+  updateCurrentPlan: jest.fn((...args) => mockUpdateCurrentPlan(...args)),
+  getPersonalBests: jest.fn((...args) => mockGetPersonalBests(...args)),
   useRoutinesStore: jest.fn(),
   getCurrentSession: jest.fn(),
   getIsHydrated: jest.fn(() => true),
@@ -102,6 +110,12 @@ jest.mock('../../src/lib/stores', () => ({
   updateCurrentSession: jest.fn(),
   setCurrentSession: jest.fn(),
   flushPendingWrites: jest.fn(),
+}));
+
+// Mock journalModel
+jest.mock('../../src/lib/journalModel', () => ({
+  createJournalEntry: jest.fn(() => ({ id: 'journal-1', userId: 'test-user', date: '2026-01-01', text: '', sessionId: 'session-1' })),
+  getDateFromTimestamp: jest.fn(() => '2026-01-01'),
 }));
 
 // Mock gamificationStore - properly mock Zustand store API
@@ -160,9 +174,50 @@ jest.mock('../../src/lib/stores/gamificationStore', () => {
   return mockStore;
 });
 
+// Mock buddyStore
+const mockBuddyStoreState = {
+  recordSet: jest.fn(),
+  sessionMemory: {
+    lastRestDuration: 0,
+  },
+  getState: jest.fn(() => mockBuddyStoreState),
+};
+
+jest.mock('../../src/lib/stores/buddyStore', () => {
+  const mockStore = {
+    useBuddyStore: jest.fn((selector) => selector ? selector(mockBuddyStoreState) : mockBuddyStoreState),
+    ...mockBuddyStoreState,
+  };
+  // Add getState to the useBuddyStore function for imperative access
+  mockStore.useBuddyStore.getState = jest.fn(() => mockBuddyStoreState);
+  return mockStore;
+});
+
 // Mock gamification functions
 jest.mock('../../src/lib/gamification', () => ({
   calculatePRReward: jest.fn((type: string, tier?: number) => ({ amount: 5, type: 'pr_weight', context: 'Tier 1' })),
+}));
+
+// Mock buddyEngine functions
+jest.mock('../../src/lib/buddyEngine', () => ({
+  evaluateSetTriggers: jest.fn(),
+  evaluateSessionTriggers: jest.fn(),
+  evaluateBehaviorTriggers: jest.fn(),
+  detectRankProgressFull: jest.fn(() => []),
+  formatCueMessage: jest.fn((cue) => ({ title: cue?.message || 'Formatted', detail: cue?.detail || '' })),
+}));
+
+// Mock voice and sound modules
+jest.mock('../../src/lib/voice/VoiceManager', () => ({
+  playVoiceLine: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('../../src/lib/sound/SoundManager', () => ({
+  playSound: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('../../src/lib/sound/soundUtils', () => ({
+  areSoundsEnabled: jest.fn(() => false),
 }));
 
 // Mock useGamificationWorkoutFinish module

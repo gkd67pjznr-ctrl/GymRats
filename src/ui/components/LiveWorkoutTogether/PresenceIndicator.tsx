@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import { makeDesignSystem } from "../designSystem";
+import { makeDesignSystem } from "../../designSystem";
 
 export interface PresenceUser {
   id: string;

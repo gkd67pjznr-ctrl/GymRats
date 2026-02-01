@@ -39,6 +39,7 @@ describe('buddyEngine', () => {
       unit: 'kg' as UnitSystem,
       exerciseName: 'Bench Press',
       prev: {},
+      setCue: undefined,
       setIndex: 0,
       totalSets: 1
     };

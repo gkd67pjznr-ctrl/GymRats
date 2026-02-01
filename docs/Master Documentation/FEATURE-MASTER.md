@@ -42,12 +42,12 @@
 | [Live Workout Together](#live-workout-together) | Planned | 0/4 | [Details](../features/Live/feature-live-together.md) |
 | [AI Coaching](#ai-coaching) | Planned | 0/4 | [Details](../features/Misc/feature-ai-coaching.md) |
 | [Templates Marketplace](#templates-marketplace) | Planned | 0/4 | [Details](../features/Misc/feature-templates-marketplace.md) |
-| [Training Journal](#training-journal) | Planned | 0/4 | [Details](../features/Misc/feature-training-journal.md) |
+| [Training Journal](#training-journal) | Implemented | 4/4 | [Details](../features/Misc/feature-training-journal.md) |
 | [Forge Seasons](#forge-seasons) | Planned | 0/4 | [Details](../features/Misc/feature-forge-seasons.md) |
 
-**Post-Launch Total:** 0/49 features (0%)
+**Post-Launch Total:** 4/49 features (8%)
 
-**Grand Total:** 129/216 features (60%)
+**Grand Total:** 133/216 features (62%)
 
 ---
 
@@ -582,12 +582,12 @@ Community-driven workout template sharing.
 ---
 
 ## Training Journal
-**Status:** Planned | **Progress:** 0/4 features
+**Status:** Implemented | **Progress:** 4/4 features
 **Post-launch**
 
 Free-form workout notes for serious lifters.
 
-**Planned:**
+**Implemented:**
 - Per-workout notes (how you felt, what went well)
 - Per-day journal entries
 - Mood/energy/soreness tracking
