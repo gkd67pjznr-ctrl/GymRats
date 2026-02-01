@@ -357,17 +357,6 @@ export type DatabaseLiveSessionEventType =
 export type DatabaseSetType = 'warmup' | 'working';
 
 /**
- * EmoteId enum for live_session_reactions and quick_reactions tables
- */
-export type DatabaseEmoteId =
-  | 'like'
-  | 'fire'
-  | 'skull'
-  | 'crown'
-  | 'bolt'
-  | 'clap';
-
-/**
  * InvitationStatus enum for live_session_invitations table
  */
 export type DatabaseInvitationStatus = 'pending' | 'accepted' | 'declined' | 'expired';

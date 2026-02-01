@@ -2,7 +2,7 @@
 // Profile editing screen with display name and avatar management
 import { useState, useEffect } from "react";
 import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, Image, ScrollView } from "react-native";
-import { useRouter, Stack } from "expo-router";
+import { useRouter, Stack, Link } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useThemeColors } from "@/src/ui/theme";
 import { useUser, useAuth } from "@/src/lib/stores";
@@ -350,6 +350,25 @@ export default function ProfileEditScreen() {
             Your display name will be visible to other users on the social feed and friends list.
           </Text>
         </View>
+
+        {/* Theme Selection Link */}
+        <Link href="/profile/themes" asChild>
+          <Pressable
+            style={{
+              borderWidth: 1,
+              borderColor: c.border,
+              borderRadius: 14,
+              padding: 14,
+              backgroundColor: c.card,
+              gap: 6,
+            }}
+          >
+            <Text style={{ color: c.text, fontSize: 18, fontWeight: "900" }}>App Themes</Text>
+            <Text style={{ color: c.muted, lineHeight: 18 }}>
+              Customize the app's appearance with different color themes and visual styles
+            </Text>
+          </Pressable>
+        </Link>
       </KeyboardAwareScrollView>
     </ProtectedRoute>
   );

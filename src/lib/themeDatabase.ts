@@ -94,6 +94,7 @@ export interface ThemeTypography {
 export interface ThemeIllustration {
   id: string;
   name: string;
+  description: string;
   category: 'achievement' | 'rank' | 'pr' | 'emotional' | 'loading' | 'empty-state';
   style: 'hand-drawn' | 'surreal' | 'psychedelic' | 'minimal';
   assetPath: string;
@@ -501,6 +502,7 @@ export const DEFAULT_ILLUSTRATIONS: ThemeIllustration[] = [
   {
     id: 'hand-drawn-base',
     name: 'Hand-Drawn Base',
+    description: 'Personal and approachable illustrations with a hand-crafted feel',
     category: 'emotional',
     style: 'hand-drawn',
     assetPath: 'illustrations/emotional/hand-drawn-base.svg',
@@ -517,6 +519,7 @@ export const DEFAULT_ILLUSTRATIONS: ThemeIllustration[] = [
   {
     id: 'surreal-energy',
     name: 'Surreal Energy',
+    description: 'Dynamic and energizing visuals with abstract, flowing forms',
     category: 'emotional',
     style: 'surreal',
     assetPath: 'illustrations/emotional/surreal-energy.svg',
@@ -533,6 +536,7 @@ export const DEFAULT_ILLUSTRATIONS: ThemeIllustration[] = [
   {
     id: 'psychedelic-growth',
     name: 'Psychedelic Growth',
+    description: 'Vibrant and evolving visuals that represent progress and transformation',
     category: 'emotional',
     style: 'psychedelic',
     assetPath: 'illustrations/emotional/psychedelic-growth.svg',
@@ -549,6 +553,7 @@ export const DEFAULT_ILLUSTRATIONS: ThemeIllustration[] = [
   {
     id: 'legendary-transform',
     name: 'Legendary Transformation',
+    description: 'Theme-warping visuals with unique personality and special effects',
     category: 'emotional',
     style: 'psychedelic',
     assetPath: 'illustrations/emotional/legendary-transform.svg',
@@ -696,6 +701,51 @@ export const DEFAULT_CONFIGURATIONS: ThemeConfiguration[] = [
     isDefault: true,
     isPremium: false,
     isLegendary: false,
+  },
+  {
+    id: 'premium-energy',
+    name: 'Premium Energy',
+    paletteId: 'neon-glow',
+    typographyId: 'personality-bold',
+    illustrationId: 'surreal-energy',
+    audioId: 'spark-pr',
+    motionId: 'smooth-premium',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    isActive: false,
+    isDefault: false,
+    isPremium: true,
+    isLegendary: false,
+  },
+  {
+    id: 'premium-growth',
+    name: 'Premium Growth',
+    paletteId: 'cosmic-strength',
+    typographyId: 'personality-irregular',
+    illustrationId: 'psychedelic-growth',
+    audioId: 'stamp-completion',
+    motionId: 'smooth-premium',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    isActive: false,
+    isDefault: false,
+    isPremium: true,
+    isLegendary: false,
+  },
+  {
+    id: 'legendary-transform',
+    name: 'Legendary Transformation',
+    paletteId: 'legendary-mystery',
+    typographyId: 'personality-hand-drawn',
+    illustrationId: 'legendary-transform',
+    audioId: 'legendary-fanfare',
+    motionId: 'dramatic-legendary',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    isActive: false,
+    isDefault: false,
+    isPremium: false,
+    isLegendary: true,
   },
 ];
 
