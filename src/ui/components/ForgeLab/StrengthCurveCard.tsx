@@ -4,6 +4,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
+import VictoryLineChart from './VictoryLineChart';
 
 type ExerciseStat = {
   exerciseId: string;
@@ -91,19 +92,34 @@ const StrengthCurveCard: React.FC<StrengthCurveCardProps> = ({
           {/* Chart Area */}
           <View style={styles.chartContainer}>
             {selectedExerciseData ? (
-              <View style={styles.chartPlaceholder}>
-                <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                  Strength Curve for {selectedExerciseData.name}
-                </Text>
-                <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                  {selectedExerciseData.e1rmHistory.length} data points
-                </Text>
-                {selectedExerciseData.e1rmHistory.length > 0 && (
-                  <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                    Latest e1RM: {selectedExerciseData.e1rmHistory[selectedExerciseData.e1rmHistory.length - 1]?.e1rm.toFixed(1)} kg
+              selectedExerciseData.e1rmHistory.length > 0 ? (
+                <>
+                  <VictoryLineChart
+                    data={selectedExerciseData.e1rmHistory.map(point => ({
+                      x: point.date,
+                      y: point.e1rm,
+                      date: point.date,
+                    }))}
+                    xLabel="Date"
+                    yLabel="e1RM (kg)"
+                    accentColor={ds.tone.accent}
+                    height={180}
+                    showDots={selectedExerciseData.e1rmHistory.length <= 20}
+                  />
+                  <View style={styles.statsContainer}>
+                    <Text style={[styles.statsText, { color: ds.tone.textSecondary }]}>
+                      {selectedExerciseData.e1rmHistory.length} measurements •
+                      Latest: {selectedExerciseData.e1rmHistory[selectedExerciseData.e1rmHistory.length - 1]?.e1rm.toFixed(1)}kg
+                    </Text>
+                  </View>
+                </>
+              ) : (
+                <View style={styles.emptyChart}>
+                  <Text style={[styles.emptyText, { color: ds.tone.textSecondary }]}>
+                    No e1RM data for {selectedExerciseData.name}
                   </Text>
-                )}
-              </View>
+                </View>
+              )
             ) : (
               <View style={styles.emptyChart}>
                 <Text style={[styles.emptyText, { color: ds.tone.textSecondary }]}>
@@ -169,14 +185,6 @@ const styles = StyleSheet.create({
   chartContainer: {
     height: 200,
   },
-  chartPlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-  },
   emptyChart: {
     flex: 1,
     justifyContent: 'center',
@@ -185,6 +193,14 @@ const styles = StyleSheet.create({
   chartText: {
     fontSize: 16,
     marginBottom: 8,
+  },
+  statsContainer: {
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  statsText: {
+    fontSize: 12,
+    opacity: 0.8,
   },
   emptyContainer: {
     height: 250,

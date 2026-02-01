@@ -4,6 +4,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
+import VictoryBarChart from './VictoryBarChart';
 
 type MuscleGroup =
   | 'chest' | 'back' | 'shoulders' | 'legs' | 'arms' | 'core'
@@ -51,6 +52,18 @@ const MuscleBalanceCard: React.FC<MuscleBalanceCardProps> = ({ data, isLoading }
       });
   }
 
+  // Prepare chart data for muscle group volumes
+  const chartData = latestData
+    ? Object.entries(latestData.groups)
+        .filter(([_, volume]) => volume > 0)
+        .map(([muscleGroup, volume]) => ({
+          x: muscleGroup,
+          y: volume,
+          label: muscleGroup,
+        }))
+        .sort((a, b) => b.y - a.y) // Sort descending
+    : [];
+
   return (
     <View style={[styles.card, { backgroundColor: ds.tone.card }]}>
       <View style={styles.header}>
@@ -67,14 +80,22 @@ const MuscleBalanceCard: React.FC<MuscleBalanceCardProps> = ({ data, isLoading }
       ) : latestData ? (
         <View style={styles.content}>
           <View style={styles.chartContainer}>
-            <View style={styles.chartPlaceholder}>
-              <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                Muscle Group Balance Visualization
-              </Text>
-              <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                {Object.keys(latestData.groups).filter(key => latestData.groups[key as MuscleGroup] > 0).length} muscle groups
-              </Text>
-            </View>
+            {chartData.length > 0 ? (
+              <VictoryBarChart
+                data={chartData}
+                xLabel="Muscle Group"
+                yLabel="Volume (kg)"
+                accentColor={ds.tone.accent}
+                height={150}
+                barWidth={20}
+              />
+            ) : (
+              <View style={styles.chartPlaceholder}>
+                <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
+                  No muscle group volume data
+                </Text>
+              </View>
+            )}
           </View>
 
           <Text style={[styles.sectionTitle, { color: ds.tone.text }]}>

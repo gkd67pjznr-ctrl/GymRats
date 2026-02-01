@@ -4,6 +4,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
+import VictoryBarChart from './VictoryBarChart';
 
 type ExerciseStat = {
   exerciseId: string;
@@ -57,19 +58,26 @@ const VolumeTrendCard: React.FC<VolumeTrendCardProps> = ({ exercises, isLoading 
       ) : exercises && exercises.length > 0 ? (
         <View style={styles.content}>
           <View style={styles.chartContainer}>
-            <View style={styles.chartPlaceholder}>
-              <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                Volume Trend Chart
-              </Text>
-              <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                {totalVolume.length} weeks of data
-              </Text>
-              {totalVolume.length > 0 && (
+            {totalVolume.length > 0 ? (
+              <VictoryBarChart
+                data={totalVolume.map(point => ({
+                  x: point.week,
+                  y: point.volume,
+                  label: point.week,
+                }))}
+                xLabel="Week"
+                yLabel="Volume (kg)"
+                accentColor={ds.tone.accent}
+                height={150}
+                barWidth={20}
+              />
+            ) : (
+              <View style={styles.chartPlaceholder}>
                 <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                  Latest volume: {totalVolume[totalVolume.length - 1]?.volume.toFixed(0)} kg
+                  No volume data available
                 </Text>
-              )}
-            </View>
+              </View>
+            )}
           </View>
 
           <View style={styles.statsContainer}>

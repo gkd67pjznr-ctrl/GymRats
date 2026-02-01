@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
+import VictoryLineChart from './VictoryLineChart';
 
 type ExerciseStat = {
   exerciseId: string;
@@ -26,6 +27,16 @@ const RankProgressionCard: React.FC<RankProgressionCardProps> = ({ exercises, is
   const selectedExerciseData = selectedExercise
     ? exercises.find(ex => ex.exerciseId === selectedExercise)
     : exercises[0];
+
+  // Prepare chart data for rank progression
+  const chartData = selectedExerciseData
+    ? selectedExerciseData.rankHistory.map(point => ({
+        x: point.date,
+        y: point.rank,
+        date: point.date,
+        score: point.score,
+      }))
+    : [];
 
   // Get rank colors from design system
   const getRankColor = (rank: number): string => {
@@ -96,23 +107,33 @@ const RankProgressionCard: React.FC<RankProgressionCardProps> = ({ exercises, is
           {/* Chart Area */}
           {selectedExerciseData ? (
             <View style={styles.chartContainer}>
-              <View style={styles.chartPlaceholder}>
-                <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                  Rank Progression for {selectedExerciseData.name}
-                </Text>
-                <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                  {selectedExerciseData.rankHistory.length} rank changes
-                </Text>
-                {selectedExerciseData.rankHistory.length > 0 && (
-                  <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-                    Current rank: {selectedExerciseData.rankHistory[selectedExerciseData.rankHistory.length - 1]?.rank} (
-                    <Text style={{ color: getRankColor(selectedExerciseData.rankHistory[selectedExerciseData.rankHistory.length - 1]?.rank) }}>
-                      {getRankName(selectedExerciseData.rankHistory[selectedExerciseData.rankHistory.length - 1]?.rank)}
+              {chartData.length > 0 ? (
+                <View style={styles.chartContainerInner}>
+                  <VictoryLineChart
+                    data={chartData}
+                    xLabel="Date"
+                    yLabel="Rank"
+                    accentColor={ds.tone.accent}
+                    height={150}
+                    showDots={chartData.length <= 20}
+                  />
+                  <View style={styles.statsContainer}>
+                    <Text style={[styles.statsText, { color: ds.tone.textSecondary }]}>
+                      {chartData.length} rank changes • Current rank: {chartData[chartData.length - 1]?.y} (
+                      <Text style={{ color: getRankColor(chartData[chartData.length - 1]?.y) }}>
+                        {getRankName(chartData[chartData.length - 1]?.y)}
+                      </Text>
+                      )
                     </Text>
-                    )
+                  </View>
+                </View>
+              ) : (
+                <View style={styles.chartPlaceholder}>
+                  <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
+                    No rank history data for {selectedExerciseData.name}
                   </Text>
-                )}
-              </View>
+                </View>
+              )}
 
               {/* Rank History List */}
               {selectedExerciseData.rankHistory.length > 0 && (
@@ -247,6 +268,17 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
     marginBottom: 20,
+  },
+  chartContainerInner: {
+    marginBottom: 20,
+  },
+  statsContainer: {
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  statsText: {
+    fontSize: 12,
+    opacity: 0.8,
   },
   chartText: {
     fontSize: 16,
