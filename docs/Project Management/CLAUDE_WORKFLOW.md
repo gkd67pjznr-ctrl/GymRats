@@ -1,8 +1,8 @@
 # CLAUDE WORKFLOW CONFIG
 
-**Version:** 1.1
+**Version:** 1.2
 **Created:** 2026-01-27
-**Updated:** 2026-01-30
+**Updated:** 2026-02-02
 **Purpose:** Standardized work loop for all development sessions
 
 ---
@@ -13,17 +13,59 @@ When a new session begins, Claude will:
 
 ### 1. Status Check (Always)
 ```
-1. Read docs/progress.md - current state
-2. Read docs/FEATURE-MASTER.md - feature status
-3. Read all files in docs/features
+1. Read docs/README.md - documentation hub (QUICK FIRST)
+2. If task is clearly defined, skip to step 2
+3. Otherwise, read docs/1-PROJECT-STATUS.md - current state
 4. Run `npm test` - verify test suite passes
 5. Check for any blocking issues
-6. [Maestro] Check if feature documentation sync needed
 ```
+
+### 1.5 Quick Navigation Protocol (IMPORTANT - Don't Get Stuck Reading)
+
+**CRITICAL:** Do NOT read all documentation on startup. Use this decision tree to navigate efficiently:
+
+```
+Task Type → Read Only This
+
+"Project status?" → docs/1-PROJECT-STATUS.md (ONLY)
+
+"Architecture/how it works?" → docs/3-CODEBASE-GUIDE.md (ONLY)
+
+"Vision/strategy?" → docs/Master Documentation/2-MASTER-PLAN.md (ONLY)
+
+"Feature implementation?" → docs/features/[feature-name]/ (ONLY that feature)
+
+"Commands/workflow?" → CLAUDE.md (Quick Commands section) OR
+                        docs/Project Management/admin-workflow-commands.md
+
+"Testing?" → docs/Master Documentation/TESTING_PLAN_MASTER.md (ONLY)
+```
+
+**Navigation Rules:**
+1. **Start with docs/README.md** - it has links to everything
+2. **Read ONLY what you need** - don't read "just in case"
+3. **Feature docs are self-contained** - each feature folder has everything you need
+4. **Project status is now ONE file** - docs/1-PROJECT-STATUS.md
+5. **Code guide is comprehensive** - docs/3-CODEBASE-GUIDE.md has architecture, patterns, testing
+
+**What NOT to do:**
+- ❌ Don't read all feature files on startup
+- ❌ Don't read all files in a category "to understand context"
+- ❌ Don't read old/consolidated docs (they've been deleted)
+- ❌ Don't read master docs unless specifically working on strategy/planning
+
+**DO this instead:**
+- ✅ Read docs/README.md first (hub with quick links)
+- ✅ Read ONLY the specific feature doc you're working on
+- ✅ Read docs/1-PROJECT-STATUS.md for current status (not progress.md or old PROJECT_STATUS.md)
+- ✅ Read docs/3-CODEBASE-GUIDE.md for architecture/patterns
+- ✅ Use the decision tree above to find what you need quickly
 
 ### 2. Priority Assessment
 
 Present the user with **top 3 recommended tasks** based on this priority matrix:
+
+**NOTE:** Before presenting tasks, check `docs/1-PROJECT-STATUS.md` → "Critical Issues" section for current P0 items.
 
 | Priority | Criteria | Weight |
 |----------|----------|--------|
@@ -568,38 +610,19 @@ This ensures documentation stays synchronized and no decisions are lost between 
 
 ### Phase: 2 - Advanced Features (AI Gym Buddy, Analytics, and Social Enhancements)
 
+### For Current Status
+**SEE:** `docs/1-PROJECT-STATUS.md` → "Feature Status (Single Source of Truth)"
+
+### For Quick Reference
+**Quality Score:** 75/100 | **Test Suite Health:** 95% passing
+**Launch Progress:** 131/167 features (78%)
+
 ### Critical Issues (P0)
-- 160 failing tests
-- Backend sync integration incomplete
-- OAuth authentication not working
-
-### In Progress Features
-- Workout Core: 15/20
-- Authentication: 7/10
-- Backend & Sync: 9/10
-- UI & Design: 12/15
-- Notifications: 1/4
-- Onboarding: 3/7
-- Avatar & Hangout Room: 4/8
-- Forge Lab (Analytics): 3/6
-
-### Completed Features
-- Exercise Library: 3/3 (Done)
-- Scoring & Ranks: 5/5 (Done)
-- Workout Logging UX: 10/10 (Done)
-- Gamification: 12/12 (Done)
-- AI Gym Buddy: 11/11 (Done)
-- Workout Replay: 5/5 (Done)
-- Forge Milestones: 5/5 (Done)
-- UI Themes & Visual Style: 12/12 (Done)
-- Forge DNA: 4/4 (Done)
-
-### Quality Score: 75/100
+- 60 failing tests (down from 159 after fixes)
+- OAuth authentication requires external setup
+- Backend sync system complete, ready for testing
 
 ### Visual Style Documentation
-- UI Aesthetic Implementation Plan: Complete
-- Visual Style Guide: Complete
-- Implementation Roadmap: Complete
 - Located in: `docs/visual-style/`
 
 ---
