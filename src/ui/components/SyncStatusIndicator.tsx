@@ -266,16 +266,22 @@ export function SyncStatusIndicator({
  * Preset variants for common use cases
  */
 // Static variants attached to the SyncStatusIndicator component
-SyncStatusIndicator.Pill = (props: Omit<SyncStatusIndicatorProps, 'displayMode'>) => (
+const Pill = (props: Omit<SyncStatusIndicatorProps, 'displayMode'>) => (
   <SyncStatusIndicator {...props} displayMode="minimal" />
 );
+Pill.displayName = 'SyncStatusIndicator.Pill';
+SyncStatusIndicator.Pill = Pill;
 
-SyncStatusIndicator.Detailed = (props: Omit<SyncStatusIndicatorProps, 'displayMode'>) => (
+const Detailed = (props: Omit<SyncStatusIndicatorProps, 'displayMode'>) => (
   <SyncStatusIndicator {...props} displayMode="detailed" />
 );
+Detailed.displayName = 'SyncStatusIndicator.Detailed';
+SyncStatusIndicator.Detailed = Detailed;
 
-SyncStatusIndicator.Row = (props: Omit<SyncStatusIndicatorProps, 'displayMode' | 'labelPosition'>) => (
+const Row = (props: Omit<SyncStatusIndicatorProps, 'displayMode' | 'labelPosition'>) => (
   <SyncStatusIndicator {...props} displayMode="compact" labelPosition="right" />
 );
+Row.displayName = 'SyncStatusIndicator.Row';
+SyncStatusIndicator.Row = Row;
 
 export default SyncStatusIndicator;

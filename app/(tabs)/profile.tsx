@@ -9,8 +9,7 @@ import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
 // Gamification imports
 import { useGamificationStore } from "../../src/lib/stores/gamificationStore";
 import { useIsGamificationHydrated, usePendingLevelUp } from "../../src/lib/stores/gamificationStore";
-import { StatsAndRanksCard } from "../../src/ui/components/Gamification";
-import { LevelUpModal } from "../../src/ui/components/Gamification";
+import { StatsAndRanksCard , LevelUpModal } from "../../src/ui/components/Gamification";
 import type { LevelUpCelebration } from "../../src/lib/gamification/types";
 // Milestones imports
 import {

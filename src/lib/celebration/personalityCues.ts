@@ -2,8 +2,7 @@
 // Integration layer for personality-based cue generation
 // Connects the personality system with existing perSetCue infrastructure
 
-import type { Cue } from '../perSetCueTypes';
-import type { PRType } from '../perSetCueTypes';
+import type { Cue , PRType } from '../perSetCueTypes';
 import { prTypeToContext, tierToIntensity } from './personalities';
 import { getPRCue } from '../stores/personalityStore';
 import { deltaToTier } from './selector';

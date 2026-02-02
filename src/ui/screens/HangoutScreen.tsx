@@ -7,9 +7,8 @@ import { useRouter } from "expo-router";
 import { makeDesignSystem } from "../designSystem";
 import { useThemeColors } from "../theme";
 import { useUser } from "../../lib/stores/authStore";
-import { useHangoutStore } from "../../lib/hangout/hangoutStore";
+import { useHangoutStore , useIsHangoutHydrated } from "../../lib/hangout/hangoutStore";
 import { HangoutRoom } from "../components/Hangout/HangoutRoom";
-import { useIsHangoutHydrated } from "../../lib/hangout/hangoutStore";
 
 export default function HangoutScreen() {
   const router = useRouter();

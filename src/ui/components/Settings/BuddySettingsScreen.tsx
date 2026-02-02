@@ -139,7 +139,7 @@ export function BuddySettingsScreen() {
       const voiceLines = buddy.voiceLines;
       if (voiceLines) {
         // Pick first available voice line
-        const triggerTypes = Object.keys(voiceLines) as Array<keyof typeof voiceLines>;
+        const triggerTypes = Object.keys(voiceLines) as (keyof typeof voiceLines)[];
         if (triggerTypes.length > 0) {
           const firstTrigger = triggerTypes[0];
           const lines = voiceLines[firstTrigger];

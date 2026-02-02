@@ -14,10 +14,9 @@ import {
 import { useRouter } from "expo-router";
 import { useThemeColors } from "../src/ui/theme";
 import { makeDesignSystem } from "../src/ui/designSystem";
-import { useJournalEntries, useUser } from "../src/lib/stores";
+import { useJournalEntries, useUser , addJournalEntry } from "../src/lib/stores";
 import JournalEntryCard from "../src/ui/components/Journal/JournalEntryCard";
 import JournalEntryModal from "../src/ui/components/Journal/JournalEntryModal";
-import { addJournalEntry } from "../src/lib/stores";
 import { createJournalEntry, getTodayDate } from "../src/lib/journalModel";
 
 export default function JournalScreen() {

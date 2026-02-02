@@ -185,7 +185,7 @@ export function generateComparisonInsights(userDNA: ForgeDNA, averageDNA: ForgeD
     'neck', 'quadriceps', 'shoulders', 'traps', 'triceps'
   ];
 
-  const significantDifferences: Array<{ muscle: MuscleGroup; user: number; average: number; difference: number }> = [];
+  const significantDifferences: { muscle: MuscleGroup; user: number; average: number; difference: number }[] = [];
 
   muscleGroups.forEach(muscle => {
     const userValue = userDNA.muscleBalance[muscle] || 0;

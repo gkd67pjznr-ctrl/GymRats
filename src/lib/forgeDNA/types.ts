@@ -47,11 +47,11 @@ export type LiftPreference =
 
 export type ForgeDNAMetrics = {
   // Muscle group balance metrics
-  muscleImbalances: Array<{
+  muscleImbalances: {
     muscleGroup: MuscleGroup;
     volumePercentage: number;
     imbalanceScore: number; // 0-100, higher = more imbalanced
-  }>;
+  }[];
 
   // Training style metrics
   avgWeightPerRep: number;    // Average weight lifted per rep
@@ -89,18 +89,18 @@ export type ForgeDNAVisualization = {
   };
 
   // Training style visualization
-  trainingStyleBars: Array<{
+  trainingStyleBars: {
     style: 'strength' | 'volume' | 'endurance';
     percentage: number;     // 0-100
     color: string;          // Style-specific color
-  }>;
+  }[];
 
   // Top exercises visualization
-  topExercisesChart: Array<{
+  topExercisesChart: {
     exerciseId: string;
     volume: number;
     color: string;
-  }>;
+  }[];
 };
 
 // Premium vs Free data

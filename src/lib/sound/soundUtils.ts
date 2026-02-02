@@ -4,6 +4,9 @@
 import { getSettings } from '../stores/settingsStore';
 import { playSound as playSoundInternal, SoundKey } from './SoundManager';
 
+// Re-export AudioCuePreferences type from settings store
+import type { AudioCuePreferences } from '../stores/settingsStore';
+
 /**
  * Check if global sounds are enabled
  */
@@ -69,6 +72,3 @@ export async function playSoundForCue(
   await playSoundInternal(soundKey, volume);
   return true;
 }
-
-// Re-export AudioCuePreferences type from settings store
-import type { AudioCuePreferences } from '../stores/settingsStore';

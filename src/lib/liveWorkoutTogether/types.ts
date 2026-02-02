@@ -36,12 +36,12 @@ export interface LiveSession {
   startedAt?: number;
   endedAt?: number;
   currentExerciseId?: string; // Current exercise in guided mode
-  plannedExercises?: Array<{
+  plannedExercises?: {
     exerciseId: string;
     targetSets: number;
     targetRepsMin?: number;
     targetRepsMax?: number;
-  }>; // Optional workout plan for guided mode
+  }[]; // Optional workout plan for guided mode
 }
 
 // ============================================================================
@@ -382,12 +382,12 @@ export interface CreateLiveSessionParams {
   name?: string;
   theme?: string;
   participantIds?: string[]; // Initial participants to invite
-  plannedExercises?: Array<{
+  plannedExercises?: {
     exerciseId: string;
     targetSets: number;
     targetRepsMin?: number;
     targetRepsMax?: number;
-  }>;
+  }[];
 }
 
 /**

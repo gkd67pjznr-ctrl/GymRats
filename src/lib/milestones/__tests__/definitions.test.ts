@@ -84,7 +84,7 @@ describe('Milestone Definitions', () => {
 
   describe('RARITY_INFO', () => {
     it('should have info for all rarities', () => {
-      const rarities: Array<keyof typeof RARITY_INFO> = ['common', 'rare', 'epic', 'legendary'];
+      const rarities: (keyof typeof RARITY_INFO)[] = ['common', 'rare', 'epic', 'legendary'];
       rarities.forEach(rarity => {
         expect(RARITY_INFO[rarity]).toBeDefined();
         expect(RARITY_INFO[rarity].name).toBeDefined();

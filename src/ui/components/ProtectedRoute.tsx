@@ -4,10 +4,9 @@
 
 import { useEffect } from "react";
 import { useRouter, useSegments } from "expo-router";
-import { Text, View } from "react-native";
+import { Text, View , ActivityIndicator } from "react-native";
 import { useThemeColors } from "../theme";
 import { useUser } from "../../lib/stores/authStore";
-import { ActivityIndicator } from "react-native";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

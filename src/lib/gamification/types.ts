@@ -165,11 +165,11 @@ export interface TokenReward {
  */
 export interface WorkoutForCalculation {
   /** All sets logged in the workout */
-  sets: Array<{
+  sets: {
     exerciseId: string;
     weightKg: number;
     reps: number;
-  }>;
+  }[];
   /** Whether the workout was 100% completed (for planned workouts) */
   fullyCompleted?: boolean;
   /** Current streak at workout time */

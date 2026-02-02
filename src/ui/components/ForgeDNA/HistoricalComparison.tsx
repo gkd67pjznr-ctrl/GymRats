@@ -41,7 +41,7 @@ export function HistoricalComparison({ history }: HistoricalComparisonProps) {
   }
 
   // Calculate changes in muscle balance
-  const muscleChanges: Array<{ muscle: MuscleGroup; change: number; currentValue: number; previousValue: number }> = [];
+  const muscleChanges: { muscle: MuscleGroup; change: number; currentValue: number; previousValue: number }[] = [];
   for (const muscle in currentDNA.muscleBalance) {
     const currentValue = currentDNA.muscleBalance[muscle as MuscleGroup];
     const previousValue = previousDNA.muscleBalance[muscle as MuscleGroup];

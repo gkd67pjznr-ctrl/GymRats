@@ -7,8 +7,7 @@ import { EXERCISES_V1 } from '../../data/exercises';
 import { detectCueForWorkingSet } from '../perSetCue';
 import { scoreForgerank, scoreFromE1rm } from '../forgerankScoring';
 import { estimate1RM_Epley } from '../e1rm';
-import { getCurrentBuddy } from '../buddyEngine';
-import { formatCueMessage } from '../buddyEngine';
+import { getCurrentBuddy , formatCueMessage } from '../buddyEngine';
 import type { CueMessage } from '../buddyTypes';
 
 // Helper to get exercise name

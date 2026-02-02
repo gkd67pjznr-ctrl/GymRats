@@ -73,12 +73,12 @@ export default function ForgotPasswordScreen() {
           </Text>
 
           <Text style={{ color: c.muted, fontSize: 16, textAlign: "center", lineHeight: 24 }}>
-            We've sent a password reset link to{"\n"}
+            We\'ve sent a password reset link to{"\n"}
             <Text style={{ color: c.text, fontWeight: "700" }}>{email}</Text>
           </Text>
 
           <Text style={{ color: c.muted, fontSize: 14, textAlign: "center", lineHeight: 20 }}>
-            The link will expire in 24 hours. If you don't see it, check your spam folder.
+            The link will expire in 24 hours. If you don\'t see it, check your spam folder.
           </Text>
 
           <Pressable
@@ -114,7 +114,7 @@ export default function ForgotPasswordScreen() {
             Forgot Password?
           </Text>
           <Text style={{ color: c.muted, fontSize: 16, lineHeight: 24 }}>
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we\'ll send you a link to reset your password.
           </Text>
         </View>
 
@@ -134,7 +134,6 @@ export default function ForgotPasswordScreen() {
             </Text>
           </View>
         )}
-
         {/* Email input */}
         <View style={{ gap: 8 }}>
           <Text style={{ color: c.text, fontSize: 14, fontWeight: "700" }}>Email</Text>
@@ -165,7 +164,7 @@ export default function ForgotPasswordScreen() {
               marginTop: 4,
             }}
           >
-            We'll send a reset link to this address
+            We\'ll send a reset link to this address
           </Text>
         </View>
 

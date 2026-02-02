@@ -4,6 +4,12 @@
 import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
+import {
+  isGoogleAuthAvailable,
+  getGoogleOAuthUrl,
+  handleGoogleOAuthCallback,
+} from '../google';
+
 // Mock Platform module
 jest.mock('react-native', () => ({
   Platform: {
@@ -17,12 +23,6 @@ jest.mock('react-native', () => ({
 }));
 
 const MockedPlatform = Platform as jest.Mocked<typeof Platform>;
-
-import {
-  isGoogleAuthAvailable,
-  getGoogleOAuthUrl,
-  handleGoogleOAuthCallback,
-} from '../google';
 
 // Mock dependencies
 jest.mock('expo-constants', () => ({

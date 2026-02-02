@@ -70,6 +70,9 @@ export type UseLiveWorkoutSessionResult = {
   // add set (main action)
   addSet: (exerciseId: string, setType?: SetType) => { weightLb: number; reps: number; set: LoggedSet };
 
+  // delete set
+  deleteSet: (setId: string) => void;
+
   // reset
   resetSession: () => void;
 };
@@ -378,6 +381,21 @@ export function useLiveWorkoutSession(
     [weightLb, reps, callbacks]
   );
 
+  // Delete a set from the workout session
+  const deleteSet = useCallback(
+    (setId: string) => {
+      setSets((prev) => prev.filter((s) => s.id !== setId));
+      // Also remove from done tracking
+      setDoneBySetId((prev) => {
+        const next = { ...prev };
+        delete next[setId];
+        return next;
+      });
+      callbacks?.onSuccess?.("Set deleted");
+    },
+    [callbacks]
+  );
+
   const resetSession = useCallback(() => {
     setSets([]);
     setDoneBySetId({});
@@ -430,6 +448,7 @@ export function useLiveWorkoutSession(
       syncQuickAddToExercise,
 
       addSet,
+      deleteSet,
 
       resetSession,
 
@@ -467,6 +486,7 @@ export function useLiveWorkoutSession(
       setDefaultsForExercise,
       syncQuickAddToExercise,
       addSet,
+      deleteSet,
       resetSession,
       getLastSetForExercise,
       copyFromLastSet,

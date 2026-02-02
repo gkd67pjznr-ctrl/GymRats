@@ -39,7 +39,7 @@ export default function Calendar() {
     const startWeekday = firstDay.getDay(); // 0 Sun..6 Sat
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const cells: Array<{ day: number | null; dayMs?: number }> = [];
+    const cells: { day: number | null; dayMs?: number }[] = [];
     for (let i = 0; i < startWeekday; i++) cells.push({ day: null });
 
     for (let day = 1; day <= daysInMonth; day++) {

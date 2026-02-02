@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator, TextInput, Modal, Image } from "react-native";
-import { Link } from "expo-router";
-import { useRouter } from "expo-router";
+import { Link , useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { useThemeColors } from "../src/ui/theme";

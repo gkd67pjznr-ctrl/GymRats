@@ -91,7 +91,7 @@ export function useGamificationWorkoutFinish(): UseGamificationWorkoutFinishResu
  * @returns Workout data for gamification
  */
 export function toWorkoutForCalculation(
-  sets: Array<{ exerciseId: string; weightKg: number; reps: number }>,
+  sets: { exerciseId: string; weightKg: number; reps: number }[],
   currentStreak: number,
   fullyCompleted?: boolean
 ): WorkoutForCalculation {

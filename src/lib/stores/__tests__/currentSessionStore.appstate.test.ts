@@ -41,7 +41,7 @@ const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 const mockAppState = AppState as jest.Mocked<typeof AppState>;
 
 describe('currentSessionStore - AppState Integration (TASK-001, TASK-002)', () => {
-  let mockAppStateChangeCallbacks: Array<(state: string) => void>;
+  let mockAppStateChangeCallbacks: ((state: string) => void)[];
   let appStateCleanup: (() => void) | undefined;
 
   beforeEach(() => {

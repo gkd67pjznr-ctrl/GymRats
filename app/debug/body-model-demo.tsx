@@ -1,9 +1,8 @@
 // Body Model Demo Screen
 import React, { useState } from 'react';
-import { ScrollView, Text, View, Pressable } from 'react-native';
+import { ScrollView, Text, View, Pressable , useColorScheme } from 'react-native';
 import { BodyModel } from '@/src/ui/components/BodyModel';
 import { makeDesignSystem, alpha } from '@/src/ui/designSystem';
-import { useColorScheme } from 'react-native';
 import { useSettings } from '@/src/lib/stores/settingsStore';
 import { TabErrorBoundary } from '@/src/ui/tab-error-boundary';
 

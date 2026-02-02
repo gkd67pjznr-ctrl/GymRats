@@ -78,7 +78,7 @@ export function calculateSetXP(weightKg: number, reps: number): number {
  * @returns Projected XP breakdown
  */
 export function calculateProjectedXP(
-  sets: Array<{ exerciseId: string; weightKg: number; reps: number }>,
+  sets: { exerciseId: string; weightKg: number; reps: number }[],
   currentStreak: number
 ): Omit<WorkoutXPBreakdown, 'completion' | 'total'> & { total: number } {
   const workout: WorkoutForCalculation = {

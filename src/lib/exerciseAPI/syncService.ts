@@ -229,7 +229,6 @@ function mapToMuscleGroups(muscles: string[]): MuscleGroup[] {
     'teres major': 'middle back',
     'teres minor': 'middle back',
     'neck': 'neck',
-    'trapezius': 'traps',
   };
 
   const mapped: MuscleGroup[] = [];

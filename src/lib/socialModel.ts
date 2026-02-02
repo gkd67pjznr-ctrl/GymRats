@@ -52,10 +52,10 @@ export type WorkoutPost = {
 
 export type WorkoutSnapshot = {
   routineName?: string;
-  topLines: Array<{
+  topLines: {
     exerciseName: string;
     bestSet?: { weightLabel: string; reps: number; e1rmLabel?: string };
-  }>;
+  }[];
 };
 
 // ---------- Reactions / Emotes ----------

@@ -7,8 +7,7 @@ import { pendingOperationsQueue } from './PendingOperationsQueue';
 import type { Session } from '@supabase/supabase-js';
 import type { WorkoutSession } from '../workoutModel';
 import type { Routine } from '../routinesModel';
-import type { FriendEdge } from '../socialModel';
-import type { WorkoutPost } from '../socialModel';
+import type { FriendEdge , WorkoutPost } from '../socialModel';
 
 /**
  * Store configuration for sync

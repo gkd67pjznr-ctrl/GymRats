@@ -20,6 +20,9 @@ import StarRating from "./StarRating";
 import SorenessPicker from "./SorenessPicker";
 import { MuscleId } from "@/src/data/consolidatedMuscleGroups";
 
+// Need to import TextInput from react-native
+import { TextInput } from "react-native";
+
 export interface JournalEntryModalProps {
   visible: boolean;
   onClose: () => void;
@@ -291,9 +294,6 @@ export const JournalEntryModal: React.FC<JournalEntryModalProps> = ({
     </Modal>
   );
 };
-
-// Need to import TextInput from react-native
-import { TextInput } from "react-native";
 
 const styles = StyleSheet.create({
   modalOverlay: {

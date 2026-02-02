@@ -217,7 +217,7 @@ export function calculateProfileStats(sessions: WorkoutSession[]): ProfileStats 
 export function getTopExercisesByRank(
   stats: ProfileStats,
   limit: number = 5
-): Array<{ exerciseId: string; rank: ExerciseRank; pr: ExercisePR }> {
+): { exerciseId: string; rank: ExerciseRank; pr: ExercisePR }[] {
   const entries = Object.entries(stats.exerciseRanks);
 
   // Sort by rank index (highest first), then by e1RM (highest first)

@@ -2,8 +2,7 @@
 // Tests for settingsStore - Zustand settings store with weight tracking
 
 import { act, renderHook, waitFor } from '@testing-library/react-native';
-import { useSettingsStore, getUserBodyweight, getUserWeightHistory, updateSettings } from '../settingsStore';
-import { useSettings } from '../settingsStore';
+import { useSettingsStore, getUserBodyweight, getUserWeightHistory, updateSettings , useSettings } from '../settingsStore';
 
 // Mock AsyncStorage for Zustand persistence
 jest.mock('@react-native-async-storage/async-storage', () => ({

@@ -59,9 +59,9 @@ fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
 fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
 console.log('Switched to OpenRouter backend.');
 console.log('Added 6 env vars to .claude/settings.local.json');
-console.log('  Haiku  -> mistralai/devstral-2512');
-console.log('  Sonnet -> google/gemini-2.5-pro');
-console.log('  Opus   -> anthropic/claude-opus-4');
+console.log('  Haiku  -> qwen/qwen3-coder:exacto');
+console.log('  Sonnet -> qwen/qwen3-coder:exacto');
+console.log('  Opus   -> qwen/qwen3-coder:exacto');
 console.log('');
 console.log('Restart Claude Code to apply changes.');
 "

@@ -12,24 +12,29 @@ import { useCurrentPlan, setCurrentPlan } from "../src/lib/workoutPlanStore";
 import type { WorkoutPlan } from "../src/lib/workoutPlanModel";
 
 // Components
-import { ExerciseBlocksCard } from "../src/ui/components/LiveWorkout/ExerciseBlocksCard";
 import { ExercisePicker } from "../src/ui/components/LiveWorkout/ExercisePicker";
 import { InstantCueToast } from "../src/ui/components/LiveWorkout/InstantCueToast";
 import { BuddyMessageToast } from "../src/ui/components/LiveWorkout/BuddyMessageToast";
-import { QuickAddSetCard } from "../src/ui/components/LiveWorkout/QuickAddSetCard";
 import { RestTimerOverlay } from "../src/ui/components/RestTimerOverlay";
 import { ValidationToast } from "../src/ui/components/LiveWorkout/ValidationToast";
-import { WorkoutTimerBar } from "../src/ui/components/LiveWorkout/WorkoutTimerBar";
 import { WorkoutTimerDetails } from "../src/ui/components/LiveWorkout/WorkoutTimerDetails";
 
-// New extracted components
-import { WorkoutHeader } from "../src/ui/components/LiveWorkout/WorkoutHeader";
+// New Hevy-style components
+import { ExerciseCard } from "../src/ui/components/LiveWorkout/ExerciseCard";
+import { WorkoutTopBar } from "../src/ui/components/LiveWorkout/WorkoutTopBar";
+import { WorkoutNotes } from "../src/ui/components/LiveWorkout/WorkoutNotes";
 import { WorkoutControls } from "../src/ui/components/LiveWorkout/WorkoutControls";
-import { SelectedExerciseCard } from "../src/ui/components/LiveWorkout/SelectedExerciseCard";
 import { WorkoutActions } from "../src/ui/components/LiveWorkout/WorkoutActions";
 import { RecapCues } from "../src/ui/components/LiveWorkout/RecapCues";
 import { PRCelebration } from "../src/ui/components/LiveWorkout/PRCelebration";
 import { TutorialOverlay } from "../src/ui/components/LiveWorkout/TutorialOverlay";
+
+// Legacy components (kept for backward compatibility)
+// import { ExerciseBlocksCard } from "../src/ui/components/LiveWorkout/ExerciseBlocksCard";
+// import { QuickAddSetCard } from "../src/ui/components/LiveWorkout/QuickAddSetCard";
+// import { SelectedExerciseCard } from "../src/ui/components/LiveWorkout/SelectedExerciseCard";
+// import { WorkoutHeader } from "../src/ui/components/LiveWorkout/WorkoutHeader";
+// import { WorkoutTimerBar } from "../src/ui/components/LiveWorkout/WorkoutTimerBar";
 
 // Live Workout Together components
 import { LiveWorkoutTogether } from "../src/ui/components/LiveWorkoutTogether/LiveWorkoutTogether";
@@ -61,6 +66,13 @@ import { randomHighlightDurationMs } from "../src/lib/perSetCue";
 import { selectCelebration } from "../src/lib/celebration";
 import type { SelectedCelebration } from "../src/lib/celebration";
 
+// Notifications
+import {
+  initializeNotificationService,
+  setupNotificationResponseListener,
+  requestNotificationPermission,
+} from "../src/lib/notifications/notificationService";
+
 // Live Workout Together types
 export type PresenceUser = {
   id: string;
@@ -78,13 +90,6 @@ export type Reaction = {
   type: 'fire' | 'muscle' | 'heart' | 'clap' | 'rocket' | 'thumbsup';
   timestamp: number;
 };
-
-// Notifications
-import {
-  initializeNotificationService,
-  setupNotificationResponseListener,
-  requestNotificationPermission,
-} from "../src/lib/notifications/notificationService";
 
 // Constants
 const DEFAULT_REST_SECONDS = 90;
@@ -158,6 +163,9 @@ export default function LiveWorkout() {
   const [showTimerDetails, setShowTimerDetails] = useState(false);
   const notificationPermissionRequestedRef = useRef(false);
   const [restStartTime, setRestStartTime] = useState<number | null>(null);
+
+  // Workout notes state
+  const [workoutNotes, setWorkoutNotes] = useState("");
 
   const onRestTimerDone = () => {
     // Record rest duration in buddy store
@@ -291,7 +299,6 @@ export default function LiveWorkout() {
     ensureCurrentSession({
       selectedExerciseId: first,
       exerciseBlocks: pickerState.planMode ? pickerState.plannedExerciseIds.slice() : [first],
-      done: pickerState.planMode ? new Set() : new Set([first]),
     });
 
     // Start buddy workout session
@@ -486,12 +493,41 @@ export default function LiveWorkout() {
     );
   }
 
+  // Helper to get previous set for an exercise at a given index
+  // Uses workout history if available
+  const getPreviousSet = useMemo(() => {
+    return (exerciseId: string, setIndex: number): { weightKg: number; reps: number } | null => {
+      // First check current session's previous sets for this exercise
+      const exerciseSets = session.sets.filter(s => s.exerciseId === exerciseId);
+      if (setIndex > 0 && exerciseSets[setIndex - 1]) {
+        return {
+          weightKg: exerciseSets[setIndex - 1].weightKg,
+          reps: exerciseSets[setIndex - 1].reps,
+        };
+      }
+      // Fall back to last workout's set for this exercise
+      const lastSet = session.getLastSetForExercise(exerciseId);
+      if (lastSet) {
+        return { weightKg: lastSet.weightKg, reps: lastSet.reps };
+      }
+      return null;
+    };
+  }, [session.sets, session.getLastSetForExercise]);
+
+  // Filter exercises to show based on focus mode
+  const visibleExerciseIds = useMemo(() => {
+    if (!focusMode) return pickerState.exerciseBlocks;
+    if (!pickerState.selectedExerciseId) return pickerState.exerciseBlocks;
+    return pickerState.exerciseBlocks.filter((id) => id === pickerState.selectedExerciseId);
+  }, [pickerState.exerciseBlocks, focusMode, pickerState.selectedExerciseId]);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: c.bg }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
+      {/* Overlays and Toasts */}
       <InstantCueToast
         cue={orchestrator.instantCue}
         onClear={orchestrator.clearInstantCue}
@@ -516,14 +552,13 @@ export default function LiveWorkout() {
         initialSeconds={DEFAULT_REST_SECONDS}
         onClose={() => setRestVisible(false)}
         onDone={onRestTimerDone}
-        workoutId={persisted?.session?.id}
+        workoutId={persisted?.id}
       />
 
       <PRCelebration
         celebration={celebration}
         onDismiss={() => setCelebration(null)}
         onShare={() => {
-          // TODO: Implement share functionality
           setCelebration(null);
         }}
       />
@@ -536,38 +571,47 @@ export default function LiveWorkout() {
 
       {showTutorial && (
         <TutorialOverlay
-          onComplete={() => {
-            // Optional: navigate away or show completion message
-            console.log('Tutorial completed');
-          }}
-          onSkip={() => {
-            console.log('Tutorial skipped');
-          }}
+          onComplete={() => console.log('Tutorial completed')}
+          onSkip={() => console.log('Tutorial skipped')}
         />
       )}
 
+      {/* Timer Details Modal */}
+      <WorkoutTimerDetails
+        visible={showTimerDetails}
+        timer={timer}
+        onClose={() => setShowTimerDetails(false)}
+      />
+
+      {/* Fixed Top Bar - Hevy style */}
+      <WorkoutTopBar
+        elapsedDisplay={timer.elapsedDisplay}
+        isRestTimerActive={restVisible}
+        onBack={() => router.back()}
+        onFinish={orchestrator.finishWorkout}
+        onRestTimer={() => setRestVisible(true)}
+      />
+
+      {/* Main Content */}
       <ScrollView
         contentContainerStyle={{ padding: PAD, gap: GAP, paddingBottom: SCROLL_BOTTOM_PADDING }}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Timer Bar */}
-        <WorkoutTimerBar
-          timer={timer}
-          onPressDetails={() => setShowTimerDetails(true)}
+        {/* Workout Notes */}
+        <WorkoutNotes
+          value={workoutNotes}
+          onChangeText={setWorkoutNotes}
         />
 
-        {/* Timer Details Modal */}
-        <WorkoutTimerDetails
-          visible={showTimerDetails}
-          timer={timer}
-          onClose={() => setShowTimerDetails(false)}
-        />
-
-        {/* Header Card */}
-        <WorkoutHeader
-          plan={plan}
-          sets={session.sets}
+        {/* Top Controls */}
+        <WorkoutControls
+          planMode={pickerState.planMode}
           focusMode={focusMode}
+          liveWorkoutTogether={liveWorkoutTogether}
+          onAddExercise={pickerState.openPickerToAdd}
+          onToggleFocus={() => setFocusMode(v => !v)}
+          onChangeSelected={pickerState.openPickerToChange}
+          onToggleLiveWorkoutTogether={() => setLiveWorkoutTogether(v => !v)}
         />
 
         {/* Live Workout Together Component */}
@@ -587,61 +631,46 @@ export default function LiveWorkout() {
           </View>
         )}
 
-        {/* Top Controls */}
-        <WorkoutControls
-          planMode={pickerState.planMode}
-          focusMode={focusMode}
-          liveWorkoutTogether={liveWorkoutTogether}
-          onAddExercise={pickerState.openPickerToAdd}
-          onToggleFocus={() => setFocusMode(v => !v)}
-          onChangeSelected={pickerState.openPickerToChange}
-          onToggleLiveWorkoutTogether={() => setLiveWorkoutTogether(v => !v)}
-        />
+        {/* Exercise Cards - Hevy-style tabular layout */}
+        {visibleExerciseIds.map((exerciseId) => {
+          const exerciseSets = session.sets.filter(s => s.exerciseId === exerciseId);
+          const targetSets = targetSetsByExerciseId[exerciseId];
 
-        {/* Exercise Blocks */}
-        <ExerciseBlocksCard
-          exerciseIds={pickerState.exerciseBlocks}
-          sets={session.sets}
-          targetSetsByExerciseId={pickerState.planMode ? targetSetsByExerciseId : undefined}
-          focusedExerciseId={pickerState.selectedExerciseId}
-          focusMode={focusMode}
-          onAddSetForExercise={addSetForExercise}
-          onJumpToExercise={(id: string) => pickerState.setSelectedExerciseId(id)}
-          isDone={session.isDone}
-          toggleDone={session.toggleDone}
-          setWeightForSet={session.setWeightForSet}
-          setRepsForSet={session.setRepsForSet}
-          kgToLb={session.kgToLb}
-          estimateE1RMLb={session.estimateE1RMLb}
-          getLastSetForExercise={session.getLastSetForExercise}
-          copyFromLastSet={session.copyFromLastSet}
-        />
-
-        {/* Quick Add Section - free workout mode only */}
-        {!pickerState.planMode && (
-          <>
-            <SelectedExerciseCard
-              selectedExerciseId={pickerState.selectedExerciseId}
-              onChangeSelected={pickerState.openPickerToChange}
+          return (
+            <ExerciseCard
+              key={exerciseId}
+              exerciseId={exerciseId}
+              sets={exerciseSets}
+              targetSets={targetSets}
+              getPreviousSet={getPreviousSet}
+              onAddSet={() => addSetForExercise(exerciseId)}
+              onDeleteSet={session.deleteSet}
+              onToggleDone={session.toggleDone}
+              onWeightChange={session.setWeightForSet}
+              onRepsChange={session.setRepsForSet}
+              isDone={session.isDone}
+              kgToLb={session.kgToLb}
+              onExerciseTap={() => pickerState.openPickerToChange()}
             />
+          );
+        })}
 
-            <QuickAddSetCard
-              weightLb={session.weightLb}
-              reps={session.reps}
-              weightLbText={session.weightLbText}
-              repsText={session.repsText}
-              onWeightText={session.onWeightText}
-              onRepsText={session.onRepsText}
-              onWeightCommit={session.onWeightCommit}
-              onRepsCommit={session.onRepsCommit}
-              onDecWeight={session.decWeight}
-              onIncWeight={session.incWeight}
-              onDecReps={session.decReps}
-              onIncReps={session.incReps}
-              onAddSet={addSet}
-              onWeightStepChange={session.onWeightStepChange}
-            />
-          </>
+        {/* Empty state when no exercises */}
+        {visibleExerciseIds.length === 0 && (
+          <View style={{
+            borderWidth: 1,
+            borderColor: c.border,
+            borderRadius: FR.radius.card,
+            padding: FR.space.x4,
+            gap: FR.space.x2,
+            backgroundColor: c.card,
+            alignItems: "center",
+          }}>
+            <Text style={[FR.type.h3, { color: c.text }]}>No Exercises Yet</Text>
+            <Text style={[FR.type.body, { color: c.muted, textAlign: "center" }]}>
+              Tap "+ Exercise" to add your first exercise and start logging sets.
+            </Text>
+          </View>
         )}
 
         {/* Bottom Actions */}

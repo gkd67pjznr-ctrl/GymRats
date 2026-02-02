@@ -122,7 +122,7 @@ function AvatarCreationStep() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const artStyles: Array<{ id: AvatarArtStyle; name: string; description: string; emoji: string }> = [
+  const artStyles: { id: AvatarArtStyle; name: string; description: string; emoji: string }[] = [
     { id: "bitmoji", name: "Bitmoji", description: "Cartoon style avatars", emoji: "👤" },
     { id: "pixel", name: "Pixel", description: "Retro pixel art", emoji: "🎮" },
     { id: "retro", name: "Retro", description: "80s/90s retro aesthetic", emoji: "📼" },
@@ -398,7 +398,7 @@ function ProfileSetupStep() {
     setCurrentStep("personality");
   };
 
-  const experienceOptions: Array<{ value: "beginner" | "intermediate" | "advanced"; label: string; years: string }> = [
+  const experienceOptions: { value: "beginner" | "intermediate" | "advanced"; label: string; years: string }[] = [
     { value: "beginner", label: "Beginner", years: "0-1 years" },
     { value: "intermediate", label: "Intermediate", years: "1-3 years" },
     { value: "advanced", label: "Advanced", years: "3+ years" },

@@ -65,7 +65,7 @@ export default function SyncStatusScreen() {
     }
   }
 
-  const storeList: Array<{ name: string; displayName: string }> = [
+  const storeList: { name: string; displayName: string }[] = [
     { name: 'workout', displayName: 'Workouts' },
     { name: 'routines', displayName: 'Routines' },
     { name: 'workoutPlan', displayName: 'Workout Plans' },

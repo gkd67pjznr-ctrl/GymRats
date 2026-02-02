@@ -154,7 +154,7 @@ export function TrophyCase({ milestones, onPressMilestone }: TrophyCaseProps) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {(Object.keys(grouped) as Array<keyof typeof grouped>).map((rarity) => (
+        {(Object.keys(grouped) as (keyof typeof grouped)[]).map((rarity) => (
           <RaritySection key={rarity} rarity={rarity} milestones={grouped[rarity]} />
         ))}
       </ScrollView>

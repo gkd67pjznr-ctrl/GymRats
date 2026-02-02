@@ -5,8 +5,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useThemeColors } from "@/src/ui/theme";
 import { makeDesignSystem } from "@/src/ui/designSystem";
-import { JournalEntry } from "@/src/lib/journalModel";
-import { formatJournalDateShort } from "@/src/lib/journalModel";
+import { JournalEntry , formatJournalDateShort } from "@/src/lib/journalModel";
 import { MUSCLE_GROUPS } from "@/src/data/consolidatedMuscleGroups";
 
 export interface JournalEntryCardProps {

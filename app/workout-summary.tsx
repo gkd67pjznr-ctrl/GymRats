@@ -7,10 +7,9 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useThemeColors } from "../src/ui/theme";
 import { FR } from "../src/ui/forgerankStyle";
 import { EXERCISES_V1 } from "../src/data/exercises";
-import { useWorkoutStore, useIsHydrated, useJournalEntryForSession, useUser } from "../src/lib/stores";
+import { useWorkoutStore, useIsHydrated, useJournalEntryForSession, useUser , updateJournalEntry, addJournalEntry } from "../src/lib/stores";
 import { timeAgo } from "../src/lib/units";
 import WorkoutNotesSection from "../src/ui/components/Journal/WorkoutNotesSection";
-import { updateJournalEntry, addJournalEntry } from "../src/lib/stores";
 import { createJournalEntry, getDateFromTimestamp } from "../src/lib/journalModel";
 
 type WorkoutSummaryData = {
@@ -55,6 +54,8 @@ export default function WorkoutSummary() {
   const hydrated = useIsHydrated();
   const sessions = useWorkoutStore((state) => state.workouts);
   const user = useUser();
+  // Get existing journal entry for this session
+  const existingJournalEntry = useJournalEntryForSession(sessionId || "");
   const [summary, setSummary] = useState<WorkoutSummaryData | null>(null);
   const [session, setSession] = useState<any>(null);
   const [isSharing, setIsSharing] = useState(false);
@@ -137,9 +138,6 @@ export default function WorkoutSummary() {
   const handleDone = () => {
     router.replace("/");
   };
-
-  // Get existing journal entry for this session
-  const existingJournalEntry = useJournalEntryForSession(sessionId || "");
 
   const handleSaveJournal = async (data: {
     text: string;

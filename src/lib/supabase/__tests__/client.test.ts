@@ -2,6 +2,10 @@
 // Characterization tests for Supabase client initialization and health check
 
 // Mock expo-constants
+import Constants from 'expo-constants';
+import { createClient } from '@supabase/supabase-js';
+import { supabase, healthCheck, HealthCheckResult } from '../client';
+
 jest.mock('expo-constants', () => ({
   expoConfig: {
     extra: {
@@ -27,10 +31,6 @@ jest.mock('@supabase/supabase-js', () => ({
     },
   })),
 }));
-
-import Constants from 'expo-constants';
-import { createClient } from '@supabase/supabase-js';
-import { supabase, healthCheck, HealthCheckResult } from '../client';
 
 describe('Supabase Client', () => {
   describe('environment variable access via Constants.expoConfig.extra', () => {

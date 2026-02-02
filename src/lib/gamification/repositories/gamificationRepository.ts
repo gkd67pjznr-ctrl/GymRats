@@ -193,14 +193,14 @@ export async function fetchUserGamificationProfile(
  * @returns Array of user profiles with XP data
  */
 export async function fetchTopUsersByXP(limit: number = 50): Promise<
-  Array<{
+  {
     userId: string;
     displayName: string | null;
     avatarUrl: string | null;
     totalXP: number;
     currentLevel: number;
     currentStreak: number;
-  }>
+  }[]
 > {
   const { data, error } = await supabase
     .from('users')
@@ -230,13 +230,13 @@ export async function fetchTopUsersByXP(limit: number = 50): Promise<
  * @returns Array of user profiles with streak data
  */
 export async function fetchTopUsersByStreak(limit: number = 50): Promise<
-  Array<{
+  {
     userId: string;
     displayName: string | null;
     avatarUrl: string | null;
     currentStreak: number;
     longestStreak: number;
-  }>
+  }[]
 > {
   const { data, error } = await supabase
     .from('users')

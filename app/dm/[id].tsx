@@ -22,7 +22,7 @@ import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
 const ME: ID = "u_demo_me";
 
 // v1 mock directory (later: user profiles + search)
-const DIRECTORY: Array<{ id: ID; name: string }> = [
+const DIRECTORY: { id: ID; name: string }[] = [
   { id: "u_demo_1", name: "Sarah" },
   { id: "u_demo_2", name: "TJ" },
   { id: "u_demo_3", name: "Mark" },

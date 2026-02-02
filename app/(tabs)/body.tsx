@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View , useColorScheme } from "react-native";
 import { TabErrorBoundary } from "@/src/ui/tab-error-boundary";
 import { useWorkoutSessions } from "@/src/lib/stores/workoutStore";
 import { calculateMuscleVolumes } from "@/src/lib/volumeCalculator";
 import { BodyModel } from "@/src/ui/components/BodyModel";
 import { makeDesignSystem } from "@/src/ui/designSystem";
-import { useColorScheme } from "react-native";
 import { useSettings } from "@/src/lib/stores/settingsStore";
 
 

@@ -194,7 +194,7 @@ export function checkStreakMilestone(streak: number): { days: number; tokens: nu
 /**
  * Get all streak milestone definitions for display.
  */
-export function getAllStreakMilestones(): Array<{ days: number; tokens: number }> {
+export function getAllStreakMilestones(): { days: number; tokens: number }[] {
   return [
     { days: 7, tokens: 25 },
     { days: 14, tokens: 40 },

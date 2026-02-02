@@ -18,12 +18,12 @@ export type WorkoutSession = {
   routineName?: string;
   planId?: string;
 
-  plannedExercises?: Array<{
+  plannedExercises?: {
     exerciseId: string;
     targetSets: number;
     targetRepsMin?: number;
     targetRepsMax?: number;
-  }>;
+  }[];
 
   // 0..1 if planned
   completionPct?: number;

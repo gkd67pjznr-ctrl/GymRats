@@ -1,9 +1,8 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View , Platform } from 'react-native';
 import { useThemeColors } from '../../theme';
 import { FR } from '../../forgerankStyle';
 import * as Haptics from 'expo-haptics';
-import { Platform } from 'react-native';
 
 export type NumericKeypadProps = {
   /** Current value as string */

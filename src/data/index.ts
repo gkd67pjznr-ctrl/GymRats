@@ -1,6 +1,6 @@
 // src/data/index.ts
 // Export all data models
 
-export * from './consolidatedMuscleGroups';
-export * from './muscleGroupsManager';
+export * as consolidatedMuscleGroups from './consolidatedMuscleGroups';
+export * as muscleGroupsManager from './muscleGroupsManager';
 export * from './exercises';

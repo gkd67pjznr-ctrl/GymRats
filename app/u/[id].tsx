@@ -47,6 +47,10 @@ export default function PublicProfileScreen() {
 
   const userId = (params?.id ?? "") as ID;
 
+  // Call hooks at the top level to avoid conditional calls
+  const { liked, likeCount } = useVisibleFeed(ME);
+  const all = getAllPosts();
+
   if (!userId) {
     return (
       <ProtectedRoute>
@@ -85,9 +89,6 @@ export default function PublicProfileScreen() {
   const blocked = outgoing === "blocked" || incoming === "blocked";
   const canSendRequest = !isMe && !isFriends && !blocked && outgoing !== "requested" && incoming !== "requested";
   const canAccept = !isMe && !isFriends && !blocked && incoming === "requested";
-
-  const { liked, likeCount } = useVisibleFeed(ME);
-  const all = getAllPosts();
 
   const theirPosts = all
     .filter((p) => p.authorUserId === userId)

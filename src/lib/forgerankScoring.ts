@@ -78,7 +78,7 @@ export type ScoreBreakdown = {
   normalizedStrength: number; // 0..1
   e1rmKg: number;
   flags: ScoreFlag[];
-  parts: Array<{ reason: ScoreReason; delta: number; note: string }>;
+  parts: { reason: ScoreReason; delta: number; note: string }[];
 };
 
 export type TierThreshold = {

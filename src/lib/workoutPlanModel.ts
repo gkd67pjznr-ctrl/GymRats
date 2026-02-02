@@ -1,3 +1,6 @@
+// [CHANGED 2026-01-23] Import from centralized uid
+import { uid } from "./uid";
+
 export type PlannedExercise = {
   exerciseId: string;
   targetSets: number; // default 3
@@ -19,9 +22,6 @@ export type WorkoutPlan = {
   currentExerciseIndex: number;
   completedSetsByExerciseId: Record<string, number>;
 };
-
-// [CHANGED 2026-01-23] Import from centralized uid
-import { uid } from "./uid";
 
 export function makePlanFromRoutine(args: {
   routineId: string;

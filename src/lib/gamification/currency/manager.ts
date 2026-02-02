@@ -152,7 +152,7 @@ export function calculateWorkoutTokenRewards(params: {
   setCount: number;
   wasPerfectWorkout: boolean;
   streakMilestone?: number;
-  prsAchieved?: Array<{ type: 'weight' | 'rep' | 'e1rm'; tier?: number }>;
+  prsAchieved?: { type: 'weight' | 'rep' | 'e1rm'; tier?: number }[];
 }): TokenReward[] {
   const rewards: TokenReward[] = [];
 

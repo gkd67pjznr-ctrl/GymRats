@@ -33,8 +33,7 @@ import { PRCelebration } from "../src/ui/components/LiveWorkout/PRCelebration";
 
 // Gamification components
 import { LevelUpModal } from "../src/ui/components/Gamification";
-import { usePendingLevelUp } from "../src/lib/stores/gamificationStore";
-import { useGamificationStore } from "../src/lib/stores/gamificationStore";
+import { usePendingLevelUp , useGamificationStore } from "../src/lib/stores/gamificationStore";
 
 // Live Workout Together components
 import { LiveWorkoutTogether } from "../src/ui/components/LiveWorkoutTogether/LiveWorkoutTogether";

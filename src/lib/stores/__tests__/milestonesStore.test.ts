@@ -5,6 +5,9 @@
 import { renderHook, act } from '@testing-library/react-native';
 import type { MilestoneUserStats } from '../../milestones/types';
 
+// Import store after mocks
+import { useMilestonesStore } from '../milestonesStore';
+
 // Mock all dependencies before importing the store
 jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
@@ -95,9 +98,6 @@ jest.mock('../../milestones/definitions', () => ({
     return ALL_MILESTONES.find(m => m.id === id);
   }),
 }));
-
-// Import store after mocks
-import { useMilestonesStore } from '../milestonesStore';
 
 describe('milestonesStore', () => {
   const baseStats: MilestoneUserStats = {

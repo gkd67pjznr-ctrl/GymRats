@@ -40,7 +40,7 @@ export default function DebugRanks() {
   const userUnit: UnitSystem = "lb";
 
   // Fake summaries to visualize scoring + ranking behavior
-  const samples: Array<{ label: string; summary: ExercisePRSummary }> = useMemo(
+  const samples: { label: string; summary: ExercisePRSummary }[] = useMemo(
     () => [
       {
         label: "New lifter (e1RM ~60kg)",

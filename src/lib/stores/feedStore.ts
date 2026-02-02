@@ -226,25 +226,11 @@ export const useFeedStore = create<FeedState>()(
         posts: state.posts,
         likesByPostId: state.likesByPostId,
       }),
-      onRehydrateStorage: () => (state) => {
-        // V1 to V2 migration
-        AsyncStorage.getItem("feed.v1").then((v1Data) => {
-          if (v1Data && state) {
-            const parsed = safeJSONParse<{ posts: FeedPost[]; likesByPostId: Record<string, Record<string, boolean>> }>(v1Data, { posts: [], likesByPostId: {} });
-            if (parsed && parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
-              state.posts = parsed.posts;
-              state.likesByPostId = parsed.likesByPostId ?? {};
-              AsyncStorage.removeItem("feed.v1").catch((err) => {
-                logError({ context: 'FeedStore', error: err, userMessage: 'Failed to remove old feed data' });
-              });
-            }
-          }
-
-          state?.setHydrated(true);
-        }).catch((err) => {
-          logError({ context: 'FeedStore', error: err, userMessage: 'Failed to load feed data' });
-          state?.setHydrated(true);
-        });
+      onRehydrateStorage: (state) => {
+        // Set hydrated immediately when storage is rehydrated
+        if (state) {
+          state.setHydrated(true);
+        }
       },
     }
   )

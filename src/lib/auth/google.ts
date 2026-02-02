@@ -22,6 +22,9 @@ import {
   type OAuthUserProfile,
 } from './oauth';
 
+// Re-export supabase for internal use
+import { supabase } from '../supabase/client';
+
 // ============================================================================
 // Configuration
 // ============================================================================
@@ -488,6 +491,3 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
     };
   }
 }
-
-// Re-export supabase for internal use
-import { supabase } from '../supabase/client';

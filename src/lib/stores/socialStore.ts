@@ -271,27 +271,34 @@ export const useSocialStore = create<SocialState>()(
         comments: state.comments,
         notifications: state.notifications,
       }),
-      onRehydrateStorage: () => (state) => {
-        // V1 to V2 migration
-        AsyncStorage.getItem("social.v1").then((v1Data) => {
-          if (v1Data && state) {
-            const parsed = safeJSONParse<{ posts: WorkoutPost[]; reactions: Reaction[]; comments: Comment[]; notifications: AppNotification[] }>(v1Data, null);
-            if (parsed && parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
-              state.posts = parsed.posts;
-              state.reactions = parsed.reactions ?? [];
-              state.comments = parsed.comments ?? [];
-              state.notifications = parsed.notifications ?? [];
-              AsyncStorage.removeItem("social.v1").catch((err) => {
-                logError({ context: 'SocialStore', error: err, userMessage: 'Failed to remove old social data' });
-              });
-            }
-          }
+      onRehydrateStorage: (state) => {
+        // Set hydrated immediately when storage is rehydrated
+        if (state) {
+          state.setHydrated(true);
+        }
 
-          state?.setHydrated(true);
-        }).catch((err) => {
-          logError({ context: 'SocialStore', error: err, userMessage: 'Failed to load social data' });
-          state?.setHydrated(true);
-        });
+        // Handle V1 to V2 migration asynchronously
+        if (state) {
+          AsyncStorage.getItem("social.v1").then((v1Data) => {
+            if (v1Data) {
+              const parsed = safeJSONParse<{ posts: WorkoutPost[]; reactions: Reaction[]; comments: Comment[]; notifications: AppNotification[] }>(v1Data, null);
+              if (parsed && parsed.posts && parsed.posts.length > 0 && state.posts.length === 0) {
+                // Update state with migrated data
+                useSocialStore.setState({
+                  posts: parsed.posts,
+                  reactions: parsed.reactions ?? [],
+                  comments: parsed.comments ?? [],
+                  notifications: parsed.notifications ?? [],
+                });
+                AsyncStorage.removeItem("social.v1").catch((err) => {
+                  logError({ context: 'SocialStore', error: err, userMessage: 'Failed to remove old social data' });
+                });
+              }
+            }
+          }).catch((err) => {
+            logError({ context: 'SocialStore', error: err, userMessage: 'Failed to load social data' });
+          });
+        }
       },
     }
   )

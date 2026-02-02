@@ -188,7 +188,7 @@ export function getVolumeForExercise(
 export function getTopMuscleGroups(
   result: VolumeResult,
   limit: number = 5
-): Array<{ muscle: MuscleGroup; volume: number }> {
+): { muscle: MuscleGroup; volume: number }[] {
   return Object.entries(result.volumeByMuscleGroup)
     .map(([muscle, volume]) => ({ muscle: muscle as MuscleGroup, volume }))
     .sort((a, b) => b.volume - a.volume)
@@ -201,7 +201,7 @@ export function getTopMuscleGroups(
 export function getTopExercises(
   result: VolumeResult,
   limit: number = 5
-): Array<{ exerciseId: string; volume: number }> {
+): { exerciseId: string; volume: number }[] {
   return Object.entries(result.volumeByExercise)
     .map(([exerciseId, volume]) => ({ exerciseId, volume }))
     .sort((a, b) => b.volume - a.volume)

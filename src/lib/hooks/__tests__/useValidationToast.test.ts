@@ -5,6 +5,9 @@
  */
 
 // Mock expo-haptics before importing the hook
+import { renderHook, act } from '@testing-library/react-native';
+import { useValidationToast } from '../useValidationToast';
+
 jest.mock('expo-haptics', () => ({
   NotificationFeedbackType: {
     Error: 'error',
@@ -14,9 +17,6 @@ jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn().mockResolvedValue(undefined),
   impactAsync: jest.fn().mockResolvedValue(undefined),
 }));
-
-import { renderHook, act } from '@testing-library/react-native';
-import { useValidationToast } from '../useValidationToast';
 
 describe('useValidationToast - Characterization Tests', () => {
   test('should initialize with invisible toast', () => {
