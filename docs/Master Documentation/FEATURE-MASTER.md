@@ -23,7 +23,7 @@
 | [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 6/12 | [Details](../features/ui-themes/feature-ui-themes.md) |
 | [Backend & Sync](#backend--sync) | **Done** | 10/10 | [Details](../features/backend-sync/feature-backend.md) |
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/onboarding/feature-onboarding.md) |
-| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 6/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
+| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 7/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
 | [Workout Replay](#workout-replay) | **Done** | 5/5 | [Details](../features/workout-replay/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | **Done** | 4/4 | [Details](../features/forge-dna/feature-forge-dna.md) |
 | [Forge Lab (Analytics)](#forge-lab-analytics) | **Done** | 6/6 | [Details](../features/forge-lab/feature-forge-lab.md) |
@@ -86,25 +86,21 @@ The core workout logging and tracking experience.
 ## Workout Logging UX
 **Status:** Done | **Progress:** 10/10 features
 
-The visual interface for logging sets — complete redesign (Fitbod/Liftoff style).
+The visual interface for logging sets — Hevy/Liftoff-style redesign, fully integrated.
 
 **Completed:**
-- Add Exercise button (prominent, with dashed border)
-- Exercise cards with collapsible header
-- Set lines with weight/reps inputs and checkmark
-- Empty state component
-- Smart defaults (auto-fill from previous set)
-- Keyboard handling (number pad, focus management)
-- Editing state management (workoutEditingStore)
-- Exercise reordering (drag-to-reorder with DraggableExerciseList)
-- PR detection integration
-- Haptic feedback
-- Set completion flow with logging
-- Exercise removal with confirmation dialog
-- Settings toggle (useNewWorkoutUX)
-- NewWorkoutSection wrapper for integration
-- Integration into live-workout.tsx with UXToggle button
-- Rest timer integration
+- WorkoutTopBar: fixed top bar with back, timer, finish button
+- WorkoutControls: prominent Add Exercise button (accent tint) + secondary pill buttons (Switch, Focus)
+- ExerciseCard: exercise name in accent color, collapsible, flex-based column headers (SET, PREVIOUS, LBS, REPS, check)
+- SetRow: clean borderless table rows, circular set number badge, background-only inputs, circular check button
+- WorkoutActions: full-width Finish button, secondary Save as Routine + Discard
+- Empty state: tappable dashed card that opens exercise picker
+- Smart defaults (auto-fill from previous set/workout)
+- Keyboard handling (number pad, select-on-focus, KeyboardAvoidingView)
+- PR detection + celebration integration
+- Haptic feedback on all interactions
+- Swipe-to-delete on set rows
+- Rest timer auto-trigger on set completion
 
 ---
 
@@ -362,7 +358,7 @@ Full premium onboarding — all steps skippable.
 ---
 
 ## Avatar & Hangout Room
-**Status:** In Progress | **Progress:** 6/8 features
+**Status:** In Progress | **Progress:** 7/8 features
 **Previously:** Planned
 
 Finch-inspired virtual gym avatar that grows as you work out, living in a shared room with friends.
@@ -381,11 +377,11 @@ Finch-inspired virtual gym avatar that grows as you work out, living in a shared
 - **Avatar cosmetics system with equipped items** (NEW)
 - **Decoration system with 33 purchasable items** (NEW)
 - **Forge Token integration for purchases** (NEW)
+- **ShopScreen component for purchasing cosmetics/decorations** (NEW)
+- **AvatarCustomizer component for equipping cosmetics** (NEW)
+- **Slot-based room decoration system** (NEW)
 
 **Remaining:**
-- Shop UI for browsing/purchasing decorations and cosmetics
-- Room decorations placement and management UI
-- Avatar customization interface
 - Room admin controls (approve/reject decorations)
 - Integration with workout start/end events
 

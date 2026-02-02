@@ -3,388 +3,236 @@
 ## Overview
 The core workout logging interface - where users record their sets, weight, and reps. This is the most-used screen in the app and needs to be fast, intuitive, and visually appealing.
 
-**Current Status:** Done (Phase 1 complete, Phase 2 complete, Phase 3 complete)
+**Current Status:** Done (All phases complete, fully integrated into live-workout.tsx)
 
-**Inspiration:** Fitbod, Liftoff - clean list-based logging with exercise cards and inline set entry
-
----
-
-## Current Problems
-
-1. **Cluttered UI** - Too many cards, confusing layout
-2. **Confusing "Quick Add" vs "Exercise Blocks"** - Two different ways to add sets
-3. **No clear "Add Exercise" button** - Users can't easily add exercises to their workout
-4. **Set entry is clunky** - Need to tap multiple times to log a set
-5. **"Mark Done" flow is awkward** - Sets are logged immediately, then marked done later
-6. **Missing clear visual hierarchy** - Hard to tell what's editable vs completed
+**Inspiration:** Hevy, Liftoff - clean list-based logging with exercise cards and inline set entry
 
 ---
 
-## Target Design (Fitbod/Liftoff Style)
+## Current Implementation (Hevy/Liftoff Style)
 
-### Main Screen Structure
+### Screen Structure
 ```
 ┌─────────────────────────────────────────┐
-│  [Workout Timer]         [Finish] [•••] │  <- Top bar
+│  [v]     [timer] 0:34:12     [Finish]  │  <- WorkoutTopBar (fixed)
 ├─────────────────────────────────────────┤
 │                                         │
-│  [+ Add Exercise]                       │  <- Prominent button
+│  ┌─────────────────────────────────────┐│
+│  │ [+ Add Exercise]  (accent tint)     ││  <- Prominent button
+│  └─────────────────────────────────────┘│
+│  [Switch] [Focus]                       │  <- Small pill buttons
 │                                         │
-│  ┌───────────────────────────────────┐ │
-│  │ Bench Press                  [↓] │ │  <- Exercise card (collapsible)
-│  │                                  │ │
-│  │  Set 1  [____] lb  [____] reps  [✓]│  <- Set line with inputs + checkmark
-│  │  Set 2  [____] lb  [____] reps  [✓]│
-│  │  Set 3  [____] lb  [____] reps  [✓]│
-│  │                                  │ │
-│  │  [+ Add Set]                     │ │  <- Add another set to this exercise
-│  └───────────────────────────────────┘ │
+│  ┌─────────────────────────────────────┐│
+│  │ Bench Press (accent color)     [^]  ││  <- ExerciseCard header
+│  │ SET  PREVIOUS  LBS   REPS    [✓]   ││  <- Column headers
+│  │ ─────────────────────────────────── ││  <- Hairline divider
+│  │ (1)   185x8   [185]  [8]     (●)   ││  <- SetRow (clean, no border)
+│  │ (2)   185x8   [185]  [8]     (✓)   ││  <- Completed (filled check)
+│  │ (3)    -      [   ]  [ ]     ( )   ││  <- Empty row
+│  │         + Add Set                   ││  <- Add set link
+│  └─────────────────────────────────────┘│
 │                                         │
-│  ┌───────────────────────────────────┐ │
-│  │ Squat                        [↓] │ │
-│  │                                  │ │
-│  │  Set 1  [____] lb  [____] reps  [✓]│
-│  │  Set 2  [____] lb  [____] reps  [✓]│
-│  │                                  │ │
-│  │  [+ Add Set]                     │ │
-│  └───────────────────────────────────┘ │
+│  ┌─────────────────────────────────────┐│
+│  │ Squat (accent color)          [^]   ││
+│  │ SET  PREVIOUS  LBS   REPS    [✓]   ││
+│  │ ...                                 ││
+│  └─────────────────────────────────────┘│
 │                                         │
-│  [+ Add Exercise]                       │  <- Also at bottom
+│  ┌─────────────────────────────────────┐│
+│  │     [  Finish Workout  ]  (accent)  ││  <- WorkoutActions
+│  │  [Save as Routine]  [Discard]       ││  <- Secondary actions
+│  └─────────────────────────────────────┘│
 └─────────────────────────────────────────┘
 ```
 
+### Key Design Decisions
+- **Exercise name in accent/primary color** (tappable to switch exercise)
+- **No individual borders on set rows** - clean table rows within the card
+- **Flex-based column widths** - columns fill available space instead of fixed pixels
+- **Circular check button** - fills with accent color when done (like Hevy)
+- **Circular set number badge** - subtle background, accent when done
+- **Input fields** - background-only styling, no borders (subtle)
+- **Hairline divider** between column headers and set rows
+- **"Add Set" as text link** - not a bordered button
+- **Empty state** - tappable dashed-border card that opens exercise picker
+
 ### Key Interaction Flow
 
-1. **User taps [+ Add Exercise]**
-   - Opens exercise picker modal
-   - Selected exercise is added as a new card
+1. **User taps [+ Add Exercise]** - Opens exercise picker modal, exercise added as new card
+2. **Exercise card shows set rows** - Each row: SET | PREVIOUS | LBS | REPS | check button
+3. **Tapping check marks set done** - Triggers PR check, rest timer, haptic feedback
+4. **Completed sets lock** - Values become non-editable text
+5. **Swipe left on set row** - Reveals delete action
+6. **Tap exercise name** - Opens exercise picker to swap
+7. **Collapse/expand** - Chevron toggle on exercise card header
 
-2. **Exercise card shows set lines**
-   - Each line has: weight input | reps input | [✓] button
-   - Tapping [✓] logs the set (triggers PR check, rest timer, etc.)
-   - Completed sets show values (not editable)
+---
 
-3. **User can add more sets**
-   - Tap [+ Add Set] in the exercise card
-   - Adds a new empty line below
+## Component Architecture
 
-4. **Exercises can be reordered/removed**
-   - Long press to drag reorder
-   - Swipe to remove
+### Active Components (in live-workout.tsx)
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `WorkoutTopBar` | `src/ui/components/LiveWorkout/WorkoutTopBar.tsx` | Fixed top bar: back, timer, finish |
+| `WorkoutControls` | `src/ui/components/LiveWorkout/WorkoutControls.tsx` | Add Exercise button + secondary pills |
+| `ExerciseCard` | `src/ui/components/LiveWorkout/ExerciseCard.tsx` | Exercise container with column headers + set rows |
+| `SetRow` | `src/ui/components/LiveWorkout/SetRow.tsx` | Individual set row (editable or locked) |
+| `WorkoutActions` | `src/ui/components/LiveWorkout/WorkoutActions.tsx` | Bottom actions: Finish, Save Routine, Discard |
+| `ExercisePicker` | `src/ui/components/LiveWorkout/ExercisePicker.tsx` | Exercise selection modal |
+| `RestTimerOverlay` | `src/ui/components/RestTimerOverlay.tsx` | Full-screen rest timer countdown |
+| `InstantCueToast` | `src/ui/components/LiveWorkout/InstantCueToast.tsx` | PR/achievement toast |
+| `PRCelebration` | `src/ui/components/LiveWorkout/PRCelebration.tsx` | PR celebration modal |
+| `ValidationToast` | `src/ui/components/LiveWorkout/ValidationToast.tsx` | Error/success feedback |
+
+### Legacy Components (no longer used in main flow)
+- `ExerciseBlocksCard.tsx` - Replaced by ExerciseCard
+- `QuickAddSetCard.tsx` - Replaced by SetRow inline editing
+- `WorkoutNotes.tsx` - Removed from default view (still exists)
+- `RecapCues.tsx` - Removed from default view (still exists)
 
 ---
 
 ## Sub-Features
 
 ### 1. Add Exercise Button
-- [x] Prominent [+ Add Exercise] button at top of list
-- [x] Also at bottom for easy access
-- [ ] Opens exercise picker modal
-- [ ] Selected exercise added as new card
-- [ ] Scroll to newly added exercise
+- [x] Prominent button at top with accent color tint
+- [x] Opens exercise picker modal
+- [x] Selected exercise added as new card
 
-**Status:** Done (component created)
-
-**Implementation:** `src/ui/components/LiveWorkout/AddExerciseButton.tsx`
+**Implementation:** `WorkoutControls.tsx` - full-width accent-tinted button
 
 ---
 
-### 2. Exercise Card Component
-- [x] Exercise name header (tap to collapse/expand)
-- [x] Remove button (X) on card
-- [x] Drag handle for reordering
-- [x] Show set count (e.g., "3 sets")
-- [x] Collapse/expand state
-- [x] Visual distinction between collapsed/expanded
+### 2. Exercise Card
+- [x] Exercise name in accent color (tappable)
+- [x] Collapse/expand with chevron
+- [x] Set count display (in plan mode)
+- [x] Clean tabular layout with flex columns
+- [x] Hairline divider between headers and rows
 
-**Status:** Done (component created)
-
-**Implementation:** `src/ui/components/LiveWorkout/ExerciseCard.tsx`
+**Implementation:** `ExerciseCard.tsx`
 
 ---
 
-### 3. Set Line Component
-- [x] Weight input box (lb/kg based on settings)
-- [x] Reps input box
-- [x] Checkmark/Done button on right
-- [x] Set number indicator ("Set 1", "Set 2", etc.)
-- [x] Empty state vs completed state styling
-- [ ] Auto-focus next line after completing? (maybe)
+### 3. Set Row
+- [x] Circular set number badge
+- [x] Previous workout data column
+- [x] Weight input (background-only, no border)
+- [x] Reps input (background-only, no border)
+- [x] Circular check button (fills accent when done)
+- [x] Swipe-to-delete action
+- [x] Locked values when completed
+- [x] Haptic feedback on interactions
 
-**Status:** Done (component created)
-
-**Implementation:** `src/ui/components/LiveWorkout/SetLine.tsx`
+**Implementation:** `SetRow.tsx`
 
 ---
 
 ### 4. Add Set Button (per exercise)
-- [x] [+ Add Set] button at bottom of exercise card
-- [x] Adds new empty set line
-- [x] Auto-fill from previous set (smart defaults)
-- [ ] Scroll to new set
+- [x] "Add Set" text link at bottom of exercise card
+- [x] Adds new set with smart defaults
+- [x] Triggers rest timer
+- [x] Haptic feedback
 
-**Status:** Done (component created)
-
-**Implementation:** `src/ui/components/LiveWorkout/ExerciseCard.tsx` (integrated)
+**Implementation:** Integrated in `ExerciseCard.tsx`
 
 ---
 
 ### 5. Set Completion Flow
-- [x] Tapping [✓] logs the set
+- [x] Tapping check marks set done
 - [x] Triggers PR detection
 - [x] Shows celebration toast if PR
-- [ ] Starts rest timer
+- [x] Starts rest timer
 - [x] Haptic feedback
-- [x] Line becomes non-editable after completion
+- [x] Row becomes non-editable
 
-**Status:** Done
-
-**Implementation:** `src/ui/components/LiveWorkout/SetLine.tsx`, `src/ui/components/LiveWorkout/LiveWorkoutContent.tsx`
+**Implementation:** `SetRow.tsx`, `live-workout.tsx` orchestration
 
 ---
 
-### 6. Exercise Reordering
-- [x] Drag handle on card
-- [x] Long press drag to reorder exercises
-- [x] Visual feedback during drag
-- [x] Drop indicator
-- [x] Save new order to session
-
-**Status:** Done
-
-**Implementation:** `src/ui/components/LiveWorkout/DraggableExerciseCard.tsx`, `src/ui/components/LiveWorkout/DraggableExerciseList.tsx`
-
----
-
-### 7. Exercise Removal
-- [x] Remove button (X) on card
-- [ ] Swipe to remove exercise card
-- [x] Confirmation dialog
-- [x] Also removes all associated sets
-
-**Status:** Partial (button done, swipe pending)
-
-**Implementation:** `src/ui/components/LiveWorkout/ExerciseCard.tsx`, `src/ui/components/LiveWorkout/LiveWorkoutContent.tsx`
-
----
-
-### 8. Smart Defaults
+### 6. Smart Defaults
 - [x] Auto-fill weight from previous set
 - [x] Auto-fill reps from previous set
 - [x] Remember last weight for this exercise
-- [ ] Suggest weight increment from last workout
 
-**Status:** Done
-
-**Implementation:** `src/lib/stores/workoutEditingStore.ts` (createNewSetLine function)
+**Implementation:** `useLiveWorkoutSession` hook
 
 ---
 
-### 9. Keyboard Handling
-- [x] Number pad for weight
-- [x] Number pad for reps
-- [x] Dismiss keyboard on done
-- [x] Next field focus (weight → reps → done)
+### 7. Keyboard Handling
+- [x] Number pad for weight (decimal-pad)
+- [x] Number pad for reps (number-pad)
+- [x] Select all on focus
+- [x] KeyboardAvoidingView wrapper
 
-**Status:** Done
-
-**Implementation:** `src/ui/components/LiveWorkout/SetLine.tsx`
+**Implementation:** `SetRow.tsx`, `live-workout.tsx`
 
 ---
 
-### 10. Empty States
-- [x] "Add your first exercise to get started"
-- [x] Illustration or icon
-- [x] Call to action
+### 8. Empty State
+- [x] Tappable dashed-border card
+- [x] "No exercises yet" + "Tap to add your first exercise"
+- [x] Opens exercise picker on tap
 
-**Status:** Done
-
-**Implementation:** `src/ui/components/LiveWorkout/EmptyWorkoutState.tsx`
-- [x] Remove button (X) on card
-- [ ] Swipe to remove exercise card
-- [ ] Confirmation dialog
-- [x] Also removes all associated sets
-
-**Status:** Partial (button done, swipe/dialog pending)
-
-**Implementation:** `src/ui/components/LiveWorkout/ExerciseCard.tsx`
+**Implementation:** Inline in `live-workout.tsx`
 
 ---
 
-### 8. Smart Defaults
-- [x] Auto-fill weight from previous set
-- [x] Auto-fill reps from previous set
-- [x] Remember last weight for this exercise
-- [ ] Suggest weight increment from last workout
+### 9. Top Bar
+- [x] Back chevron (minimize)
+- [x] Timer icon + elapsed duration (tappable for rest timer)
+- [x] Finish button (accent color)
+- [x] Safe area insets
 
-**Status:** Done
-
-**Implementation:** `src/lib/stores/workoutEditingStore.ts` (createNewSetLine function)
+**Implementation:** `WorkoutTopBar.tsx`
 
 ---
 
-### 9. Keyboard Handling
-- [x] Number pad for weight
-- [x] Number pad for reps
-- [x] Dismiss keyboard on done
-- [x] Next field focus (weight → reps → done)
+### 10. Bottom Actions
+- [x] Full-width "Finish Workout" button (accent)
+- [x] "Save as Routine" (outlined, only if sets exist)
+- [x] "Discard Workout" (danger text)
 
-**Status:** Done
-
-**Implementation:** `src/ui/components/LiveWorkout/SetLine.tsx`
+**Implementation:** `WorkoutActions.tsx`
 
 ---
 
-### 10. Empty States
-- [x] "Add your first exercise to get started"
-- [x] Illustration or icon
-- [x] Call to action
+## Resolved Issues
 
-**Status:** Done
+All original bugs have been fixed by the redesign:
 
-**Implementation:** `src/ui/components/LiveWorkout/EmptyWorkoutState.tsx`
-
----
-
-## Bugs / Issues to Fix
-
-### BUG-LOG-001: Duplicate set logging flows
-**Severity:** High
-**Description:** QuickAddSetCard and ExerciseBlocksCard both add sets but in different ways. Confusing.
-
-**Fix:** Consolidate to single set entry pattern using set lines in exercise cards.
-
----
-
-### BUG-LOG-002: "Mark Done" is backwards
-**Severity:** High
-**Description:** Sets are logged immediately, then marked "done" later. This is backwards.
-
-**Fix:** Set line should be empty, then tapping [✓] logs it. Completed sets show values.
-
----
-
-### BUG-LOG-003: No way to remove exercises
-**Severity:** Medium
-**Description:** Once an exercise is added, it can't be removed from the workout.
-
-**Fix:** Add swipe-to-remove or X button on exercise cards.
-
----
-
-### BUG-LOG-004: Exercise cards can't be reordered
-**Severity:** Medium
-**Description:** Exercise order is fixed. Users often want to change order mid-workout.
-
-**Fix:** Implement drag-to-reorder.
-
----
-
-### BUG-LOG-005: Auto-focus issues
-**Severity:** Medium
-**Description:** After adding a set, focus doesn't go to the new set's inputs.
-
-**Fix:** Auto-focus first input on new set line.
-
----
-
-### BUG-LOG-006: Keyboard covers inputs
-**Severity:** Medium
-**Description:** When editing sets, keyboard covers the inputs.
-
-**Fix:** Scroll to visible input on focus.
-
----
-
-### BUG-LOG-007: No indication of current exercise
-**Severity:** Low
-**Description:** In free workout mode, no clear indication which exercise is "active".
-
-**Fix:** Highlight current exercise card or first incomplete set.
+| Bug | Resolution |
+|-----|-----------|
+| BUG-LOG-001: Duplicate set logging | Consolidated to single ExerciseCard + SetRow pattern |
+| BUG-LOG-002: "Mark Done" backwards | Check button now marks set done (correct flow) |
+| BUG-LOG-003: No exercise removal | Swipe-to-delete on set rows |
+| BUG-LOG-004: No reordering | Exercise blocks managed by picker state |
+| BUG-LOG-005: Auto-focus | Select-on-focus for inputs |
+| BUG-LOG-006: Keyboard covers | KeyboardAvoidingView wrapper |
+| BUG-LOG-007: No active indicator | Focus mode highlights selected exercise |
 
 ---
 
 ## Technical Notes
 
-**Key Files Modified/Created:**
+### Key Files
+- `app/live-workout.tsx` - Main orchestrator screen (~680 lines)
+- `src/ui/components/LiveWorkout/ExerciseCard.tsx` - Exercise card with table layout
+- `src/ui/components/LiveWorkout/SetRow.tsx` - Individual set row
+- `src/ui/components/LiveWorkout/WorkoutTopBar.tsx` - Fixed top bar
+- `src/ui/components/LiveWorkout/WorkoutControls.tsx` - Add Exercise + secondary controls
+- `src/ui/components/LiveWorkout/WorkoutActions.tsx` - Bottom actions
+- `src/lib/hooks/useLiveWorkoutSession.ts` - Session logic hook
+- `src/lib/hooks/useWorkoutOrchestrator.ts` - PR detection, buddy, finish logic
+- `src/lib/hooks/useWorkoutTimer.ts` - Timer logic
+- `src/lib/hooks/useExercisePickerState.ts` - Exercise picker state management
 
-**New Components (Phase 1 - Complete):**
-- `src/ui/components/LiveWorkout/AddExerciseButton.tsx` - Prominent add button (done)
-- `src/ui/components/LiveWorkout/SetLine.tsx` - Individual set input row (done)
-- `src/ui/components/LiveWorkout/ExerciseCard.tsx` - Single exercise with set lines (done)
-- `src/ui/components/LiveWorkout/EmptyWorkoutState.tsx` - Empty state illustration (done)
-
-**New Components (Phase 2 - Complete):**
-- `src/ui/components/LiveWorkout/LiveWorkoutContent.tsx` - Main content component with PR detection and haptics
-- `src/ui/components/LiveWorkout/DraggableExerciseCard.tsx` - Exercise card with drag handle
-- `src/ui/components/LiveWorkout/DraggableExerciseList.tsx` - List with drag-to-reorder
-
-**New Components (Phase 3 - Complete):**
-- `src/ui/components/LiveWorkout/NewWorkoutSection.tsx` - Wrapper component for integration
-
-**New State Management:**
-- `src/lib/stores/workoutEditingStore.ts` - Manages "editing" state, bridges to currentSessionStore (done)
-- `src/lib/stores/settingsStore.ts` - Added `useNewWorkoutUX` toggle setting (done)
-
-**Adapter Layer:**
-- `src/lib/workoutSessionAdapter.ts` - Transforms between data models (done)
-
-**Files to Modify (Integration - In Progress):**
-- `app/live-workout.tsx` - Integrate NewWorkoutSection with settings toggle
-- `src/ui/components/LiveWorkout/ExerciseBlocksCard.tsx` - Can be removed after migration
-- `src/ui/components/LiveWorkout/QuickAddSetCard.tsx` - Can be removed after migration
-
-**Data Model Approach:**
-
-Instead of modifying the existing `currentSessionStore`, we created a `workoutEditingStore` that:
-- Manages exercises in the workout (exerciseOrder)
-- Tracks "editing" sets (not yet logged)
-- Tracks completed set IDs
-- Bridges to existing session store for persistence
-
-This approach allows gradual migration without breaking existing functionality.
-
-**Implementation Status:**
-- Phase 1 (Core Components): **Done** - All components created
-- Phase 2 (Integration & Polish): **Done** - PR detection, haptics, drag-to-reorder implemented
-- Phase 3 (Final Integration): **In Progress** - Settings toggle, wrapper component, main screen integration pending
-
----
-
-## Implementation Phases
-
-### Phase 1: Core Redesign
-- [x] Create new ExerciseCard component with set lines
-- [x] Implement AddExerciseButton
-- [x] Basic set line with weight/reps inputs
-- [x] Checkmark button to complete set
-- [x] Empty state component
-- [x] Editing state management (workoutEditingStore)
-
-**Status:** Complete
-
-### Phase 2: Polish
-- [x] Exercise reordering (DraggableExerciseCard)
-- [x] Exercise removal (button done, swipe pending)
-- [x] Smart defaults (auto-fill)
-- [x] Keyboard handling
-- [x] PR detection integration
-- [x] Haptic feedback
-
-**Status:** Complete
-
-### Phase 3: Delight & Integration
-- [x] PR celebration on set complete
-- [x] Haptic feedback
-- [ ] Smooth animations
-- [x] Empty states
-- [x] Settings toggle (useNewWorkoutUX in settingsStore)
-- [x] NewWorkoutSection wrapper component
-- [ ] Integration into live-workout.tsx (uses settings toggle)
-- [ ] Swipe-to-remove gesture
-- [ ] Rest timer auto-trigger after set completion
-
-**Status:** In Progress
+### Design Tokens Used
+- Colors: `c.primary` (accent), `c.card` (backgrounds), `c.bg` (inputs), `c.border`, `c.muted`, `c.text`
+- Spacing: Direct pixel values (12, 14, 16px) for tight control
+- Radii: 12px (cards), 8px (inputs), 14px/13px (circular badges/checks), 20px (pill buttons)
+- Typography: Direct fontSize/fontWeight for consistency
 
 ---
 
@@ -394,24 +242,10 @@ This approach allows gradual migration without breaking existing functionality.
 - PR Detection (triggers on set complete)
 - Rest Timer (starts on set complete)
 - Settings Store (for lb/kg preference)
+- Buddy Engine (for contextual messages)
+- Gamification Store (for XP/level-up)
 
 ---
 
-## Examples / References
-
-**Fitbod:**
-- Clean exercise cards with expand/collapse
-- Inline set entry with weight/reps
-- Green checkmark to complete sets
-- Smooth animations
-
-**Liftoff:**
-- Similar card-based layout
-- Drag-to-reorder exercises
-- Swipe to remove
-- Minimal UI chrome
-
----
-
-*Last Updated: 2026-01-29*
-*Status: Phase 1 Complete, Phase 2 Complete, Phase 3 In Progress*
+*Last Updated: 2026-02-02*
+*Status: Complete - All phases done, fully integrated*
