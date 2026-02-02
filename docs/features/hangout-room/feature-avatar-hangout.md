@@ -4,7 +4,7 @@
 A Finch-inspired virtual gym avatar that grows as the user works out, living in a shared hangout room with friends. The avatar represents the user's commitment to self-care and fitness journey — not just gamification, but emotional investment.
 
 ## Current Implementation Status
-**Status:** In Progress | **Progress:** 4/8 features
+**Status:** In Progress | **Progress:** 6/8 features
 
 ### Completed Features (P0 - MVP)
 ✅ **Avatar Creation**
@@ -27,24 +27,34 @@ A Finch-inspired virtual gym avatar that grows as the user works out, living in 
 - HangoutRoom component for main room view
 - FriendAvatar component for friends' avatars
 
+✅ **Real-time Presence System** (NEW)
+- Supabase subscriptions for INSERT/UPDATE/DELETE events
+- Presence tracking with online/working_out/resting/offline statuses
+- FriendAvatar leave/return animations
+- Comprehensive test coverage (22 tests for presenceTracker, 13 for FriendAvatar)
+
+✅ **Shop Extension** (NEW)
+- Added `room_decorations` and `avatar_cosmetics` to ShopCategory
+- 33 new purchasable items with Forge Token integration
+- UserInventory updated with equippedHairstyle, equippedOutfit, equippedAccessories, ownedDecorations
+- Shop system handles all 8 categories (personalities, themes, card_skins, profile_badges, profile_frames, titles, room_decorations, avatar_cosmetics)
+
 ## Remaining Features (P1 - Polish)
 
-### Real-time Presence System
-- [ ] Real-time presence tracking with Supabase subscriptions
-- [ ] Avatar leave/return animations
-- [ ] Integration with workout start/end events
+### Shop UI
+- [ ] Shop screen with category tabs for browsing items
+- [ ] Purchase confirmation UI with token balance display
+- [ ] Filter by affordable/owned items
 
-### Cosmetics & Decorations
-- [ ] Avatar cosmetics system with equipped items
-- [ ] Decoration system with item management
-- [ ] Forge Token integration for purchases
-- [ ] Room admin controls
+### Avatar Customization UI
+- [ ] AvatarCustomizer component with cosmetic preview
+- [ ] Category selection (hair, outfits, accessories)
+- [ ] Save/equip functionality
 
-### UI/UX Polish
-- [ ] Room decorations placement and management UI
-- [ ] Avatar customization interface
-- [ ] Presence status indicators
-- [ ] Room theme selection
+### Room Decoration Management
+- [ ] Decoration placement UI (drag-and-drop in room)
+- [ ] Room admin controls (approve/reject decorations)
+- [ ] Room theme selection UI
 
 ## Technical Implementation
 
@@ -148,9 +158,12 @@ Added columns to existing `users` table:
 ✅ Hangout room core with static avatars
 
 ### Phase 2 (In Progress - P1 - Polish)
-🔄 Real-time presence tracking
-🔄 Basic cosmetics and decorations
-🔄 Room management and admin controls
+✅ Real-time presence tracking (complete with subscriptions)
+✅ Shop extension (decorations and cosmetics added as purchasable)
+🔄 Shop UI for browsing and purchasing items
+🔄 Avatar customization interface
+🔄 Room decoration placement UI
+🔄 Room admin controls
 
 ### Phase 3 (Pending - P2 - Enhancement)
 🕒 Additional art styles (IAP)

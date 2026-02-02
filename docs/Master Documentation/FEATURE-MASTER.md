@@ -23,13 +23,13 @@
 | [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 6/12 | [Details](../features/ui-themes/feature-ui-themes.md) |
 | [Backend & Sync](#backend--sync) | **Done** | 10/10 | [Details](../features/backend-sync/feature-backend.md) |
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/onboarding/feature-onboarding.md) |
-| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
+| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 6/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
 | [Workout Replay](#workout-replay) | **Done** | 5/5 | [Details](../features/workout-replay/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | **Done** | 4/4 | [Details](../features/forge-dna/feature-forge-dna.md) |
 | [Forge Lab (Analytics)](#forge-lab-analytics) | **Done** | 6/6 | [Details](../features/forge-lab/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | **Done** | 5/5 | [Details](../features/gamification/feature-forge-milestones.md) |
 
-**Launch Total:** 135/167 features (81%)
+**Launch Total:** 137/167 features (82%)
 
 ## Quick Summary — Post-Launch
 
@@ -47,7 +47,7 @@
 
 **Post-Launch Total:** 4/49 features (8%)
 
-**Grand Total:** 139/216 features (64%)
+**Grand Total:** 141/216 features (65%)
 
 ---
 
@@ -362,7 +362,7 @@ Full premium onboarding — all steps skippable.
 ---
 
 ## Avatar & Hangout Room
-**Status:** In Progress | **Progress:** 4/8 features
+**Status:** In Progress | **Progress:** 6/8 features
 **Previously:** Planned
 
 Finch-inspired virtual gym avatar that grows as you work out, living in a shared room with friends.
@@ -376,19 +376,18 @@ Finch-inspired virtual gym avatar that grows as you work out, living in a shared
 - Hangout room repository with CRUD operations
 - Hangout room store with Zustand state management
 - Basic UI components (AvatarView, HangoutRoom, FriendAvatar)
+- **Real-time presence tracking with Supabase subscriptions** (NEW)
+- **Avatar leave/return animations** (NEW)
+- **Avatar cosmetics system with equipped items** (NEW)
+- **Decoration system with 33 purchasable items** (NEW)
+- **Forge Token integration for purchases** (NEW)
 
-**In Progress:**
-- Real-time presence tracking with Supabase subscriptions
-- Avatar leave/return animations
-- Integration with workout start/end events
-- Avatar cosmetics system with equipped items
-- Decoration system with item management
-- Forge Token integration for purchases
-- Room admin controls
+**Remaining:**
+- Shop UI for browsing/purchasing decorations and cosmetics
 - Room decorations placement and management UI
 - Avatar customization interface
-- Presence status indicators
-- Room theme selection
+- Room admin controls (approve/reject decorations)
+- Integration with workout start/end events
 
 **Growth philosophy:** Represents the user caring about themselves and sticking to it. Inspirational, not just gamification.
 

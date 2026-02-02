@@ -35,7 +35,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | UI Themes & Visual Style | 🔄 In Progress | 6/12 | Documentation complete |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
 | Onboarding | 🔄 In Progress | 3/7 | Welcome/profile complete |
-| Avatar & Hangout Room | 🔄 In Progress | 5/8 | Phase 1 complete, tests added |
+| Avatar & Hangout Room | 🔄 In Progress | 6/8 | Phase 1 complete, presence system + shop extension done |
 | Workout Replay | ✅ Done | 5/5 | Cinematic summaries complete |
 | Forge DNA | ✅ Done | 4/4 | Visualization complete |
 | Forge Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
@@ -186,6 +186,9 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 ## Recent Updates (Last 30 Days)
 
 ### 2026-02-02
+- Extended shop system with room_decorations and avatar_cosmetics categories
+- Added 33 new purchasable items (13 decorations, 20 avatar cosmetics)
+- Updated UserInventory to support avatar equipment tracking
 - Backend sync testing complete - all 13 migrations applied to Supabase
 - Fixed database SQL issues: duplicate policy names, RLS recursion, missing extensions
 - Verified database connectivity - all tables accessible via RLS policies
