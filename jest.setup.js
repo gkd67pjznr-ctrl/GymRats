@@ -63,7 +63,7 @@ jest.mock('expo-iap', () => ({
   requestPurchaseAsync: jest.fn(() => Promise.resolve()),
   getPurchaseHistoryAsync: jest.fn(() => Promise.resolve([])),
   finishTransactionAsync: jest.fn(() => Promise.resolve()),
-}));
+}), { virtual: true });
 
 // Mock expo-constants
 jest.mock('expo-constants', () => ({

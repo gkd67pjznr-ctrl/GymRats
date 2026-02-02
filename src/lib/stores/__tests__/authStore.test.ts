@@ -90,14 +90,14 @@ describe('authStore', () => {
   const fullMockUserProfile = {
     ...mockUserProfile,
     subscriptionTier: 'basic', // email is not dev@forgerank.app
-    avatarArtStyle: undefined,
-    avatarGrowthStage: undefined,
-    avatarHeightScale: undefined,
-    avatarCosmetics: undefined,
-    totalVolumeKg: undefined,
-    totalSets: undefined,
-    hangoutRoomId: undefined,
-    hangoutRoomRole: undefined,
+    avatarArtStyle: null,
+    avatarGrowthStage: null,
+    avatarHeightScale: null,
+    avatarCosmetics: null,
+    totalVolumeKg: null,
+    totalSets: null,
+    hangoutRoomId: null,
+    hangoutRoomRole: null,
   };
 
   // Alias for clarity

@@ -52,13 +52,11 @@ jest.mock('@/src/ui/forgerankStyle', () => ({
 }));
 
 jest.mock('expo-apple-authentication', () => ({
-  AppleAuthenticationButton: jest.fn(({ style, onPress, disabled, children }) => {
+  AppleAuthenticationButton: jest.fn(({ style, onPress, disabled }) => {
     const React = require('react');
-    const { Pressable, Text } = require('react-native');
+    const { Pressable } = require('react-native');
     return (
-      <Pressable onPress={onPress} disabled={disabled} style={style} testID="apple-auth-button">
-        <Text>{children || 'Continue with Apple'}</Text>
-      </Pressable>
+      <Pressable onPress={onPress} disabled={disabled} style={style} testID="apple-auth-button" />
     );
   }),
   AppleAuthenticationButtonType: {

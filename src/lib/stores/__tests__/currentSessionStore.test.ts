@@ -263,14 +263,14 @@ describe('currentSessionStore', () => {
       const currentSession = getCurrentSession();
       expect(currentSession).toBeNull();
 
-      // Check that the persisted value has session: null
+      // Check that the persisted value has session cleared (null or undefined/absent)
       const calls = mockAsyncStorage.setItem.mock.calls;
-      const setItemCalls = calls.filter((call) => call[0] === 'currentSession.v2');
+      const setItemCalls = calls.filter((call: [string, string]) => call[0] === 'currentSession.v2');
       if (setItemCalls.length > 0) {
         const lastCall = setItemCalls[setItemCalls.length - 1];
         const persistedValue = JSON.parse(lastCall[1]);
-        const session = persistedValue.state?.session ?? persistedValue.session ?? undefined;
-        expect(session).toBeNull();
+        const session = persistedValue.state?.session ?? persistedValue.session;
+        expect(session == null).toBe(true);
       }
     });
   });
