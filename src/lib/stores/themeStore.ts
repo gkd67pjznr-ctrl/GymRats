@@ -17,12 +17,16 @@ import {
   getPaletteById,
   getTypographyById,
   getIllustrationById,
+  getAudioById,
+  getMotionById,
   setActiveConfiguration,
   addConfiguration,
   updateConfiguration,
   ThemePalette,
   ThemeTypography,
   ThemeIllustration,
+  ThemeAudio,
+  ThemeMotion,
   ThemeConfiguration
 } from '../themeDatabase';
 import { createQueuedJSONStorage } from './storage/createQueuedAsyncStorage';
@@ -32,6 +36,8 @@ export interface ThemeState {
   activePalette: ThemePalette | null;
   activeTypography: ThemeTypography | null;
   activeIllustration: ThemeIllustration | null;
+  activeAudio: ThemeAudio | null;
+  activeMotion: ThemeMotion | null;
   isThemeLoaded: boolean;
 
   // Actions
@@ -49,6 +55,8 @@ export const useThemeStore = create<ThemeState>()(
       activePalette: null,
       activeTypography: null,
       activeIllustration: null,
+      activeAudio: null,
+      activeMotion: null,
       isThemeLoaded: false,
 
       initializeThemes: () => {
@@ -59,12 +67,16 @@ export const useThemeStore = create<ThemeState>()(
           const palette = getPaletteById(database, activeConfig.paletteId);
           const typography = getTypographyById(database, activeConfig.typographyId);
           const illustration = getIllustrationById(database, activeConfig.illustrationId);
+          const audio = getAudioById(database, activeConfig.audioId);
+          const motion = getMotionById(database, activeConfig.motionId);
 
           set({
             database,
             activePalette: palette || null,
             activeTypography: typography || null,
             activeIllustration: illustration || null,
+            activeAudio: audio || null,
+            activeMotion: motion || null,
             isThemeLoaded: true,
           });
         } else {
@@ -84,12 +96,16 @@ export const useThemeStore = create<ThemeState>()(
           const palette = getPaletteById(updatedDatabase, activeConfig.paletteId);
           const typography = getTypographyById(updatedDatabase, activeConfig.typographyId);
           const illustration = getIllustrationById(updatedDatabase, activeConfig.illustrationId);
+          const audio = getAudioById(updatedDatabase, activeConfig.audioId);
+          const motion = getMotionById(updatedDatabase, activeConfig.motionId);
 
           set({
             database: updatedDatabase,
             activePalette: palette || null,
             activeTypography: typography || null,
             activeIllustration: illustration || null,
+            activeAudio: audio || null,
+            activeMotion: motion || null,
           });
         }
       },
@@ -120,11 +136,15 @@ export const useThemeStore = create<ThemeState>()(
           const palette = getPaletteById(database, activeConfig.paletteId);
           const typography = getTypographyById(database, activeConfig.typographyId);
           const illustration = getIllustrationById(database, activeConfig.illustrationId);
+          const audio = getAudioById(database, activeConfig.audioId);
+          const motion = getMotionById(database, activeConfig.motionId);
 
           set({
             activePalette: palette || null,
             activeTypography: typography || null,
             activeIllustration: illustration || null,
+            activeAudio: audio || null,
+            activeMotion: motion || null,
           });
         }
       },
@@ -143,6 +163,8 @@ export const useThemeStore = create<ThemeState>()(
 export const useActivePalette = () => useThemeStore(state => state.activePalette);
 export const useActiveTypography = () => useThemeStore(state => state.activeTypography);
 export const useActiveIllustration = () => useThemeStore(state => state.activeIllustration);
+export const useActiveAudio = () => useThemeStore(state => state.activeAudio);
+export const useActiveMotion = () => useThemeStore(state => state.activeMotion);
 export const useThemeDatabase = () => useThemeStore(state => state.database);
 export const useIsThemeLoaded = () => useThemeStore(state => state.isThemeLoaded);
 

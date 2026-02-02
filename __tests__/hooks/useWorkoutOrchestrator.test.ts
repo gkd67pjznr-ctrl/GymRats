@@ -45,6 +45,15 @@ jest.mock('../../src/lib/simpleSession', () => ({
   generateCuesForExerciseSession: jest.fn(() => []),
 }));
 
+// Mock the buddyEngine module
+jest.mock('../../src/lib/buddyEngine', () => ({
+  detectRankProgressFull: jest.fn(() => []),
+  evaluateBehaviorTriggers: jest.fn(() => []),
+  evaluateSetTriggers: jest.fn(() => []),
+  evaluateSessionTriggers: jest.fn(() => []),
+  formatCueMessage: jest.fn((message) => message),
+}));
+
 // Mock the workoutModel module
 jest.mock('../../src/lib/workoutModel', () => ({
   uid: jest.fn(() => 'test-uid-' + Math.random().toString(36).substr(2, 9)),
@@ -54,6 +63,7 @@ jest.mock('../../src/lib/workoutModel', () => ({
 // Mock the workoutPlanStore
 jest.mock('../../src/lib/workoutPlanStore', () => ({
   setCurrentPlan: jest.fn(),
+  getCurrentPlan: jest.fn(),
 }));
 
 // Mock EXERCISES_V1
@@ -100,7 +110,23 @@ jest.mock('../../src/lib/stores', () => ({
     sets: [] as LoggedSet[],
   })),
   useIsHydrated: jest.fn(() => true),
-  useUser: jest.fn(() => null), // Add missing useUser export
+  useUser: jest.fn(() => ({
+    id: 'user-1',
+    email: 'test@example.com',
+    displayName: 'Test User',
+    avatarUrl: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    subscriptionTier: 'basic',
+    avatarArtStyle: null,
+    avatarGrowthStage: null,
+    avatarHeightScale: null,
+    avatarCosmetics: null,
+    totalVolumeKg: null,
+    totalSets: null,
+    hangoutRoomId: null,
+    hangoutRoomRole: null,
+  })),
   upsertRoutine: jest.fn((...args) => mockUpsertRoutine(...args)),
   addWorkoutSession: jest.fn((...args) => mockAddWorkoutSession(...args)),
   clearCurrentSession: jest.fn((...args) => mockClearCurrentSession(...args)),
@@ -108,6 +134,7 @@ jest.mock('../../src/lib/stores', () => ({
   useRoutinesStore: jest.fn(),
   getCurrentSession: jest.fn(),
   getIsHydrated: jest.fn(() => true),
+  getPersonalBests: jest.fn(() => ({})), // Return empty object by default
   hasCurrentSession: jest.fn(),
   updateCurrentSession: jest.fn(),
   setCurrentSession: jest.fn(),

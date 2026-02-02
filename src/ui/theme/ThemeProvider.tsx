@@ -9,13 +9,15 @@
  */
 
 import React, { createContext, useContext, useMemo } from 'react';
-import { useThemeStore, useActivePalette, useActiveTypography, useActiveIllustration } from '../../lib/stores/themeStore';
-import type { ThemePalette, ThemeTypography, ThemeIllustration } from '../../lib/themeDatabase';
+import { useThemeStore, useActivePalette, useActiveTypography, useActiveIllustration, useActiveAudio, useActiveMotion } from '../../lib/stores/themeStore';
+import type { ThemePalette, ThemeTypography, ThemeIllustration, ThemeAudio, ThemeMotion } from '../../lib/themeDatabase';
 
 interface ThemeContextType {
   palette: ThemePalette | null;
   typography: ThemeTypography | null;
   illustration: ThemeIllustration | null;
+  audio: ThemeAudio | null;
+  motion: ThemeMotion | null;
   setActiveTheme: (configId: string) => void;
   isLoaded: boolean;
 }
@@ -30,6 +32,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const palette = useActivePalette();
   const typography = useActiveTypography();
   const illustration = useActiveIllustration();
+  const audio = useActiveAudio();
+  const motion = useActiveMotion();
   const isLoaded = useThemeStore(state => state.isThemeLoaded);
   const setActiveTheme = useThemeStore(state => state.setActiveTheme);
 
@@ -37,9 +41,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     palette,
     typography,
     illustration,
+    audio,
+    motion,
     setActiveTheme,
     isLoaded,
-  }), [palette, typography, illustration, setActiveTheme, isLoaded]);
+  }), [palette, typography, illustration, audio, motion, setActiveTheme, isLoaded]);
 
   return (
     <ThemeContext.Provider value={contextValue}>

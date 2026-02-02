@@ -10,7 +10,7 @@
 
 import { useMemo } from 'react';
 import { useTheme } from '../../ui/theme';
-import { makeDesignSystem } from '../designSystem';
+import { makeDesignSystem, makeDesignSystemFromPalette } from '../designSystem';
 import type { DesignSystem } from '../designSystem';
 
 export const useThemeDesignSystem = (): DesignSystem | null => {
@@ -21,7 +21,12 @@ export const useThemeDesignSystem = (): DesignSystem | null => {
       return null;
     }
 
-    // Map the theme palette to the design system accent
+    // If the palette has the new extended structure with colors, use it
+    if (palette.colors) {
+      return makeDesignSystemFromPalette('dark', palette);
+    }
+
+    // Otherwise, fall back to the old mapping approach
     let accent: "toxic" | "electric" | "ember" | "ice" | "ultra" = "toxic";
 
     // Map our new palette IDs to the existing design system accents

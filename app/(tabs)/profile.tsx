@@ -24,6 +24,7 @@ import {
 } from "../../src/lib/stores/milestonesStore";
 import { useRouter } from "expo-router";
 import { ForgeDNACard, ProfileStatsCard } from "../../src/ui/components/Profile";
+import { NavigationCard } from "../../src/ui/components/NavigationCard";
 
 export default function ProfileTab() {
   const c = useThemeColors();
@@ -110,23 +111,7 @@ export default function ProfileTab() {
     );
   }
 
-  const CardLink = (props: { href: string; title: string; subtitle: string }) => (
-    <Link href={props.href as Href} asChild>
-      <Pressable
-        style={{
-          borderWidth: 1,
-          borderColor: c.border,
-          borderRadius: 14,
-          padding: 14,
-          backgroundColor: c.card,
-          gap: 6,
-        }}
-      >
-        <Text style={{ color: c.text, fontSize: 18, fontWeight: "900" }}>{props.title}</Text>
-        <Text style={{ color: c.muted, lineHeight: 18 }}>{props.subtitle}</Text>
-      </Pressable>
-    </Link>
-  );
+  // Remove the CardLink component since we're using NavigationCard
 
   return (
     <ProtectedRoute>
@@ -238,50 +223,67 @@ export default function ProfileTab() {
         </Text>
 
         {/* Edit Profile Card */}
-        <Link href="/profile/edit" asChild>
-          <Pressable
-            style={{
-              borderWidth: 1,
-              borderColor: c.border,
-              borderRadius: 14,
-              padding: 14,
-              backgroundColor: c.card,
-              gap: 6,
-            }}
-          >
-            <Text style={{ color: c.text, fontSize: 18, fontWeight: "900" }}>Edit Profile</Text>
-            <Text style={{ color: c.muted, lineHeight: 18 }}>
-              Update your display name and profile picture
-            </Text>
-          </Pressable>
-        </Link>
+        <NavigationCard
+          href="/profile/edit"
+          title="Edit Profile"
+          subtitle="Update your display name and profile picture"
+          icon="✏️"
+        />
 
         {/* Calendar: real data lives in /calendar */}
-        <CardLink
+        <NavigationCard
           href="/calendar"
           title="Workout Calendar"
           subtitle="Shows a month grid with highlighted workout days (real data)."
+          icon="📅"
         />
 
         {/* History: real data lives in /history */}
-        <CardLink
+        <NavigationCard
           href="/history"
           title="History"
           subtitle="Browse your saved workout sessions by day/time/duration (real data)."
+          icon="📊"
         />
 
         {/* Avatar: virtual gym companion */}
-        <CardLink
+        <NavigationCard
           href="/avatar"
           title="Avatar"
           subtitle="Customize your gym companion and track its growth."
+          icon="👤"
         />
 
         {/* Hangout Room: social space with friends */}
-        <CardLink
+        <NavigationCard
           href="/hangout"
           title="Hangout Room"
           subtitle="Visit your virtual gym hangout space with friends."
+          icon="👥"
+        />
+
+        {/* Themes: customize app appearance */}
+        <NavigationCard
+          href="/profile/themes"
+          title="App Themes"
+          subtitle="Customize the app's appearance with different color themes and visual styles."
+          icon="🎨"
+        />
+
+        {/* Theme Demo: see themed components in action */}
+        <NavigationCard
+          href="/profile/theme-demo"
+          title="Theme Demo"
+          subtitle="See how themed components look with your current theme."
+          icon="✨"
+        />
+
+        {/* Illustrations Gallery: browse themed illustrations */}
+        <NavigationCard
+          href="/profile/illustrations"
+          title="Illustrations Gallery"
+          subtitle="Browse themed illustrations that enhance your app experience with unique visuals."
+          icon="🖼️"
         />
 
         <View style={{ height: 6 }} />
