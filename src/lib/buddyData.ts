@@ -387,6 +387,7 @@ export const buddies: Buddy[] = [
       "Call that a set? My grandma pulls more.",
       "You call that effort? I've seen zombies with more intensity."
     ],
+    previewVoice: 'trash-heavy-1',
     unlockMethod: 'iap',
     iapProductId: 'buddy.savage.premium',
     messages: {
@@ -516,6 +517,7 @@ export const buddies: Buddy[] = [
       "YES! Your power level... it's RISING!",
       "Transformation sequence initiated! HENSHIN!"
     ],
+    previewVoice: 'trash-heavy-1',
     unlockMethod: 'iap',
     iapProductId: 'buddy.anime.premium',
     messages: {
@@ -645,6 +647,7 @@ export const buddies: Buddy[] = [
       "That form is so bad it should be illegal.",
       "I've seen better lifts from a broken vending machine."
     ],
+    previewVoice: 'trash-heavy-1',
     unlockMethod: 'iap',
     iapProductId: 'buddy.trash.legendary',
     themeId: 'trash_talker_theme',

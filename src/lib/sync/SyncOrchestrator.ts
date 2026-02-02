@@ -99,6 +99,13 @@ class SyncOrchestratorClass {
   }
 
   /**
+   * Get number of registered stores
+   */
+  getStoreCount(): number {
+    return this.stores.size;
+  }
+
+  /**
    * Handle user sign in
    */
   async onSignIn(userId: string, session?: Session): Promise<void> {

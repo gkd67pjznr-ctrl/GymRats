@@ -16,6 +16,7 @@
   ],
   "exclude": [
     "node_modules",
-    "src/lib/_old"
+    "supabase/functions/**",
+    "supabase/migrations/**"
   ]
 }

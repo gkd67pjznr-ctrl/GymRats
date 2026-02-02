@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
-import { makeDesignSystem } from "../../../ui/designSystem";
+import { makeDesignSystem } from "../../designSystem";
 import { useThemeColors } from "../../../ui/theme";
 import {
   useForgeDNAStore,
@@ -13,7 +13,14 @@ import {
   useLoadDNAHistory,
   useIsSharing,
   useShareError,
-  useShareDNA
+  useShareDNA,
+  useIsSyncing,
+  useSyncError,
+  useLastSynced,
+  useSyncWithServer,
+  useAverageUserDNA,
+  useComparisonLoading,
+  useLoadUserComparison
 } from "../../../lib/forgeDNA/store";
 import { ForgeDNAVisualization } from "../ForgeDNA/ForgeDNAVisualization";
 import { ShareButton } from "../ForgeDNA/ShareButton";

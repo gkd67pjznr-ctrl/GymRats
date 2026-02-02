@@ -81,7 +81,7 @@
 - Gym Finder / Map (0/6)
 - AI Coaching (0/4)
 - Templates Marketplace (0/4)
-- Training Journal (0/4)
+- Training Journal (4/4)
 - Forge Seasons (0/4)
 
 ---

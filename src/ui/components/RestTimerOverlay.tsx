@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, AppState, AppStateStatus, Pressable, Text, View } from "react-native";
+import * as Haptics from 'expo-haptics';
 import { useThemeColors } from "../theme";
 import { scheduleRestTimerNotification, cancelRestTimerNotification } from "@/src/lib/notifications/notificationService";
-import { getSettings } from "@/src/lib/stores/settingsStore";
+import Svg, { Circle } from "react-native-svg";
+import { playSound } from "@/src/lib/sound";
+import { isAudioCueEnabled, isRestTimerAudioEnabled, isRestTimerHapticEnabled } from "@/src/lib/sound/soundUtils";
 
 type Props = {
   visible: boolean; // if false, render nothing
@@ -14,6 +17,39 @@ type Props = {
 
 function clampInt(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.floor(n)));
+}
+
+function CircularProgress({
+  progress,
+  size = 100,
+  strokeWidth = 8,
+  color
+}: {
+  progress: number;
+  size?: number;
+  strokeWidth?: number;
+  color: string;
+}) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference * (1 - progress);
+
+  return (
+    <Svg width={size} height={size}>
+      <Circle
+        stroke={color}
+        fill="transparent"
+        strokeWidth={strokeWidth}
+        strokeDasharray={circumference}
+        strokeDashoffset={strokeDashoffset}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${size/2} ${size/2})`}
+        cx={size/2}
+        cy={size/2}
+        r={radius}
+      />
+    </Svg>
+  );
 }
 
 function formatMMSS(totalSeconds: number) {
@@ -66,8 +102,10 @@ export function RestTimerOverlay(props: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const [secondsLeft, setSecondsLeft] = useState(props.initialSeconds);
+  const [initialSeconds, setInitialSeconds] = useState(props.initialSeconds);
   const [isRunning, setIsRunning] = useState(true);
   const [scheduledNotificationId, setScheduledNotificationId] = useState<string | null>(null);
+  const hasPlayedStartSoundRef = useRef(false);
 
   // slide animation: panel only (overlay)
   const panelY = useRef(new Animated.Value(220)).current; // off-screen-ish
@@ -77,7 +115,9 @@ export function RestTimerOverlay(props: Props) {
     // when shown, reset and start running
     setExpanded(false);
     setSecondsLeft(props.initialSeconds);
+    setInitialSeconds(props.initialSeconds);
     setIsRunning(true);
+    hasPlayedStartSoundRef.current = false;
 
     // Clean up any existing notification when timer starts
     cancelRestTimerNotification().catch(console.error);
@@ -113,10 +153,27 @@ export function RestTimerOverlay(props: Props) {
     }
   }, [props.visible, isRunning, secondsLeft, appState]);
 
+  // Play start sound when timer starts
+  useEffect(() => {
+    if (!props.visible || !isRunning || secondsLeft <= 0) return;
+    if (hasPlayedStartSoundRef.current) return;
+
+    if (isAudioCueEnabled('restTimerStart')) {
+      playSound('spark').catch(console.error);
+    }
+    hasPlayedStartSoundRef.current = true;
+  }, [props.visible, isRunning, secondsLeft]);
+
   useEffect(() => {
     if (!props.visible) return;
     if (secondsLeft !== 0) return;
 
+    if (isRestTimerAudioEnabled()) {
+      playSound('cheer').catch(console.error);
+    }
+    if (isRestTimerHapticEnabled()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(console.error);
+    }
     setIsRunning(false);
     props.onDone?.();
 
@@ -252,7 +309,19 @@ export function RestTimerOverlay(props: Props) {
             </Pressable>
           </View>
 
-          <Text style={{ color: c.text, fontWeight: "900", fontSize: 32 }}>{timeLabel}</Text>
+          <View style={{ alignItems: "center", justifyContent: "center", marginVertical: 10 }}>
+            <View style={{ position: "relative", width: 120, height: 120, alignItems: "center", justifyContent: "center" }}>
+              <CircularProgress
+                progress={initialSeconds > 0 ? 1 - (secondsLeft / initialSeconds) : 0}
+                size={120}
+                strokeWidth={6}
+                color={c.primary}
+              />
+              <Text style={{ position: "absolute", color: c.text, fontWeight: "900", fontSize: 32 }}>
+                {timeLabel}
+              </Text>
+            </View>
+          </View>
 
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
             <SmallBtn
@@ -266,7 +335,9 @@ export function RestTimerOverlay(props: Props) {
               title="Reset"
               onPress={() => {
                 setSecondsLeft(props.initialSeconds);
+                setInitialSeconds(props.initialSeconds);
                 setIsRunning(true);
+                hasPlayedStartSoundRef.current = false;
               }}
               subtle
             />

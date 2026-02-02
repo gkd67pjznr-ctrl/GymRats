@@ -263,7 +263,7 @@ export type DatabasePost = {
 };
 
 /**
- * EmoteId enum for reactions table
+ * EmoteId enum for reactions, live_session_reactions and quick_reactions tables
  */
 export type DatabaseEmoteId =
   | "like"

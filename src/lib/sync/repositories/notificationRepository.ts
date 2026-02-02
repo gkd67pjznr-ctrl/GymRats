@@ -1,9 +1,10 @@
 // src/lib/sync/repositories/notificationRepository.ts
 // Repository for user notifications CRUD operations with Supabase
 
-import { supabase } from '../../supabase/client';
+import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { AppNotification } from '../../socialModel';
 import type { DatabaseNotification, DatabaseNotificationInsert } from '../../supabase/types';
+declare const __DEV__: boolean | undefined;
 
 /**
  * Repository interface for notifications
@@ -50,6 +51,14 @@ export const notificationRepository: NotificationRepository = {
    * Fetch notifications for a user
    */
   async fetchUserNotifications(userId: string, limit = 50): Promise<AppNotification[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[notificationRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('notifications')
       .select('*')
@@ -69,6 +78,14 @@ export const notificationRepository: NotificationRepository = {
    * Fetch unread notification count for a user
    */
   async fetchUnreadCount(userId: string): Promise<number> {
+    // If Supabase is not configured, return 0
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[notificationRepository] Supabase placeholder detected, returning 0');
+      }
+      return 0;
+    }
+
     const { count, error } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
@@ -87,6 +104,15 @@ export const notificationRepository: NotificationRepository = {
    * Create a new notification
    */
   async create(notification: Omit<DatabaseNotificationInsert, 'user_id'>, userId: string): Promise<string> {
+    // If Supabase is not configured, simulate success with a mock ID
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[notificationRepository] Supabase placeholder detected, simulating notification creation');
+      }
+      // Generate a mock ID
+      return `mock_${Date.now().toString(36)}_${Math.random().toString(36).substring(2)}`;
+    }
+
     const insertData: DatabaseNotificationInsert = {
       ...notification,
       user_id: userId,
@@ -110,6 +136,14 @@ export const notificationRepository: NotificationRepository = {
    * Mark a notification as read
    */
   async markAsRead(id: string, userId: string): Promise<void> {
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[notificationRepository] Supabase placeholder detected, skipping markAsRead');
+      }
+      return;
+    }
+
     const now = new Date().toISOString();
 
     const { error } = await supabase
@@ -128,6 +162,14 @@ export const notificationRepository: NotificationRepository = {
    * Mark all notifications as read for a user
    */
   async markAllAsRead(userId: string): Promise<void> {
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[notificationRepository] Supabase placeholder detected, skipping markAllAsRead');
+      }
+      return;
+    }
+
     const now = new Date().toISOString();
 
     const { error } = await supabase
@@ -149,6 +191,14 @@ export const notificationRepository: NotificationRepository = {
     userId: string,
     onInsert: (notification: AppNotification) => void
   ): () => void {
+    // If Supabase is not configured, return no-op subscription
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[notificationRepository] Supabase placeholder detected, returning no-op subscription');
+      }
+      return () => {};
+    }
+
     const channel = supabase
       .channel(`notifications:user_id=eq.${userId}`)
       .on(

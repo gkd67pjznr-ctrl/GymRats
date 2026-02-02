@@ -6,11 +6,13 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { useThemeColors } from "../src/ui/theme";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { useSettings, updateSettings } from "../src/lib/stores";
+import { useSettings, updateSettings, usePersonality } from "../src/lib/stores";
 import { useAuthStore, useIsEmailVerified, useUser } from "../src/lib/stores/authStore";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { migrateLocalToCloud, importFromCSV } from "../src/lib/migration/dataMigrator";
 import type { MigrationProgress } from "../src/lib/migration/dataMigrator";
+import { WeightEntryModal } from "../src/ui/components/Settings/WeightEntryModal";
+import { kgToLb } from "../src/lib/units";
 
 function Row(props: {
   title: string;
@@ -73,11 +75,17 @@ export default function SettingsScreen() {
   const user = useUser();
   const { signOut, loading: authLoading, session, resendVerificationEmail, deleteAccount, updateAvatar, removeAvatar, loading: avatarLoading } = useAuthStore();
   const isEmailVerified = useIsEmailVerified();
+  const currentPersonality = usePersonality();
 
   // Delete account modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [_showPersonalityModal, setShowPersonalityModal] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Weight entry modal state
+  const [showWeightModal, setShowWeightModal] = useState(false);
+  const [weightModalMode, setWeightModalMode] = useState<'current' | 'historical'>('current');
 
   // Migration state
   const [showMigrationModal, setShowMigrationModal] = useState(false);
@@ -159,7 +167,7 @@ export default function SettingsScreen() {
           Alert.alert("Error", uploadResult.error || "Failed to update avatar");
         }
       }
-    } catch (err) {
+    } catch (_err) {
       Alert.alert("Error", "Failed to pick image");
     }
   }
@@ -245,10 +253,20 @@ export default function SettingsScreen() {
           setShowMigrationModal(false);
         }
       }
-    } catch (err) {
+    } catch (_err) {
       Alert.alert("Error", "Failed to pick CSV file");
     }
   }
+
+  // Weight entry modal handlers
+  const handleOpenWeightModal = (mode: 'current' | 'historical') => {
+    setWeightModalMode(mode);
+    setShowWeightModal(true);
+  };
+
+  const handleCloseWeightModal = () => {
+    setShowWeightModal(false);
+  };
 
   function closeMigrationModal() {
     setShowMigrationModal(false);
@@ -382,6 +400,19 @@ export default function SettingsScreen() {
 
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
           <Row
+            title="Buddy Voice"
+            subtitle="Voice lines from your AI Gym Buddy (premium/legendary only)."
+            right={
+              <Toggle
+                value={settings.buddyVoiceEnabled}
+                onChange={(v) => updateSettings({ buddyVoiceEnabled: v })}
+              />
+            }
+          />
+        </View>
+
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Row
             title="Units"
             subtitle="Display and logging units."
             right={
@@ -396,6 +427,46 @@ export default function SettingsScreen() {
                   active={settings.unitSystem === "kg"}
                   onPress={() => updateSettings({ unitSystem: "kg" })}
                 />
+              </View>
+            }
+          />
+        </View>
+
+        {/* Weight Tracking */}
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Row
+            title="Bodyweight"
+            subtitle={`Current weight: ${settings.unitSystem === 'lb' ? kgToLb(settings.bodyweight).toFixed(1) : settings.bodyweight.toFixed(1)} ${settings.unitSystem}`}
+            right={
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                <Pressable
+                  onPress={() => handleOpenWeightModal('current')}
+                  style={{
+                    paddingVertical: 10,
+                    paddingHorizontal: 14,
+                    borderRadius: 12,
+                    backgroundColor: c.bg,
+                    borderWidth: 1,
+                    borderColor: c.border,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ fontWeight: '700', fontSize: 12 }}>Update</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => handleOpenWeightModal('historical')}
+                  style={{
+                    paddingVertical: 10,
+                    paddingHorizontal: 14,
+                    borderRadius: 12,
+                    backgroundColor: c.bg,
+                    borderWidth: 1,
+                    borderColor: c.border,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ fontWeight: '700', fontSize: 12 }}>Add Historical</Text>
+                </Pressable>
               </View>
             }
           />
@@ -440,6 +511,103 @@ export default function SettingsScreen() {
               />
             }
           />
+        </View>
+
+        {/* Audio Cues */}
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Row
+            title="Audio Cues"
+            subtitle="Individual sound effects for different events"
+          />
+          <View style={{ gap: 8, marginTop: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>PR Celebrations</Text>
+              <Toggle
+                value={settings.audioCues.prCelebration}
+                onChange={(v) => updateSettings({ audioCues: { ...settings.audioCues, prCelebration: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Rest Timer Start</Text>
+              <Toggle
+                value={settings.audioCues.restTimerStart}
+                onChange={(v) => updateSettings({ audioCues: { ...settings.audioCues, restTimerStart: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Rest Timer End</Text>
+              <Toggle
+                value={settings.audioCues.restTimerEnd}
+                onChange={(v) => updateSettings({ audioCues: { ...settings.audioCues, restTimerEnd: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Workout Complete</Text>
+              <Toggle
+                value={settings.audioCues.workoutComplete}
+                onChange={(v) => updateSettings({ audioCues: { ...settings.audioCues, workoutComplete: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Rank Up</Text>
+              <Toggle
+                value={settings.audioCues.rankUp}
+                onChange={(v) => updateSettings({ audioCues: { ...settings.audioCues, rankUp: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Level Up</Text>
+              <Toggle
+                value={settings.audioCues.levelUp}
+                onChange={(v) => updateSettings({ audioCues: { ...settings.audioCues, levelUp: v } })}
+              />
+            </View>
+          </View>
+        </View>
+
+        {/* Rest Timer Feedback */}
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Row
+            title="Rest Timer Feedback"
+            subtitle="How the rest timer notifies you when it's done"
+          />
+          <View style={{ gap: 8, marginTop: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Audio</Text>
+              <Toggle
+                value={settings.restTimerFeedback.audio}
+                onChange={(v) => updateSettings({ restTimerFeedback: { ...settings.restTimerFeedback, audio: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Haptic</Text>
+              <Toggle
+                value={settings.restTimerFeedback.haptic}
+                onChange={(v) => updateSettings({ restTimerFeedback: { ...settings.restTimerFeedback, haptic: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Voice</Text>
+              <Toggle
+                value={settings.restTimerFeedback.voice}
+                onChange={(v) => updateSettings({ restTimerFeedback: { ...settings.restTimerFeedback, voice: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Notification</Text>
+              <Toggle
+                value={settings.restTimerFeedback.notification}
+                onChange={(v) => updateSettings({ restTimerFeedback: { ...settings.restTimerFeedback, notification: v } })}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ color: c.text, fontSize: 14, fontWeight: '700' }}>Visual Progress</Text>
+              <Toggle
+                value={settings.restTimerFeedback.visualProgress}
+                onChange={(v) => updateSettings({ restTimerFeedback: { ...settings.restTimerFeedback, visualProgress: v } })}
+              />
+            </View>
+          </View>
         </View>
 
         {/* Dev Menu Link */}
@@ -605,7 +773,6 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-<<<<<<< HEAD
         {/* Dev Menu Link */}
         {__DEV__ && (
           <Link href="/dev-menu" asChild>
@@ -623,7 +790,7 @@ export default function SettingsScreen() {
             </Pressable>
           </Link>
         )}
-=======
+
         {/* Personality Selection */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
           <Pressable onPress={() => setShowPersonalityModal(true)}>
@@ -641,7 +808,6 @@ export default function SettingsScreen() {
             />
           </Pressable>
         </View>
->>>>>>> glm-work
 
         {/* Email Verification Status */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
@@ -789,7 +955,7 @@ export default function SettingsScreen() {
         </View>
 
         <Text style={{ color: c.muted }}>
-          Next: we'll wire these settings into LiveWorkout (rest timer default + unit display).
+          Next: we&rsquo;ll wire these settings into LiveWorkout (rest timer default + unit display).
         </Text>
         </ScrollView>
       </View>
@@ -994,6 +1160,14 @@ export default function SettingsScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Weight Entry Modal */}
+      <WeightEntryModal
+        visible={showWeightModal}
+        onClose={handleCloseWeightModal}
+        mode={weightModalMode}
+        initialWeightKg={settings.bodyweight}
+      />
     </ProtectedRoute>
   );
 }

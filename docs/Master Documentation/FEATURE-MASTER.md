@@ -1,6 +1,6 @@
 # FORGERANK FEATURE MASTER
 
-**Last Updated:** 2026-01-30
+**Last Updated:** 2026-02-01
 **Version:** v0.3 (Post-organization)
 
 ---
@@ -9,27 +9,27 @@
 
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
-| [Workout Core](#workout-core) | In Progress | 8/20 | [Details](../features/Workout/feature-workouts.md) |
+| [Workout Core](#workout-core) | In Progress | 12/20 | [Details](../features/Workout/feature-workouts.md) |
 | [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](../features/Workout/feature-workout-logging-ux.md) |
 | [Exercise Library](#exercise-library) | Done | 3/3 | [Details](../features/Workout/feature-exercises.md) |
 | [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](../features/Workout/feature-scoring.md) |
-| [AI Gym Buddy](#ai-gym-buddy) | In Progress | 1/11 | [Details](../features/Workout/feature-cue-system.md) |
-| [Body Model](#body-model) | Planned | 0/5 | [Details](../features/Workout/feature-body-model.md) |
+| [AI Gym Buddy](#ai-gym-buddy) | In Progress | 9/11 | [Details](../features/Workout/feature-cue-system.md) |
+| [Body Model](#body-model) | In Progress | 3/5 | [Details](../features/Workout/feature-body-model.md) |
 | [Authentication](#authentication) | In Progress | 7/10 | [Details](../features/Auth/feature-auth.md) |
 | [Social & Feed](#social--feed) | In Progress | 9/15 | [Details](../features/Social/feature-social.md) |
 | [Gamification](#gamification) | **Done** | 12/12 | [Details](../features/Gamification/feature-gamification.md) |
 | [Notifications](#notifications) | In Progress | 1/4 | [Details](../features/Social/feature-notifications.md) |
 | [UI & Design](#ui--design) | In Progress | 12/15 | [Details](../features/UI/feature-ui.md) |
-| [UI Themes & Visual Style](#ui-themes--visual-style) | Done | 12/12 | [Details](../features/UI/feature-ui-themes.md) |
-| [Backend & Sync](#backend--sync) | In Progress | 9/10 | [Details](../features/Backend/feature-backend.md) |
-| [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/Misc/feature-onboarding.md) |
+| [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 6/12 | [Details](../features/UI/feature-ui-themes.md) |
+| [Backend & Sync](#backend--sync) | **Done** | 10/10 | [Details](../features/Backend/feature-backend.md) |
+| [Onboarding](#onboarding) | In Progress | 5/7 | [Details](../features/Misc/feature-onboarding.md) |
 | [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](../features/Avatar/feature-avatars.md) |
 | [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](../features/Workout/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | ✅ Done | 4/4 | [Details](../features/Analytics/feature-forge-dna.md) |
-| [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 3/6 | [Details](../features/Analytics/feature-forge-lab.md) |
+| [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 5/6 | [Details](../features/Analytics/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](../features/Gamification/feature-forge-milestones.md) |
 
-**Launch Total:** 117/167 features (70%)
+**Launch Total:** 131/167 features (78%)
 
 ## Quick Summary — Post-Launch
 
@@ -42,12 +42,12 @@
 | [Live Workout Together](#live-workout-together) | Planned | 0/4 | [Details](../features/Live/feature-live-together.md) |
 | [AI Coaching](#ai-coaching) | Planned | 0/4 | [Details](../features/Misc/feature-ai-coaching.md) |
 | [Templates Marketplace](#templates-marketplace) | Planned | 0/4 | [Details](../features/Misc/feature-templates-marketplace.md) |
-| [Training Journal](#training-journal) | Planned | 0/4 | [Details](../features/Misc/feature-training-journal.md) |
+| [Training Journal](#training-journal) | Implemented | 4/4 | [Details](../features/Misc/feature-training-journal.md) |
 | [Forge Seasons](#forge-seasons) | Planned | 0/4 | [Details](../features/Misc/feature-forge-seasons.md) |
 
-**Post-Launch Total:** 0/49 features (0%)
+**Post-Launch Total:** 4/49 features (8%)
 
-**Grand Total:** 117/216 features (54%)
+**Grand Total:** 133/216 features (62%)
 
 ---
 
@@ -66,7 +66,7 @@ What sets Forgerank apart — the combination is the killer feature:
 ---
 
 ## Workout Core
-**Status:** In Progress | **Progress:** 8/20 features
+**Status:** In Progress | **Progress:** 11/20 features
 
 The core workout logging and tracking experience.
 
@@ -129,25 +129,30 @@ The visual interface for logging sets — complete redesign (Fitbod/Liftoff styl
 ---
 
 ## AI Gym Buddy
-**Status:** In Progress | **Progress:** 11/11 features
+**Status:** In Progress | **Progress:** 9/11 features
 **Previously:** Cue System
 
 The app's personality — reactive commentary that makes it feel alive. Like a sports announcer, not a chatbot.
 
-**Completed:**
+**Completed (Core):**
+✅ **Fully Implemented:**
 - Basic PR detection cues
-- 12 personality archetypes (Coach, Hype Beast, Chill, Savage, Anime Sensei, Girl Power Fit, Mindful Movement, Goth Gym Rat, Action Hero, Drill Sergeant, Zen Master, Trash Talker, Legendary Mystery Buddy)
+- 12 personality archetypes with full message pools
 - Tiered buddy system (Basic, Premium, Legendary)
-- Reactive commentary engine with message selection
-- Integrated session management (workout start, set recording, rest tracking)
-- Implemented trigger evaluation system (performance events, behavior patterns, session flow)
-- Added full rank progress detection with historical data integration
-- Enhanced buddy store with session memory tracking
-- Exercise completion tracking with skipping detection
-- Complete message pools for all personalities (70 messages each across 14 trigger types)
-- Voice line integration for premium buddies
-- Sound effects for legendary buddies
-- Theme transformations for legendary buddies
+- Reactive commentary engine with trigger evaluation
+- Integrated session management (workout tracking)
+- Buddy store with unlocked buddies, session memory, and IAP integration
+- Complete message pools (70+ messages per buddy across 14 trigger types)
+- Real IAP integration with expo-iap (purchase flow, product info, restoration)
+- Voice playback system with tier-based audio (VoiceManager)
+- Buddy selection UI in settings with purchase/restore flows
+
+🔄 **Partially Implemented / In Progress:**
+- Voice line integration (playback working, but no audio toggle UI or voice preview)
+- Buddy-specific sound effects (SoundManager integration needed)
+- Legendary buddy theme transformations (data structures exist, theme application logic needed)
+- Forge Tokens economy (store exists, but no earning/spending mechanics)
+- Audio toggle in settings (store exists, UI controls needed)
 
 **Planned (Post-Launch):**
 - Community-created personality packs
@@ -158,14 +163,23 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 ---
 
 ## Body Model
-**Status:** Implemented | **Progress:** 5/5 features
+**Status:** In Progress | **Progress:** 3/5 features
 
-- Detailed muscle subdivisions (upper chest, rear delts, etc.)
-- Volume-based coloring (gradient based on sets)
-- Primary/secondary/tertiary muscle mapping per exercise
-- Default post image (if no photo uploaded)
-- Interactive body stats screen
-- Inclusive body options standard (gender-neutral, diverse representation)
+✅ **Implemented (Core Visualization):**
+- Detailed muscle subdivisions with actual SVG paths (21 muscle groups)
+- Volume-based coloring with weekly/monthly/all time filtering
+- Primary/secondary/tertiary muscle mapping for 300+ exercises
+- Interactive body stats screen with front/back view switching
+
+🔄 **In Progress (Integration):**
+- Default post image for social posts (compact body model component ready, social integration pending)
+- Balance indicators (left/right, push/pull) - UI planned, calculations needed
+
+📋 **Future Enhancements (Post-Launch):**
+- Inclusive body options (gender-neutral, diverse representation)
+- Enhanced interactive features (tap muscles for detailed stats and exercises)
+- 3D body model visualization (if user demand warrants)
+- Muscle balance analytics with recommendations
 
 ---
 
@@ -286,19 +300,23 @@ Pure-inspired dark aesthetic — looks so good people want to show it off.
 ---
 
 ## UI Themes & Visual Style
-**Status:** Done | **Progress:** 12/12 features
+**Status:** In Progress | **Progress:** 6/12 features
 
-Complete implementation of the Forgerank visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency.
+Implementation of the Forgerank visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency.
 
 **Completed:**
-- UI Aesthetic Implementation Plan with layered approach
-- Visual Style Guide with detailed design specifications
-- Implementation Roadmap with 12-week phased rollout
-- Theme System Infrastructure with CSS custom properties
-- Color Palette System with multiple emotional accent options
-- Typography System balancing clarity with personality
-- Illustration Style with hand-drawn aesthetic
-- Emotional Language/Copy guidelines for key moments
+- UI Aesthetic Implementation Plan with layered approach (documentation)
+- Visual Style Guide with detailed design specifications (documentation)
+- Implementation Roadmap with 12-week phased rollout (documentation)
+- Emotional Language/Copy system via buddy engine
+
+**In Progress:**
+- Theme System Infrastructure (partially implemented, needs refinement)
+- Color Palette System (implemented but needs alignment with visual style guide)
+- Typography System (implemented but needs alignment with specifications)
+
+**Not Started:**
+- Illustration Style system (documentation exists, implementation needed)
 
 **Documentation:**
 - `docs/visual-style/ui-aesthetic-implementation.md`
@@ -308,7 +326,7 @@ Complete implementation of the Forgerank visual identity with a layered approach
 ---
 
 ## Backend & Sync
-**Status:** In Progress | **Progress:** 9/10 features
+**Status:** Done | **Progress:** 10/10 features
 
 **Completed:**
 - Supabase client + 9-table schema + RLS policies
@@ -317,10 +335,11 @@ Complete implementation of the Forgerank visual identity with a layered approach
 - Offline mutation queuing + conflict resolution
 - Real-time subscriptions (feed, friends, chat)
 - File storage (avatar uploads)
+- Sync system integration with auth (initialization, store registration)
 
-**Remaining:**
-- Data migration script (local to cloud)
-- Apply user search migration to production
+**Post-Launch / Nice-to-Have:**
+- Data migration script (local to cloud) - for existing user data import
+- Apply user search migration (`005_user_search.sql`) to production Supabase
 
 ---
 
@@ -563,12 +582,12 @@ Community-driven workout template sharing.
 ---
 
 ## Training Journal
-**Status:** Planned | **Progress:** 0/4 features
+**Status:** Implemented | **Progress:** 4/4 features
 **Post-launch**
 
 Free-form workout notes for serious lifters.
 
-**Planned:**
+**Implemented:**
 - Per-workout notes (how you felt, what went well)
 - Per-day journal entries
 - Mood/energy/soreness tracking

@@ -4,10 +4,10 @@
  * Handles CRUD operations for the users table gamification columns.
  */
 
-import { supabase } from '@/src/lib/supabase/client';
+import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { GamificationProfile, WorkoutCalendarEntry } from '../types';
 import { DEFAULT_GAMIFICATION_PROFILE } from '../types';
-import type { DatabaseUser, JsonWorkoutCalendarEntry } from '@/src/lib/supabase/types';
+import type { DatabaseUser, JsonWorkoutCalendarEntry } from '../../supabase/types';
 
 /**
  * Convert database user row to GamificationProfile.
@@ -74,6 +74,14 @@ export function gamificationProfileToDbUpdate(
  * @returns Gamification profile or null if not authenticated
  */
 export async function fetchGamificationProfile(): Promise<GamificationProfile | null> {
+  // If Supabase is not configured, return null to use local data
+  if (isSupabasePlaceholder) {
+    if (__DEV__) {
+      console.log('[gamificationRepository] Supabase placeholder detected, skipping fetch');
+    }
+    return null;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -113,6 +121,14 @@ export async function fetchGamificationProfile(): Promise<GamificationProfile | 
 export async function pushGamificationProfile(
   profile: GamificationProfile
 ): Promise<boolean> {
+  // If Supabase is not configured, return true (success) to skip sync
+  if (isSupabasePlaceholder) {
+    if (__DEV__) {
+      console.log('[gamificationRepository] Supabase placeholder detected, skipping push');
+    }
+    return true;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

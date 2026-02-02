@@ -20,6 +20,7 @@ interface WorkoutState {
   // Actions
   addSession: (session: WorkoutSession) => void;
   updateSession: (id: string, updates: Partial<WorkoutSession>) => void;
+  updateSessionWithJournal: (id: string, updates: Partial<WorkoutSession>) => void;
   removeSession: (id: string) => void;
   clearSessions: () => void;
   getSessionById: (id: string) => WorkoutSession | undefined;
@@ -66,6 +67,32 @@ export const useWorkoutStore = create<WorkoutState>()(
       getSessionById: (id) => get().sessions.find((s) => s.id === id),
 
       setHydrated: (value) => set({ hydrated: value }),
+
+      // Journal integration helper
+      updateSessionWithJournal: (id: string, updates: Partial<WorkoutSession>) => {
+        const state = get();
+        const session = state.sessions.find((s) => s.id === id);
+        if (!session) return;
+
+        // Update the session
+        set({
+          sessions: state.sessions.map((s) =>
+            s.id === id ? { ...s, ...updates } : s
+          ),
+        });
+
+        // If journal fields are being updated, also update/create journal entry
+        const hasJournalFields = updates.notes !== undefined ||
+          updates.mood !== undefined ||
+          updates.energy !== undefined ||
+          updates.soreness !== undefined;
+
+        if (hasJournalFields) {
+          // This will be handled by the journal integration in the UI layer
+          // The actual journal entry creation/update happens in useWorkoutOrchestrator
+          // and workout summary screen
+        }
+      },
 
       // Sync actions
       pullFromServer: async () => {
@@ -161,6 +188,13 @@ export function useWorkoutSessions(): WorkoutSession[] {
 // Imperative getters for non-React code
 export function getWorkoutSessions(): WorkoutSession[] {
   return useWorkoutStore.getState().sessions;
+}
+
+/**
+ * Get workout history for analytics (async wrapper for compatibility)
+ */
+export async function getWorkoutHistory(): Promise<WorkoutSession[]> {
+  return getWorkoutSessions();
 }
 
 // Get user's all-time best e1RM for each exercise
@@ -301,4 +335,40 @@ function mergeSessions(
  */
 export function getWorkoutSyncStatus(): SyncMetadata {
   return useWorkoutStore.getState()._sync;
+}
+
+/**
+ * Get the most recent set for a given exercise across all workout history
+ * Returns null if no sets found for the exercise
+ */
+export function getLastSetForExercise(exerciseId: string, userId?: string): { weightKg: number; reps: number; timestampMs: number } | null {
+  const sessions = useWorkoutStore.getState().sessions;
+  let filteredSessions = sessions;
+  if (userId) {
+    filteredSessions = sessions.filter(s => s.userId === userId);
+  } else {
+    // Try to get current user
+    const user = getUser();
+    if (user) {
+      filteredSessions = sessions.filter(s => s.userId === user.id);
+    }
+  }
+  // Sort sessions by startedAtMs descending to get most recent first
+  const sortedSessions = [...filteredSessions].sort((a, b) => b.startedAtMs - a.startedAtMs);
+
+  for (const session of sortedSessions) {
+    // Filter sets for this exercise in this session
+    const exerciseSets = session.sets.filter(set => set.exerciseId === exerciseId);
+    if (exerciseSets.length > 0) {
+      // Get the most recent set within this session (sets are already in chronological order?)
+      // Assuming sets are stored chronologically within session
+      const lastSet = exerciseSets[exerciseSets.length - 1];
+      return {
+        weightKg: lastSet.weightKg,
+        reps: lastSet.reps,
+        timestampMs: lastSet.timestampMs,
+      };
+    }
+  }
+  return null;
 }

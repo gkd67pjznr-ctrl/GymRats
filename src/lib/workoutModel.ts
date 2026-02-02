@@ -27,6 +27,12 @@ export type WorkoutSession = {
 
   // 0..1 if planned
   completionPct?: number;
+
+  // Training journal fields
+  notes?: string;
+  mood?: number;          // 1-5
+  energy?: number;        // 1-5
+  soreness?: string[];    // muscle group IDs
 };
 
 // [CHANGED 2026-01-23] Re-export from centralized uid

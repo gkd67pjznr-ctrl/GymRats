@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, Text, Pressable, StyleSheet, Alert, Modal, TextInput } from "react-native";
-import { makeDesignSystem } from "../../../ui/designSystem";
+import { makeDesignSystem } from "../../designSystem";
 import { useThemeColors } from "../../../ui/theme";
 
 interface ShareButtonProps {

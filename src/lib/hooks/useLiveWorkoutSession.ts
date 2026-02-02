@@ -4,6 +4,7 @@ import { lbToKg, kgToLb } from "../units";
 import { validateWeight, validateReps } from "../validators/workout";
 import { uid } from "../uid";
 import { estimate1RM_Epley } from "../e1rm";
+import { getLastSetForExercise } from '../stores/workoutStore';
 
 type Defaults = { weightLb: number; reps: number };
 
@@ -322,14 +323,30 @@ export function useLiveWorkoutSession(
   const syncQuickAddToExercise = useCallback(
     (exerciseId: string) => {
       const d = defaultsByExerciseId[exerciseId];
-      if (!d) return;
+      if (d) {
+        setWeightLb(d.weightLb);
+        setReps(d.reps);
+        setWeightLbText(d.weightLb.toFixed(1));
+        setRepsText(String(d.reps));
+        return;
+      }
 
-      setWeightLb(d.weightLb);
-      setReps(d.reps);
-      setWeightLbText(d.weightLb.toFixed(1));
-      setRepsText(String(d.reps));
+      // No defaults for this exercise in current session, try to get from workout history
+      const lastSet = getLastSetForExercise(exerciseId);
+      if (lastSet) {
+        const weightLbFromHistory = kgToLb(lastSet.weightKg);
+        const repsFromHistory = lastSet.reps;
+        // Set as defaults for this exercise in current session
+        setDefaultsForExercise(exerciseId, { weightLb: weightLbFromHistory, reps: repsFromHistory });
+        // Update quick-add inputs
+        setWeightLb(weightLbFromHistory);
+        setReps(repsFromHistory);
+        setWeightLbText(weightLbFromHistory.toFixed(1));
+        setRepsText(String(repsFromHistory));
+      }
+      // If no history, keep current inputs unchanged
     },
-    [defaultsByExerciseId]
+    [defaultsByExerciseId, setDefaultsForExercise, kgToLb]
   );
 
   // Add set to the workout session

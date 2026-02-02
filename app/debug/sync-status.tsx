@@ -76,6 +76,7 @@ export default function SyncStatusScreen() {
   ];
 
   return (
+    <>
     <Stack.Screen
       options={{
         title: "Sync Status",
@@ -158,7 +159,7 @@ export default function SyncStatusScreen() {
               gap: 8,
               paddingVertical: 12,
               paddingHorizontal: 16,
-              borderRadius: FR.radius.md,
+              borderRadius: FR.radius.button,
               backgroundColor: (syncing || !isOnline) ? c.border : c.text,
               opacity: pressed ? 0.8 : 1,
             })}
@@ -262,5 +263,6 @@ export default function SyncStatusScreen() {
         </View>
       </ScrollView>
     </View>
+  </>
   );
 }

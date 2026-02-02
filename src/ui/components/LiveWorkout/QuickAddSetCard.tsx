@@ -112,6 +112,7 @@ export function QuickAddSetCard(props: Props) {
         max={2000}
         stepOptions={WEIGHT_STEPS_LB}
         presets={WEIGHT_PRESETS_LB}
+        keypadMode={true}
       />
 
       {/* Reps Input */}
@@ -127,6 +128,7 @@ export function QuickAddSetCard(props: Props) {
         min={1}
         max={100}
         presets={REPS_PRESETS}
+        keypadMode={true}
       />
 
       {/* Current value display */}

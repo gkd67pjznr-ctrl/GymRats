@@ -7,7 +7,6 @@ module.exports = {
     icon: './assets/images/icon.png',
     scheme: 'forgerank',
     userInterfaceStyle: 'automatic',
-    privacy: 'unauthenticated',
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
@@ -28,6 +27,7 @@ module.exports = {
     },
     plugins: [
       'expo-router',
+      'expo-iap',
       [
         'expo-splash-screen',
         {

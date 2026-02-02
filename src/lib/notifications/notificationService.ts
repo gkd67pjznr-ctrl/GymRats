@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { NotificationPayload, NotificationPreferences, NOTIFICATION_CHANNELS, REST_TIMER_NOTIFICATION_ID } from './types';
 import { getSettings } from '../stores/settingsStore';
+import { supabase } from '../supabase/client';
 
 /**
  * Notification Service - Core notification functionality
@@ -256,15 +257,15 @@ const shouldShowNotification = (type: NotificationType, prefs: NotificationPrefe
 /**
  * Set up notification response listener
  */
-export const setupNotificationResponseListener = (handler: (response: Notifications.NotificationResponse) => void): void => {
-  Notifications.addNotificationResponseReceivedListener(handler);
+export const setupNotificationResponseListener = (handler: (response: Notifications.NotificationResponse) => void): Notifications.Subscription => {
+  return Notifications.addNotificationResponseReceivedListener(handler);
 };
 
 /**
  * Set up notification received listener (foreground)
  */
-export const setupNotificationReceivedListener = (handler: (notification: Notifications.Notification) => void): void => {
-  Notifications.addNotificationReceivedListener(handler);
+export const setupNotificationReceivedListener = (handler: (notification: Notifications.Notification) => void): Notifications.Subscription => {
+  return Notifications.addNotificationReceivedListener(handler);
 };
 
 /**
@@ -421,12 +422,26 @@ const createInAppNotification = async (
   payload: NotificationPayload
 ): Promise<void> => {
   try {
-    // This would call the Supabase client to insert into notifications table
-    if (__DEV__) {
-      console.log(`Creating in-app notification for user ${userId}:`, payload);
+    console.log(`Creating in-app notification for user ${userId}:`, payload);
+
+    // Insert notification into database
+    const { error } = await supabase
+      .from('notifications')
+      .insert({
+        user_id: userId,
+        type: payload.type,
+        title: payload.title,
+        body: payload.body,
+        data: payload.data || null,
+        created_at: new Date().toISOString()
+      });
+
+    if (error) {
+      console.error('Failed to create in-app notification:', error);
+      throw error;
     }
-    // For now, we'll just log it since we don't have the backend
-    // implementation for in-app notifications yet
+
+    console.log('In-app notification created successfully');
   } catch (error) {
     if (__DEV__) {
       console.error('Failed to create in-app notification:', error);
@@ -448,13 +463,51 @@ export const registerPushToken = async (): Promise<void> => {
       return;
     }
 
-    const token = await Notifications.getExpoPushTokenAsync();
-    if (__DEV__) {
-      console.log('Expo push token:', token.data);
-      // In a real implementation, this would save the token to the user's record
-      // For now, we'll just log it
-      console.log('Would save push token to user record:', token.data);
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.log('No authenticated user found');
+      return;
     }
+
+    const token = await Notifications.getExpoPushTokenAsync();
+    console.log('Expo push token:', token.data);
+
+    // Get Supabase URL from client (remove trailing slash if present)
+    const supabaseUrl = supabase.supabaseUrl.replace(/\/$/, '');
+    const functionUrl = `${supabaseUrl}/functions/v1/register-push-token`;
+
+    // Get auth token from current session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.error('No authenticated session found');
+      return;
+    }
+
+    const response = await fetch(functionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        userId: user.id,
+        token: token.data,
+        deviceInfo: {
+          platform: Platform.OS,
+          osVersion: Platform.Version,
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Failed to register push token: ${response.status}`, errorText);
+      throw new Error(`Push token registration failed: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('Push token registered successfully:', result);
   } catch (error) {
     if (__DEV__) {
       console.error('Failed to register push token:', error);
@@ -464,20 +517,46 @@ export const registerPushToken = async (): Promise<void> => {
 
 /**
  * Send push notification via backend
- * This would be called from the backend when social events occur
+ * Calls Supabase Edge Function to send push notification to user
  */
 export const sendPushNotification = async (
   userId: string,
   payload: NotificationPayload
 ): Promise<void> => {
   try {
-    // In a real implementation, this would call the backend API
-    // to send a push notification to the user's device
-    if (__DEV__) {
-      console.log(`Would send push notification to user ${userId}:`, payload);
-      // For now, we'll just log it since we don't have the backend
-      // implementation for sending push notifications yet
+    console.log(`Sending push notification to user ${userId}:`, payload);
+
+    // Get Supabase URL from client (remove trailing slash if present)
+    const supabaseUrl = supabase.supabaseUrl.replace(/\/$/, '');
+    const functionUrl = `${supabaseUrl}/functions/v1/send-push-notification`;
+
+    // Get auth token from current session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.error('No authenticated session found');
+      return;
     }
+
+    const response = await fetch(functionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        userId,
+        payload
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Failed to send push notification: ${response.status}`, errorText);
+      throw new Error(`Push notification failed: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('Push notification sent successfully:', result);
   } catch (error) {
     if (__DEV__) {
       console.error('Failed to send push notification:', error);

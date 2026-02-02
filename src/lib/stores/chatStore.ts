@@ -1,9 +1,10 @@
 // src/lib/stores/chatStore.ts
 // Zustand store for chat threads and messages with AsyncStorage persistence and Supabase sync/realtime
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { shallow } from "zustand/shallow";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import type { ChatMessage, ChatThread, ID } from "../socialModel";
 import { logError } from "../errorHandler";
@@ -69,6 +70,16 @@ function isTypingFresh(lastAtMs: number): boolean {
 export function setTyping(threadId: ID, userId: ID, isTyping: boolean): void {
   if (!threadId || !userId) return;
 
+  const currentlyTyping = getIsUserTyping(threadId, userId);
+
+  if (isTyping === currentlyTyping) {
+    // Typing state unchanged, but update timestamp if typing
+    if (isTyping && typing[threadId]?.[userId]) {
+      typing[threadId][userId] = Date.now();
+    }
+    return;
+  }
+
   if (isTyping) {
     if (!typing[threadId]) typing[threadId] = {};
     typing[threadId][userId] = Date.now();
@@ -87,6 +98,10 @@ export function getIsUserTyping(threadId: ID, userId: ID): boolean {
   const lastAt = typing?.[threadId]?.[userId];
   if (!lastAt) return false;
   return isTypingFresh(lastAt);
+}
+
+export function resetTyping(): void {
+  typing = {};
 }
 
 export const useChatStore = create<ChatState>()(
@@ -358,19 +373,39 @@ export function canUserMessageThread(thread: ChatThread, senderUserId: ID): bool
 // ============================================================================
 
 export function useThreads(myUserId: ID): ChatThread[] {
-  return useChatStore(selectThreadsForUser(myUserId));
+  const threads = useChatStore(state => state.threads);
+  return useMemo(() =>
+    threads
+      .filter(t => t.memberUserIds.includes(myUserId))
+      .slice()
+      .sort((a, b) => (b.updatedAtMs ?? b.createdAtMs) - (a.updatedAtMs ?? a.createdAtMs))
+  , [threads, myUserId]);
 }
 
 export function useThread(threadId: ID): ChatThread | null {
-  return useChatStore(selectThread(threadId));
+  const threads = useChatStore(state => state.threads);
+  return useMemo(() => threads.find(t => t.id === threadId) ?? null, [threads, threadId]);
 }
 
 export function useThreadMessages(threadId: ID): ChatMessage[] {
-  return useChatStore(selectMessagesForThread(threadId));
+  const messages = useChatStore(state => state.messages);
+  return useMemo(() =>
+    messages
+      .filter(m => m.threadId === threadId)
+      .slice()
+      .sort((a, b) => a.createdAtMs - b.createdAtMs)
+  , [messages, threadId]);
 }
 
 export function useUnreadCount(threadId: ID, myUserId: ID): number {
-  return useChatStore(selectUnreadCount(threadId, myUserId));
+  const messages = useChatStore(state => state.messages);
+  const reads = useChatStore(state => state.reads);
+  return useMemo(() => {
+    const lastRead = reads?.[threadId]?.[myUserId] ?? 0;
+    return messages.filter(
+      m => m.threadId === threadId && m.createdAtMs > lastRead && m.senderUserId !== myUserId
+    ).length;
+  }, [messages, reads, threadId, myUserId]);
 }
 
 export function useThreadOtherUserId(thread: ChatThread | null, myUserId: ID): ID | null {
@@ -444,8 +479,8 @@ export function subscribeChat(listener: () => void): () => void {
 // Imperative action wrappers for non-React code
 // ============================================================================
 
-export function ensureThread(myUserId: ID, otherUserId: ID): ID {
-  return useChatStore.getState().ensureThread(myUserId, otherUserId).id;
+export function ensureThread(myUserId: ID, otherUserId: ID, canMessage?: ChatThread["canMessage"]): ID {
+  return useChatStore.getState().ensureThread(myUserId, otherUserId, canMessage).id;
 }
 
 export function sendMessage(threadId: string, senderId: ID, text: string): void {

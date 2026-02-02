@@ -65,7 +65,7 @@ export function isAppleAuthAvailable(): boolean {
   return !!(
     Platform.OS === 'ios' ||
     Platform.OS === 'macos' ||
-    (typeof window !== 'undefined' && window.MSStream)
+    (typeof window !== 'undefined' && !!window.MSStream)
   );
 }
 

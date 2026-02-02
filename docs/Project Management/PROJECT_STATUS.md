@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-Forgerank has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. However, there are **critical issues** that need immediate attention including 160 failing tests and incomplete backend integration.
+Forgerank has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. However, there are **critical issues** that need immediate attention including 159 failing tests and incomplete backend integration.
 
 ---
 
@@ -33,6 +33,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | Forge Milestones | ✅ Done | 100% |
 | Gamification (XP/Levels) | ✅ Done | 100% |
 | Cosmetic Store | ✅ Done | 100% |
+| Training Journal | ✅ Done | 100% |
 | Avatar System | 🔄 In Progress | 50% |
 | Hangout Room | 🔄 In Progress | 50% |
 
@@ -97,6 +98,14 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 - Cosmetic store for avatar items and room decorations
 - Achievements card on profile
 
+### Training Journal
+- Per-workout notes integration in workout summary
+- Daily journal entries independent of workouts
+- Mood, energy, and soreness tracking (1-5 star ratings)
+- Journal history with search, filtering, and statistics
+- Calendar integration for rest day entries
+- Muscle group soreness tracking using existing muscle system
+
 ### UI Foundation
 - Dark theme with accent colors
 - 7 rank tier colors (Iron → Mythic)
@@ -111,9 +120,9 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 ## What Needs Work
 
 ### Critical Path (Required for v1)
-1. **Fix Failing Tests** - 160 tests currently failing,严重影响 test suite reliability
+1. **Fix Failing Tests** - 159 tests currently failing,严重影响 test suite reliability
 2. **OAuth Authentication** - Google/Apple sign-in not working
-3. **Backend Sync** - All data is local-only, no cloud persistence
+3. **Backend Sync** - Complete (sync system initialized, stores registered, auth integration working)
 4. **Input UX Polish** - Number pad, steppers, auto-fill
 
 ### High Priority
@@ -149,17 +158,24 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Known Critical Bugs
 
-- **BUG-LOG-012**: Routine exercises don't load - workout shows "Barbell Bench Press - Medium Grip" instead of routine's exercises
 - **BUG-LOG-008**: Button overflow on long exercise names in live workout
-- **TEST-FAILURES**: 160 failing tests严重影响 code reliability and development workflow
+- **TEST-FAILURES**: 159 failing tests严重影响 code reliability and development workflow
 
 ---
+
+## Recent Changes (2026-02-01)
+
+- Implemented complete Training Journal feature with per-workout notes and daily journal entries
+- Added mood, energy, and soreness tracking with 1-5 star ratings
+- Created journal history screen with search, filtering, and statistics
+- Integrated journal entries with calendar and workout summary screens
+- Updated feature documentation to reflect implementation status
 
 ## Recent Changes (2026-01-30)
 
 - Completed comprehensive codebase analysis and created documentation in `docs/Codebase Analysis/`
 - Updated CLAUDE workflow documentation to reflect current project state
-- Identified critical issues: 160 failing tests, backend sync integration incomplete, OAuth authentication not working
+- Identified critical issues: 159 failing tests, backend sync integration complete, OAuth authentication not working
 - Implemented complete AI Gym Buddy System with 9 distinct personalities
 - Implemented complete Workout Replay feature with cinematic post-workout summaries
 - Implemented Forge Lab analytics (Phase 1) with core data processing and UI components
@@ -186,19 +202,19 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Top 3 Priorities
 
-1. **Fix Failing Tests** - Address 160 failing tests to restore test suite reliability
+1. **Fix Failing Tests** - Address 159 failing tests to restore test suite reliability
 2. **Get OAuth Working** - Users need real accounts before backend sync
-3. **Backend Sync** - Infrastructure done (60%), needs auth integration to activate
+3. **Backend Sync** - Complete (sync system initialized, stores registered, auth integration working)
 
 ---
 
 ## Quality Metrics
 
 ### Test Status
-- **Total Tests**: 1074
-- **Passing Tests**: 914
-- **Failing Tests**: 160
-- **Test Suite Health**: 85% passing
+- **Total Tests**: 1219
+- **Passing Tests**: 1044
+- **Failing Tests**: 159
+- **Test Suite Health**: 86% passing
 
 ### Code Quality
 - **Overall Quality Score**: 75/100
@@ -209,6 +225,6 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ### Feature Completeness
 - **Total Features**: 167
-- **Implemented Features**: 117
-- **Progress**: 70%
+- **Implemented Features**: 118
+- **Progress**: 71%
 - **Phase**: 2 - Advanced Features

@@ -181,10 +181,13 @@ export {
   getPRCue,
   setPersonality,
   getAllPersonalitiesList,
-  type Personality,
-  type CueContext,
-  type CueIntensity,
 } from "./personalityStore";
+
+export type {
+  Personality,
+  CueContext,
+  CueIntensity,
+} from "../celebration/personalities";
 
 // Gamification (XP, Currency, Shop)
 export {
@@ -207,9 +210,6 @@ export {
   purchaseShopItem,
   equipShopItem,
   getUserInventory,
-  type UserInventory,
-  type ShopItem,
-  type ShopCategory,
 } from "./gamificationStore";
 
 // Live workout session state
@@ -231,13 +231,27 @@ export {
   type LiveWorkoutState,
 } from "./liveWorkoutStore";
 
-// Body Model
+// Training journal
 export {
-  BodyModel,
-  CompactBodyModel,
-  calculateMuscleVolume,
-  type MuscleVolumeData,
-} from "../lib/bodyModel";
+  useJournalStore,
+  useJournalEntries,
+  useJournalEntry,
+  useJournalEntriesForDate,
+  useJournalEntryForSession,
+  addJournalEntry,
+  updateJournalEntry,
+  removeJournalEntry,
+} from "./journalStore";
+
+export type { JournalEntry } from "../journalModel";
+
+// Body Model (temporarily disabled due to missing module)
+// export {
+//   BodyModel,
+//   CompactBodyModel,
+//   calculateMuscleVolume,
+//   type MuscleVolumeData,
+// } from "../lib/bodyModel";
 
 // Shop Items (from gamification module)
 export {
@@ -245,4 +259,7 @@ export {
   getShopItemsByCategory,
   getShopItem,
   getRarityColor,
-} from "../lib/gamification/shop";
+  type UserInventory,
+  type ShopItem,
+  type ShopCategory,
+} from "../gamification/shop";

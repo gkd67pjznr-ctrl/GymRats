@@ -1,9 +1,10 @@
 // src/lib/sync/repositories/commentRepository.ts
 // Repository for post comments CRUD operations with Supabase
 
-import { supabase } from '../../supabase/client';
+import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { Comment } from '../../socialModel';
 import type { DatabaseComment, DatabaseCommentInsert } from '../../supabase/types';
+declare const __DEV__: boolean | undefined;
 
 /**
  * Repository interface for post comments
@@ -60,6 +61,14 @@ export const commentRepository: CommentRepository = {
    * Fetch all comments for a post
    */
   async fetchByPost(postId: string): Promise<Comment[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[commentRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('comments')
       .select('*')
@@ -97,6 +106,14 @@ export const commentRepository: CommentRepository = {
    * Fetch a single comment by ID
    */
   async fetchById(id: string): Promise<Comment | null> {
+    // If Supabase is not configured, return null
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[commentRepository] Supabase placeholder detected, returning null');
+      }
+      return null;
+    }
+
     const { data, error } = await supabase
       .from('comments')
       .select('*')
@@ -131,6 +148,20 @@ export const commentRepository: CommentRepository = {
    * Create a new comment
    */
   async create(comment: Omit<Comment, 'id'>): Promise<Comment> {
+    // If Supabase is not configured, simulate success with a mock ID
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[commentRepository] Supabase placeholder detected, simulating comment creation');
+      }
+      // Generate a mock ID
+      const mockId = `mock_${Date.now().toString(36)}_${Math.random().toString(36).substring(2)}`;
+      return {
+        ...comment,
+        id: mockId,
+        userDisplayName: 'Unknown',
+      };
+    }
+
     const insertData = toDatabaseInsert(comment);
 
     const { data, error } = await supabase

@@ -1,9 +1,10 @@
 // src/lib/sync/repositories/postRepository.ts
 // Repository for social posts CRUD operations with Supabase
 
-import { supabase } from '../../supabase/client';
+import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { WorkoutPost } from '../../socialModel';
 import type { DatabasePost, DatabasePostInsert } from '../../supabase/types';
+declare const __DEV__: boolean | undefined;
 
 /**
  * Repository interface for social posts
@@ -86,6 +87,14 @@ export const postRepository: PostRepository = {
     limit?: number;
     before?: string;
   }): Promise<WorkoutPost[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     let query = supabase
       .from('posts')
       .select('*')
@@ -127,6 +136,14 @@ export const postRepository: PostRepository = {
    * Fetch a single post by ID
    */
   async fetchById(id: string): Promise<WorkoutPost | null> {
+    // If Supabase is not configured, return null
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, returning null');
+      }
+      return null;
+    }
+
     const { data, error } = await supabase
       .from('posts')
       .select('*')
@@ -148,6 +165,14 @@ export const postRepository: PostRepository = {
    * Fetch all posts by a specific user
    */
   async fetchUserPosts(userId: string, limit = 50): Promise<WorkoutPost[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('posts')
       .select('*')
@@ -167,6 +192,22 @@ export const postRepository: PostRepository = {
    * Create a new post
    */
   async create(post: Omit<WorkoutPost, 'id' | 'likeCount' | 'commentCount'>): Promise<WorkoutPost> {
+    // If Supabase is not configured, simulate success with a mock ID
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, simulating post creation');
+      }
+      // Generate a mock ID
+      const mockId = `mock_${Date.now().toString(36)}_${Math.random().toString(36).substring(2)}`;
+      return {
+        ...post,
+        id: mockId,
+        likeCount: 0,
+        commentCount: 0,
+        createdAtMs: Date.now(),
+      };
+    }
+
     const insertData = toDatabaseInsert(post);
 
     const { data, error } = await supabase
@@ -187,6 +228,14 @@ export const postRepository: PostRepository = {
    * Update an existing post
    */
   async update(id: string, updates: Partial<WorkoutPost>): Promise<void> {
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, skipping update');
+      }
+      return;
+    }
+
     const updateData: Partial<DatabasePostInsert> = {};
 
     if (updates.title !== undefined) updateData.title = updates.title;
@@ -211,6 +260,14 @@ export const postRepository: PostRepository = {
    * Delete a post
    */
   async delete(id: string, authorId: string): Promise<void> {
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, skipping delete');
+      }
+      return;
+    }
+
     const { error } = await supabase
       .from('posts')
       .delete()
@@ -230,6 +287,14 @@ export const postRepository: PostRepository = {
     onInsert: (post: WorkoutPost) => void,
     filter: 'public' | 'friends' | string = 'public'
   ): () => void {
+    // If Supabase is not configured, return no-op subscription
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, returning no-op subscription');
+      }
+      return () => {};
+    }
+
     const channel = supabase
       .channel(`posts:${filter}`)
       .on(
@@ -261,6 +326,14 @@ export const postRepository: PostRepository = {
     onUpdate: (post: WorkoutPost) => void,
     onDelete: (postId: string) => void
   ): () => void {
+    // If Supabase is not configured, return no-op subscription
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[postRepository] Supabase placeholder detected, returning no-op subscription');
+      }
+      return () => {};
+    }
+
     const channel = supabase
       .channel(`post:${postId}`)
       .on(

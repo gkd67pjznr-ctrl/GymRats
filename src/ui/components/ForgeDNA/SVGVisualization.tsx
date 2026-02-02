@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Svg, Circle, Path, Line, G, Text as SvgText } from "react-native-svg";
-import { makeDesignSystem } from "../../../ui/designSystem";
+import { makeDesignSystem } from "../../designSystem";
 import { useThemeColors } from "../../../ui/theme";
 import type { ForgeDNA } from "../../../lib/forgeDNA/types";
 import type { MuscleGroup } from "../../../data/exerciseTypes";

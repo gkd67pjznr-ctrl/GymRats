@@ -1,7 +1,7 @@
 // src/lib/stores/authStore.ts
 // Zustand store for authentication state with Supabase integration
 import { create } from "zustand";
-import { supabase } from "../supabase/client";
+import { supabase, isSupabasePlaceholder } from "../supabase/client";
 import type { AuthError, Session } from "@supabase/supabase-js";
 import type { DatabaseUser, mapDatabaseUser } from "../supabase/types";
 import { syncOrchestrator } from "../sync/SyncOrchestrator";
@@ -629,6 +629,40 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     set({ loading: true, error: null });
 
+    // If Supabase is configured with placeholder values, create a mock user directly
+    if (isSupabasePlaceholder) {
+      const mockUser = {
+        id: "dev-user-id-123456",
+        email: "dev@forgerank.app",
+        displayName: "Dev User",
+        avatarUrl: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        subscriptionTier: 'legendary' as const,
+        avatarArtStyle: null,
+        avatarGrowthStage: null,
+        avatarHeightScale: null,
+        avatarCosmetics: null,
+        totalVolumeKg: null,
+        totalSets: null,
+        hangoutRoomId: null,
+        hangoutRoomRole: null,
+      };
+
+      set({
+        user: mockUser,
+        session: null,
+        loading: false,
+      });
+
+      // Trigger sync orchestrator sign in (offline mode)
+      syncOrchestrator.onSignIn(mockUser.id).catch(err => {
+        console.warn('[authStore] Failed to trigger sync on dev login:', err);
+      });
+
+      return { success: true };
+    }
+
     try {
       const devEmail = "dev@forgerank.app";
       const devPassword = "dev123456";
@@ -686,6 +720,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           session: signInData.session,
           loading: false,
         });
+
+        // Trigger sync orchestrator sign in
+        syncOrchestrator.onSignIn(signInData.user.id, signInData.session).catch(err => {
+          console.warn('[authStore] Failed to trigger sync on dev login:', err);
+        });
+
         return { success: true };
       }
 
@@ -728,6 +768,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           session: signUpData.session,
           loading: false,
         });
+
+        // Trigger sync orchestrator sign in
+        syncOrchestrator.onSignIn(signUpData.user.id, signUpData.session).catch(err => {
+          console.warn('[authStore] Failed to trigger sync on dev login:', err);
+        });
+
         return { success: true };
       }
 

@@ -3,10 +3,17 @@
 ## Overview
 A visual representation of the human body that shows muscle engagement based on workout volume. Serves as both a stats visualization and a default image for social posts when no photo is uploaded.
 
-**Status:** In Progress | **Progress:** 4/6 features
+**Status:** In Progress | **Progress:** 23/26 checklist items (3/5 sub-features complete)
 **Priority:** P1 (Phase 4)
 
-## Recent Updates (2026-01-30)
+## Recent Updates (2026-02-01)
+- **SVG Paths**: Replaced placeholder SVG paths with actual muscle shapes for all 21 muscle groups
+- **Time Filtering**: Added weekly/monthly/all time toggle to body stats screen
+- **Volume Calculation**: Integrated time-based filtering into muscle volume visualization
+- **Data Consolidation**: Updated consolidated muscle groups with proper SVG paths from muscleGroups.ts
+- **Performance**: Removed unnecessary store usage, compute volumes locally for faster filtering
+
+## Previous Updates (2026-01-30)
 - Added complete muscle group system with 32 detailed subdivisions
 - Implemented exercise-to-muscle mapping for 300+ exercises
 - Built BodyModel component with SVG visualization
@@ -33,7 +40,7 @@ A visual representation of the human body that shows muscle engagement based on 
 ### ✅ Done - Volume-Based Coloring
 - [x] Gradient intensity based on sets per muscle
 - [x] Color scale (cool to hot)
-- [ ] Weekly/monthly view toggle
+- [x] Weekly/monthly view toggle (implemented with week/month/all time filters)
 - [x] Exercise-to-muscle mapping
 - [x] Primary/secondary/tertiary muscle attribution
 
@@ -61,10 +68,10 @@ Includes comprehensive mappings for over 300 exercises with detailed muscle attr
 ### In Progress - Default Post Image
 - [x] Auto-generate body model for workout posts
 - [x] Shows muscles worked in that session
-- [ ] Used when user doesn't upload photo
+- [ ] Used when user doesn't upload photo - *Requires social post integration*
 - [x] Maintains aesthetic consistency
 
-Compact body model component implemented but not yet integrated into social posts.
+Compact body model component implemented but not yet integrated into social posts. Integration pending social feature completion.
 
 ---
 
@@ -72,9 +79,9 @@ Compact body model component implemented but not yet integrated into social post
 - [x] Tap muscle to see stats
 - [x] Volume per muscle over time (in Body Stats tab)
 - [x] Exercises targeting that muscle
-- [ ] Balance indicators (left/right, push/pull)
+- [ ] Balance indicators (left/right, push/pull) - *Planned for future update*
 
-Basic interactive functionality implemented in the Body Stats screen with front/back view switching.
+Basic interactive functionality implemented in the Body Stats screen with front/back view switching and time filtering.
 
 ---
 
@@ -157,36 +164,42 @@ const volumeToColor = (sets: number): string => {
 
 ## Priority
 
-## Implementation Summary (2026-01-30)
+## Implementation Summary (2026-02-01)
 
-### What Was Done
+### What Was Done (Updated)
+- **SVG Visualization**: Replaced all placeholder SVG paths with actual muscle shapes (21 muscle groups)
+- **Time Filtering**: Added weekly/monthly/all time toggle to body stats screen
+- **Performance**: Optimized volume calculation to compute locally, removed unnecessary store persistence
+- **Data Consistency**: Consolidated SVG paths from `muscleGroups.ts` into `consolidatedMuscleGroups.ts`
+
+### Previous Implementation (2026-01-30)
 - Created complete muscle group system with 32 detailed subdivisions
 - Implemented exercise-to-muscle mapping for 300+ exercises
 - Built BodyModel component with SVG visualization
 - Integrated body stats screen with volume-based coloring
 - Implemented volume calculation logic from workout history
-- Created Zustand store for body stat persistence
+- Created Zustand store for body stat persistence (now optimized)
 
-### Files Created
-- `src/lib/bodyModel/muscleGroups.ts` - Detailed muscle definitions and mappings
-- `src/lib/bodyModel/bodyModel.tsx` - Detailed body visualization component
-- `src/lib/bodyModel/index.ts` - Module exports
-- `src/ui/components/BodyModel.tsx` - Simplified body visualization component
-- `src/lib/stores/bodyStatStore.ts` - Zustand store for persistence
-- Integrated into `app/(tabs)/body.tsx`
+### Files Created/Updated
+- `src/data/consolidatedMuscleGroups.ts` - Updated with actual SVG paths for all muscle groups
+- `src/ui/components/BodyModel.tsx` - SVG visualization component with proper muscle shapes
+- `app/(tabs)/body.tsx` - Added time filtering toggle and local volume calculation
+- `src/lib/volumeCalculator.ts` - Volume calculation with time filtering support
+- `src/lib/stores/bodyStatStore.ts` - Zustand store (still available but not used for filtered views)
 
 ### Test Status
 - Basic functionality tested through body stats screen
 - Volume calculation verified with sample data
+- Time filtering logic needs additional testing
 
-### Score: 75/100
+### Score: 85/100 (↑ from 75/100)
 
 ### Next Steps
-- Replace placeholder SVG paths with actual muscle shapes
-- Consolidate redundant muscle group definitions
-- Integrate compact body model into social posts
-- Implement Forge Lab muscle balance visualization
-- Add time-based analytics for muscle development
+- **Social Integration**: Integrate compact body model into social posts as default fallback image (blocked on social feature completion)
+- **Balance Indicators**: Add left/right, push/pull balance visualization (planned for future update)
+- **Interactive Features**: Enhance tap muscle for detailed stats and exercises (medium priority)
+- **Performance**: Cache volume calculations for better performance with large workout history (low priority)
+- **Testing**: Add comprehensive tests for time filtering and SVG rendering (high priority)
 
 ---
 

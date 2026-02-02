@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 import { OAuthButton } from '../OAuthButton';
@@ -74,8 +75,19 @@ jest.mock('@/src/lib/auth/apple', () => ({
 }));
 
 describe('OAuthButton Component', () => {
+  let originalOS: string;
+
+  beforeAll(() => {
+    originalOS = Platform.OS;
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
+    Platform.OS = 'ios';
+  });
+
+  afterAll(() => {
+    Platform.OS = originalOS;
   });
 
   describe('Google button', () => {
@@ -145,30 +157,37 @@ describe('OAuthButton Component', () => {
   });
 
   describe('Apple button', () => {
-    it('should render when available', () => {
+    it('should render on iOS when available', () => {
+      Platform.OS = 'ios';
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(true);
 
-      const { getByText } = render(
+      const { getByTestId, queryByText } = render(
         <OAuthButton provider="apple" onPress={jest.fn()} />
       );
 
-      expect(getByText('Continue with Apple')).toBeTruthy();
+      // Should render native Apple button
+      expect(getByTestId('apple-auth-button')).toBeTruthy();
+      // Should not render custom button text
+      expect(queryByText('Continue with Apple')).toBeNull();
     });
 
-    it('should not render when not available', () => {
+    it('should not render on Android', () => {
+      Platform.OS = 'android';
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(false);
 
-      const { UNSAFE_root } = render(
+      const { UNSAFE_root, queryByTestId } = render(
         <OAuthButton provider="apple" onPress={jest.fn()} />
       );
 
       // Component should return null (not render anything)
       expect(UNSAFE_root.children.length).toBe(0);
+      expect(queryByTestId('apple-auth-button')).toBeNull();
     });
 
     it('should call onPress when pressed', () => {
+      Platform.OS = 'web';
       const { isAppleAuthAvailable } = require('@/src/lib/auth/apple');
       isAppleAuthAvailable.mockReturnValue(true);
 

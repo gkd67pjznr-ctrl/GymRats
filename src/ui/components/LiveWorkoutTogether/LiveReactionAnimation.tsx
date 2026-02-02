@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, Animated, Easing, StyleSheet } from "react-native";
-import { makeDesignSystem } from "../../ui/designSystem";
+import { makeDesignSystem } from "../../designSystem";
 
 export interface LiveReactionAnimationProps {
   reaction: string;

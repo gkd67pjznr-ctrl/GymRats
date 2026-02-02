@@ -3,7 +3,7 @@
 ## Overview
 Premium analytics dashboard for serious lifters. Deep training insights, trends, and data visualization. Weight graph is free; everything else is behind Pro subscription.
 
-**Status:** In Progress | **Progress:** 3/6 features
+**Status:** In Progress | **Progress:** 5/6 features
 **Priority:** Launch (v1)
 **Source:** 2026-01-29 brainstorm interview
 
@@ -13,8 +13,10 @@ Premium analytics dashboard for serious lifters. Deep training insights, trends,
 
 ### ✅ Done - Weight Graph (FREE)
 - [x] Bodyweight trend over time
-- [x] Manual entry or imported from Apple Health
-- [x] Line chart with date range selector
+- [x] Manual entry via Settings screen with WeightEntryModal component
+- [x] Support for current weight updates and historical entries
+- [x] Unit conversion (kg/lb) with user preference
+- [x] Line chart with date range selector (using victory-native)
 - [x] Goal weight line (optional)
 - [x] Available to all users — not behind paywall
 
@@ -90,14 +92,22 @@ type ForgeLabData = {
 ```
 
 **Charting Library:**
-- `react-native-chart-kit` or `victory-native` for charts
+- ✅ `victory-native` implemented with VictoryLineChart and VictoryBarChart wrapper components
 - Custom SVG for radar/heatmap visualizations
 - Smooth animations on data load
+- Dark theme support with Forgerank design system integration
 
 **Premium Gating:**
 - Weight graph: always visible, fully functional
 - All other charts: show placeholder with blur + "Upgrade to Pro" CTA
 - Demo data preview (show what the chart looks like with sample data)
+
+**Technical Implementation:**
+- ✅ Data caching with hash-based invalidation (DJB2 algorithm)
+- ✅ Weight tracking integrated into settingsStore with addWeightEntry/updateCurrentWeight actions
+- ✅ WeightEntryModal component for user input with validation
+- ✅ Unit conversion handled at display layer (kg stored internally)
+- ✅ Integration with Forge Lab analytics for weight trend visualization
 
 ---
 

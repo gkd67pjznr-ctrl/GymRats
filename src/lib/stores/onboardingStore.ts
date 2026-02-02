@@ -4,6 +4,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
+import { updateSettings } from "./settingsStore";
 
 const STORAGE_KEY = "forgerank.onboarding.v1";
 
@@ -13,9 +14,14 @@ const STORAGE_KEY = "forgerank.onboarding.v1";
 export type ExperienceLevel = "beginner" | "intermediate" | "advanced";
 
 /**
+ * Training goal for personalization
+ */
+export type TrainingGoal = "strength" | "aesthetics" | "health" | "sport" | "general";
+
+/**
  * Onboarding steps
  */
-export type OnboardingStep = "welcome" | "profile" | "personality" | "tutorial" | "complete";
+export type OnboardingStep = "welcome" | "avatar" | "goals" | "profile" | "personality" | "highlights" | "tutorial" | "complete";
 
 /**
  * User profile data collected during onboarding
@@ -26,6 +32,7 @@ export interface OnboardingProfile {
   bodyweightUnit: "lb" | "kg"; // User's preferred unit for display
   experienceLevel: ExperienceLevel;
   personalityId: string; // ID of selected gym buddy personality
+  goal: TrainingGoal | null; // Training goal for personalization
 }
 
 /**
@@ -39,16 +46,22 @@ export interface OnboardingState {
   completedAt: number | null;
   profile: OnboardingProfile | null;
   hydrated: boolean;
+  tutorialStep: number;
+  tutorialCompleted: boolean;
 
   // Actions
   startOnboarding: () => void;
   setCurrentStep: (step: OnboardingStep) => void;
   setProfile: (profile: OnboardingProfile) => void;
   setPersonality: (personalityId: string) => void;
+  setGoal: (goal: TrainingGoal) => void;
   completeOnboarding: () => void;
   resetOnboarding: () => void; // For testing/re-onboarding
   skipOnboarding: () => void; // Skip tutorial but mark complete
   setHydrated: (value: boolean) => void;
+  advanceTutorialStep: () => void;
+  completeTutorial: () => void;
+  resetTutorial: () => void;
 }
 
 /**
@@ -110,6 +123,8 @@ export const useOnboardingStore = create<OnboardingState>()(
       completedAt: null,
       profile: null,
       hydrated: false,
+      tutorialStep: 0,
+      tutorialCompleted: false,
 
       startOnboarding: () => {
         set({
@@ -124,6 +139,15 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       setProfile: (profile) => {
         set({ profile });
+        // Sync to settings store
+        updateSettings({
+          displayName: profile.displayName,
+          bodyweight: profile.bodyweight,
+          experienceLevel: profile.experienceLevel,
+          personalityId: profile.personalityId,
+          goal: profile.goal || "general",
+          unitSystem: profile.bodyweightUnit,
+        });
       },
 
       setPersonality: (personalityId) => {
@@ -133,6 +157,43 @@ export const useOnboardingStore = create<OnboardingState>()(
             personalityId,
           } as OnboardingProfile,
         }));
+        // Sync to settings store
+        const profile = get().profile;
+        if (profile) {
+          updateSettings({
+            personalityId,
+            displayName: profile.displayName,
+            bodyweight: profile.bodyweight,
+            experienceLevel: profile.experienceLevel,
+            goal: profile.goal || "general",
+            unitSystem: profile.bodyweightUnit,
+          });
+        } else {
+          updateSettings({ personalityId });
+        }
+      },
+
+      setGoal: (goal) => {
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goal,
+          } as OnboardingProfile,
+        }));
+        // Sync to settings store
+        const profile = get().profile;
+        if (profile) {
+          updateSettings({
+            goal,
+            displayName: profile.displayName,
+            bodyweight: profile.bodyweight,
+            experienceLevel: profile.experienceLevel,
+            personalityId: profile.personalityId,
+            unitSystem: profile.bodyweightUnit,
+          });
+        } else {
+          updateSettings({ goal });
+        }
       },
 
       completeOnboarding: () => {
@@ -150,24 +211,54 @@ export const useOnboardingStore = create<OnboardingState>()(
           startedAt: null,
           completedAt: null,
           profile: null,
+          tutorialStep: 0,
+          tutorialCompleted: false,
         });
       },
 
       skipOnboarding: () => {
+        const defaultProfile = {
+          displayName: "Lifter",
+          bodyweight: 70, // default kg
+          bodyweightUnit: "lb",
+          experienceLevel: "intermediate",
+          personalityId: "coach",
+          goal: "general",
+        };
         set({
           completed: true,
           completedAt: Date.now(),
           currentStep: "complete",
-          profile: {
-            displayName: "Lifter",
-            bodyweight: 70, // default kg
-            bodyweightUnit: "lb",
-            experienceLevel: "intermediate",
-            personalityId: "coach",
-          },
+          profile: defaultProfile,
+        });
+        // Sync to settings store
+        updateSettings({
+          displayName: defaultProfile.displayName,
+          bodyweight: defaultProfile.bodyweight,
+          experienceLevel: defaultProfile.experienceLevel,
+          personalityId: defaultProfile.personalityId,
+          goal: defaultProfile.goal,
+          unitSystem: defaultProfile.bodyweightUnit,
         });
       },
 
+      advanceTutorialStep: () => {
+        set((state) => ({
+          tutorialStep: state.tutorialStep + 1,
+        }));
+      },
+      completeTutorial: () => {
+        set({
+          tutorialCompleted: true,
+          tutorialStep: 0,
+        });
+      },
+      resetTutorial: () => {
+        set({
+          tutorialStep: 0,
+          tutorialCompleted: false,
+        });
+      },
       setHydrated: (value) => set({ hydrated: value }),
     }),
     {
@@ -179,6 +270,8 @@ export const useOnboardingStore = create<OnboardingState>()(
         startedAt: state.startedAt,
         completedAt: state.completedAt,
         profile: state.profile,
+        tutorialStep: state.tutorialStep,
+        tutorialCompleted: state.tutorialCompleted,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
@@ -237,6 +330,10 @@ export function setOnboardingStep(step: OnboardingStep) {
 
 export function setOnboardingProfile(profile: OnboardingProfile) {
   useOnboardingStore.getState().setProfile(profile);
+}
+
+export function setOnboardingGoal(goal: TrainingGoal) {
+  useOnboardingStore.getState().setGoal(goal);
 }
 
 export function completeOnboarding() {

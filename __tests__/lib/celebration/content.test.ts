@@ -6,7 +6,6 @@ import {
   getAssetForKey,
   getTextTemplate,
   CELEBRATIONS,
-  makeCelebrations,
 } from '@/src/lib/celebration/content';
 import type { Celebration } from '@/src/lib/celebration/types';
 

@@ -185,7 +185,7 @@ All prices per **1 million tokens** via OpenRouter (Jan 2026). OpenRouter passes
 
 | Model | OpenRouter ID | Input | Output | Context | Category |
 |-------|---------------|-------|--------|---------|----------|
-| **DeepSeek V3.2** | `deepseek/deepseek-chat` | $0.24 | $0.38 | 128K | Budget |
+| **DeepSeek V3.2** | `deepseek/deepseek-r1-0528` | $0.24 | $0.38 | 128K | Budget |
 | **Devstral 2** | `mistralai/devstral-2512` | $0.15 | $0.60 | 256K | Budget |
 | **Qwen3-Coder 480B** | `qwen/qwen3-coder` | $0.22 | $0.95 | 262K | Budget |
 | **MiniMax M2.1** | `minimax/minimax-m2.1` | $0.30 | $1.20 | 205K | Budget |
@@ -338,7 +338,7 @@ Claude Code uses the **Anthropic Messages API** with native tool calling. OpenRo
 #### 8. DeepSeek V3.2 — Ultra-Budget All-Rounder
 | | |
 |---|---|
-| **ID** | `deepseek/deepseek-chat` |
+| **ID** | `deepseek/deepseek-r1-0528` |
 | **Price** | $0.24 / $0.38 |
 | **Context** | 128K |
 
@@ -411,7 +411,7 @@ Opus → Claude Opus 4.5
 
 **Best value via OpenRouter:**
 ```json
-Haiku → deepseek/deepseek-chat ($0.24/$0.38)
+Haiku → deepseek/deepseek-r1-0528 ($0.24/$0.38)
 Sonnet → qwen/qwen3-coder:exacto ($0.22/$0.95)
 Opus → anthropic/claude-opus-4 ($5/$25) or openai/gpt-5.2-codex ($1.75/$14)
 ```
@@ -434,7 +434,7 @@ Opus → openai/gpt-5.2-codex ($1.75/$14)
 
 ## Finding Model IDs
 
-Browse available models at [openrouter.ai/models](https://openrouter.ai/models). The model ID is the slug shown on each model's page (e.g., `qwen/qwen3-coder-480b-a35b`, `anthropic/claude-opus-4`, `deepseek/deepseek-chat`).
+Browse available models at [openrouter.ai/models](https://openrouter.ai/models). The model ID is the slug shown on each model's page (e.g., `qwen/qwen3-coder-480b-a35b`, `anthropic/claude-opus-4`, `deepseek/deepseek-r1-0528`).
 
 For Exacto variants (better tool calling), append `:exacto` to the model ID (e.g., `qwen/qwen3-coder:exacto`).
 

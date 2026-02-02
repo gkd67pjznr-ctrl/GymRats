@@ -3,7 +3,7 @@
 #
 # Copies .claude/settings.local.json from the main repo into the
 # target worktree so Claude Code picks up the current backend config
-# (GLM, OpenRouter, or native Anthropic).
+# (GLM, OpenRouter, Deepseek, or native Anthropic).
 #
 # Usage:
 #   ./scripts/llm/init-worktree.sh <worktree-path>
@@ -52,6 +52,7 @@ try {
   const url = (s.env||{}).ANTHROPIC_BASE_URL || '';
   if (url.includes('openrouter.ai')) console.log('OpenRouter');
   else if (url.includes('api.z.ai')) console.log('GLM');
+  else if (url.includes('api.deepseek.com')) console.log('Deepseek');
   else console.log('Anthropic (native)');
 } catch(e) { console.log('unknown'); }
 ")

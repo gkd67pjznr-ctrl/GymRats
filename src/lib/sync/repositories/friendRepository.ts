@@ -1,9 +1,10 @@
 // src/lib/sync/repositories/friendRepository.ts
 // Repository for friend relationships CRUD operations with Supabase
 
-import { supabase } from '../../supabase/client';
+import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { FriendEdge } from '../../socialModel';
 import type { DatabaseFriendship, DatabaseFriendshipInsert } from '../../supabase/types';
+declare const __DEV__: boolean | undefined;
 
 /**
  * Repository interface for friend relationships
@@ -60,6 +61,14 @@ export const friendRepository: FriendRepository = {
    * Fetch all friend edges for a user
    */
   async fetchAll(userId: string): Promise<FriendEdge[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[friendRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const { data, error } = await supabase
       .from('friendships')
       .select('*')
@@ -78,6 +87,14 @@ export const friendRepository: FriendRepository = {
    * Fetch friendships since a given timestamp
    */
   async fetchSince(userId: string, timestamp: number): Promise<FriendEdge[]> {
+    // If Supabase is not configured, return empty array
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[friendRepository] Supabase placeholder detected, returning empty array');
+      }
+      return [];
+    }
+
     const sinceDate = new Date(timestamp).toISOString();
 
     const { data, error } = await supabase
@@ -99,6 +116,14 @@ export const friendRepository: FriendRepository = {
    * Upsert a friend edge
    */
   async upsert(edge: FriendEdge): Promise<void> {
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[friendRepository] Supabase placeholder detected, skipping upsert');
+      }
+      return;
+    }
+
     const insertData = toDatabaseInsert(edge);
 
     const { error } = await supabase
@@ -115,6 +140,14 @@ export const friendRepository: FriendRepository = {
    * Delete friendship(s) between two users
    */
   async delete(userId: string, otherUserId: string): Promise<void> {
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[friendRepository] Supabase placeholder detected, skipping delete');
+      }
+      return;
+    }
+
     const { error } = await supabase
       .from('friendships')
       .delete()
@@ -131,6 +164,14 @@ export const friendRepository: FriendRepository = {
    */
   async syncUp(edges: FriendEdge[]): Promise<void> {
     if (edges.length === 0) return;
+
+    // If Supabase is not configured, do nothing
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[friendRepository] Supabase placeholder detected, skipping syncUp');
+      }
+      return;
+    }
 
     const insertData = edges.map(e => toDatabaseInsert(e));
 
@@ -153,6 +194,14 @@ export const friendRepository: FriendRepository = {
     onUpdate: (edge: FriendEdge) => void,
     onDelete: (userId: string, otherUserId: string) => void
   ): () => void {
+    // If Supabase is not configured, return no-op subscription
+    if (isSupabasePlaceholder) {
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.log('[friendRepository] Supabase placeholder detected, returning no-op subscription');
+      }
+      return () => {};
+    }
+
     // Subscribe to edges where user is either user_id or friend_id
     const filter1 = `user_id=eq.${userId}`;
     const filter2 = `friend_id=eq.${userId}`;

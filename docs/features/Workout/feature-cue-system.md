@@ -1,6 +1,6 @@
 # Feature: AI Gym Buddy System
 
-**Status:** In Progress | **Progress:** 8/11 features
+**Status:** In Progress | **Progress:** 9/11 features
 **Previously:** Cue System
 
 ## Overview
@@ -49,7 +49,7 @@ Three tiers of gym buddy, each with increasing richness:
 
 ---
 
-### Implemented - Personality Roster (12 at Launch)
+### Partially Implemented - Personality Roster (12 at Launch)
 
 All buddies are **original characters** inspired by familiar archetypes -- not licensed real people, not celebrity likenesses. Each has a distinct voice, vocabulary, and energy.
 
@@ -69,11 +69,13 @@ All buddies are **original characters** inspired by familiar archetypes -- not l
 | Trash Talker | **Trash Talker** | Legendary | Roasts you with love. Full theme reskin. "You call that a set? My grandma pulls more." |
 | Legendary Mystery Buddy | **Legendary Mystery Buddy** | Legendary | Theme-warping presence with unique personality. "THE POWER AWAKENS..." |
 
+**Implementation Status:**
 - [x] 12 personalities designed and written at launch
-- [x] Personality selection in settings
-- [x] Personality preview (read sample lines, hear voice preview for premium+)
+- [x] Personality selection in settings (BuddySettingsScreen)
+- [x] Text preview (read sample lines in settings)
+- [ ] Voice preview for premium+ (audio playback in selection UI needed)
 - [x] Tier-gated unlock flow (Forge Tokens for basic, IAP for premium/legendary)
-- [x] Legendary buddies apply theme transformation on equip
+- [ ] Legendary buddies apply theme transformation on equip (data structures exist, theme application logic needed)
 
 ---
 
@@ -113,13 +115,19 @@ Buddies react to three categories of in-session events:
 
 ---
 
-### Implemented - Voice System (Premium+ Only)
-- [x] AI-generated voices per buddy (not real person recordings)
+### Partially Implemented - Voice System (Premium+ Only)
+- [x] Voice playback system with expo-av integration
 - [x] Voice lines triggered on same events as text
-- [x] Audio toggle in settings (default: off for basic, on for premium+)
-- [x] Voice preview in buddy select screen
-- [x] Buddy-specific sound effects for premium tier (PR sting, rank-up fanfare)
-- [x] Legendary tier: unique sound palette per buddy
+- [ ] Audio toggle in settings UI (store exists, UI controls needed)
+- [ ] Voice preview in buddy select screen
+- [ ] Buddy-specific sound effects for premium tier (PR sting, rank-up fanfare)
+- [ ] Legendary tier: unique sound palette per buddy
+
+**Current Implementation Status:**
+- VoiceManager created with tier-based playback logic
+- Integrated with workout orchestrator for all trigger types
+- Uses expo-av for audio playback
+- SoundManager integration for SFX (stubbed, not buddy-specific)
 
 **Sound Design Scope:**
 - Buddy voice lines and buddy-specific SFX only
@@ -291,8 +299,8 @@ type Buddy = {
 - [x] Buddy selection UI in settings
 - [x] IAP integration for premium/legendary purchases
 
-**P1 (Completed):**
-- [x] Legendary tier theme transformations
+**P1 (Partially Completed):**
+- [ ] Legendary tier theme transformations (data structures exist, theme application logic needed)
 - [x] Expanded message pools (reduce repetition)
 - [x] Behavior pattern triggers (long rest, skip, return after absence)
 - [x] Session flow triggers (start hype, mid check-in, final set push)

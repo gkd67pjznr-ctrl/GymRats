@@ -2,9 +2,11 @@
 // Main onboarding screen with step routing
 
 import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
-import { View, Text, Pressable, ActivityIndicator, TextInput } from "react-native";
-import { useOnboardingStore, useCurrentOnboardingStep } from "../src/lib/stores/onboardingStore";
+import { useState, useEffect } from "react";
+import { View, Text, Pressable, ActivityIndicator, TextInput, ScrollView, Dimensions } from "react-native";
+import { useOnboardingStore, useCurrentOnboardingStep, PERSONALITIES } from "../src/lib/stores/onboardingStore";
+import { useAvatarStore } from "../src/lib/avatar/avatarStore";
+import type { AvatarArtStyle } from "../src/lib/avatar/avatarTypes";
 import { useThemeColors } from "../src/ui/theme";
 import { FR } from "../src/ui/forgerankStyle";
 
@@ -33,10 +35,16 @@ function OnboardingContent({ currentStep }: { currentStep: string }) {
   switch (currentStep) {
     case "welcome":
       return <WelcomeStep />;
+    case "avatar":
+      return <AvatarCreationStep />;
+    case "goals":
+      return <GoalSettingStep />;
     case "profile":
       return <ProfileSetupStep />;
     case "personality":
       return <PersonalityPickerStep />;
+    case "highlights":
+      return <HighlightsStep />;
     case "tutorial":
       return <TutorialStep />;
     case "complete":
@@ -54,7 +62,7 @@ function WelcomeStep() {
 
   const handleStart = () => {
     startOnboarding();
-    setCurrentStep("profile");
+    setCurrentStep("avatar");
   };
 
   return (
@@ -77,6 +85,8 @@ function WelcomeStep() {
 
       <Pressable
         onPress={handleStart}
+        accessibilityLabel="Let's get started"
+        accessibilityRole="button"
         style={({ pressed }) => ({
           ...FR.pillButton({ card: c.card, border: c.border }),
           backgroundColor: c.text,
@@ -103,7 +113,226 @@ function FeatureItem({ icon, title, description }: { icon: string; title: string
   );
 }
 
-// Step 2: Profile Setup
+// Step 2: Avatar Creation
+function AvatarCreationStep() {
+  const c = useThemeColors();
+  const { setCurrentStep } = useOnboardingStore();
+  const { setArtStyle } = useAvatarStore();
+  const [selectedStyle, setSelectedStyle] = useState<AvatarArtStyle | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const artStyles: Array<{ id: AvatarArtStyle; name: string; description: string; emoji: string }> = [
+    { id: "bitmoji", name: "Bitmoji", description: "Cartoon style avatars", emoji: "👤" },
+    { id: "pixel", name: "Pixel", description: "Retro pixel art", emoji: "🎮" },
+    { id: "retro", name: "Retro", description: "80s/90s retro aesthetic", emoji: "📼" },
+    { id: "3d", name: "3D", description: "Modern 3D characters", emoji: "🕶️" },
+  ];
+
+  const handleNext = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (selectedStyle) {
+        const success = await setArtStyle(selectedStyle);
+        if (!success) {
+          throw new Error("Failed to set avatar style");
+        }
+      } else {
+        // Assign default art style if skipped
+        const success = await setArtStyle("bitmoji");
+        if (!success) {
+          throw new Error("Failed to set default avatar style");
+        }
+      }
+      setCurrentStep("goals");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save avatar style");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSkip = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Assign default art style when skipping
+      const success = await setArtStyle("bitmoji");
+      if (!success) {
+        throw new Error("Failed to set default avatar style");
+      }
+      setCurrentStep("goals");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save avatar style");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <View style={{ flex: 1, padding: FR.space.x6, gap: FR.space.x6 }}>
+      <View style={{ gap: FR.space.x2 }}>
+        <Text style={{ color: c.text, ...FR.type.h1 }}>Create your avatar</Text>
+        <Text style={{ color: c.muted, ...FR.type.sub }}>Pick an art style. You can customize it later.</Text>
+      </View>
+
+      <View style={{ gap: FR.space.x3, flex: 1 }}>
+        {artStyles.map((style) => (
+          <Pressable
+            key={style.id}
+            onPress={() => setSelectedStyle(style.id)}
+            style={({ pressed }) => ({
+              ...FR.card({ card: c.card, border: selectedStyle === style.id ? c.text : c.border }),
+              padding: FR.space.x4,
+              opacity: pressed ? 0.8 : 1,
+            })}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
+              <Text style={{ fontSize: 32 }}>{style.emoji}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>{style.name}</Text>
+                <Text style={{ color: c.muted, ...FR.type.sub }}>{style.description}</Text>
+              </View>
+            </View>
+          </Pressable>
+        ))}
+      </View>
+
+      {error && (
+        <Text style={{ color: "#FF6B6B", ...FR.type.sub, textAlign: "center" }}>
+          {error}
+        </Text>
+      )}
+
+      <View style={{ gap: FR.space.x2 }}>
+        <Pressable
+          onPress={handleNext}
+          disabled={loading}
+          style={({ pressed }) => ({
+            ...FR.pillButton({ card: c.card, border: c.border }),
+            backgroundColor: loading ? c.muted : c.text,
+            paddingVertical: FR.space.x4,
+            opacity: pressed ? 0.8 : loading ? 0.6 : 1,
+          })}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color={c.bg} />
+          ) : (
+            <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>
+              {selectedStyle ? "Continue" : "Skip"}
+            </Text>
+          )}
+        </Pressable>
+        {selectedStyle && (
+          <Pressable
+            onPress={handleSkip}
+            disabled={loading}
+            style={({ pressed }) => ({ opacity: pressed ? 0.7 : loading ? 0.5 : 1 })}
+          >
+            <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Skip for now</Text>
+          </Pressable>
+        )}
+        <Pressable
+          onPress={() => setCurrentStep("welcome")}
+          disabled={loading}
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : loading ? 0.5 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+// Step 3: Goal Setting
+function GoalSettingStep() {
+  const c = useThemeColors();
+  const { setCurrentStep, setGoal } = useOnboardingStore();
+  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
+
+  const goalOptions = [
+    { id: "strength", name: "Strength", description: "Get stronger, lift heavier", emoji: "💪" },
+    { id: "aesthetics", name: "Aesthetics", description: "Build muscle, look good", emoji: "🏋️" },
+    { id: "health", name: "Health", description: "Stay active, feel better", emoji: "❤️" },
+    { id: "sport", name: "Sport", description: "Improve performance", emoji: "⚽" },
+    { id: "general", name: "General", description: "Just stay active", emoji: "👟" },
+  ];
+
+  const handleNext = () => {
+    if (selectedGoal) {
+      setGoal(selectedGoal as any);
+    }
+    setCurrentStep("profile");
+  };
+
+  const handleSkip = () => {
+    setCurrentStep("profile");
+  };
+
+  return (
+    <View style={{ flex: 1, padding: FR.space.x6, gap: FR.space.x6 }}>
+      <View style={{ gap: FR.space.x2 }}>
+        <Text style={{ color: c.text, ...FR.type.h1 }}>What are you training for?</Text>
+        <Text style={{ color: c.muted, ...FR.type.sub }}>This helps us personalize your experience. You can change this later.</Text>
+      </View>
+
+      <View style={{ gap: FR.space.x3, flex: 1 }}>
+        {goalOptions.map((goal) => (
+          <Pressable
+            key={goal.id}
+            onPress={() => setSelectedGoal(goal.id)}
+            style={({ pressed }) => ({
+              ...FR.card({ card: c.card, border: selectedGoal === goal.id ? c.text : c.border }),
+              padding: FR.space.x4,
+              opacity: pressed ? 0.8 : 1,
+            })}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
+              <Text style={{ fontSize: 32 }}>{goal.emoji}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>{goal.name}</Text>
+                <Text style={{ color: c.muted, ...FR.type.sub }}>{goal.description}</Text>
+              </View>
+            </View>
+          </Pressable>
+        ))}
+      </View>
+
+      <View style={{ gap: FR.space.x2 }}>
+        <Pressable
+          onPress={handleNext}
+          style={({ pressed }) => ({
+            ...FR.pillButton({ card: c.card, border: c.border }),
+            backgroundColor: c.text,
+            paddingVertical: FR.space.x4,
+            opacity: pressed ? 0.8 : 1,
+          })}
+        >
+          <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>
+            {selectedGoal ? "Continue" : "Skip"}
+          </Text>
+        </Pressable>
+        {selectedGoal && (
+          <Pressable
+            onPress={handleSkip}
+            style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+          >
+            <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Skip for now</Text>
+          </Pressable>
+        )}
+        <Pressable
+          onPress={() => setCurrentStep("avatar")}
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+// Step 4: Profile Setup
 function ProfileSetupStep() {
   const c = useThemeColors();
   const { setCurrentStep, setProfile } = useOnboardingStore();
@@ -111,18 +340,56 @@ function ProfileSetupStep() {
   const [bodyweight, setBodyweight] = useState("");
   const [unit, setUnit] = useState<"lb" | "kg">("lb");
   const [experience, setExperience] = useState<"" | "beginner" | "intermediate" | "advanced">("");
+  const [validationErrors, setValidationErrors] = useState<{
+    displayName?: string;
+    bodyweight?: string;
+    experience?: string;
+  }>({});
 
   const handleNext = () => {
-    if (!displayName.trim() || !bodyweight || !experience) {
-      return; // TODO: Show validation error
+    const errors: typeof validationErrors = {};
+
+    // Validate display name
+    const trimmedName = displayName.trim();
+    if (!trimmedName) {
+      errors.displayName = "Please enter your name";
+    } else if (trimmedName.length > 50) {
+      errors.displayName = "Name must be less than 50 characters";
     }
 
+    // Validate bodyweight
+    if (!bodyweight.trim()) {
+      errors.bodyweight = "Please enter your bodyweight";
+    } else {
+      const weightNum = parseFloat(bodyweight);
+      if (isNaN(weightNum) || weightNum <= 0) {
+        errors.bodyweight = "Please enter a valid positive number";
+      } else if (unit === "kg" && weightNum > 300) {
+        errors.bodyweight = "Weight cannot exceed 300 kg";
+      } else if (unit === "lb" && weightNum > 660) {
+        errors.bodyweight = "Weight cannot exceed 660 lb";
+      }
+    }
+
+    // Validate experience
+    if (!experience) {
+      errors.experience = "Please select your experience level";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    // Clear any previous errors
+    setValidationErrors({});
+
     // Convert to kg for storage
-    const weightLb = unit === "kg" ? parseFloat(bodyweight) * 2.20462 : parseFloat(bodyweight);
-    const weightKg = unit === "lb" ? parseFloat(bodyweight) / 2.20462 : parseFloat(bodyweight);
+    const weightNum = parseFloat(bodyweight);
+    const weightKg = unit === "kg" ? weightNum : weightNum / 2.20462;
 
     setProfile({
-      displayName: displayName.trim(),
+      displayName: trimmedName,
       bodyweight: weightKg,
       bodyweightUnit: unit,
       experienceLevel: experience,
@@ -150,11 +417,16 @@ function ProfileSetupStep() {
           <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>Your Name</Text>
           <TextInput
             value={displayName}
-            onChangeText={setDisplayName}
+            onChangeText={(text) => {
+              setDisplayName(text);
+              if (validationErrors.displayName) {
+                setValidationErrors((prev) => ({ ...prev, displayName: undefined }));
+              }
+            }}
             placeholder="Enter your name"
             placeholderTextColor={c.muted}
             style={{
-              ...FR.card({ card: c.card, border: c.border }),
+              ...FR.card({ card: c.card, border: validationErrors.displayName ? "#FF6B6B" : c.border }),
               color: c.text,
               ...FR.type.body,
               paddingVertical: FR.space.x3,
@@ -163,6 +435,11 @@ function ProfileSetupStep() {
             }}
             autoCapitalize="words"
           />
+          {validationErrors.displayName && (
+            <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
+              {validationErrors.displayName}
+            </Text>
+          )}
         </View>
 
         {/* Bodyweight input */}
@@ -171,13 +448,18 @@ function ProfileSetupStep() {
           <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
             <TextInput
               value={bodyweight}
-              onChangeText={setBodyweight}
+              onChangeText={(text) => {
+                setBodyweight(text);
+                if (validationErrors.bodyweight) {
+                  setValidationErrors((prev) => ({ ...prev, bodyweight: undefined }));
+                }
+              }}
               placeholder="150"
               placeholderTextColor={c.muted}
               keyboardType="decimal-pad"
               style={{
                 flex: 1,
-                ...FR.card({ card: c.card, border: c.border }),
+                ...FR.card({ card: c.card, border: validationErrors.bodyweight ? "#FF6B6B" : c.border }),
                 color: c.text,
                 ...FR.type.body,
                 paddingVertical: FR.space.x3,
@@ -187,6 +469,11 @@ function ProfileSetupStep() {
             />
             <UnitToggle value={unit} onChange={setUnit} />
           </View>
+          {validationErrors.bodyweight && (
+            <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
+              {validationErrors.bodyweight}
+            </Text>
+          )}
         </View>
 
         {/* Experience level */}
@@ -196,7 +483,12 @@ function ProfileSetupStep() {
             {experienceOptions.map((option) => (
               <Pressable
                 key={option.value}
-                onPress={() => setExperience(option.value)}
+                onPress={() => {
+                  setExperience(option.value);
+                  if (validationErrors.experience) {
+                    setValidationErrors((prev) => ({ ...prev, experience: undefined }));
+                  }
+                }}
                 style={({ pressed }) => ({
                   ...FR.card({ card: c.card, border: c.border }),
                   paddingVertical: FR.space.x3,
@@ -217,6 +509,11 @@ function ProfileSetupStep() {
               </Pressable>
             ))}
           </View>
+          {validationErrors.experience && (
+            <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
+              {validationErrors.experience}
+            </Text>
+          )}
         </View>
       </View>
 
@@ -233,7 +530,7 @@ function ProfileSetupStep() {
           <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
         </Pressable>
         <Pressable
-          onPress={() => setCurrentStep("welcome")}
+          onPress={() => setCurrentStep("goals")}
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
         >
           <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
@@ -280,7 +577,7 @@ function UnitToggle({ value, onChange }: { value: "lb" | "kg"; onChange: (v: "lb
   );
 }
 
-// Placeholder components for other steps (to be implemented)
+// Personality picker step
 function PersonalityPickerStep() {
   const c = useThemeColors();
   const { setCurrentStep, setPersonality } = useOnboardingStore();
@@ -288,7 +585,7 @@ function PersonalityPickerStep() {
 
   const handleNext = () => {
     setPersonality(selected || "coach");
-    setCurrentStep("tutorial");
+    setCurrentStep("highlights");
   };
 
   return (
@@ -298,20 +595,17 @@ function PersonalityPickerStep() {
 
       {/* Personality cards */}
       <View style={{ gap: FR.space.x3, flex: 1 }}>
-        {["coach", "hype", "chill", "savage"].map((id) => {
-          const personality = {
-            coach: { emoji: "🏋️", name: "Coach", tagline: "Let's get to work." },
-            hype: { emoji: "🔥", name: "Hype", tagline: "LET'S GOOO!" },
-            chill: { emoji: "😌", name: "Chill", tagline: "You got this." },
-            savage: { emoji: "💀", name: "Savage", tagline: "Is that all you got?" },
-          }[id];
-
+        {PERSONALITIES.map((personality) => {
+          const isSelected = selected === personality.id;
           return (
             <Pressable
-              key={id}
-              onPress={() => setSelected(id)}
+              key={personality.id}
+              onPress={() => setSelected(personality.id)}
+              accessibilityLabel={`Select ${personality.name} personality`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isSelected }}
               style={({ pressed }) => ({
-                ...FR.card({ card: c.card, border: selected === id ? c.text : c.border }),
+                ...FR.card({ card: c.card, border: isSelected ? c.text : c.border }),
                 padding: FR.space.x4,
                 opacity: pressed ? 0.8 : 1,
               })}
@@ -321,6 +615,7 @@ function PersonalityPickerStep() {
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>{personality.name}</Text>
                   <Text style={{ color: c.muted, ...FR.type.sub }}>{personality.tagline}</Text>
+                  <Text style={{ color: c.muted, ...FR.type.sub, fontSize: 12 }}>{personality.description}</Text>
                 </View>
               </View>
             </Pressable>
@@ -328,28 +623,160 @@ function PersonalityPickerStep() {
         })}
       </View>
 
-      <Pressable
-        onPress={handleNext}
-        style={({ pressed }) => ({
-          ...FR.pillButton({ card: c.card, border: c.border }),
-          backgroundColor: c.text,
-          paddingVertical: FR.space.x4,
-          opacity: pressed ? 0.8 : 1,
-        })}
+      <View style={{ gap: FR.space.x2 }}>
+        <Pressable
+          onPress={handleNext}
+          style={({ pressed }) => ({
+            ...FR.pillButton({ card: c.card, border: c.border }),
+            backgroundColor: c.text,
+            paddingVertical: FR.space.x4,
+            opacity: pressed ? 0.8 : 1,
+          })}
+        >
+          <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setCurrentStep("profile")}
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+function HighlightsStep() {
+  const c = useThemeColors();
+  const { setCurrentStep } = useOnboardingStore();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const screenWidth = Dimensions.get("window").width;
+
+  const features = [
+    {
+      emoji: "🏆",
+      title: "Track Your Rank",
+      description: "Earn 20 ranks per exercise based on verified world-class standards. Each PR moves you up the ladder.",
+    },
+    {
+      emoji: "📊",
+      title: "Social Feed",
+      description: "Share workouts, compete with friends, and react to each other's progress in real-time.",
+    },
+    {
+      emoji: "🔥",
+      title: "Streak System",
+      description: "Build consistency with daily workout streaks. The longer your streak, the more rewards you earn.",
+    },
+  ];
+
+  const handleNext = () => {
+    if (currentIndex < features.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setCurrentStep("tutorial");
+    }
+  };
+
+  const handleSkip = () => {
+    setCurrentStep("tutorial");
+  };
+
+  return (
+    <View style={{ flex: 1, padding: FR.space.x6, gap: FR.space.x6 }}>
+      <View style={{ gap: FR.space.x2 }}>
+        <Text style={{ color: c.text, ...FR.type.h1 }}>Key Features</Text>
+        <Text style={{ color: c.muted, ...FR.type.sub }}>A quick tour of what makes Forgerank special</Text>
+      </View>
+
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={(event) => {
+          const newIndex = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
+          setCurrentIndex(newIndex);
+        }}
+        style={{ flex: 1 }}
       >
-        <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
-      </Pressable>
+        {features.map((feature, index) => (
+          <View key={index} style={{ width: screenWidth - FR.space.x6 * 2, paddingHorizontal: FR.space.x3 }}>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: FR.space.x6 }}>
+              <Text style={{ fontSize: 64 }}>{feature.emoji}</Text>
+              <View style={{ gap: FR.space.x3 }}>
+                <Text style={{ color: c.text, ...FR.type.h2, textAlign: "center" }}>{feature.title}</Text>
+                <Text style={{ color: c.muted, ...FR.type.body, textAlign: "center" }}>{feature.description}</Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+
+      {/* Pagination dots */}
+      <View style={{ flexDirection: "row", justifyContent: "center", gap: FR.space.x2 }}>
+        {features.map((_, index) => (
+          <View
+            key={index}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: index === currentIndex ? c.text : c.muted,
+            }}
+          />
+        ))}
+      </View>
+
+      <View style={{ gap: FR.space.x2 }}>
+        <Pressable
+          onPress={handleNext}
+          accessibilityLabel={currentIndex < features.length - 1 ? "Next" : "Get Started"}
+          accessibilityRole="button"
+          style={({ pressed }) => ({
+            ...FR.pillButton({ card: c.card, border: c.border }),
+            backgroundColor: c.text,
+            paddingVertical: FR.space.x4,
+            opacity: pressed ? 0.8 : 1,
+          })}
+        >
+          <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>
+            {currentIndex < features.length - 1 ? "Next" : "Get Started"}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={handleSkip}
+          accessibilityLabel="Skip"
+          accessibilityRole="button"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Skip</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setCurrentStep("personality")}
+          accessibilityLabel="Back"
+          accessibilityRole="button"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 function TutorialStep() {
   const c = useThemeColors();
+  const router = useRouter();
   const { setCurrentStep, completeOnboarding } = useOnboardingStore();
 
   const handleSkip = () => {
+    // Mark tutorial as completed and go to complete step
     setCurrentStep("complete");
-    completeOnboarding();
+  };
+
+  const startGuidedWorkout = () => {
+    // Navigate to live-workout with tutorial mode
+    router.push("/live-workout?tutorial=true");
   };
 
   return (
@@ -361,17 +788,37 @@ function TutorialStep() {
         You're all set! Start a workout whenever you're ready. We'll guide you through your first session.
       </Text>
 
-      <Pressable
-        onPress={handleSkip}
-        style={({ pressed }) => ({
-          ...FR.pillButton({ card: c.card, border: c.border }),
-          backgroundColor: c.text,
-          paddingVertical: FR.space.x4,
-          opacity: pressed ? 0.8 : 1,
-        })}
-      >
-        <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Get Started</Text>
-      </Pressable>
+      <View style={{ gap: FR.space.x4 }}>
+        <Pressable
+          onPress={startGuidedWorkout}
+          accessibilityLabel="Start guided workout"
+          accessibilityRole="button"
+          style={({ pressed }) => ({
+            ...FR.pillButton({ card: c.card, border: c.border }),
+            backgroundColor: c.text,
+            paddingVertical: FR.space.x4,
+            opacity: pressed ? 0.8 : 1,
+          })}
+        >
+          <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Start Guided Workout</Text>
+        </Pressable>
+        <Pressable
+          onPress={handleSkip}
+          accessibilityLabel="Skip tutorial"
+          accessibilityRole="button"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Skip Tutorial</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setCurrentStep("highlights")}
+          accessibilityLabel="Back"
+          accessibilityRole="button"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -381,11 +828,11 @@ function CompletionStep() {
   const router = useRouter();
 
   // Navigate to home after a brief celebration
-  useState(() => {
+  useEffect(() => {
     setTimeout(() => {
       router.replace("/");
     }, 1500);
-  });
+  }, []);
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: FR.space.x4 }}>

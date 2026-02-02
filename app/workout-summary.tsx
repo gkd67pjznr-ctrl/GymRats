@@ -7,8 +7,11 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useThemeColors } from "../src/ui/theme";
 import { FR } from "../src/ui/forgerankStyle";
 import { EXERCISES_V1 } from "../src/data/exercises";
-import { useWorkoutStore, useIsHydrated } from "../src/lib/stores";
+import { useWorkoutStore, useIsHydrated, useJournalEntryForSession, useUser } from "../src/lib/stores";
 import { timeAgo } from "../src/lib/units";
+import WorkoutNotesSection from "../src/ui/components/Journal/WorkoutNotesSection";
+import { updateJournalEntry, addJournalEntry } from "../src/lib/stores";
+import { createJournalEntry, getDateFromTimestamp } from "../src/lib/journalModel";
 
 type WorkoutSummaryData = {
   sessionId: string;
@@ -51,7 +54,9 @@ export default function WorkoutSummary() {
   // Get the workout session - wait for hydration
   const hydrated = useIsHydrated();
   const sessions = useWorkoutStore((state) => state.workouts);
+  const user = useUser();
   const [summary, setSummary] = useState<WorkoutSummaryData | null>(null);
+  const [session, setSession] = useState<any>(null);
   const [isSharing, setIsSharing] = useState(false);
   const [endedAtMs, setEndedAtMs] = useState<number | null>(null);
 
@@ -66,8 +71,8 @@ export default function WorkoutSummary() {
 
     // Ensure sessions is an array before calling find
     const sessionsArray = sessions ?? [];
-    const session = sessionsArray.find((s) => s.id === sessionId);
-    if (!session) {
+    const foundSession = sessionsArray.find((s) => s.id === sessionId);
+    if (!foundSession) {
       // Session not found, go home
       router.replace("/");
       return;
@@ -78,29 +83,30 @@ export default function WorkoutSummary() {
 
     // Calculate completion % if following a routine
     let completionPct: number | undefined;
-    if (session.plannedExercises && session.plannedExercises.length > 0) {
-      const totalTargetSets = session.plannedExercises.reduce(
+    if (foundSession.plannedExercises && foundSession.plannedExercises.length > 0) {
+      const totalTargetSets = foundSession.plannedExercises.reduce(
         (sum, ex) => sum + (ex.targetSets || 0),
         0
       );
-      const completedSets = session.sets.length;
+      const completedSets = foundSession.sets.length;
       completionPct = totalTargetSets > 0
         ? Math.round((Math.min(completedSets, totalTargetSets) / totalTargetSets) * 100)
         : 0;
     }
 
-    const exerciseIds = Array.from(new Set(session.sets.map((s) => s.exerciseId)));
+    const exerciseIds = Array.from(new Set(foundSession.sets.map((s) => s.exerciseId)));
 
+    setSession(foundSession);
     setSummary({
-      sessionId: session.id,
-      durationMs: session.endedAtMs - session.startedAtMs,
-      setCount: session.sets.length,
+      sessionId: foundSession.id,
+      durationMs: foundSession.endedAtMs - foundSession.startedAtMs,
+      setCount: foundSession.sets.length,
       prCount,
       completionPct,
-      routineName: session.routineName,
+      routineName: foundSession.routineName,
       exerciseIds,
     });
-    setEndedAtMs(session.endedAtMs);
+    setEndedAtMs(foundSession.endedAtMs);
   }, [hydrated, sessionId, sessions, router]);
 
   if (!summary) {
@@ -130,6 +136,58 @@ export default function WorkoutSummary() {
 
   const handleDone = () => {
     router.replace("/");
+  };
+
+  // Get existing journal entry for this session
+  const existingJournalEntry = useJournalEntryForSession(sessionId || "");
+
+  const handleSaveJournal = async (data: {
+    text: string;
+    mood?: number;
+    energy?: number;
+    soreness?: string[];
+  }) => {
+    if (!user?.id || !session) return;
+
+    const sessionDate = getDateFromTimestamp(session.startedAtMs);
+
+    if (existingJournalEntry) {
+      // Update existing journal entry
+      updateJournalEntry(existingJournalEntry.id, {
+        text: data.text,
+        mood: data.mood,
+        energy: data.energy,
+        soreness: data.soreness,
+      });
+
+      // Also update the workout session with journal fields
+      useWorkoutStore.getState().updateSession(session.id, {
+        notes: data.text,
+        mood: data.mood,
+        energy: data.energy,
+        soreness: data.soreness,
+      });
+    } else {
+      // Create new journal entry
+      const journalEntry = createJournalEntry(
+        user.id,
+        sessionDate,
+        data.text,
+        session.id,
+        data.mood,
+        data.energy,
+        data.soreness
+      );
+      addJournalEntry(journalEntry);
+
+      // Also update the workout session with journal fields
+      useWorkoutStore.getState().updateSession(session.id, {
+        notes: data.text,
+        mood: data.mood,
+        energy: data.energy,
+        soreness: data.soreness,
+      });
+    }
   };
 
   return (
@@ -232,6 +290,18 @@ export default function WorkoutSummary() {
               ))}
             </View>
           </View>
+        )}
+
+        {/* Journal Notes Section */}
+        {session && user && (
+          <WorkoutNotesSection
+            sessionId={session.id}
+            sessionDate={getDateFromTimestamp(session.startedAtMs)}
+            userId={user.id}
+            existingEntry={existingJournalEntry}
+            onSave={handleSaveJournal}
+            compact={false}
+          />
         )}
       </ScrollView>
 

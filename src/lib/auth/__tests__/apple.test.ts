@@ -41,6 +41,7 @@ import {
   type OAuthUserProfile,
   type OAuthError,
 } from '../oauth';
+import * as appleModule from '../apple';
 
 // Mock oauth module functions
 jest.mock('../oauth', () => ({
@@ -81,6 +82,14 @@ jest.mock('../../supabase/client', () => ({
     },
   },
 }));
+
+// Mock oauth module
+jest.mock('../oauth', () => ({
+  parseOAuthError: jest.fn(),
+  extractAppleProfile: jest.fn(),
+  signInWithOAuthToken: jest.fn(),
+}));
+
 
 // Mock oauth module functions
 
@@ -178,7 +187,6 @@ describe('Apple Sign In', () => {
       const onSuccessMock = jest.fn();
       const onErrorMock = jest.fn();
 
-      // Update the mock implementations
       (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
       (extractAppleProfile as jest.Mock).mockReturnValue(mockProfile);
       (signInWithOAuthToken as jest.Mock).mockResolvedValue({ data: { user: {} }, error: null });
@@ -590,7 +598,6 @@ describe('Apple Sign In', () => {
         realUserStatus: AppleAuthentication.AppleAuthenticationRealUserStatus.LIKELY_REAL,
       };
 
-      // Update the mock implementations
       (AppleAuthentication.signInAsync as jest.Mock).mockResolvedValue(mockCredential);
       (extractAppleProfile as jest.Mock).mockReturnValue(mockProfile);
       (signInWithOAuthToken as jest.Mock).mockResolvedValue({ data: { user: {} }, error: null });

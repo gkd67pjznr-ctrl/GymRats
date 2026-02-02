@@ -15,7 +15,9 @@ import { reactionRepository } from "../sync/repositories/reactionRepository";
 import { commentRepository } from "../sync/repositories/commentRepository";
 import { notificationRepository } from "../sync/repositories/notificationRepository";
 import { networkMonitor } from "../sync/NetworkMonitor";
-import { subscribeToUserPosts, subscribeToPostReactions, subscribeToPostComments } from "../sync";
+import { subscribeToUserPosts, subscribeToPostReactions, subscribeToPostComments } from "../sync/RealtimeManager";
+import { useMemo } from "react";
+import { shallow } from "zustand/shallow";
 
 const STORAGE_KEY = "social.v2";
 
@@ -335,23 +337,27 @@ export const selectMyReactionForPost = (postId: string, myUserId: string) => (st
 // ============================================================================
 
 export function useFeedAll(): WorkoutPost[] {
-  return useSocialStore(selectFeedAll);
+  return useSocialStore(selectFeedAll, shallow);
 }
 
 export function usePost(postId: string): WorkoutPost | undefined {
-  return useSocialStore(selectPostById(postId));
+  const selector = useMemo(() => selectPostById(postId), [postId]);
+  return useSocialStore(selector);
 }
 
 export function usePostComments(postId: string): Comment[] {
-  return useSocialStore(selectCommentsForPost(postId));
+  const selector = useMemo(() => selectCommentsForPost(postId), [postId]);
+  return useSocialStore(selector);
 }
 
 export function usePostReactions(postId: string): Reaction[] {
-  return useSocialStore(selectReactionsForPost(postId));
+  const selector = useMemo(() => selectReactionsForPost(postId), [postId]);
+  return useSocialStore(selector);
 }
 
 export function useMyReaction(postId: string, myUserId: string): Reaction | undefined {
-  return useSocialStore(selectMyReactionForPost(postId, myUserId));
+  const selector = useMemo(() => selectMyReactionForPost(postId, myUserId), [postId, myUserId]);
+  return useSocialStore(selector);
 }
 
 // ============================================================================

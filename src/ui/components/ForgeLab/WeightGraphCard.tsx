@@ -4,6 +4,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
+import VictoryLineChart from './VictoryLineChart';
 
 type WeightDataPoint = {
   date: string;
@@ -17,6 +18,13 @@ type WeightGraphCardProps = {
 
 const WeightGraphCard: React.FC<WeightGraphCardProps> = ({ data, isLoading }) => {
   const ds = makeDesignSystem('dark', 'toxic');
+
+  // Transform data for Victory chart
+  const chartData = data.map(point => ({
+    x: point.date,
+    y: point.weightKg,
+    date: point.date,
+  }));
 
   return (
     <View style={[styles.card, { backgroundColor: ds.tone.card }]}>
@@ -33,15 +41,22 @@ const WeightGraphCard: React.FC<WeightGraphCardProps> = ({ data, isLoading }) =>
         </View>
       ) : data && data.length > 0 ? (
         <View style={styles.chartContainer}>
-          {/* Placeholder for chart - in a real implementation, this would use a charting library */}
-          <View style={styles.chartPlaceholder}>
-            <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-              Weight Chart Visualization
-            </Text>
-            <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
-              {data.length} data points
-            </Text>
-          </View>
+          <VictoryLineChart
+            data={chartData}
+            xLabel="Date"
+            yLabel="Weight (kg)"
+            accentColor={ds.tone.accent}
+            height={180}
+            showDots={chartData.length <= 20} // Only show dots for reasonable number of points
+          />
+          {chartData.length > 0 && (
+            <View style={styles.statsContainer}>
+              <Text style={[styles.statsText, { color: ds.tone.textSecondary }]}>
+                {chartData.length} measurements •
+                Latest: {chartData[chartData.length - 1].y.toFixed(1)}kg
+              </Text>
+            </View>
+          )}
         </View>
       ) : (
         <View style={styles.emptyContainer}>
@@ -79,18 +94,6 @@ const styles = StyleSheet.create({
   chartContainer: {
     height: 200,
   },
-  chartPlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-  },
-  chartText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
   emptyContainer: {
     height: 200,
     justifyContent: 'center',
@@ -99,6 +102,14 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     textAlign: 'center',
+  },
+  statsContainer: {
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  statsText: {
+    fontSize: 12,
+    opacity: 0.8,
   },
 });
 

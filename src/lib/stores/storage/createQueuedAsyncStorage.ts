@@ -57,7 +57,8 @@ export function createQueuedAsyncStorage(): StateStorage {
             timestamp: new Date().toISOString(),
           };
           if (__DEV__) console.error('[createQueuedAsyncStorage] Failed to set item:', errorDetails);
-          throw error; // Re-throw to allow caller to handle
+          // Don't re-throw to prevent unhandled promise rejections
+          // The error is logged, and we return normally to allow the queue to continue
         }
       });
     },
@@ -78,7 +79,7 @@ export function createQueuedAsyncStorage(): StateStorage {
             stack: error instanceof Error ? error.stack : undefined,
             timestamp: new Date().toISOString(),
           });
-          throw error;
+          // Don't re-throw to prevent unhandled promise rejections
         }
       });
     },

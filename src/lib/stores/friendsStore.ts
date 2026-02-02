@@ -13,7 +13,9 @@ import { getUser } from "./authStore";
 import { friendRepository } from "../sync/repositories/friendRepository";
 import { networkMonitor } from "../sync/NetworkMonitor";
 import { resolveFriendConflict } from "../sync/ConflictResolver";
-import { subscribeToUserFriendships } from "../sync";
+import { subscribeToUserFriendships } from "../sync/RealtimeManager";
+import { useMemo } from "react";
+import { shallow } from "zustand/shallow";
 
 const STORAGE_KEY = "friends.v2";
 
@@ -288,11 +290,13 @@ export const selectAreFriends = (myUserId: ID, otherUserId: ID) => (state: Frien
 // ============================================================================
 
 export function useFriendEdges(myUserId: ID): FriendEdge[] {
-  return useFriendsStore(selectFriendEdges(myUserId));
+  const selector = useMemo(() => selectFriendEdges(myUserId), [myUserId]);
+  return useFriendsStore(selector, shallow);
 }
 
 export function useFriendStatus(myUserId: ID, otherUserId: ID): FriendStatus {
-  return useFriendsStore(selectFriendStatus(myUserId, otherUserId));
+  const selector = useMemo(() => selectFriendStatus(myUserId, otherUserId), [myUserId, otherUserId]);
+  return useFriendsStore(selector, shallow);
 }
 
 // ============================================================================

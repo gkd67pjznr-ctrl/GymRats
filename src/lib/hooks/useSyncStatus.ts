@@ -8,15 +8,13 @@ import {
   useIsSyncing as useOrchestratorSyncing,
   useSyncStats as useOrchestratorStats,
 } from '../sync/SyncOrchestrator';
-import {
-  getWorkoutSyncStatus,
-  getRoutinesSyncStatus,
-  getWorkoutPlanSyncStatus,
-  getFriendsSyncStatus,
-  getSocialSyncStatus,
-  getFeedSyncStatus,
-  getChatSyncStatus,
-} from '../stores';
+import { getWorkoutSyncStatus } from '../stores/workoutStore';
+import { getRoutinesSyncStatus } from '../stores/routinesStore';
+import { getWorkoutPlanSyncStatus } from '../stores/workoutPlanStore';
+import { getFriendsSyncStatus } from '../stores/friendsStore';
+import { getSocialSyncStatus } from '../stores/socialStore';
+import { getFeedSyncStatus } from '../stores/feedStore';
+import { getChatSyncStatus } from '../stores/chatStore';
 
 /**
  * Get sync status for a specific store

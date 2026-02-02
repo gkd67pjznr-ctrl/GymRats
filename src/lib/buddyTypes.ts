@@ -59,7 +59,7 @@ export interface Buddy {
   unlockMethod: 'free' | 'forge_tokens' | 'iap';
   unlockCost?: number;                           // forge token cost (basic tier)
   iapProductId?: string;                         // IAP product ID (premium/legendary)
-  messages: Record<TriggerType, string[]>;       // triggerType -> message pool
-  voiceLines?: Record<TriggerType, string[]>;    // triggerType -> voice asset refs
-  sfxPack?: Record<TriggerType, string>;         // event -> sfx asset ref
+  messages: Partial<Record<TriggerType, string[]>>;       // triggerType -> message pool
+  voiceLines?: Partial<Record<TriggerType, string[]>>;    // triggerType -> voice asset refs
+  sfxPack?: Partial<Record<TriggerType, string>>;         // event -> sfx asset ref
 }
