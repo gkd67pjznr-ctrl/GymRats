@@ -28,6 +28,8 @@ import {
   type ShopCategory,
   type UserInventory,
 } from '../gamification';
+import { getDefaultRoomDecorations } from '../hangout/roomSlots';
+import type { RoomDecorationsState } from '../hangout/roomSlots';
 import {
   dbUserToGamificationProfile,
   gamificationProfileToDbUpdate,
@@ -51,6 +53,9 @@ interface GamificationState {
   // Shop/Inventory
   inventory: UserInventory;
 
+  // Room Decorations (slot-based)
+  roomDecorations: RoomDecorationsState;
+
   // Actions
   setProfile: (profile: GamificationProfile) => void;
   setHydrated: (value: boolean) => void;
@@ -72,6 +77,7 @@ interface GamificationState {
   // Shop actions
   purchaseItem: (itemId: string) => { success: boolean; error?: string };
   equipItem: (itemId: string, category: ShopCategory) => { success: boolean; error?: string };
+  equipRoomDecoration: (slotId: string, itemId: string) => { success: boolean; error?: string };
 
   // Sync actions
   pullFromServer: () => Promise<void>;
@@ -93,6 +99,7 @@ export const useGamificationStore = create<GamificationState>()(
       },
       pendingLevelUp: null,
       inventory: { ...DEFAULT_INVENTORY },
+      roomDecorations: getDefaultRoomDecorations(),
 
       setProfile: (profile) =>
         set({
@@ -380,10 +387,65 @@ export const useGamificationStore = create<GamificationState>()(
                 inventory.equippedBadges = [...inventory.equippedBadges, itemId];
               }
               break;
+            case 'avatar_cosmetics':
+              // Handle avatar cosmetics based on item ID prefix
+              if (itemId.startsWith('hair_')) {
+                inventory.equippedHairstyle = itemId;
+              } else if (itemId.startsWith('outfit_')) {
+                inventory.equippedOutfit = itemId;
+              } else if (itemId.startsWith('acc_')) {
+                // Accessories can have multiple equipped (but not 'acc_none')
+                if (itemId === 'acc_none') {
+                  inventory.equippedAccessories = ['acc_none'];
+                } else if (!inventory.equippedAccessories.includes(itemId)) {
+                  // Remove 'acc_none' if equipping a real accessory
+                  const withoutNone = inventory.equippedAccessories.filter(a => a !== 'acc_none');
+                  inventory.equippedAccessories = [...withoutNone, itemId];
+                }
+              }
+              break;
+            case 'room_decorations':
+              // Decorations are added to owned but not equipped here
+              // They are placed in the room separately
+              if (!inventory.ownedDecorations.includes(itemId)) {
+                inventory.ownedDecorations = [...inventory.ownedDecorations, itemId];
+              }
+              break;
           }
 
           return { inventory };
         });
+
+        return { success: true };
+      },
+
+      /**
+       * Equip decoration to a specific room slot
+       */
+      equipRoomDecoration: (slotId, itemId) => {
+        const state = get();
+        const item = getShopItem(itemId);
+
+        if (!item) {
+          return { success: false, error: 'Item not found' };
+        }
+
+        // Check if owned (or is free/default)
+        const isOwned = state.inventory.ownedItems.includes(itemId) ||
+                        state.inventory.ownedDecorations.includes(itemId) ||
+                        item.cost === 0;
+
+        if (!isOwned) {
+          return { success: false, error: 'Not owned' };
+        }
+
+        // Update room decoration state
+        set((state) => ({
+          roomDecorations: {
+            ...state.roomDecorations,
+            [slotId]: itemId,
+          },
+        }));
 
         return { success: true };
       },
@@ -598,16 +660,27 @@ export function useOwnedItems(): string[] {
   return useGamificationStore(selectOwnedItems);
 }
 
+// ========== Room Decorations Hooks ==========
+
+export const selectRoomDecorations = (state: GamificationState) => state.roomDecorations;
+
+export function useRoomDecorations(): RoomDecorationsState {
+  return useGamificationStore(selectRoomDecorations);
+}
+
 export function useShopItems(category?: ShopCategory): ShopItem[] {
-  const ownedItems = useOwnedItems();
+  const inventory = useGamificationStore(selectInventory);
   const items = category
     ? SHOP_ITEMS.filter(item => item.category === category)
     : SHOP_ITEMS;
 
   return items.map(item => ({
     ...item,
-    isOwned: ownedItems.includes(item.id) || item.cost === 0,
-    isEquipped: getCategoryEquipped(item.category, item.id, useGamificationStore.getState().inventory),
+    isOwned:
+      inventory.ownedItems.includes(item.id) ||
+      (item.category === 'room_decorations' && inventory.ownedDecorations.includes(item.id)) ||
+      item.cost === 0,
+    isEquipped: getCategoryEquipped(item.category, item.id, inventory),
   }));
 }
 
@@ -625,6 +698,17 @@ function getCategoryEquipped(category: ShopCategory, itemId: string, inventory: 
       return inventory.equippedTitle === itemId;
     case 'profile_badges':
       return inventory.equippedBadges.includes(itemId);
+    case 'avatar_cosmetics':
+      if (itemId.startsWith('hair_')) {
+        return inventory.equippedHairstyle === itemId;
+      } else if (itemId.startsWith('outfit_')) {
+        return inventory.equippedOutfit === itemId;
+      } else if (itemId.startsWith('acc_')) {
+        return inventory.equippedAccessories.includes(itemId);
+      }
+      return false;
+    case 'room_decorations':
+      return inventory.ownedDecorations.includes(itemId);
     default:
       return false;
   }
@@ -640,6 +724,14 @@ export function equipShopItem(itemId: string, category: ShopCategory): { success
   return useGamificationStore.getState().equipItem(itemId, category);
 }
 
+export function equipRoomDecoration(slotId: string, itemId: string): { success: boolean; error?: string } {
+  return useGamificationStore.getState().equipRoomDecoration(slotId, itemId);
+}
+
 export function getUserInventory(): UserInventory {
   return useGamificationStore.getState().inventory;
+}
+
+export function getRoomDecorations(): RoomDecorationsState {
+  return useGamificationStore.getState().roomDecorations;
 }

@@ -1,11 +1,11 @@
 # Forgerank Feature Priorities Summary
 
-**Last Updated:** 2026-01-30
+**Last Updated:** 2026-02-02
 **Source:** FEATURE-MASTER.md, MASTER_PLAN.md, 2026-01-29 brainstorm
 
 ---
 
-## Launch Priorities (v1) - 155 Features Total
+## Launch Priorities (v1) - 167 Features Total
 
 ### Top 5 Core Differentiators (Must-Have for Launch)
 
@@ -14,17 +14,20 @@
    - Static verified standards (not user-inflated)
    - Anti-cheat heuristics
 
-2. **AI Gym Buddy** 🚧 (In Progress - 4/11 features)
-   - 8-12 personality archetypes at launch
-   - Reactive commentary system (text + voice)
+2. **AI Gym Buddy** ✅ (In Progress - 9/11 features)
+   - 9 personality archetypes implemented
+   - Reactive commentary system (text + voice) working
    - Tiered system: Basic (free), Premium (IAP), Legendary (IAP)
    - Triggers: PRs, rank-ups, behavior patterns, session flow
+   - Voice playback system implemented
+   - IAP integration with expo-iap working
 
-3. **Avatar & Hangout Room** 🚧 (Planned - 0/8 features)
-   - Finch-inspired growing avatar (size/height growth)
-   - Multiple art styles (Bitmoji, pixel, retro, 3D)
-   - Shared visual-only social space
-   - Purchasable decorations (IAP)
+3. **Avatar & Hangout Room** 🚧 (In Progress - 4/8 features)
+   - Avatar creation UI with art style selection
+   - Avatar growth system with calculation algorithms
+   - Hangout room core with database schema
+   - Basic UI components (AvatarView, HangoutRoom, FriendAvatar)
+   - Real-time presence tracking in progress
 
 4. **Pure-Inspired Aesthetic** 🚧 (In Progress - 8/15 features)
    - Dark gradients + bold typography
@@ -48,23 +51,30 @@
 - ✅ Gamification (12/12) - XP, levels, streaks, Forge Tokens
 - ✅ Workout Replay (5/5) - Cinematic post-workout summaries
 - ✅ Forge Milestones (5/5) - Tiered achievements
-- ✅ Body Model (5/5) - Muscle subdivisions + volume coloring
+- ✅ Forge DNA (4/4) - Training identity visualization
+- ✅ Forge Lab (6/6) - Premium analytics dashboard
+- ✅ Backend & Sync (10/10) - Full sync system operational
+- ✅ Body Model (3/5) - Muscle subdivisions + volume coloring (core complete)
 - ✅ Integrations (5/5) - Health data import framework
 
 #### In Progress (Active Development)
-- 🚧 Workout Core (8/20) - Routine flow, rest timer enhancements
-- 🚧 AI Gym Buddy (4/11) - Personality engine + reactive commentary
+- 🚧 Workout Core (12/20) - Routine flow, rest timer enhancements
+- 🚧 AI Gym Buddy (9/11) - Voice UI, buddy-specific sound effects
 - 🚧 Authentication (7/10) - Apple Sign In, password reset
 - 🚧 Social & Feed (9/15) - Auto-posts, reactions, comments
-- 🚧 Backend & Sync (9/10) - Data migration script
+- 🚧 Avatar & Hangout Room (4/8) - Real-time presence, cosmetics
 - 🚧 Onboarding (3/7) - Avatar creation, guided workout
-- 🚧 UI & Design (8/15) - Rank-up animations, skeleton screens
+- 🚧 UI & Design (12/15) - Rank-up animations, skeleton screens
 
 #### Planned (Not Started)
-- ⏳ Avatar & Hangout Room (0/8) - Full avatar system
-- ⏳ Forge DNA (3/4) - Training identity visualization
-- ⏳ Forge Lab (0/6) - Premium analytics dashboard
-- 🚧 Notifications (1/4) - Minimal essentials (Rest timer complete, social notifications pending)
+- ⏳ Leaderboards & Competitions (0/10) - Post-launch
+- ⏳ Online Competitions (0/8) - Post-launch
+- ⏳ Live Workout Together (0/4) - Post-launch
+- ⏳ Gym Finder / Map (0/6) - Post-launch
+- ⏳ AI Coaching (0/4) - Post-launch
+- ⏳ Templates Marketplace (0/4) - Post-launch
+- ⏳ Forge Seasons (0/4) - Post-launch
+- 🚧 Notifications (1/4) - Rest timer complete, social notifications pending
 
 ---
 

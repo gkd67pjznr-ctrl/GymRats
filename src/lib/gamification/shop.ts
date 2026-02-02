@@ -10,7 +10,9 @@ export type ShopCategory =
   | 'card_skins'
   | 'profile_badges'
   | 'profile_frames'
-  | 'titles';
+  | 'titles'
+  | 'room_decorations'  // New: Hangout room decorations
+  | 'avatar_cosmetics'; // New: Avatar customization items
 
 /**
  * Shop item rarity
@@ -350,6 +352,388 @@ export const SHOP_ITEMS: ShopItem[] = [
     isOwned: false,
     unlockLevel: 50,
   },
+
+  // ========== ROOM DECORATIONS ==========
+  // Furniture
+  {
+    id: 'deco_chair_001',
+    name: 'Basic Chair',
+    description: 'A simple chair for your avatar to sit on',
+    category: 'room_decorations',
+    rarity: 'common',
+    cost: 50,
+    emoji: '🪑',
+    isOwned: false,
+  },
+  {
+    id: 'deco_bench_001',
+    name: 'Weight Bench',
+    description: 'Classic flat bench for pressing',
+    category: 'room_decorations',
+    rarity: 'rare',
+    cost: 100,
+    emoji: '🛋️',
+    isOwned: false,
+  },
+  {
+    id: 'deco_rack_001',
+    name: 'Power Rack',
+    description: 'Full power rack for heavy lifting',
+    category: 'room_decorations',
+    rarity: 'legendary',
+    cost: 500,
+    emoji: '🏋️',
+    isOwned: false,
+    unlockLevel: 10,
+  },
+
+  // Posters
+  {
+    id: 'deco_poster_001',
+    name: 'Motivational Quote',
+    description: 'Inspirational fitness quote',
+    category: 'room_decorations',
+    rarity: 'common',
+    cost: 25,
+    emoji: '📜',
+    isOwned: false,
+  },
+  {
+    id: 'deco_poster_002',
+    name: 'Muscle Anatomy',
+    description: 'Detailed muscle group chart',
+    category: 'room_decorations',
+    rarity: 'rare',
+    cost: 30,
+    emoji: '💪',
+    isOwned: false,
+  },
+
+  // Equipment
+  {
+    id: 'deco_barbell_001',
+    name: 'Olympic Barbell',
+    description: 'Standard Olympic weightlifting bar',
+    category: 'room_decorations',
+    rarity: 'epic',
+    cost: 200,
+    emoji: '🏋️',
+    isOwned: false,
+    unlockLevel: 5,
+  },
+  {
+    id: 'deco_plates_001',
+    name: 'Weight Plates',
+    description: 'Set of standard weight plates',
+    category: 'room_decorations',
+    rarity: 'rare',
+    cost: 150,
+    emoji: '⚖️',
+    isOwned: false,
+  },
+
+  // Trophies
+  {
+    id: 'deco_trophy_001',
+    name: 'First PR Trophy',
+    description: 'Commemorate your first personal record',
+    category: 'room_decorations',
+    rarity: 'rare',
+    cost: 75,
+    emoji: '🏆',
+    isOwned: false,
+  },
+  {
+    id: 'deco_trophy_002',
+    name: 'Streak Champion',
+    description: 'Award for maintaining workout streak',
+    category: 'room_decorations',
+    rarity: 'epic',
+    cost: 100,
+    emoji: '🔥',
+    isOwned: false,
+    unlockLevel: 5,
+  },
+
+  // Plants
+  {
+    id: 'deco_plant_001',
+    name: 'Small Potted Plant',
+    description: 'A little greenery for your room',
+    category: 'room_decorations',
+    rarity: 'common',
+    cost: 20,
+    emoji: '🪴',
+    isOwned: false,
+  },
+  {
+    id: 'deco_plant_002',
+    name: 'Large Palm',
+    description: 'Big tropical palm tree',
+    category: 'room_decorations',
+    rarity: 'rare',
+    cost: 80,
+    emoji: '🌴',
+    isOwned: false,
+  },
+
+  // Room Themes
+  {
+    id: 'theme_dark_room',
+    name: 'Dark Room',
+    description: 'Moody, atmospheric lighting',
+    category: 'room_decorations',
+    rarity: 'rare',
+    cost: 100,
+    emoji: '🌑',
+    isOwned: false,
+  },
+  {
+    id: 'theme_bright',
+    name: 'Bright & Cheerful',
+    description: 'Light, energetic atmosphere',
+    category: 'room_decorations',
+    rarity: 'rare',
+    cost: 100,
+    emoji: '☀️',
+    isOwned: false,
+  },
+  {
+    id: 'theme_retro_80s',
+    name: 'Retro 80s',
+    description: 'Neon colors and vintage style',
+    category: 'room_decorations',
+    rarity: 'epic',
+    cost: 250,
+    emoji: '💜',
+    isOwned: false,
+    unlockLevel: 10,
+  },
+
+  // ========== AVATAR COSMETICS ==========
+  // Hairstyles
+  {
+    id: 'hair_default',
+    name: 'Default Hair',
+    description: 'Standard avatar hairstyle',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 0,
+    emoji: '💇',
+    isOwned: true,
+    isEquipped: true,
+  },
+  {
+    id: 'hair_short',
+    name: 'Short Cut',
+    description: 'Clean, short hairstyle',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 50,
+    emoji: '👱',
+    isOwned: false,
+  },
+  {
+    id: 'hair_long',
+    name: 'Long Flowing',
+    description: 'Flowing long hair',
+    category: 'avatar_cosmetics',
+    rarity: 'rare',
+    cost: 100,
+    emoji: '💁‍♀️',
+    isOwned: false,
+  },
+  {
+    id: 'hair_buzz',
+    name: 'Buzz Cut',
+    description: 'No-nonsense buzz cut',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 25,
+    emoji: '👨‍🦲',
+    isOwned: false,
+  },
+  {
+    id: 'hair_mohawk',
+    name: 'Mohawk',
+    description: 'Bold mohawk style',
+    category: 'avatar_cosmetics',
+    rarity: 'epic',
+    cost: 300,
+    emoji: '🎸',
+    isOwned: false,
+    unlockLevel: 15,
+  },
+  {
+    id: 'hair_ponytail',
+    name: 'Ponytail',
+    description: 'Practical ponytail',
+    category: 'avatar_cosmetics',
+    rarity: 'rare',
+    cost: 75,
+    emoji: '👩',
+    isOwned: false,
+  },
+
+  // Outfits
+  {
+    id: 'outfit_default',
+    name: 'Default Gear',
+    description: 'Standard workout outfit',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 0,
+    emoji: '👕',
+    isOwned: true,
+    isEquipped: true,
+  },
+  {
+    id: 'outfit_tank',
+    name: 'Tank Top',
+    description: 'Classic gym tank top',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 50,
+    emoji: '🎽',
+    isOwned: false,
+  },
+  {
+    id: 'outfit_hoodie',
+    name: 'Gym Hoodie',
+    description: 'Comfortable workout hoodie',
+    category: 'avatar_cosmetics',
+    rarity: 'rare',
+    cost: 150,
+    emoji: '🧥',
+    isOwned: false,
+  },
+  {
+    id: 'outfit_singlet',
+    name: 'Competition Singlet',
+    description: 'Professional lifting singlet',
+    category: 'avatar_cosmetics',
+    rarity: 'rare',
+    cost: 200,
+    emoji: '🏅',
+    isOwned: false,
+    unlockLevel: 10,
+  },
+  {
+    id: 'outfit_tracksuit',
+    name: 'Vintage Tracksuit',
+    description: 'Retro 80s tracksuit',
+    category: 'avatar_cosmetics',
+    rarity: 'epic',
+    cost: 400,
+    emoji: '👟',
+    isOwned: false,
+    unlockLevel: 20,
+  },
+  {
+    id: 'outfit_belt',
+    name: 'Lifting Belt',
+    description: 'Heavy-duty lifting belt',
+    category: 'avatar_cosmetics',
+    rarity: 'rare',
+    cost: 100,
+    emoji: '⚫',
+    isOwned: false,
+  },
+
+  // Accessories
+  {
+    id: 'acc_none',
+    name: 'No Accessories',
+    description: 'Clean look, no extras',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 0,
+    emoji: '🚫',
+    isOwned: true,
+    isEquipped: true,
+  },
+  {
+    id: 'acc_wraps',
+    name: 'Wrist Wraps',
+    description: 'Supportive wrist wraps',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 40,
+    emoji: '🧤',
+    isOwned: false,
+  },
+  {
+    id: 'acc_headband',
+    name: 'Headband',
+    description: 'Classic workout headband',
+    category: 'avatar_cosmetics',
+    rarity: 'rare',
+    cost: 80,
+    emoji: '🎀',
+    isOwned: false,
+  },
+  {
+    id: 'acc_gloves',
+    name: 'Lifting Gloves',
+    description: 'Protective lifting gloves',
+    category: 'avatar_cosmetics',
+    rarity: 'rare',
+    cost: 120,
+    emoji: '🧤',
+    isOwned: false,
+  },
+  {
+    id: 'acc_knee_sleeves',
+    name: 'Knee Sleeves',
+    description: 'Supportive knee sleeves',
+    category: 'avatar_cosmetics',
+    rarity: 'epic',
+    cost: 250,
+    emoji: '🦵',
+    isOwned: false,
+    unlockLevel: 15,
+  },
+  {
+    id: 'acc_chalk',
+    name: 'Chalk Bag',
+    description: 'Essential lifting chalk',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 30,
+    emoji: '🤚',
+    isOwned: false,
+  },
+  {
+    id: 'acc_bottle',
+    name: 'Water Bottle',
+    description: 'Stay hydrated',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 25,
+    emoji: '🧴',
+    isOwned: false,
+  },
+  {
+    id: 'acc_towel',
+    name: 'Gym Towel',
+    description: 'Wipe down your equipment',
+    category: 'avatar_cosmetics',
+    rarity: 'common',
+    cost: 20,
+    emoji: '🧣',
+    isOwned: false,
+  },
+  {
+    id: 'acc_stereo',
+    name: 'Portable Stereo',
+    description: 'Pump up the jams',
+    category: 'avatar_cosmetics',
+    rarity: 'epic',
+    cost: 350,
+    emoji: '📻',
+    isOwned: false,
+    unlockLevel: 25,
+  },
 ];
 
 /**
@@ -393,6 +777,12 @@ export interface UserInventory {
   equippedBadges: string[];
   equippedFrame?: string;
   equippedTitle?: string;
+  // Avatar cosmetics
+  equippedHairstyle?: string;
+  equippedOutfit?: string;
+  equippedAccessories: string[]; // Multiple accessories can be equipped
+  // Room decorations (owned but not placed - decoration placement is separate)
+  ownedDecorations: string[];
 }
 
 /**
@@ -406,4 +796,10 @@ export const DEFAULT_INVENTORY: UserInventory = {
   equippedBadges: [],
   equippedFrame: 'frame_default',
   equippedTitle: 'title_default',
+  // Avatar cosmetics defaults
+  equippedHairstyle: 'hair_default',
+  equippedOutfit: 'outfit_default',
+  equippedAccessories: ['acc_none'],
+  // Room decorations
+  ownedDecorations: [],
 };

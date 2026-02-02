@@ -27,22 +27,26 @@ CREATE INDEX IF NOT EXISTS idx_user_milestones_earned_at ON public.user_mileston
 ALTER TABLE public.user_milestones ENABLE ROW LEVEL SECURITY;
 
 -- Users can read their own milestones
-CREATE POLICY IF NOT EXISTS "Users can read own milestones"
+DROP POLICY IF EXISTS "Users can read own milestones" ON public.user_milestones;
+CREATE POLICY "Users can read own milestones"
   ON public.user_milestones FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Users can insert their own milestones
-CREATE POLICY IF NOT EXISTS "Users can insert own milestones"
+DROP POLICY IF EXISTS "Users can insert own milestones" ON public.user_milestones;
+CREATE POLICY "Users can insert own milestones"
   ON public.user_milestones FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Users can update their own milestones (for timestamp corrections)
-CREATE POLICY IF NOT EXISTS "Users can update own milestones"
+DROP POLICY IF EXISTS "Users can update own milestones" ON public.user_milestones;
+CREATE POLICY "Users can update own milestones"
   ON public.user_milestones FOR UPDATE
   USING (auth.uid() = user_id);
 
 -- Users can delete their own milestones
-CREATE POLICY IF NOT EXISTS "Users can delete own milestones"
+DROP POLICY IF EXISTS "Users can delete own milestones" ON public.user_milestones;
+CREATE POLICY "Users can delete own milestones"
   ON public.user_milestones FOR DELETE
   USING (auth.uid() = user_id);
 

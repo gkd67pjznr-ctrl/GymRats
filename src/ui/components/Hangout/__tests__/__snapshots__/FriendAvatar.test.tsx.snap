@@ -1,0 +1,1845 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FriendAvatar should handle missing avatarUrl gracefully 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Available"
+      displayName="Friend"
+      showStatus={true}
+      size="large"
+      status="online"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Online
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should handle missing displayName gracefully 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Available"
+      showStatus={true}
+      size="large"
+      status="online"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      User
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Online
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should not render friend indicator for non-friends 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Available"
+      displayName="Stranger"
+      showStatus={true}
+      size="large"
+      status="online"
+      userId="stranger-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Stranger
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Online
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should render correctly with online presence 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Available"
+      displayName="Friend Name"
+      showStatus={true}
+      size="large"
+      status="online"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend Name
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Online
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should render current user with "You" label 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Available"
+      displayName="Current User"
+      showStatus={true}
+      size="large"
+      status="online"
+      userId="current-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      You
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Online
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should render friend indicator for friends 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Available"
+      displayName="Friend Name"
+      showStatus={true}
+      size="large"
+      status="online"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend Name
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Online
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should render with offline status 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      displayName="Friend Name"
+      showStatus={true}
+      size="large"
+      status="offline"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend Name
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#A9AEC7",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#F2F4FF",
+            },
+          ]
+        }
+      >
+        Offline
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should render with resting status 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Resting"
+      displayName="Friend Name"
+      showStatus={true}
+      size="large"
+      status="resting"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend Name
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": undefined,
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Resting
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar should render with working_out status 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Bench pressing"
+      displayName="Friend Name"
+      showStatus={true}
+      size="large"
+      status="working_out"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend Name
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#A6FF00",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Bench pressing
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar status badges should show Offline badge for offline status 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      displayName="Friend"
+      showStatus={true}
+      size="large"
+      status="offline"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#A9AEC7",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#F2F4FF",
+            },
+          ]
+        }
+      >
+        Offline
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar status badges should show Online badge for online status 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Available"
+      displayName="Friend"
+      showStatus={true}
+      size="large"
+      status="online"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Online
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar status badges should show Resting badge for resting status 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Resting"
+      displayName="Friend"
+      showStatus={true}
+      size="large"
+      status="resting"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": undefined,
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Resting
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`FriendAvatar status badges should show Working Out badge for working_out status 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    {
+      "alignItems": "center",
+    }
+  }
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "alignItems": "center",
+        "opacity": 1,
+        "position": "relative",
+        "transform": [
+          {
+            "scale": 1,
+          },
+        ],
+      }
+    }
+  >
+    <AvatarView
+      activity="Bench pressing"
+      displayName="Friend"
+      showStatus={true}
+      size="large"
+      status="working_out"
+      userId="friend-user"
+    />
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "fontSize": 12,
+            "fontWeight": "600",
+            "marginTop": 8,
+            "maxWidth": 100,
+            "paddingHorizontal": 8,
+            "paddingVertical": 4,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+            "borderColor": "#e5e7eb",
+            "color": "#111827",
+          },
+        ]
+      }
+    >
+      Friend
+    </Text>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "borderRadius": 12,
+            "borderWidth": 2,
+            "minWidth": 24,
+            "paddingHorizontal": 6,
+            "paddingVertical": 2,
+            "position": "absolute",
+            "right": -6,
+            "top": -6,
+          },
+          {
+            "backgroundColor": "#A6FF00",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    >
+      <Text
+        numberOfLines={1}
+        style={
+          [
+            {
+              "fontSize": 10,
+              "fontWeight": "700",
+            },
+            {
+              "color": "#0A0A0D",
+            },
+          ]
+        }
+      >
+        Bench pressing
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "borderRadius": 8,
+            "borderWidth": 2,
+            "bottom": -4,
+            "height": 16,
+            "position": "absolute",
+            "right": -4,
+            "width": 16,
+          },
+          {
+            "backgroundColor": "#20FF9A",
+            "borderColor": "#ffffff",
+          },
+        ]
+      }
+    />
+  </View>
+</View>
+`;

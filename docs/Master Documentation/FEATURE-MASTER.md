@@ -1,7 +1,7 @@
 # FORGERANK FEATURE MASTER
 
-**Last Updated:** 2026-02-01
-**Version:** v0.3 (Post-organization)
+**Last Updated:** 2026-02-02
+**Version:** v0.4 (Post-merge)
 
 ---
 
@@ -13,41 +13,41 @@
 | [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](../features/workout-feature-workout-logging-ux.md) |
 | [Exercise Library](#exercise-library) | Done | 3/3 | [Details](../features/workout-feature-exercises.md) |
 | [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](../features/workout-feature-scoring.md) |
-| [AI Gym Buddy](#ai-gym-buddy) | In Progress | 9/11 | [Details](../features/workout-feature-cue-system.md) |
-| [Body Model](#body-model) | In Progress | 3/5 | [Details](../features/workout-feature-body-model.md) |
+| [AI Gym Buddy](#ai-gym-buddy) | In Progress | 9/11 | [Details](../features/ai-buddy/feature-ai-buddy.md) |
+| [Body Model](#body-model) | In Progress | 3/5 | [Details](../features/body-model/feature-body-model.md) |
 | [Authentication](#authentication) | In Progress | 7/10 | [Details](../features/authentication/feature-auth.md) |
 | [Social & Feed](#social--feed) | In Progress | 9/15 | [Details](../features/social-feed/feature-social.md) |
 | [Gamification](#gamification) | **Done** | 12/12 | [Details](../features/gamification/feature-gamification.md) |
-| [Notifications](#notifications) | In Progress | 1/4 | [Details](../features/social-feed/feature-notifications.md) |
-| [UI & Design](#ui--design) | In Progress | 12/15 | [Details](../features/ui-feature-ui.md) |
-| [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 6/12 | [Details](../features/ui-feature-ui-themes.md) |
+| [Notifications](#notifications) | In Progress | 1/4 | [Details](../features/notifications/feature-notifications.md) |
+| [UI & Design](#ui--design) | In Progress | 12/15 | [Details](../features/ui-design/feature-ui.md) |
+| [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 6/12 | [Details](../features/ui-themes/feature-ui-themes.md) |
 | [Backend & Sync](#backend--sync) | **Done** | 10/10 | [Details](../features/backend-sync/feature-backend.md) |
-| [Onboarding](#onboarding) | In Progress | 5/7 | [Details](../features/feature-onboarding.md) |
-| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 4/8 | [Details](../features/avatar/feature-avatars.md) |
-| [Workout Replay](#workout-replay) | Implemented | 5/5 | [Details](../features/workout-feature-workout-replay.md) |
-| [Forge DNA](#forge-dna) | ✅ Done | 4/4 | [Details](../features/forge-feature-forge-dna.md) |
-| [Forge Lab (Analytics)](#forge-lab-analytics) | In Progress | 5/6 | [Details](../features/forge-feature-forge-lab.md) |
-| [Forge Milestones](#forge-milestones) | Done | 5/5 | [Details](../features/gamification/feature-forge-milestones.md) |
+| [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/onboarding/feature-onboarding.md) |
+| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 6/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
+| [Workout Replay](#workout-replay) | **Done** | 5/5 | [Details](../features/workout-replay/feature-workout-replay.md) |
+| [Forge DNA](#forge-dna) | **Done** | 4/4 | [Details](../features/forge-dna/feature-forge-dna.md) |
+| [Forge Lab (Analytics)](#forge-lab-analytics) | **Done** | 6/6 | [Details](../features/forge-lab/feature-forge-lab.md) |
+| [Forge Milestones](#forge-milestones) | **Done** | 5/5 | [Details](../features/gamification/feature-forge-milestones.md) |
 
-**Launch Total:** 131/167 features (78%)
+**Launch Total:** 137/167 features (82%)
 
 ## Quick Summary — Post-Launch
 
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
-| [Leaderboards & Competitions](#leaderboards--competitions) | Planned | 0/10 | [Details](../features/social-feed/feature-leaderboards.md) |
-| [Integrations](#integrations) | Planned | 0/5 | [Details](../features/feature-integrations.md) |
-| [Online Competitions](#online-competitions) | Planned | 0/8 | [Details](../features/social-feed/feature-competitions.md) |
-| [Gym Finder / Map](#gym-finder--map) | Planned | 0/6 | [Details](../features/feature-gym-finder.md) |
-| [Live Workout Together](#live-workout-together) | Planned | 0/4 | [Details](../features/live-feature-live-together.md) |
-| [AI Coaching](#ai-coaching) | Planned | 0/4 | [Details](../features/feature-ai-coaching.md) |
-| [Templates Marketplace](#templates-marketplace) | Planned | 0/4 | [Details](../features/feature-templates-marketplace.md) |
-| [Training Journal](#training-journal) | Implemented | 4/4 | [Details](../features/feature-training-journal.md) |
-| [Forge Seasons](#forge-seasons) | Planned | 0/4 | [Details](../features/feature-forge-seasons.md) |
+| [Leaderboards & Competitions](#leaderboards--competitions) | Planned | 0/10 | [Details](../features/leaderboards/feature-leaderboards.md) |
+| [Integrations](#integrations) | Planned | 0/5 | [Details](../features/integrations/feature-integrations.md) |
+| [Online Competitions](#online-competitions) | Planned | 0/8 | [Details](../features/competitions/feature-competitions.md) |
+| [Gym Finder / Map](#gym-finder--map) | Planned | 0/6 | [Details](../features/gym-finder/feature-gym-finder.md) |
+| [Live Workout Together](#live-workout-together) | Planned | 0/4 | [Details](../features/live-workout-together/feature-live-together.md) |
+| [AI Coaching](#ai-coaching) | Planned | 0/4 | [Details](../features/ai-coaching/feature-ai-coaching.md) |
+| [Templates Marketplace](#templates-marketplace) | Planned | 0/4 | [Details](../features/templates-marketplace/feature-templates-marketplace.md) |
+| [Training Journal](#training-journal) | Implemented | 4/4 | [Details](../features/training-journal/feature-training-journal.md) |
+| [Forge Seasons](#forge-seasons) | Planned | 0/4 | [Details](../features/forge-seasons/feature-forge-seasons.md) |
 
 **Post-Launch Total:** 4/49 features (8%)
 
-**Grand Total:** 133/216 features (62%)
+**Grand Total:** 141/216 features (65%)
 
 ---
 
@@ -362,7 +362,7 @@ Full premium onboarding — all steps skippable.
 ---
 
 ## Avatar & Hangout Room
-**Status:** In Progress | **Progress:** 4/8 features
+**Status:** In Progress | **Progress:** 6/8 features
 **Previously:** Planned
 
 Finch-inspired virtual gym avatar that grows as you work out, living in a shared room with friends.
@@ -376,19 +376,18 @@ Finch-inspired virtual gym avatar that grows as you work out, living in a shared
 - Hangout room repository with CRUD operations
 - Hangout room store with Zustand state management
 - Basic UI components (AvatarView, HangoutRoom, FriendAvatar)
+- **Real-time presence tracking with Supabase subscriptions** (NEW)
+- **Avatar leave/return animations** (NEW)
+- **Avatar cosmetics system with equipped items** (NEW)
+- **Decoration system with 33 purchasable items** (NEW)
+- **Forge Token integration for purchases** (NEW)
 
-**In Progress:**
-- Real-time presence tracking with Supabase subscriptions
-- Avatar leave/return animations
-- Integration with workout start/end events
-- Avatar cosmetics system with equipped items
-- Decoration system with item management
-- Forge Token integration for purchases
-- Room admin controls
+**Remaining:**
+- Shop UI for browsing/purchasing decorations and cosmetics
 - Room decorations placement and management UI
 - Avatar customization interface
-- Presence status indicators
-- Room theme selection
+- Room admin controls (approve/reject decorations)
+- Integration with workout start/end events
 
 **Growth philosophy:** Represents the user caring about themselves and sticking to it. Inspirational, not just gamification.
 
@@ -410,7 +409,7 @@ Cinematic post-workout summary — THE share moment.
 ---
 
 ## Forge DNA
-**Status:** In Progress | **Progress:** 3/4 features
+**Status:** Done | **Progress:** 4/4 features
 **NEW — from 2026-01-29 brainstorm
 
 Visual fingerprint of your training identity — profile centerpiece.
@@ -419,30 +418,26 @@ Visual fingerprint of your training identity — profile centerpiece.
 - Training identity visualization (single beautiful graphic)
 - Muscle group balance display
 - Training style analysis (strength vs volume vs endurance)
-
-**Planned:**
 - Premium blur mechanic with conversion CTA
-- Premium blur mechanic (blur interesting sections to incentivize subscription)
 
 ---
 
 ## Forge Lab (Analytics)
-**Status:** Planned | **Progress:** 0/6 features
+**Status:** Done | **Progress:** 6/6 features
 **NEW — from 2026-01-29 brainstorm
 
 Premium analytics dashboard for serious lifters.
 
-**Free:**
-- Weight graph over time
+**Completed:**
+- Weight graph over time (victory-native charts)
 - Basic e1RM trends
-
-**Premium:**
 - Strength curves per exercise
 - Volume trends (weekly/monthly)
 - Muscle group balance analytics
-- Recovery patterns
-- Rank progression graphs
-- Integration data (Apple Health, MFP, Whoop imports)
+- Correlation insights with integration data
+- Forge Lab store with AsyncStorage persistence
+- useIsPremiumUser integration with authStore
+- All 32 tests passing
 
 ---
 
