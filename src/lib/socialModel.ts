@@ -5,6 +5,24 @@ export type ID = string;
 // ---------- Users / Relationships ----------
 export type PrivacyLevel = "public" | "friends";
 
+export type ReportReason =
+  | "spam"
+  | "harassment"
+  | "inappropriate"
+  | "misinformation"
+  | "other";
+
+export type Report = {
+  id: ID;
+  reporterUserId: ID;
+  targetPostId?: ID;
+  targetUserId?: ID;
+  reason: ReportReason;
+  additionalInfo?: string;
+  createdAtMs: number;
+  status: "pending" | "reviewed" | "resolved";
+};
+
 export type FriendStatus = "none" | "requested" | "pending" | "friends" | "blocked";
 
 export type FriendEdge = {

@@ -7,6 +7,7 @@ import type { LoggedSet } from "../loggerTypes";
 import { uid } from "../uid";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import { getGlobalPersistQueue } from "../utils/PersistQueue";
+import { useHangoutStore } from "../hangout/hangoutStore";
 
 const STORAGE_KEY = "currentSession.v2"; // New key for Zustand version
 
@@ -122,6 +123,17 @@ export const useCurrentSessionStore = create<CurrentSessionState>()(
         };
 
         set({ session: newSession });
+
+        // Update hangout presence to "working_out" when workout starts
+        // Only if user has a hangout room
+        const currentRoom = useHangoutStore.getState().currentRoom;
+        if (currentRoom) {
+          useHangoutStore.getState().updatePresence('working_out', 'Workout in progress')
+            .catch(err => {
+              if (__DEV__) console.error('[currentSessionStore] Failed to update presence:', err);
+            });
+        }
+
         return newSession;
       },
 
@@ -132,7 +144,18 @@ export const useCurrentSessionStore = create<CurrentSessionState>()(
 
       setSession: (session) => set({ session }),
 
-      clearSession: () => set({ session: null }),
+      clearSession: () => {
+        set({ session: null });
+
+        // Update hangout presence back to "online" when workout ends
+        const currentRoom = useHangoutStore.getState().currentRoom;
+        if (currentRoom) {
+          useHangoutStore.getState().updatePresence('online', 'Available')
+            .catch(err => {
+              if (__DEV__) console.error('[currentSessionStore] Failed to update presence:', err);
+            });
+        }
+      },
 
       setHydrated: (value) => set({ hydrated: value }),
     }),

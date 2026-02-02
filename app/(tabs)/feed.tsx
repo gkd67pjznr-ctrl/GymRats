@@ -13,6 +13,7 @@ import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
 import { timeAgo } from "../../src/lib/units";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
 import { SyncStatusIndicator } from "../../src/ui/components/SyncStatusIndicator";
+import { RankBadge, PhotoCard, PostOptions } from "../../src/ui/components/Social";
 
 type FeedMode = "public" | "friends";
 const ME = ME_ID;
@@ -40,6 +41,7 @@ export default function FeedTab() {
   const [mode, setMode] = useState<FeedMode>("public");
   const [refreshing, setRefreshing] = useState(false);
   const { pullFromServer: syncFeed } = useSocialStore();
+  const [selectedPostForOptions, setSelectedPostForOptions] = useState<WorkoutPost | null>(null);
 
   const userId = user?.id ?? ME;
 
@@ -141,7 +143,10 @@ export default function FeedTab() {
           {/* Header */}
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: FR.space.x3 }}>
             <View style={{ flex: 1, gap: 2 }}>
-              <Text style={{ color: c.text, ...FR.type.h3 }}>{displayName(p.post.authorUserId)}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
+                <Text style={{ color: c.text, ...FR.type.h3 }}>{displayName(p.post.authorUserId)}</Text>
+                <RankBadge post={p.post} size="sm" variant="minimal" showLabel={false} />
+              </View>
               <Text style={{ color: c.muted, ...FR.type.sub }}>
                 {p.post.title ?? "Workout"} • {timeAgo(p.post.createdAtMs)}
               </Text>
@@ -160,6 +165,15 @@ export default function FeedTab() {
               >
                 <Text style={{ color: c.text, ...FR.type.mono }}>{p.post.privacy.toUpperCase()}</Text>
               </View>
+              <Pressable
+                onPress={() => setSelectedPostForOptions(p.post)}
+                style={({ pressed }) => ({
+                  padding: 8,
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <Text style={{ color: c.muted, fontSize: 18 }}>•••</Text>
+              </Pressable>
             </View>
           </View>
 
@@ -181,6 +195,11 @@ export default function FeedTab() {
             <Text style={{ color: c.muted, ...FR.type.sub }}>
               {p.post.exerciseCount ?? 0} exercises • {p.post.setCount ?? 0} sets • {p.post.durationSec ? `${Math.round(p.post.durationSec / 60)}m` : "—"}
             </Text>
+          )}
+
+          {/* Attached Photos */}
+          {p.post.photoUrls && p.post.photoUrls.length > 0 && (
+            <PhotoCard photoUrls={p.post.photoUrls} />
           )}
 
           {/* Footer row */}
@@ -253,6 +272,15 @@ export default function FeedTab() {
             posts.map((p) => <PostCard key={p.id} post={p} />)
           )}
         </ScrollView>
+
+        {/* Post Options Modal */}
+        {selectedPostForOptions && (
+          <PostOptions
+            visible={selectedPostForOptions !== null}
+            onClose={() => setSelectedPostForOptions(null)}
+            post={selectedPostForOptions}
+          />
+        )}
       </View>
     </TabErrorBoundary>
     </ProtectedRoute>

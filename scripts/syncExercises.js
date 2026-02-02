@@ -4,9 +4,7 @@
  */
 
 const https = require('https');
-
-const API_KEY = '44fd4a9fecmsh502ff3c161ed2e0p1d49c5jsn9443a4b4b98a';
-const BASE_URL = 'https://exercisedb.p.rapidapi.com';
+const { EXERCISEDB_API_KEY, BASE_URL, HOST } = require('./apiConfig');
 
 function fetchExercises(bodyPart) {
   return new Promise((resolve, reject) => {
@@ -16,8 +14,8 @@ function fetchExercises(bodyPart) {
 
     https.get(url, {
       headers: {
-        'X-RapidAPI-Key': API_KEY,
-        'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com',
+        'X-RapidAPI-Key': EXERCISEDB_API_KEY,
+        'X-RapidAPI-Host': HOST,
       },
     }, (res) => {
       let data = '';

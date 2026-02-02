@@ -1,22 +1,128 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+**⚠️ PARALLEL WORK ASSUMPTION:** Assume there are multiple instances of Claude working in parallel in the same project/worktree. Additionally, assume there are multiple worktrees with many agents working in parallel across those worktrees. Coordinate accordingly — check for conflicts, use git before making changes, and communicate clearly about what you're working on.
+
+---
+
+This file provides guidance to Claude Code (claude.ai/code) when working on code in this repository.
+
+---
+
+## ⚡ COMMANDS - GO HERE IMMEDIATELY
+
+**IF YOU RECEIVED ONE OF THESE COMMANDS, follow the steps below exactly:**
+
+---
+
+### Primary Command
+
+**`Let's work`** → GO HERE FIRST, THEN SECOND, THEN START:
+1. **FIRST:** Read `docs/1-PROJECT-STATUS.md` → "Critical Issues" section (top priority items)
+2. **SECOND:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "Top 3 Priorities"
+3. **START:** Present top 3 priorities to user, confirm task, begin work
+
+---
+
+### Session Management Commands
+
+**`What should we do?`** → GO HERE FIRST, THEN START:
+1. **FIRST:** Read `docs/1-PROJECT-STATUS.md` → "Top 3 Priorities" (bottom of file)
+2. **START:** Present priorities to user, confirm task, begin work
+
+**`Start [task]`** → GO HERE FIRST, THEN START:
+1. **FIRST:** Read `docs/features/[task-name]/feature-*.md` (the feature file for that task)
+2. **SECOND:** Read `docs/3-CODEBASE-GUIDE.md` → relevant sections for patterns
+3. **START:** Begin implementation
+
+---
+
+### Data Sync Commands
+
+**`Exercise DB sync` or `sync exercises`** → GO HERE IN ORDER, THEN START:
+1. **FIRST:** Read `scripts/syncExercises.js` (sync script implementation)
+2. **SECOND:** Read `src/lib/exerciseAPI/syncService.ts` (sync service)
+3. **THIRD:** Read `docs/features/exercises/` (exercise feature docs)
+4. **FOURTH:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "DIRECTIVE: EXERCISE DB SYNC"
+5. **START:** Begin sync process
+
+**`Maestro scan`** → GO HERE IN ORDER, THEN START:
+1. **FIRST:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "MAESTRO DUTIES"
+2. **SECOND:** Read `docs/Master Documentation/4-FEATURE-MASTER.md` (feature status overview)
+3. **START:** Begin synchronization process
+
+---
+
+### Debugging Commands
+
+**`Fix errors` or `Fix expo errors`** → GO HERE IN ORDER, THEN START:
+1. **FIRST:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "DIRECTIVE: FIX EXPO ERROR LOGS"
+2. **SECOND:** Check `expo-errors/` folder for latest error log
+3. **START:** Fix errors, prompt user to restart, delete log file
+
+---
+
+## ⚠️ IF NO COMMAND GIVEN - GO HERE IMMEDIATELY
+
+**Default startup protocol when no specific command was provided:**
+
+1. **FIRST:** Read `docs/README.md` (navigation hub - 30 seconds max)
+2. **SECOND:** Read `docs/1-PROJECT-STATUS.md` → "Critical Issues" (30 seconds max)
+3. **THIRD:** Read `docs/3-CODEBASE-GUIDE.md` → "Directory Structure" (2 minutes max)
+4. **FOURTH:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "Top 3 Priorities" (30 seconds max)
+5. **THEN:** Assess priorities and present recommendations to user
+
+**STOP:** Do NOT read all files in every category. Read ONLY the sections specified above. Do not read all feature files. Do not read old/consolidated docs.
+
+---
+
+## QUICK COMMANDS SUMMARY
+
+| Command | Go Here First | Then Read | Then Start |
+|---------|--------------|-----------|-----------|
+| `Let's work` | 1-PROJECT-STATUS.md → Critical Issues | CLAUDE_WORKFLOW.md → Top 3 | Assess & present |
+| `What should we do?` | 1-PROJECT-STATUS.md → Top 3 Priorities | - | Assess & present |
+| `Start [task]` | features/[task]/feature-*.md | 3-CODEBASE-GUIDE.md | Begin |
+| `Exercise DB sync` | scripts/syncExercises.js | syncService.ts, feature docs | Begin sync |
+| `Maestro scan` | CLAUDE_WORKFLOW.md → Maestro Duties | FEATURE-MASTER.md | Begin sync |
+| `Fix errors` | CLAUDE_WORKFLOW.md → Fix Expo directive | expo-errors/ | Fix & restart |
+
+**See `docs/Project Management/admin-workflow-commands.md` for complete command reference.**
+
+---
+
+---
 
 ## Work Session Protocol
 
-**IMPORTANT:** Before starting any work, follow the workflow defined in `docs/CLAUDE_WORKFLOW.md`:
+For full workflow details, see `docs/Project Management/CLAUDE_WORKFLOW.md`:
 
 1. **Session Startup** - Run status check, assess priorities, confirm task with user
 2. **The Work Loop** - Build → Test → Fix → Test → Document → Score
 3. **Completion Scoring** - Every task scored 0-100% against defined metrics
 4. **Quality Gates** - Tests must pass, score >= 70% for acceptable
 
-Shortcut triggers:
-- "Let's work" → Full startup protocol
-- "What should we do?" → Priority assessment
-- "Start [task]" → Jump to specific task
+---
 
-See `docs/CLAUDE_WORKFLOW.md` for full protocol details.
+## Feature Documentation - Flat Structure Reference
+
+**IMPORTANT:** Feature docs are now in a flat structure. Each feature has its own folder.
+
+**Quick Feature Lookup:**
+| Feature | Folder | Feature File |
+|---------|--------|-------------|
+| AI Gym Buddy | `docs/features/ai-buddy/` | `feature-ai-buddy.md` |
+| Authentication | `docs/features/authentication/` | `feature-auth.md` |
+| Backend Sync | `docs/features/backend-sync/` | `feature-backend.md` |
+| Forge Lab | `docs/features/forge-lab/` | `feature-forge-lab.md` |
+| Forge DNA | `docs/features/forge-dna/` | `feature-forge-dna.md` |
+| Gamification | `docs/features/gamification/` | `feature-gamification.md` |
+| Notifications | `docs/features/notifications/` | `feature-notifications.md` |
+| Social Feed | `docs/features/social-feed/` | `feature-social.md` |
+| Workout Replay | `docs/features/workout-replay/` | `feature-workout-replay.md` |
+| Workout Logging | `docs/features/workout-logging/` | `feature-workout-logging-ux.md` |
+| UI Themes | `docs/features/ui-themes/` | `feature-ui-themes.md` |
+
+**See `docs/README.md` for complete feature index.**
 
 ---
 

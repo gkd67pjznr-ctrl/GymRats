@@ -16,6 +16,8 @@ import { resolveFriendConflict } from "../sync/ConflictResolver";
 import { subscribeToUserFriendships } from "../sync/RealtimeManager";
 import { useMemo } from "react";
 import { shallow } from "zustand/shallow";
+import { sendFriendRequestNotification } from "../notifications/notificationService";
+import { getUserProfile } from "./userProfileStore";
 
 const STORAGE_KEY = "friends.v2";
 
@@ -413,11 +415,28 @@ export function getFriendsSyncStatus(): SyncMetadata {
  */
 export function setupFriendsRealtime(userId: ID): () => void {
   return subscribeToUserFriendships(userId, {
-    onInsert: (edge) => {
+    onInsert: async (edge) => {
       // Handle new friendship edge
       useFriendsStore.setState((state) => ({
         edges: [...state.edges, edge],
       }));
+
+      // Send notification if this is a friend request for the current user
+      if (edge.otherUserId === userId && edge.status === 'pending') {
+        // This is a friend request TO the current user
+        try {
+          const senderProfile = await getUserProfile(edge.userId);
+          if (senderProfile) {
+            await sendFriendRequestNotification(
+              edge.userId,
+              senderProfile.displayName || edge.userId,
+              userId
+            );
+          }
+        } catch (error) {
+          console.error('[friendsStore] Failed to send friend request notification:', error);
+        }
+      }
     },
     onUpdate: (edge) => {
       // Handle updated friendship edge

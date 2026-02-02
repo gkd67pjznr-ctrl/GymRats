@@ -6,9 +6,7 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
-
-const API_KEY = '44fd4a9fecmsh502ff3c161ed2e0p1d49c5jsn9443a4b4b98a';
-const BASE_URL = 'exercisedb.p.rapidapi.com';
+const { EXERCISEDB_API_KEY, HOST } = require('./apiConfig');
 
 const BODY_PARTS = [
   'back', 'cardio', 'chest', 'core', 'forearms', 'lower arms',
@@ -47,12 +45,12 @@ function fetchExercisesPaginated(bodyPart) {
 
     const fetchPage = (offset) => {
       const options = {
-        hostname: 'exercisedb.p.rapidapi.com',
+        hostname: HOST,
         path: `/exercises?bodyPart=${encodeURIComponent(bodyPart)}&offset=${offset}&limit=${limit}`,
         method: 'GET',
         headers: {
-          'x-rapidapi-key': API_KEY,
-          'x-rapidapi-host': BASE_URL,
+          'x-rapidapi-key': EXERCISEDB_API_KEY,
+          'x-rapidapi-host': HOST,
         }
       };
 

@@ -62,10 +62,24 @@ export default function NotificationsScreen() {
       <Text style={{ color: c.text, fontWeight: "900", fontSize: 16, marginTop: 4 }}>Social</Text>
 
       <Row
-        title="Likes & Reactions"
+        title="Friend Requests"
+        subtitle="Notify me about new friend requests and acceptances."
+        value={prefs.friendRequests}
+        onToggle={() => setNotificationPref("friendRequests", !prefs.friendRequests)}
+      />
+
+      <Row
+        title="Direct Messages"
+        subtitle="Notify me when I receive a message."
+        value={prefs.directMessages}
+        onToggle={() => setNotificationPref("directMessages", !prefs.directMessages)}
+      />
+
+      <Row
+        title="Reactions"
         subtitle="Notify me when someone reacts to my posted workout."
-        value={prefs.likes}
-        onToggle={() => setNotificationPref("likes", !prefs.likes)}
+        value={prefs.reactions}
+        onToggle={() => setNotificationPref("reactions", !prefs.reactions)}
       />
 
       <Row
@@ -75,29 +89,22 @@ export default function NotificationsScreen() {
         onToggle={() => setNotificationPref("comments", !prefs.comments)}
       />
 
+      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16, marginTop: 6 }}>Workout</Text>
+
       <Row
-        title="Friend Requests"
-        subtitle="Notify me about new friend requests and acceptances."
-        value={prefs.friendRequests}
-        onToggle={() => setNotificationPref("friendRequests", !prefs.friendRequests)}
+        title="Rest Timer"
+        subtitle="Notify me when my rest timer completes (backgrounded workouts)."
+        value={prefs.restTimer}
+        onToggle={() => setNotificationPref("restTimer", !prefs.restTimer)}
       />
 
-      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16, marginTop: 6 }}>Chat</Text>
+      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16, marginTop: 6 }}>Competitions</Text>
 
       <Row
-        title="Messages"
-        subtitle="Notify me when I receive a message."
-        value={prefs.messages}
-        onToggle={() => setNotificationPref("messages", !prefs.messages)}
-      />
-
-      <Text style={{ color: c.text, fontWeight: "900", fontSize: 16, marginTop: 6 }}>Other</Text>
-
-      <Row
-        title="Store & Updates"
-        subtitle="Optional: new emote bundles, feature updates, promos."
-        value={prefs.marketing}
-        onToggle={() => setNotificationPref("marketing", !prefs.marketing)}
+        title="Competition Results"
+        subtitle="Notify me when a competition I entered has finished."
+        value={prefs.competitionResults}
+        onToggle={() => setNotificationPref("competitionResults", !prefs.competitionResults)}
       />
 
       <View

@@ -2,24 +2,25 @@
 // Main hangout room view component
 
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { makeDesignSystem } from "../../designSystem";
 import { useThemeColors } from "../../theme";
 import { useHangoutStore } from "../../../lib/hangout/hangoutStore";
 import { useUser } from "../../../lib/stores/authStore";
 import { FriendAvatar } from "./FriendAvatar";
 import { RoomDecoration } from "./RoomDecoration";
+import { CreateRoomModal } from "./CreateRoomModal";
+import { DecorationPicker } from "./DecorationPicker";
 import { subscribeToRoomPresence, subscribeToRoomDecorations } from "../../../lib/hangout/presenceTracker";
 import type { HangoutRoom } from "../../../lib/hangout/hangoutTypes";
 
 interface HangoutRoomProps {
   roomId?: string;
-  onAddDecoration?: () => void;
   onCustomizeAvatar?: () => void;
 }
 
 export function HangoutRoom(props: HangoutRoomProps) {
-  const { roomId, onAddDecoration, onCustomizeAvatar } = props;
+  const { roomId, onCustomizeAvatar } = props;
 
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
@@ -30,8 +31,13 @@ export function HangoutRoom(props: HangoutRoomProps) {
   const userPresences = useHangoutStore((state) => state.userPresences);
   const loadRoom = useHangoutStore((state) => state.loadRoom);
   const loadUserRoom = useHangoutStore((state) => state.loadUserRoom);
+  const createRoom = useHangoutStore((state) => state.createRoom);
+  const loading = useHangoutStore((state) => state.loading);
 
   const [cleanupFunctions, setCleanupFunctions] = useState<(() => void)[]>([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDecorationPicker, setShowDecorationPicker] = useState(false);
+  const addRoomDecoration = useHangoutStore((state) => state.addRoomDecoration);
 
   // Load room data
   useEffect(() => {
@@ -83,26 +89,34 @@ export function HangoutRoom(props: HangoutRoomProps) {
 
   if (!currentRoom) {
     return (
-      <View style={[styles.container, { backgroundColor: c.bg }]}>
-        <Text style={[styles.emptyText, { color: c.muted }]}>
-          {user ? "You don't have a hangout room yet." : "Please sign in to view the hangout room."}
-        </Text>
-        {user && (
-          <Pressable
-            onPress={() => {
-              // TODO: Implement create room functionality
-            }}
-            style={[
-              styles.createButton,
-              { backgroundColor: ds.tone.accent, borderColor: ds.tone.accent },
-            ]}
-          >
-            <Text style={[styles.createButtonText, { color: c.bg }]}>
-              Create Hangout Room
-            </Text>
-          </Pressable>
-        )}
-      </View>
+      <>
+        <View style={[styles.container, { backgroundColor: c.bg }]}>
+          <Text style={[styles.emptyText, { color: c.muted }]}>
+            {user ? "You don't have a hangout room yet." : "Please sign in to view the hangout room."}
+          </Text>
+          {user && (
+            <Pressable
+              onPress={() => setShowCreateModal(true)}
+              style={[
+                styles.createButton,
+                { backgroundColor: ds.tone.accent, borderColor: ds.tone.accent },
+              ]}
+            >
+              <Text style={[styles.createButtonText, { color: c.bg }]}>
+                Create Hangout Room
+              </Text>
+            </Pressable>
+          )}
+        </View>
+        <CreateRoomModal
+          visible={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onCreateRoom={async (name, theme) => {
+            return await createRoom(name, theme);
+          }}
+          loading={loading}
+        />
+      </>
     );
   }
 
@@ -179,19 +193,17 @@ export function HangoutRoom(props: HangoutRoomProps) {
 
       {/* Room Controls */}
       <View style={[styles.controls, { backgroundColor: c.card }]}>
-        {onAddDecoration && (
-          <Pressable
-            onPress={onAddDecoration}
-            style={[
-              styles.controlButton,
-              { backgroundColor: ds.tone.accent },
-            ]}
-          >
-            <Text style={[styles.controlButtonText, { color: c.bg }]}>
-              Add Decoration
-            </Text>
-          </Pressable>
-        )}
+        <Pressable
+          onPress={() => setShowDecorationPicker(true)}
+          style={[
+            styles.controlButton,
+            { backgroundColor: ds.tone.accent },
+          ]}
+        >
+          <Text style={[styles.controlButtonText, { color: c.bg }]}>
+            Add Decoration
+          </Text>
+        </Pressable>
 
         {onCustomizeAvatar && (
           <Pressable
@@ -207,15 +219,38 @@ export function HangoutRoom(props: HangoutRoomProps) {
           </Pressable>
         )}
       </View>
+
+      {/* Modals */}
+      <CreateRoomModal
+        visible={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreateRoom={async (name, theme) => {
+          return await createRoom(name, theme);
+        }}
+        loading={loading}
+      />
+      <DecorationPicker
+        visible={showDecorationPicker}
+        onClose={() => setShowDecorationPicker(false)}
+        onAddDecoration={async (itemId, itemType, position) => {
+          return await addRoomDecoration(itemId, itemType, position);
+        }}
+        loading={loading}
+      />
     </View>
   );
 }
 
 // Helper function to get room background color
 function getRoomBackgroundColor(room: HangoutRoom): string {
-  // TODO: Implement theme-based background colors
-  // For now, return a default dark background
-  return "#0a0a0a";
+  // Return theme-based background color
+  const themeColors: Record<string, string> = {
+    default: "#0a0a0a",
+    neon: "#0a0a1a",
+    nature: "#0a1a0a",
+    industrial: "#0d0d0d",
+  };
+  return themeColors[room.theme] || themeColors.default;
 }
 
 const styles = StyleSheet.create({

@@ -1,13 +1,14 @@
 // Test API connection
 const https = require('https');
+const { EXERCISEDB_API_KEY, HOST } = require('./apiConfig');
 
 const options = {
-  hostname: 'exercisedb.p.rapidapi.com',
+  hostname: HOST,
   path: '/exercises?limit=2',
   method: 'GET',
   headers: {
-    'x-rapidapi-key': '44fd4a9fecmsh502ff3c161ed2e0p1d49c5jsn9443a4b4b98a',
-    'x-rapidapi-host': 'exercisedb.p.rapidapi.com',
+    'x-rapidapi-key': EXERCISEDB_API_KEY,
+    'x-rapidapi-host': HOST,
     'accept': 'application/json'
   }
 };
