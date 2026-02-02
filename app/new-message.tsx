@@ -147,7 +147,7 @@ export default function NewMessageScreen() {
                         onPress={(e) => {
                           e.stopPropagation?.();
                           const thread = ensureThread(userId, p.id, "friendsOnly");
-                          router.push((`/dm/${thread.id}` as any) as any);
+                          router.push((`/dm/${thread}` as any) as any);
                         }}
                         style={({ pressed }) => ({
                           paddingVertical: 6,

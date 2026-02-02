@@ -18,6 +18,7 @@ import { useJournalEntries, useUser , addJournalEntry } from "../src/lib/stores"
 import JournalEntryCard from "../src/ui/components/Journal/JournalEntryCard";
 import JournalEntryModal from "../src/ui/components/Journal/JournalEntryModal";
 import { createJournalEntry, getTodayDate } from "../src/lib/journalModel";
+import { MuscleId } from "../src/data/consolidatedMuscleGroups";
 
 export default function JournalScreen() {
   const colors = useThemeColors();
@@ -123,7 +124,7 @@ export default function JournalScreen() {
     text: string;
     mood?: number;
     energy?: number;
-    soreness?: string[];
+    soreness?: MuscleId[];
     date?: string;
   }) => {
     if (!user?.id) return;

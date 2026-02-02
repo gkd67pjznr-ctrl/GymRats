@@ -3,6 +3,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
 import { useEffect, useRef } from 'react';
 import * as WebBrowser from 'expo-web-browser';
@@ -178,33 +179,35 @@ export default function RootLayout() {
 
   return (
     <ErrorBoundary name="root">
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <View style={{ flex: 1, position: 'relative' }}>
-          <Stack>
-            <Stack.Screen
-              name="onboarding"
-              options={{
-                headerShown: false,
-                presentation: 'card',
-              }}
-            />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="live-workout" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/login" options={{ headerShown: false, presentation: 'card' }} />
-            <Stack.Screen name="auth/signup" options={{ headerShown: false, presentation: 'card' }} />
-            <Stack.Screen name="auth/forgot-password" options={{ headerShown: false, presentation: 'card' }} />
-            <Stack.Screen name="auth/reset-password" options={{ headerShown: false, presentation: 'card' }} />
-            <Stack.Screen name="auth/verify-email" options={{ headerShown: false, presentation: 'card' }} />
-            <Stack.Screen name="hangout" options={{ headerShown: false }} />
-            <Stack.Screen name="avatar" options={{ headerShown: false }} />
-            <Stack.Screen name="live-workout-together" options={{ headerShown: false }} />
-            <Stack.Screen name="live-workout-with-friends" options={{ headerShown: false }} />
-          </Stack>
-          <PersistentTabBar />
-        </View>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <SafeAreaProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <View style={{ flex: 1, position: 'relative' }}>
+            <Stack>
+              <Stack.Screen
+                name="onboarding"
+                options={{
+                  headerShown: false,
+                  presentation: 'card',
+                }}
+              />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="live-workout" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/login" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="auth/signup" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="auth/forgot-password" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="auth/reset-password" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="auth/verify-email" options={{ headerShown: false, presentation: 'card' }} />
+              <Stack.Screen name="hangout/index" options={{ headerShown: false }} />
+              <Stack.Screen name="avatar/index" options={{ headerShown: false }} />
+              <Stack.Screen name="live-workout-together" options={{ headerShown: false }} />
+              <Stack.Screen name="live-workout-with-friends" options={{ headerShown: false }} />
+            </Stack>
+            <PersistentTabBar />
+          </View>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }

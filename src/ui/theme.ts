@@ -20,6 +20,7 @@ export interface ThemeColors {
   success: string;
   warning: string;
   danger: string;
+  accent: string;
 }
 
 export interface ThemeRadius {
@@ -41,6 +42,7 @@ const lightColors: ThemeColors = {
   success: "#10b981",
   warning: "#f59e0b",
   danger: "#ef4444",
+  accent: "#3b82f6", // Same as primary
 };
 
 const darkColors: ThemeColors = {
@@ -54,6 +56,7 @@ const darkColors: ThemeColors = {
   success: "#34d399",
   warning: "#fbbf24",
   danger: "#f87171",
+  accent: "#60a5fa", // Same as primary
 };
 
 const radius: ThemeRadius = {

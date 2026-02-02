@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { makeDesignSystem } from "../src/ui/designSystem";
 import { FR } from "../src/ui/forgerankStyle";
@@ -136,6 +137,7 @@ export default function LiveWorkoutWithFriends() {
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // Unified spacing/radii via FR
   const PAD = FR.space.x4;
@@ -427,7 +429,7 @@ export default function LiveWorkoutWithFriends() {
         initialSeconds={DEFAULT_REST_SECONDS}
         onClose={() => setRestVisible(false)}
         onDone={onRestTimerDoneFeedback}
-        workoutId={persisted?.session?.id}
+        workoutId={persisted?.id}
       />
 
       <PRCelebration
@@ -446,7 +448,12 @@ export default function LiveWorkoutWithFriends() {
       />
 
       <ScrollView
-        contentContainerStyle={{ padding: PAD, gap: GAP, paddingBottom: SCROLL_BOTTOM_PADDING }}
+        contentContainerStyle={{
+          paddingTop: insets.top + PAD,
+          paddingHorizontal: PAD,
+          paddingBottom: SCROLL_BOTTOM_PADDING + insets.bottom,
+          gap: GAP,
+        }}
         keyboardShouldPersistTaps="handled"
       >
         {/* Timer Bar */}
@@ -508,6 +515,10 @@ export default function LiveWorkoutWithFriends() {
           toggleDone={session.toggleDone}
           setWeightForSet={session.setWeightForSet}
           setRepsForSet={session.setRepsForSet}
+          incrementWeight={session.incrementWeightForSet}
+          decrementWeight={session.decrementWeightForSet}
+          incrementReps={session.incrementRepsForSet}
+          decrementReps={session.decrementRepsForSet}
           kgToLb={session.kgToLb}
           estimateE1RMLb={session.estimateE1RMLb}
           getLastSetForExercise={session.getLastSetForExercise}

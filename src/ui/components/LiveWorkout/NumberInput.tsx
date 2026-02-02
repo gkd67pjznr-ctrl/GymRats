@@ -53,6 +53,7 @@ export function NumberInput({
   onCommit,
   onDecrement,
   onIncrement,
+  onStepChange,
   min = 0,
   max = 9999,
   stepOptions,
