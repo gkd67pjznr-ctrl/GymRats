@@ -28,6 +28,8 @@ import {
   type ShopCategory,
   type UserInventory,
 } from '../gamification';
+import { getDefaultRoomDecorations } from '../hangout/roomSlots';
+import type { RoomDecorationsState } from '../hangout/roomSlots';
 import {
   dbUserToGamificationProfile,
   gamificationProfileToDbUpdate,
@@ -51,6 +53,9 @@ interface GamificationState {
   // Shop/Inventory
   inventory: UserInventory;
 
+  // Room Decorations (slot-based)
+  roomDecorations: RoomDecorationsState;
+
   // Actions
   setProfile: (profile: GamificationProfile) => void;
   setHydrated: (value: boolean) => void;
@@ -72,6 +77,7 @@ interface GamificationState {
   // Shop actions
   purchaseItem: (itemId: string) => { success: boolean; error?: string };
   equipItem: (itemId: string, category: ShopCategory) => { success: boolean; error?: string };
+  equipRoomDecoration: (slotId: string, itemId: string) => { success: boolean; error?: string };
 
   // Sync actions
   pullFromServer: () => Promise<void>;
@@ -93,6 +99,7 @@ export const useGamificationStore = create<GamificationState>()(
       },
       pendingLevelUp: null,
       inventory: { ...DEFAULT_INVENTORY },
+      roomDecorations: getDefaultRoomDecorations(),
 
       setProfile: (profile) =>
         set({
@@ -412,6 +419,37 @@ export const useGamificationStore = create<GamificationState>()(
         return { success: true };
       },
 
+      /**
+       * Equip decoration to a specific room slot
+       */
+      equipRoomDecoration: (slotId, itemId) => {
+        const state = get();
+        const item = getShopItem(itemId);
+
+        if (!item) {
+          return { success: false, error: 'Item not found' };
+        }
+
+        // Check if owned (or is free/default)
+        const isOwned = state.inventory.ownedItems.includes(itemId) ||
+                        state.inventory.ownedDecorations.includes(itemId) ||
+                        item.cost === 0;
+
+        if (!isOwned) {
+          return { success: false, error: 'Not owned' };
+        }
+
+        // Update room decoration state
+        set((state) => ({
+          roomDecorations: {
+            ...state.roomDecorations,
+            [slotId]: itemId,
+          },
+        }));
+
+        return { success: true };
+      },
+
       // Sync actions
       pullFromServer: async () => {
         const user = getUser();
@@ -622,6 +660,14 @@ export function useOwnedItems(): string[] {
   return useGamificationStore(selectOwnedItems);
 }
 
+// ========== Room Decorations Hooks ==========
+
+export const selectRoomDecorations = (state: GamificationState) => state.roomDecorations;
+
+export function useRoomDecorations(): RoomDecorationsState {
+  return useGamificationStore(selectRoomDecorations);
+}
+
 export function useShopItems(category?: ShopCategory): ShopItem[] {
   const inventory = useGamificationStore(selectInventory);
   const items = category
@@ -678,6 +724,14 @@ export function equipShopItem(itemId: string, category: ShopCategory): { success
   return useGamificationStore.getState().equipItem(itemId, category);
 }
 
+export function equipRoomDecoration(slotId: string, itemId: string): { success: boolean; error?: string } {
+  return useGamificationStore.getState().equipRoomDecoration(slotId, itemId);
+}
+
 export function getUserInventory(): UserInventory {
   return useGamificationStore.getState().inventory;
+}
+
+export function getRoomDecorations(): RoomDecorationsState {
+  return useGamificationStore.getState().roomDecorations;
 }
