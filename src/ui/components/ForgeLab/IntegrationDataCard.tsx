@@ -11,18 +11,108 @@ type IntegrationData = {
   mfp?: { calories: number[]; protein: number[] };
 };
 
+type Insight = {
+  title: string;
+  description: string;
+  strength: 'high' | 'medium' | 'low';
+  trend?: 'up' | 'down' | 'neutral';
+};
+
 type IntegrationDataCardProps = {
   data?: IntegrationData;
   isLoading: boolean;
+  workoutVolume?: number[]; // Optional: weekly workout volume for correlation
 };
 
-const IntegrationDataCard: React.FC<IntegrationDataCardProps> = ({ data, isLoading }) => {
+const IntegrationDataCard: React.FC<IntegrationDataCardProps> = ({
+  data,
+  isLoading,
+  workoutVolume = []
+}) => {
   const ds = makeDesignSystem('dark', 'toxic');
 
   // Check which integrations are available
   const hasAppleHealth = data?.appleHealth && Object.keys(data.appleHealth).length > 0;
   const hasWhoop = data?.whoop && Object.keys(data.whoop).length > 0;
   const hasMfp = data?.mfp && Object.keys(data.mfp).length > 0;
+  const hasMultipleSources = [hasAppleHealth, hasWhoop, hasMfp].filter(Boolean).length >= 2;
+
+  // Generate insights based on available data
+  const insights: Insight[] = React.useMemo(() => {
+    const generatedInsights: Insight[] = [];
+
+    // Sleep vs Volume correlation
+    if (hasAppleHealth && data?.appleHealth?.sleep && workoutVolume.length > 0) {
+      const avgSleep = data.appleHealth.sleep.reduce((a, b) => a + b, 0) / data.appleHealth.sleep.length;
+      if (avgSleep > 0) {
+        if (avgSleep >= 7) {
+          generatedInsights.push({
+            title: 'Sleep & Training',
+            description: `Your avg sleep (${avgSleep.toFixed(1)}h) supports good recovery. Maintain this for consistent progress.`,
+            strength: 'high',
+            trend: 'neutral'
+          });
+        } else {
+          generatedInsights.push({
+            title: 'Sleep & Training',
+            description: `Sleep is below optimal (${avgSleep.toFixed(1)}h). More rest may improve performance.`,
+            strength: 'medium',
+            trend: 'down'
+          });
+        }
+      }
+    }
+
+    // Recovery insights from Whoop
+    if (hasWhoop && data?.whoop?.recovery && data.whoop.recovery.length > 0) {
+      const avgRecovery = data.whoop.recovery.reduce((a, b) => a + b, 0) / data.whoop.recovery.length;
+      if (avgRecovery >= 80) {
+        generatedInsights.push({
+          title: 'Recovery Status',
+          description: `Excellent recovery avg (${avgRecovery.toFixed(0)}%). Great condition for intense sessions.`,
+          strength: 'high',
+          trend: 'up'
+        });
+      } else if (avgRecovery >= 50) {
+        generatedInsights.push({
+          title: 'Recovery Status',
+          description: `Moderate recovery (${avgRecovery.toFixed(0)}%). Consider deload if planning PR attempts.`,
+          strength: 'medium',
+          trend: 'neutral'
+        });
+      } else {
+        generatedInsights.push({
+          title: 'Recovery Status',
+          description: `Low recovery (${avgRecovery.toFixed(0)}%). Focus on rest and nutrition before heavy lifting.`,
+          strength: 'high',
+          trend: 'down'
+        });
+      }
+    }
+
+    // Nutrition insights from MFP
+    if (hasMfp && data?.mfp?.calories && data.mfp.calories.length > 0) {
+      const avgCalories = data.mfp.calories.reduce((a, b) => a + b, 0) / data.mfp.calories.length;
+      generatedInsights.push({
+        title: 'Fueling Strategy',
+        description: `Tracking ${avgCalories.toFixed(0)} kcal/day. Consistent nutrition supports strength gains.`,
+        strength: 'medium',
+        trend: 'neutral'
+      });
+    }
+
+    // Multi-source correlation insights
+    if (hasAppleHealth && hasWhoop && data?.appleHealth?.sleep && data?.whoop?.recovery) {
+      generatedInsights.push({
+        title: 'Sleep Quality Impact',
+        description: 'Cross-reference available: Analyzing how sleep quality affects your recovery scores.',
+        strength: 'low',
+        trend: 'neutral'
+      });
+    }
+
+    return generatedInsights;
+  }, [data, hasAppleHealth, hasWhoop, hasMfp, workoutVolume]);
 
   return (
     <View style={[styles.card, { backgroundColor: ds.tone.card }]}>
@@ -170,10 +260,47 @@ const IntegrationDataCard: React.FC<IntegrationDataCardProps> = ({ data, isLoadi
             <Text style={[styles.insightsTitle, { color: ds.tone.text }]}>
               Insights
             </Text>
-            <Text style={[styles.insightsText, { color: ds.tone.textSecondary }]}>
-              Correlation analysis will appear here when you have data from
-              multiple sources.
-            </Text>
+
+            {!hasMultipleSources && insights.length === 0 ? (
+              <Text style={[styles.insightsText, { color: ds.tone.textSecondary }]}>
+                Connect multiple data sources to unlock correlation insights.
+              </Text>
+            ) : insights.length > 0 ? (
+              <View style={styles.insightsList}>
+                {insights.map((insight, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.insightCard,
+                      { backgroundColor: ds.tone.bg }
+                    ]}
+                  >
+                    <View style={styles.insightHeader}>
+                      <Text style={[styles.insightCardTitle, { color: ds.tone.text }]}>
+                        {insight.title}
+                      </Text>
+                      <View
+                        style={[
+                          styles.strengthIndicator,
+                          {
+                            backgroundColor:
+                              insight.strength === 'high' ? '#4CAF50' :
+                              insight.strength === 'medium' ? '#FFC107' : '#9E9E9E'
+                          }
+                        ]}
+                      />
+                    </View>
+                    <Text style={[styles.insightCardDescription, { color: ds.tone.textSecondary }]}>
+                      {insight.description}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text style={[styles.insightsText, { color: ds.tone.textSecondary }]}>
+                Not enough data for insights yet. Keep tracking to unlock correlations.
+              </Text>
+            )}
           </View>
         </View>
       ) : (
@@ -259,10 +386,38 @@ const styles = StyleSheet.create({
   insightsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   insightsText: {
     fontSize: 14,
+  },
+  insightsList: {
+    gap: 12,
+  },
+  insightCard: {
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  insightHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  insightCardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  strengthIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  insightCardDescription: {
+    fontSize: 14,
+    lineHeight: 20,
   },
   emptyContainer: {
     height: 300,

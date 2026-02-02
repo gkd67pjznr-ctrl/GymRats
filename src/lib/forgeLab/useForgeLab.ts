@@ -64,18 +64,48 @@ export const useMuscleGroupVolume = () => {
  * Hook for checking if user has premium access
  */
 export const useIsPremiumUser = () => {
-  // TODO: Implement actual premium check
-  // For now, we'll assume premium is enabled for development
-  return true;
+  // Import from authStore to get subscription tier
+  // Use dynamic import to avoid circular dependencies
+  const useAuthStore = require('@/src/lib/stores/authStore').useAuthStore;
+  const subscriptionTier = useAuthStore((state) => state.subscriptionTier);
+
+  // User has premium access if they have premium or legendary tier
+  return subscriptionTier === 'premium' || subscriptionTier === 'legendary';
 };
 
 /**
  * Hook for filtering data by date range
+ *
+ * Note: The primary filtering happens in the store's loadData() function
+ * which filters sessions by date range before computing analytics.
+ * This hook provides additional filtering capabilities for computed data.
  */
 export const useFilteredData = (data: ForgeLabData | null, dateRange: string) => {
   if (!data) return null;
 
-  // TODO: Implement actual date range filtering
-  // This is a placeholder implementation
+  // The data from the store is already filtered by dateRange
+  // This hook provides a consistent interface for potential future enhancements
+  // such as client-side filtering of historical data for comparison views
+
+  // For now, return the data as-is since the store handles filtering
+  // Future enhancements could include:
+  // - Comparison period data (e.g., show this week vs last week)
+  // - Rolling window calculations
+  // - Custom date range filtering for specific chart components
+
   return data;
+};
+
+/**
+ * Hook for getting comparison data (previous period)
+ * Useful for showing trends like "this week vs last week"
+ */
+export const useComparisonData = (currentData: ForgeLabData | null) => {
+  if (!currentData) return null;
+
+  // This is a placeholder for future comparison functionality
+  // Could compare current period with previous period
+  // For example, if current dateRange is '1W', compare with previous week
+
+  return null;
 };

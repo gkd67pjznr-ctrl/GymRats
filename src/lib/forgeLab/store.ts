@@ -2,11 +2,12 @@
  * Forge Lab Store - Zustand store for Forge Lab analytics
  */
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { ForgeLabState } from './types';
 import { compileForgeLabData } from './calculator';
 import { getWorkoutHistory } from '@/src/lib/stores/workoutStore';
 import { getUserBodyweight, getUserWeightHistory } from '@/src/lib/stores/settingsStore';
+import { createQueuedJSONStorage } from '@/src/lib/stores/storage/createQueuedAsyncStorage';
 import type { WorkoutSession } from '@/src/lib/workoutModel';
 
 /**
@@ -96,14 +97,14 @@ export const useForgeLabStore = create<ForgeLabState>()(
 
           // Skip recomputation if hash matches and we have data
           if (lastHash === hash && existingData) {
-            if (process.env.NODE_ENV !== 'production') {
+            if (__DEV__) {
               console.log('Forge Lab cache hit:', hash);
             }
             set({ loading: false });
             return;
           }
 
-          if (process.env.NODE_ENV !== 'production') {
+          if (__DEV__) {
             console.log('Forge Lab cache miss, computing:', hash);
           }
 
@@ -147,7 +148,7 @@ export const useForgeLabStore = create<ForgeLabState>()(
     }),
     {
       name: 'forgeLabStore',
-      storage: createJSONStorage(() => localStorage)
+      storage: createQueuedJSONStorage(),
     }
   )
 );

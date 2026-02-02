@@ -13,6 +13,9 @@ import type { SyncMetadata } from "../sync/syncTypes";
 import { getUser } from "./authStore";
 import { networkMonitor } from "../sync/NetworkMonitor";
 import { realtimeManager } from "../sync/RealtimeManager";
+import { sendDirectMessageNotification } from "../notifications/notificationService";
+import { getUserProfile } from "./userProfileStore";
+import { getUser } from "./authStore";
 
 // Import from new Zustand friendsStore location
 import {
@@ -509,9 +512,11 @@ export function setupChatRealtime(threadId: ID): () => void {
   return realtimeManager.subscribeToBroadcast(
     `chat:${threadId}`,
     'message',
-    (payload) => {
+    async (payload) => {
       // Handle incoming message
       const msg = payload as ChatMessage;
+      const currentUser = getUser();
+
       useChatStore.setState((state) => {
         // Check if message already exists
         if (state.messages.find(m => m.id === msg.id)) {
@@ -527,6 +532,24 @@ export function setupChatRealtime(threadId: ID): () => void {
           ),
         };
       });
+
+      // Send notification if message is from another user
+      if (currentUser && msg.senderUserId !== currentUser.id) {
+        try {
+          const senderProfile = await getUserProfile(msg.senderUserId);
+          if (senderProfile) {
+            await sendDirectMessageNotification(
+              msg.senderUserId,
+              senderProfile.displayName || msg.senderUserId,
+              currentUser.id,
+              threadId,
+              msg.text
+            );
+          }
+        } catch (error) {
+          console.error('[chatStore] Failed to send DM notification:', error);
+        }
+      }
     }
   );
 }
