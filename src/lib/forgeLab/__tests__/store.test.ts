@@ -32,8 +32,9 @@ describe('Forge Lab Store', () => {
       data: null,
       loading: false,
       error: null,
-      dateRange: '3M'
-    }, true); // true = replace state instead of merging
+      dateRange: '3M',
+      lastHash: undefined
+    });
   });
 
   it('should have initial state', () => {

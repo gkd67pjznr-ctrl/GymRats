@@ -4,6 +4,7 @@
 import { useEffect } from 'react';
 import { useForgeLabStore, useForgeLabData, useForgeLabActions, useForgeLabDateRange } from './store';
 import { ForgeLabData } from './types';
+import { useIsPremiumUser as useRealIsPremiumUser } from '@/src/lib/hooks/useIsPremiumUser';
 
 /**
  * Main hook for Forge Lab functionality
@@ -64,18 +65,18 @@ export const useMuscleGroupVolume = () => {
  * Hook for checking if user has premium access
  */
 export const useIsPremiumUser = () => {
-  // TODO: Implement actual premium check
-  // For now, we'll assume premium is enabled for development
-  return true;
+  return useRealIsPremiumUser();
 };
 
 /**
  * Hook for filtering data by date range
+ * Note: Date range filtering is already applied at the store level when loading data.
+ * This hook is kept for future client-side filtering needs.
  */
 export const useFilteredData = (data: ForgeLabData | null, dateRange: string) => {
   if (!data) return null;
 
-  // TODO: Implement actual date range filtering
-  // This is a placeholder implementation
+  // Date range filtering is already applied at the store level
+  // Additional client-side filtering could be implemented here if needed
   return data;
 };

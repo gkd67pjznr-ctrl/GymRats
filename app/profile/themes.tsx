@@ -9,12 +9,12 @@ import { useThemeStore, useActivePalette } from "@/src/lib/stores/themeStore";
 import { ProtectedRoute } from "@/src/ui/components/ProtectedRoute";
 import { ThemePalette } from "@/src/lib/themeDatabase";
 import { ThemePreview } from "@/src/ui/components/ThemePreview";
-import { ThemeCard } from "@/src/ui/components/ThemeCard";
 
 /**
- * Theme Card Component
+ * Local Theme Card Component
+ * Note: Renamed from ThemeCard to LocalThemeCard to avoid duplicate declaration error
  */
-function ThemeCard({
+function LocalThemeCard({
   theme,
   isActive,
   onPress,
@@ -224,7 +224,7 @@ export default function ThemeSelectionScreen() {
         {/* Theme Grid */}
         <View style={{ gap: 12 }}>
           {themes.map((theme) => (
-            <ThemeCard
+            <LocalThemeCard
               key={theme.id}
               theme={theme}
               isActive={activePalette?.id === theme.id}

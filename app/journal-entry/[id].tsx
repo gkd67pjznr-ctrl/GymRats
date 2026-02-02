@@ -16,7 +16,7 @@ import { useThemeColors } from "../../src/ui/theme";
 import { makeDesignSystem } from "../../src/ui/designSystem";
 import { useJournalEntry, useUser, updateJournalEntry, removeJournalEntry } from "../../src/lib/stores";
 import { formatJournalDate } from "../../src/lib/journalModel";
-import { MUSCLE_GROUPS } from "../../src/data/consolidatedMuscleGroups";
+import { MUSCLE_GROUPS, MuscleId } from "../../src/data/consolidatedMuscleGroups";
 import JournalEntryModal from "../../src/ui/components/Journal/JournalEntryModal";
 
 export default function JournalEntryDetail() {
@@ -56,7 +56,7 @@ export default function JournalEntryDetail() {
     text: string;
     mood?: number;
     energy?: number;
-    soreness?: string[];
+    soreness?: MuscleId[];
     date?: string;
   }) => {
     setIsSaving(true);

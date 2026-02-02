@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { makeDesignSystem } from "../src/ui/designSystem";
 import { FR } from "../src/ui/forgerankStyle";
@@ -144,6 +145,7 @@ export default function LiveWorkout() {
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // Unified spacing/radii via FR
   const PAD = FR.space.x4;
@@ -594,7 +596,12 @@ export default function LiveWorkout() {
 
       {/* Main Content */}
       <ScrollView
-        contentContainerStyle={{ padding: PAD, gap: GAP, paddingBottom: SCROLL_BOTTOM_PADDING }}
+        contentContainerStyle={{
+          paddingTop: PAD,
+          paddingHorizontal: PAD,
+          paddingBottom: SCROLL_BOTTOM_PADDING + insets.bottom,
+          gap: GAP,
+        }}
         keyboardShouldPersistTaps="handled"
       >
         {/* Workout Notes */}

@@ -14,6 +14,7 @@ export type NotificationPrefs = {
   restTimer: boolean;
   reactions: boolean;
   comments: boolean;
+  marketing: boolean;
 };
 
 const DEFAULTS: NotificationPrefs = {
@@ -23,6 +24,7 @@ const DEFAULTS: NotificationPrefs = {
   restTimer: true,
   reactions: true,
   comments: true,
+  marketing: false,
 };
 
 let prefs: NotificationPrefs = { ...DEFAULTS };

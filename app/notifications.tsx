@@ -64,8 +64,8 @@ export default function NotificationsScreen() {
       <Row
         title="Likes & Reactions"
         subtitle="Notify me when someone reacts to my posted workout."
-        value={prefs.likes}
-        onToggle={() => setNotificationPref("likes", !prefs.likes)}
+        value={prefs.reactions}
+        onToggle={() => setNotificationPref("reactions", !prefs.reactions)}
       />
 
       <Row
@@ -87,8 +87,8 @@ export default function NotificationsScreen() {
       <Row
         title="Messages"
         subtitle="Notify me when I receive a message."
-        value={prefs.messages}
-        onToggle={() => setNotificationPref("messages", !prefs.messages)}
+        value={prefs.directMessages}
+        onToggle={() => setNotificationPref("directMessages", !prefs.directMessages)}
       />
 
       <Text style={{ color: c.text, fontWeight: "900", fontSize: 16, marginTop: 6 }}>Other</Text>

@@ -8,6 +8,7 @@ import { compileForgeLabData } from './calculator';
 import { getWorkoutHistory } from '@/src/lib/stores/workoutStore';
 import { getUserBodyweight, getUserWeightHistory } from '@/src/lib/stores/settingsStore';
 import type { WorkoutSession } from '@/src/lib/workoutModel';
+import { createQueuedJSONStorage } from '@/src/lib/stores/storage/createQueuedAsyncStorage';
 
 /**
  * Compute a hash of input data to detect changes
@@ -147,7 +148,7 @@ export const useForgeLabStore = create<ForgeLabState>()(
     }),
     {
       name: 'forgeLabStore',
-      storage: createJSONStorage(() => localStorage)
+      storage: createQueuedJSONStorage()
     }
   )
 );
