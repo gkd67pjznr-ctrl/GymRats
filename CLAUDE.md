@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+**⚠️ PARALLEL WORK ASSUMPTION:** Assume there are multiple instances of Claude working in parallel in the same project/worktree. Additionally, assume there are multiple worktrees with many agents working in parallel across those worktrees. Coordinate accordingly — check for conflicts, use git before making changes, and communicate clearly about what you're working on.
+
+---
+
 This file provides guidance to Claude Code (claude.ai/code) when working on code in this repository.
 
 ---
