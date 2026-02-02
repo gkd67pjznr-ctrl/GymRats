@@ -380,6 +380,30 @@ export const useGamificationStore = create<GamificationState>()(
                 inventory.equippedBadges = [...inventory.equippedBadges, itemId];
               }
               break;
+            case 'avatar_cosmetics':
+              // Handle avatar cosmetics based on item ID prefix
+              if (itemId.startsWith('hair_')) {
+                inventory.equippedHairstyle = itemId;
+              } else if (itemId.startsWith('outfit_')) {
+                inventory.equippedOutfit = itemId;
+              } else if (itemId.startsWith('acc_')) {
+                // Accessories can have multiple equipped (but not 'acc_none')
+                if (itemId === 'acc_none') {
+                  inventory.equippedAccessories = ['acc_none'];
+                } else if (!inventory.equippedAccessories.includes(itemId)) {
+                  // Remove 'acc_none' if equipping a real accessory
+                  const withoutNone = inventory.equippedAccessories.filter(a => a !== 'acc_none');
+                  inventory.equippedAccessories = [...withoutNone, itemId];
+                }
+              }
+              break;
+            case 'room_decorations':
+              // Decorations are added to owned but not equipped here
+              // They are placed in the room separately
+              if (!inventory.ownedDecorations.includes(itemId)) {
+                inventory.ownedDecorations = [...inventory.ownedDecorations, itemId];
+              }
+              break;
           }
 
           return { inventory };
@@ -599,15 +623,18 @@ export function useOwnedItems(): string[] {
 }
 
 export function useShopItems(category?: ShopCategory): ShopItem[] {
-  const ownedItems = useOwnedItems();
+  const inventory = useGamificationStore(selectInventory);
   const items = category
     ? SHOP_ITEMS.filter(item => item.category === category)
     : SHOP_ITEMS;
 
   return items.map(item => ({
     ...item,
-    isOwned: ownedItems.includes(item.id) || item.cost === 0,
-    isEquipped: getCategoryEquipped(item.category, item.id, useGamificationStore.getState().inventory),
+    isOwned:
+      inventory.ownedItems.includes(item.id) ||
+      (item.category === 'room_decorations' && inventory.ownedDecorations.includes(item.id)) ||
+      item.cost === 0,
+    isEquipped: getCategoryEquipped(item.category, item.id, inventory),
   }));
 }
 
@@ -625,6 +652,17 @@ function getCategoryEquipped(category: ShopCategory, itemId: string, inventory: 
       return inventory.equippedTitle === itemId;
     case 'profile_badges':
       return inventory.equippedBadges.includes(itemId);
+    case 'avatar_cosmetics':
+      if (itemId.startsWith('hair_')) {
+        return inventory.equippedHairstyle === itemId;
+      } else if (itemId.startsWith('outfit_')) {
+        return inventory.equippedOutfit === itemId;
+      } else if (itemId.startsWith('acc_')) {
+        return inventory.equippedAccessories.includes(itemId);
+      }
+      return false;
+    case 'room_decorations':
+      return inventory.ownedDecorations.includes(itemId);
     default:
       return false;
   }
