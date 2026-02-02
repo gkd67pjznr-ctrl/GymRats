@@ -3,6 +3,9 @@
 -- Created: 2026-01-28
 -- Dependencies: 001_initial_schema.sql, 002_enhanced_rls_policies.sql
 
+-- Enable pg_trgm extension for text search indexes
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- ============================================================================
 -- FUNCTION: search_users
 -- Allows searching users by display name or email while protecting privacy

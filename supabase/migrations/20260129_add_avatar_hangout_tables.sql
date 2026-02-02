@@ -121,7 +121,7 @@ CREATE POLICY "Users can view presence in rooms they have access to"
         )
     );
 
-CREATE POLICY "Users can update their own presence"
+CREATE POLICY "Users can insert their own presence"
     ON public.user_presence FOR INSERT
     WITH CHECK (user_id = auth.uid());
 

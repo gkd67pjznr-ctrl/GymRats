@@ -328,21 +328,14 @@ CREATE POLICY "Host can delete own sessions"
   ON public.live_sessions FOR DELETE
   USING (auth.uid() = host_id);
 
-CREATE POLICY "Participants can view active sessions they're in"
-  ON public.live_sessions FOR SELECT
-  USING (
-    status = 'active' AND (
-      auth.uid() = host_id OR
-      EXISTS (
-        SELECT 1 FROM public.live_session_participants p
-        WHERE p.session_id = id AND p.user_id = auth.uid()
-      )
-    )
-  );
-
 CREATE POLICY "Anyone can view public active sessions for discovery"
   ON public.live_sessions FOR SELECT
   USING (status = 'active');
+
+-- Host can view their own sessions (including inactive ones)
+CREATE POLICY "Host can view own sessions"
+  ON public.live_sessions FOR SELECT
+  USING (auth.uid() = host_id);
 
 -- Participants: Users can manage their own participation
 CREATE POLICY "Users can join sessions"
@@ -362,11 +355,9 @@ CREATE POLICY "Session participants can view each other"
   USING (
     auth.uid() = user_id OR
     EXISTS (
-      SELECT 1 FROM public.live_session_participants p
-      WHERE p.session_id = (
-        SELECT session_id FROM public.live_session_participants
-        WHERE user_id = auth.uid() LIMIT 1
-      )
+      SELECT 1 FROM public.live_sessions ls
+      WHERE ls.id = live_session_participants.session_id
+        AND ls.host_id = auth.uid()
     )
   );
 
@@ -460,7 +451,7 @@ CREATE POLICY "Recipients can update their invitations"
   USING (auth.uid() = recipient_id);
 
 -- Workout presence: Users can update their own presence
-CREATE POLICY "Users can update own workout presence"
+CREATE POLICY "Users can insert own workout presence"
   ON public.workout_presence FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 

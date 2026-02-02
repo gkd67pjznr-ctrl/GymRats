@@ -27,7 +27,8 @@ export function hasTestSupabaseCredentials(): boolean {
     'example',
     'change-me',
     'insert-',
-    'supabase.co', // Default Supabase domain without project-specific subdomain
+    // 'supabase.co', // REMOVED: This incorrectly flags real Supabase URLs
+    'https://placeholder.supabase.co', // More specific placeholder check
   ];
 
   const isPlaceholderUrl = placeholderPatterns.some(pattern =>

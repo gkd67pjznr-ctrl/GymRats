@@ -121,7 +121,11 @@ CREATE TRIGGER trigger_create_notification_for_friend_request
 -- ============================================================================
 -- FUNCTION: create_notification_for_direct_message()
 -- Trigger function to create notification when direct message is sent
+-- Note: DISABLED - chat_threads and chat_messages tables don't exist yet
+-- This will be implemented when the chat system is added
 -- ============================================================================
+-- The function and trigger below are commented out until chat tables are created
+/*
 CREATE OR REPLACE FUNCTION public.create_notification_for_direct_message()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -132,15 +136,15 @@ BEGIN
   -- Get sender's display name
   SELECT display_name INTO sender_name
   FROM public.users
-  WHERE id = NEW.sender_id;
+  WHERE id = NEW.user_id;
 
   -- Get the other user in the thread (not the sender)
   SELECT
     CASE
-      WHEN user1_id = NEW.sender_id THEN user2_id
+      WHEN user1_id = NEW.user_id THEN user2_id
       ELSE user1_id
     END INTO thread_other_user_id
-  FROM public.threads
+  FROM public.chat_threads
   WHERE id = NEW.thread_id;
 
   -- Create message preview (truncate to 50 chars)
@@ -150,28 +154,30 @@ BEGIN
       ELSE NEW.message
     END;
 
-  -- Create notification for receiver
-  INSERT INTO public.notifications (
-    user_id,
-    type,
-    title,
-    body,
-    data,
-    created_at
-  ) VALUES (
-    thread_other_user_id,
-    'dm_received',
-    'New Message from ' || sender_name,
-    message_preview,
-    jsonb_build_object(
-      'type', 'dm_received',
-      'screen', 'dm',
-      'threadId', NEW.thread_id,
-      'senderId', NEW.sender_id,
-      'senderName', sender_name
-    ),
-    NOW()
-  );
+  -- Create notification for receiver (only if not blocked)
+  IF thread_other_user_id IS NOT NULL THEN
+    INSERT INTO public.notifications (
+      user_id,
+      type,
+      title,
+      body,
+      data,
+      created_at
+    ) VALUES (
+      thread_other_user_id,
+      'dm_received',
+      'New Message from ' || sender_name,
+      message_preview,
+      jsonb_build_object(
+        'type', 'dm_received',
+        'screen', 'dm',
+        'threadId', NEW.thread_id,
+        'senderId', NEW.user_id,
+        'senderName', sender_name
+      ),
+      NOW()
+    );
+  END IF;
 
   RETURN NEW;
 END;
@@ -181,13 +187,13 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- TRIGGER: trigger_create_notification_for_direct_message
 -- Automatically creates notification when direct message is sent
 -- ============================================================================
--- Note: This assumes a messages table exists. If not, this will need to be
--- adjusted based on the actual message table structure.
-DROP TRIGGER IF EXISTS trigger_create_notification_for_direct_message ON public.messages;
+-- Note: This references chat_messages table
+DROP TRIGGER IF EXISTS trigger_create_notification_for_direct_message ON public.chat_messages;
 CREATE TRIGGER trigger_create_notification_for_direct_message
-  AFTER INSERT ON public.messages
+  AFTER INSERT ON public.chat_messages
   FOR EACH ROW
   EXECUTE FUNCTION public.create_notification_for_direct_message();
+*/
 
 -- ============================================================================
 -- ROW LEVEL SECURITY for user_push_tokens
