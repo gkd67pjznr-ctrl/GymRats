@@ -81,13 +81,6 @@ The core workout logging experience - the heart of Forgerank. Users start workou
 **Status:** Basic functionality works
 **Next:** Polish UI and add progress tracking
 
-### Done - Set Input Polish
-- [x] Calculator-style number pad
-- [x] Stepper +/- buttons
-- [x] Auto-fill from last workout
-- [x] Smart weight increments
-
-**Status:** Complete - All set input polish features implemented
 
 ### Done - Rest Timer Enhancement
 - [x] Auto-start after set

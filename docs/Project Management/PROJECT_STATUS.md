@@ -123,26 +123,25 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 1. **Fix Failing Tests** - 159 tests currently failing,严重影响 test suite reliability
 2. **OAuth Authentication** - Google/Apple sign-in not working
 3. **Backend Sync** - Complete (sync system initialized, stores registered, auth integration working)
-4. **Input UX Polish** - Number pad, steppers, auto-fill
 
 ### High Priority
-5. **Forge Lab Charting** - Implement actual charting library (react-native-chart-kit or victory-native)
-6. **Backend Integration for Milestones** - Create user_milestones table and sync functionality
-7. **Profile Stats** - Show user's ranks, PRs, streaks, and milestone counts
-8. **Avatar System Completion** - Finish avatar growth and customization features
-9. **Hangout Room Real-time Features** - Implement presence tracking and decorations
+4. **Forge Lab Charting** - Implement actual charting library (react-native-chart-kit or victory-native)
+5. **Backend Integration for Milestones** - Create user_milestones table and sync functionality
+6. **Profile Stats** - Show user's ranks, PRs, streaks, and milestone counts
+7. **Avatar System Completion** - Finish avatar growth and customization features
+8. **Hangout Room Real-time Features** - Implement presence tracking and decorations
 
 ### Medium Priority
-10. **Leaderboards** - Friends comparison
-11. **Onboarding Flow** - First-time user experience with buddy selection
-12. **Push Notifications** - Rest timer, social activity, milestone achievements
-13. **Protected Routes** - Implement proper authentication guards
+9. **Leaderboards** - Friends comparison
+10. **Onboarding Flow** - First-time user experience with buddy selection
+11. **Push Notifications** - Rest timer, social activity, milestone achievements
+12. **Protected Routes** - Implement proper authentication guards
 
 ### Lower Priority (Post-v1)
-14. **XP & Levels** - User progression system (already implemented)
-15. **Cosmetic Store** - Themes, voice packs, card skins (already implemented)
-16. **Multiple Personalities** - Additional gym buddy customizations
-17. **Hidden Milestones** - Secret achievements for dedicated users
+13. **XP & Levels** - User progression system (already implemented)
+14. **Cosmetic Store** - Themes, voice packs, card skins (already implemented)
+15. **Multiple Personalities** - Additional gym buddy customizations
+16. **Hidden Milestones** - Secret achievements for dedicated users
 
 ---
 

@@ -118,7 +118,6 @@
 
 ### Phase 1: Core Workout Polish (Current - 4 weeks)
 - Routine-based workout flow
-- Set input improvements
 - Rest timer enhancements
 - Protected routes
 
