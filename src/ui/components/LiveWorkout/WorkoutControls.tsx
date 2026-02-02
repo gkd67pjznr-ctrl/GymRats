@@ -1,17 +1,11 @@
 /**
  * WorkoutControls Component
  *
- * Displays top control buttons for the live workout screen.
- * - + Exercise (free workout mode only)
- * - Focus toggle
- * - Pick (change selected exercise, free workout mode only)
- *
- * Extracted from live-workout.tsx to reduce component complexity.
+ * Hevy/Liftoff style - prominent "+ Add Exercise" button with minimal secondary controls.
  */
 
-import { Pressable, Text, View } from "react-native";
-import { makeDesignSystem } from "@/src/ui/designSystem";
-import { FR } from "@/src/ui/forgerankStyle";
+import { Pressable, Text, View, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/src/ui/theme";
 
 export interface WorkoutControlsProps {
@@ -27,84 +21,117 @@ export interface WorkoutControlsProps {
 export function WorkoutControls({
   planMode,
   focusMode,
-  liveWorkoutTogether,
   onAddExercise,
   onToggleFocus,
   onChangeSelected,
-  onToggleLiveWorkoutTogether,
 }: WorkoutControlsProps) {
   const c = useThemeColors();
-  const ds = makeDesignSystem("dark", "toxic");
-  const PILL_R = FR.radius.pill;
-
-  const buttonStyle = (pressed: boolean, isActive = false) => ({
-    paddingVertical: FR.space.x3,
-    paddingHorizontal: FR.space.x4,
-    borderRadius: PILL_R,
-    borderWidth: 1,
-    borderColor: c.border,
-    backgroundColor: isActive ? c.bg : c.card,
-    alignItems: "center",
-    justifyContent: "center",
-    opacity: pressed ? ds.rules.tapOpacity : 1,
-  });
-
-  const primaryButtonStyle = (pressed: boolean) => ({
-    flex: 1,
-    paddingVertical: FR.space.x3,
-    paddingHorizontal: FR.space.x4,
-    borderRadius: PILL_R,
-    borderWidth: 1,
-    borderColor: c.border,
-    backgroundColor: c.card,
-    alignItems: "center",
-    justifyContent: "center",
-    opacity: pressed ? ds.rules.tapOpacity : 1,
-  });
 
   return (
-    <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
-      {/* + Exercise button - only in free workout mode */}
+    <View style={styles.container}>
+      {/* Primary: Add Exercise button */}
       {!planMode && (
         <Pressable
           onPress={onAddExercise}
-          style={({ pressed }) => primaryButtonStyle(pressed)}
+          style={({ pressed }) => [
+            styles.addButton,
+            {
+              backgroundColor: c.primary + "18",
+              borderColor: c.primary + "40",
+              opacity: pressed ? 0.7 : 1,
+            },
+          ]}
         >
-          <Text style={{ color: c.text, ...FR.type.h3 }}>+ Exercise</Text>
-        </Pressable>
-      )}
-
-      {/* Focus toggle */}
-      <Pressable
-        onPress={onToggleFocus}
-        style={({ pressed }) => buttonStyle(pressed, focusMode)}
-      >
-        <Text style={{ color: c.text, ...FR.type.h3 }}>
-          {focusMode ? "Focus ✓" : "Focus"}
-        </Text>
-      </Pressable>
-
-      {/* Live Workout Together toggle */}
-      {onToggleLiveWorkoutTogether && (
-        <Pressable
-          onPress={onToggleLiveWorkoutTogether}
-          style={({ pressed }) => buttonStyle(pressed, liveWorkoutTogether)}
-        >
-          <Text style={{ color: c.text, ...FR.type.h3 }}>
-            {liveWorkoutTogether ? "Friends ✓" : "Friends"}
+          <Ionicons name="add" size={20} color={c.primary} />
+          <Text style={[styles.addButtonText, { color: c.primary }]}>
+            Add Exercise
           </Text>
         </Pressable>
       )}
 
-      {/* Pick button - only in free workout mode */}
-      {!planMode && (
+      {/* Secondary controls row */}
+      <View style={styles.secondaryRow}>
+        {!planMode && (
+          <Pressable
+            onPress={onChangeSelected}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              {
+                backgroundColor: c.card,
+                borderColor: c.border,
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Ionicons name="swap-horizontal" size={14} color={c.muted} />
+            <Text style={[styles.secondaryText, { color: c.muted }]}>
+              Switch
+            </Text>
+          </Pressable>
+        )}
+
         <Pressable
-          onPress={onChangeSelected}
-          style={({ pressed }) => buttonStyle(pressed)}
+          onPress={onToggleFocus}
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            {
+              backgroundColor: focusMode ? c.primary + "18" : c.card,
+              borderColor: focusMode ? c.primary + "40" : c.border,
+              opacity: pressed ? 0.7 : 1,
+            },
+          ]}
         >
-          <Text style={{ color: c.text, ...FR.type.h3 }}>Pick</Text>
+          <Ionicons
+            name="eye"
+            size={14}
+            color={focusMode ? c.primary : c.muted}
+          />
+          <Text
+            style={[
+              styles.secondaryText,
+              { color: focusMode ? c.primary : c.muted },
+            ]}
+          >
+            Focus
+          </Text>
         </Pressable>
-      )}
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 8,
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 6,
+  },
+  addButtonText: {
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  secondaryRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  secondaryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    gap: 5,
+  },
+  secondaryText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+});

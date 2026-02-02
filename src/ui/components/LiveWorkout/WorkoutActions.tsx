@@ -1,18 +1,12 @@
 /**
  * WorkoutActions Component
  *
- * Displays the bottom action buttons for the live workout screen.
- * - Finish Workout (primary action, accent color)
- * - Save Routine (disabled if no sets)
- * - Reset
- *
- * Extracted from live-workout.tsx to reduce component complexity.
+ * Bottom actions for the live workout - Hevy/Liftoff style.
+ * Clean two-button layout: Cancel (outlined) + Finish (accent).
  */
 
-import { Pressable, Text, View } from "react-native";
-import { FR } from "@/src/ui/forgerankStyle";
+import { Pressable, Text, View, StyleSheet } from "react-native";
 import { useThemeColors } from "@/src/ui/theme";
-import { makeDesignSystem } from "@/src/ui/designSystem";
 
 export interface WorkoutActionsProps {
   setsCount: number;
@@ -28,73 +22,92 @@ export function WorkoutActions({
   onReset,
 }: WorkoutActionsProps) {
   const c = useThemeColors();
-  const ds = makeDesignSystem("dark", "toxic");
-  const PILL_R = FR.radius.pill;
-
-  const primaryButtonStyle = (pressed: boolean) => ({
-    flex: 1,
-    paddingVertical: FR.space.x3,
-    paddingHorizontal: FR.space.x4,
-    borderRadius: PILL_R,
-    borderWidth: 1,
-    borderColor: ds.tone.accent,
-    backgroundColor: ds.tone.accent,
-    alignItems: "center",
-    justifyContent: "center",
-    opacity: pressed ? ds.rules.tapOpacity : 1,
-  });
-
-  const secondaryButtonStyle = (pressed: boolean, disabled = false) => ({
-    flex: 1,
-    paddingVertical: FR.space.x3,
-    paddingHorizontal: FR.space.x4,
-    borderRadius: PILL_R,
-    borderWidth: 1,
-    borderColor: c.border,
-    backgroundColor: c.card,
-    alignItems: "center",
-    justifyContent: "center",
-    opacity: disabled ? 0.5 : pressed ? ds.rules.tapOpacity : 1,
-  });
-
-  const iconButtonStyle = (pressed: boolean) => ({
-    paddingVertical: FR.space.x3,
-    paddingHorizontal: FR.space.x4,
-    borderRadius: PILL_R,
-    borderWidth: 1,
-    borderColor: c.border,
-    backgroundColor: c.card,
-    alignItems: "center",
-    justifyContent: "center",
-    opacity: pressed ? ds.rules.tapOpacity : 1,
-  });
+  const hasSets = setsCount > 0;
 
   return (
-    <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
-      {/* Finish Workout - primary action */}
+    <View style={styles.container}>
+      {/* Finish Workout - primary */}
       <Pressable
         onPress={onFinishWorkout}
-        style={({ pressed }) => primaryButtonStyle(pressed)}
+        style={({ pressed }) => [
+          styles.finishButton,
+          {
+            backgroundColor: c.primary,
+            opacity: pressed ? 0.8 : 1,
+          },
+        ]}
       >
-        <Text style={{ color: c.bg, ...FR.type.h3 }}>Finish Workout</Text>
+        <Text style={[styles.finishText, { color: c.bg }]}>
+          Finish Workout
+        </Text>
       </Pressable>
 
-      {/* Save Routine - disabled if no sets */}
-      <Pressable
-        onPress={onSaveRoutine}
-        disabled={setsCount === 0}
-        style={({ pressed }) => secondaryButtonStyle(pressed, setsCount === 0)}
-      >
-        <Text style={{ color: c.text, ...FR.type.h3 }}>Save Routine</Text>
-      </Pressable>
+      {/* Secondary row */}
+      <View style={styles.secondaryRow}>
+        {hasSets && (
+          <Pressable
+            onPress={onSaveRoutine}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              {
+                borderColor: c.border,
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Text style={[styles.secondaryText, { color: c.muted }]}>
+              Save as Routine
+            </Text>
+          </Pressable>
+        )}
 
-      {/* Reset */}
-      <Pressable
-        onPress={onReset}
-        style={({ pressed }) => iconButtonStyle(pressed)}
-      >
-        <Text style={{ color: c.text, ...FR.type.h3 }}>Reset</Text>
-      </Pressable>
+        <Pressable
+          onPress={onReset}
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            {
+              borderColor: c.border,
+              opacity: pressed ? 0.7 : 1,
+            },
+          ]}
+        >
+          <Text style={[styles.secondaryText, { color: c.danger }]}>
+            Discard Workout
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 12,
+    marginTop: 8,
+  },
+  finishButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    borderRadius: 12,
+  },
+  finishText: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  secondaryRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 16,
+  },
+  secondaryButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  secondaryText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+});

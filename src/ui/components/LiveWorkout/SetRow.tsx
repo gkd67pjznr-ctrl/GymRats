@@ -1,6 +1,6 @@
 // src/ui/components/LiveWorkout/SetRow.tsx
-// Tabular set row component - Hevy-style layout
-// SET | PREV | LBS | REPS | ✓
+// Clean table row for set data - Hevy/Liftoff style
+// SET | PREVIOUS | LBS | REPS | [check]
 
 import { useRef } from "react";
 import {
@@ -22,7 +22,6 @@ import type { LoggedSet } from "../../../lib/loggerTypes";
 export interface SetRowProps {
   set: LoggedSet;
   setNumber: number;
-  /** Previous workout's data for this exercise at this set number */
   previousSet: { weightKg: number; reps: number } | null;
   isDone: boolean;
   onToggleDone: () => void;
@@ -31,15 +30,6 @@ export interface SetRowProps {
   onDelete: () => void;
   kgToLb: (kg: number) => number;
 }
-
-// Column widths for consistent alignment
-const COL = {
-  SET: 36,
-  PREV: 72,
-  LBS: 64,
-  REPS: 56,
-  CHECK: 44,
-};
 
 export function SetRow({
   set,
@@ -78,9 +68,8 @@ export function SetRow({
     onDelete();
   };
 
-  // Render delete action on swipe right
   const renderRightActions = (
-    progress: Animated.AnimatedInterpolation<number>,
+    _progress: Animated.AnimatedInterpolation<number>,
     dragX: Animated.AnimatedInterpolation<number>
   ) => {
     const scale = dragX.interpolate({
@@ -97,14 +86,13 @@ export function SetRow({
           justifyContent: "center",
           alignItems: "center",
           width: 80,
-          borderRadius: FR.radius.soft,
         }}
       >
         <Animated.Text
           style={{
             color: "#fff",
             fontWeight: "700",
-            fontSize: 14,
+            fontSize: 13,
             transform: [{ scale }],
           }}
         >
@@ -125,38 +113,46 @@ export function SetRow({
         style={[
           styles.row,
           {
-            backgroundColor: isDone ? c.bg : c.card,
-            borderColor: c.border,
+            backgroundColor: isDone ? c.bg + "80" : "transparent",
           },
         ]}
       >
         {/* SET number */}
-        <View style={[styles.cell, { width: COL.SET }]}>
-          <Text
+        <View style={styles.setCol}>
+          <View
             style={[
-              FR.type.body,
-              { color: c.muted, fontWeight: "700" },
+              styles.setNumberBadge,
+              {
+                backgroundColor: isDone ? c.primary + "20" : c.bg,
+              },
             ]}
           >
-            {setNumber}
-          </Text>
+            <Text
+              style={[
+                styles.setNumberText,
+                { color: isDone ? c.primary : c.muted },
+              ]}
+            >
+              {setNumber}
+            </Text>
+          </View>
         </View>
 
-        {/* PREV - previous workout data */}
-        <View style={[styles.cell, { width: COL.PREV }]}>
+        {/* PREVIOUS */}
+        <View style={styles.prevCol}>
           {prevWeightLb !== null && prevReps !== null ? (
-            <Text style={[FR.type.sub, { color: c.muted }]}>
-              {Math.round(prevWeightLb)}×{prevReps}
+            <Text style={[styles.prevText, { color: c.muted }]}>
+              {Math.round(prevWeightLb)} x {prevReps}
             </Text>
           ) : (
-            <Text style={[FR.type.sub, { color: c.border }]}>—</Text>
+            <Text style={[styles.prevText, { color: c.border }]}>-</Text>
           )}
         </View>
 
         {/* LBS input */}
-        <View style={[styles.cell, { width: COL.LBS }]}>
+        <View style={styles.inputCol}>
           {isDone ? (
-            <Text style={[FR.type.body, { color: c.text, fontWeight: "700" }]}>
+            <Text style={[styles.lockedValue, { color: c.text }]}>
               {Math.round(weightLb)}
             </Text>
           ) : (
@@ -170,7 +166,6 @@ export function SetRow({
                 {
                   color: c.text,
                   backgroundColor: c.bg,
-                  borderColor: c.border,
                 },
               ]}
             />
@@ -178,9 +173,9 @@ export function SetRow({
         </View>
 
         {/* REPS input */}
-        <View style={[styles.cell, { width: COL.REPS }]}>
+        <View style={styles.inputCol}>
           {isDone ? (
-            <Text style={[FR.type.body, { color: c.text, fontWeight: "700" }]}>
+            <Text style={[styles.lockedValue, { color: c.text }]}>
               {set.reps}
             </Text>
           ) : (
@@ -194,35 +189,30 @@ export function SetRow({
                 {
                   color: c.text,
                   backgroundColor: c.bg,
-                  borderColor: c.border,
                 },
               ]}
             />
           )}
         </View>
 
-        {/* Checkmark button */}
-        <Pressable
-          onPress={handleToggleDone}
-          style={({ pressed }) => [
-            styles.checkButton,
-            {
-              backgroundColor: isDone ? c.primary + "30" : "transparent",
-              borderColor: isDone ? c.primary : c.border,
-              opacity: pressed ? 0.7 : 1,
-            },
-          ]}
-        >
-          <Text
-            style={{
-              color: isDone ? c.primary : c.muted,
-              fontSize: 16,
-              fontWeight: "700",
-            }}
+        {/* Check button */}
+        <View style={styles.checkCol}>
+          <Pressable
+            onPress={handleToggleDone}
+            style={({ pressed }) => [
+              styles.checkButton,
+              {
+                backgroundColor: isDone ? c.primary : "transparent",
+                borderColor: isDone ? c.primary : c.border,
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
           >
-            {isDone ? "✓" : "○"}
-          </Text>
-        </Pressable>
+            {isDone ? (
+              <Text style={styles.checkMark}>✓</Text>
+            ) : null}
+          </Pressable>
+        </View>
       </View>
     </Swipeable>
   );
@@ -232,33 +222,68 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: FR.space.x2,
-    paddingHorizontal: FR.space.x2,
-    borderRadius: FR.radius.soft,
-    borderWidth: 1,
-    gap: FR.space.x1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    minHeight: 44,
   },
-  cell: {
+  setCol: {
+    width: 36,
+    alignItems: "center",
+  },
+  setNumberBadge: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: "center",
     justifyContent: "center",
+  },
+  setNumberText: {
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  prevCol: {
+    flex: 1,
+    alignItems: "center",
+  },
+  prevText: {
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  inputCol: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 4,
   },
   input: {
     width: "100%",
     textAlign: "center",
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "700",
-    paddingVertical: FR.space.x1,
-    paddingHorizontal: FR.space.x1,
-    borderRadius: FR.radius.input,
-    borderWidth: 1,
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    borderRadius: 8,
+  },
+  lockedValue: {
+    fontSize: 15,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  checkCol: {
+    width: 40,
+    alignItems: "center",
   },
   checkButton: {
-    width: COL.CHECK - 4,
-    height: 32,
-    borderRadius: FR.radius.soft,
-    borderWidth: 1,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
+  },
+  checkMark: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "700",
   },
 });
 

@@ -4,8 +4,6 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, Styl
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { makeDesignSystem } from "../src/ui/designSystem";
-import { FR } from "../src/ui/forgerankStyle";
 import { useThemeColors } from "../src/ui/theme";
 
 import { getSettings } from "../src/lib/stores";
@@ -20,13 +18,11 @@ import { RestTimerOverlay } from "../src/ui/components/RestTimerOverlay";
 import { ValidationToast } from "../src/ui/components/LiveWorkout/ValidationToast";
 import { WorkoutTimerDetails } from "../src/ui/components/LiveWorkout/WorkoutTimerDetails";
 
-// New Hevy-style components
+// Hevy-style components
 import { ExerciseCard } from "../src/ui/components/LiveWorkout/ExerciseCard";
 import { WorkoutTopBar } from "../src/ui/components/LiveWorkout/WorkoutTopBar";
-import { WorkoutNotes } from "../src/ui/components/LiveWorkout/WorkoutNotes";
 import { WorkoutControls } from "../src/ui/components/LiveWorkout/WorkoutControls";
 import { WorkoutActions } from "../src/ui/components/LiveWorkout/WorkoutActions";
-import { RecapCues } from "../src/ui/components/LiveWorkout/RecapCues";
 import { PRCelebration } from "../src/ui/components/LiveWorkout/PRCelebration";
 import { TutorialOverlay } from "../src/ui/components/LiveWorkout/TutorialOverlay";
 
@@ -143,13 +139,8 @@ function hapticPR() {
 
 export default function LiveWorkout() {
   const c = useThemeColors();
-  const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
   const insets = useSafeAreaInsets();
-
-  // Unified spacing/radii via FR
-  const PAD = FR.space.x4;
-  const GAP = FR.space.x3;
 
   // Plan data
   const plan = useCurrentPlan();
@@ -166,8 +157,6 @@ export default function LiveWorkout() {
   const notificationPermissionRequestedRef = useRef(false);
   const [restStartTime, setRestStartTime] = useState<number | null>(null);
 
-  // Workout notes state
-  const [workoutNotes, setWorkoutNotes] = useState("");
 
   const onRestTimerDone = () => {
     // Record rest duration in buddy store
@@ -597,33 +586,25 @@ export default function LiveWorkout() {
       {/* Main Content */}
       <ScrollView
         contentContainerStyle={{
-          paddingTop: PAD,
-          paddingHorizontal: PAD,
+          paddingTop: 12,
+          paddingHorizontal: 16,
           paddingBottom: SCROLL_BOTTOM_PADDING + insets.bottom,
-          gap: GAP,
+          gap: 12,
         }}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Workout Notes */}
-        <WorkoutNotes
-          value={workoutNotes}
-          onChangeText={setWorkoutNotes}
-        />
-
-        {/* Top Controls */}
+        {/* Controls: Add Exercise + secondary */}
         <WorkoutControls
           planMode={pickerState.planMode}
           focusMode={focusMode}
-          liveWorkoutTogether={liveWorkoutTogether}
           onAddExercise={pickerState.openPickerToAdd}
           onToggleFocus={() => setFocusMode(v => !v)}
           onChangeSelected={pickerState.openPickerToChange}
-          onToggleLiveWorkoutTogether={() => setLiveWorkoutTogether(v => !v)}
         />
 
         {/* Live Workout Together Component */}
         {liveWorkoutTogether && user && (
-          <View style={{ marginBottom: 16 }}>
+          <View>
             <Text style={[styles.sectionTitle, { color: c.text }]}>
               Working Out Together
             </Text>
@@ -638,7 +619,7 @@ export default function LiveWorkout() {
           </View>
         )}
 
-        {/* Exercise Cards - Hevy-style tabular layout */}
+        {/* Exercise Cards */}
         {visibleExerciseIds.map((exerciseId) => {
           const exerciseSets = session.sets.filter(s => s.exerciseId === exerciseId);
           const targetSets = targetSetsByExerciseId[exerciseId];
@@ -662,22 +643,29 @@ export default function LiveWorkout() {
           );
         })}
 
-        {/* Empty state when no exercises */}
+        {/* Empty state */}
         {visibleExerciseIds.length === 0 && (
-          <View style={{
-            borderWidth: 1,
-            borderColor: c.border,
-            borderRadius: FR.radius.card,
-            padding: FR.space.x4,
-            gap: FR.space.x2,
-            backgroundColor: c.card,
-            alignItems: "center",
-          }}>
-            <Text style={[FR.type.h3, { color: c.text }]}>No Exercises Yet</Text>
-            <Text style={[FR.type.body, { color: c.muted, textAlign: "center" }]}>
-              Tap "+ Exercise" to add your first exercise and start logging sets.
+          <Pressable
+            onPress={pickerState.openPickerToAdd}
+            style={{
+              borderWidth: 1,
+              borderColor: c.border,
+              borderStyle: "dashed",
+              borderRadius: 12,
+              paddingVertical: 40,
+              paddingHorizontal: 24,
+              backgroundColor: c.card,
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: "700", color: c.text }}>
+              No exercises yet
             </Text>
-          </View>
+            <Text style={{ fontSize: 14, color: c.primary, fontWeight: "600" }}>
+              Tap to add your first exercise
+            </Text>
+          </Pressable>
         )}
 
         {/* Bottom Actions */}
@@ -687,9 +675,6 @@ export default function LiveWorkout() {
           onSaveRoutine={handleSaveAsRoutine}
           onReset={handleReset}
         />
-
-        {/* Recap Cues */}
-        <RecapCues cues={orchestrator.recapCues} />
       </ScrollView>
     </KeyboardAvoidingView>
   );
