@@ -16,6 +16,13 @@ import {
   type CurrentSession,
 } from '../currentSessionStore';
 
+// Mock NetInfo
+jest.mock('@react-native-community/netinfo', () => ({
+  default: {
+    fetch: jest.fn().mockResolvedValue({ isConnected: true, isInternetReachable: true }),
+  },
+}));
+
 // Mock AsyncStorage
 // Note: We need to mock it here even though it's mocked globally in jest.setup.js
 // because we need to control the mock behavior in tests
