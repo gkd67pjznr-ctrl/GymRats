@@ -18,6 +18,9 @@ import { networkMonitor } from "../sync/NetworkMonitor";
 import { subscribeToUserPosts, subscribeToPostReactions, subscribeToPostComments } from "../sync/RealtimeManager";
 import { useMemo } from "react";
 import { shallow } from "zustand/shallow";
+import type { WorkoutSession } from "../workoutModel";
+import { createWorkoutPostFromSession, detectWorkoutMilestones, type WorkoutMilestone } from "../workoutPostGenerator";
+import type { ReportReason } from "../socialModel";
 
 const STORAGE_KEY = "social.v2";
 
@@ -31,8 +34,29 @@ interface SocialState {
 
   // Actions
   createPost: (input: Omit<WorkoutPost, "id" | "likeCount" | "commentCount">) => WorkoutPost;
+  updatePost: (id: string, updates: Partial<WorkoutPost>) => void;
+  createPostFromWorkout: (args: {
+    session: WorkoutSession;
+    authorUserId: string;
+    authorDisplayName: string;
+    authorAvatarUrl?: string;
+    privacy?: 'public' | 'friends';
+    caption?: string;
+    bodyweightKg?: number;
+  }) => WorkoutPost;
+  detectAndCreateMilestonePosts: (args: {
+    session: WorkoutSession;
+    authorUserId: string;
+    authorDisplayName: string;
+    authorAvatarUrl?: string;
+    previousBests?: Record<string, { weightKg: number; reps: number; e1rmKg: number }>;
+    currentStreak?: number;
+  }) => WorkoutMilestone[];
   toggleReaction: (postId: string, myUserId: string, emote: EmoteId) => void;
   addComment: (postId: string, myUserId: string, myDisplayName: string, text: string) => Comment | null;
+  reportPost: (args: { postId: string; reason: ReportReason; additionalInfo?: string }) => Promise<void>;
+  reportUser: (args: { reportedUserId: string; reason: ReportReason; additionalInfo?: string }) => Promise<void>;
+  blockUser: (userId: string) => Promise<void>;
   setHydrated: (value: boolean) => void;
 
   // Sync actions
@@ -80,6 +104,66 @@ export const useSocialStore = create<SocialState>()(
         }
 
         return post;
+      },
+
+      updatePost: (id, updates) => {
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === id ? { ...p, ...updates } : p
+          ),
+        }));
+
+        // Sync to server if online
+        if (networkMonitor.isOnline()) {
+          postRepository.update(id, updates).catch(err => {
+            console.error('[socialStore] Failed to update post:', err);
+          });
+        }
+      },
+
+      createPostFromWorkout: (args) => {
+        const { session, authorUserId, authorDisplayName, authorAvatarUrl, privacy = 'public', caption, bodyweightKg } = args;
+
+        const postData = createWorkoutPostFromSession({
+          session,
+          authorUserId,
+          authorDisplayName,
+          authorAvatarUrl,
+          privacy,
+          caption,
+          bodyweightKg,
+        });
+
+        return get().createPost(postData);
+      },
+
+      detectAndCreateMilestonePosts: (args) => {
+        const { session, authorUserId, authorDisplayName, authorAvatarUrl, previousBests, currentStreak } = args;
+
+        const milestones = detectWorkoutMilestones({
+          session,
+          previousBests,
+          currentStreak,
+        });
+
+        // Auto-post milestones
+        for (const milestone of milestones) {
+          const postData = createWorkoutPostFromSession({
+            session,
+            authorUserId,
+            authorDisplayName,
+            authorAvatarUrl,
+            privacy: 'public',
+            caption: milestone.message,
+          });
+
+          // Only create significant milestones automatically
+          if (milestone.type === 'e1rm_pr' || milestone.type === 'rank_up' || milestone.type === 'streak') {
+            get().createPost(postData);
+          }
+        }
+
+        return milestones;
       },
 
       toggleReaction: (postId, myUserId, emote) => {
@@ -175,6 +259,90 @@ export const useSocialStore = create<SocialState>()(
       },
 
       setHydrated: (value) => set({ hydrated: value }),
+
+      reportPost: async (args) => {
+        const user = getUser();
+        if (!user) {
+          console.warn('[socialStore] Cannot report post: no user signed in');
+          return;
+        }
+
+        try {
+          // Create report locally and sync to server
+          const report = {
+            id: uid(),
+            reporterUserId: user.id,
+            targetPostId: args.postId,
+            reason: args.reason,
+            additionalInfo: args.additionalInfo,
+            createdAtMs: Date.now(),
+            status: 'pending' as const,
+          };
+
+          // Sync to server
+          if (networkMonitor.isOnline()) {
+            // TODO: Create reportRepository when backend is ready
+            console.log('[socialStore] Report submitted:', report);
+          }
+        } catch (error) {
+          console.error('[socialStore] Failed to report post:', error);
+          throw error;
+        }
+      },
+
+      reportUser: async (args) => {
+        const user = getUser();
+        if (!user) {
+          console.warn('[socialStore] Cannot report user: no user signed in');
+          return;
+        }
+
+        try {
+          // Create report locally and sync to server
+          const report = {
+            id: uid(),
+            reporterUserId: user.id,
+            targetUserId: args.reportedUserId,
+            reason: args.reason,
+            additionalInfo: args.additionalInfo,
+            createdAtMs: Date.now(),
+            status: 'pending' as const,
+          };
+
+          // Sync to server
+          if (networkMonitor.isOnline()) {
+            // TODO: Create reportRepository when backend is ready
+            console.log('[socialStore] User report submitted:', report);
+          }
+        } catch (error) {
+          console.error('[socialStore] Failed to report user:', error);
+          throw error;
+        }
+      },
+
+      blockUser: async (userId) => {
+        const user = getUser();
+        if (!user) {
+          console.warn('[socialStore] Cannot block user: no user signed in');
+          return;
+        }
+
+        try {
+          // Import friendsStore actions
+          const { blockUser: blockUserAction } = await import('./friendsStore');
+
+          // Use the friendsStore blockUser action
+          await blockUserAction(userId);
+
+          // Filter out posts from blocked user
+          set((state) => ({
+            posts: state.posts.filter(p => p.authorUserId !== userId),
+          }));
+        } catch (error) {
+          console.error('[socialStore] Failed to block user:', error);
+          throw error;
+        }
+      },
 
       // Sync actions
       pullFromServer: async () => {
