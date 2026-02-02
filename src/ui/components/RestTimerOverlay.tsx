@@ -59,40 +59,6 @@ function formatMMSS(totalSeconds: number) {
   return `${mm}:${String(ss).padStart(2, "0")}`;
 }
 
-/**
- * Handle app state changes
- */
-const handleAppStateChange = (nextAppState: AppStateStatus) => {
-  setAppState(nextAppState);
-
-  // If app comes back to foreground, cancel any scheduled notifications
-  if (nextAppState === 'active') {
-    cancelRestTimerNotification().catch(console.error);
-    setScheduledNotificationId(null);
-  }
-};
-
-/**
- * Schedule background notification for rest timer
- */
-const scheduleBackgroundNotification = async (secondsLeft: number) => {
-  try {
-    // Cancel any existing notification first
-    if (scheduledNotificationId) {
-      await cancelRestTimerNotification();
-    }
-
-    // Schedule new notification
-    const notificationId = await scheduleRestTimerNotification(secondsLeft);
-    if (notificationId) {
-      setScheduledNotificationId(notificationId);
-    }
-  } catch (error) {
-    if (__DEV__) {
-      console.error('Failed to schedule background notification:', error);
-    }
-  }
-};
 
 export function RestTimerOverlay(props: Props) {
   const c = useThemeColors();

@@ -15,7 +15,6 @@ import { networkMonitor } from "../sync/NetworkMonitor";
 import { realtimeManager } from "../sync/RealtimeManager";
 import { sendDirectMessageNotification } from "../notifications/notificationService";
 import { getUserProfile } from "./userProfileStore";
-import { getUser } from "./authStore";
 
 // Import from new Zustand friendsStore location
 import {
@@ -490,8 +489,8 @@ export function sendMessage(threadId: string, senderId: ID, text: string): void 
   useChatStore.getState().sendMessage(threadId, senderId, text);
 }
 
-export function markThreadRead(threadId: string, userId: ID): void {
-  useChatStore.getState().markThreadRead(threadId, userId);
+export function markThreadRead(threadId: string, userId: ID, atMs?: number): void {
+  useChatStore.getState().markThreadRead(threadId, userId, atMs);
 }
 
 // ============================================================================

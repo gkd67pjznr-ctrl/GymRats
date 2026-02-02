@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { LoggedSet, SetType } from "../loggerTypes";
 import { lbToKg, kgToLb } from "../units";
 import { validateWeight, validateReps } from "../validators/workout";
@@ -16,6 +16,7 @@ type Defaults = { weightLb: number; reps: number };
 export type ValidationCallbacks = {
   onError?: (error: string) => void;
   onSuccess?: (message: string) => void;
+  onDismiss?: () => void;
 };
 
 export type UseLiveWorkoutSessionResult = {
@@ -93,6 +94,11 @@ export function useLiveWorkoutSession(
   const [weightLbText, setWeightLbText] = useState(String(startWeight));
   const [repsText, setRepsText] = useState(String(startReps));
   const [weightStep, setWeightStep] = useState(2.5); // Default 2.5 lb increments
+
+  // Refs to track latest text values for commit handlers (avoids stale closures
+  // when changeText + blur fire in the same React batch)
+  const weightLbTextRef = useRef(String(startWeight));
+  const repsTextRef = useRef(String(startReps));
 
   // per-exercise defaults (last-used)
   const [defaultsByExerciseId, setDefaultsByExerciseId] = useState<Record<string, Defaults>>({});
@@ -201,7 +207,8 @@ export function useLiveWorkoutSession(
 
   const onWeightText = useCallback((t: string) => {
     setWeightLbText(t);
-    
+    weightLbTextRef.current = t;
+
     const result = validateWeight(t);
     if (result.valid && result.value !== undefined) {
       setWeightLb(result.value);
@@ -210,7 +217,8 @@ export function useLiveWorkoutSession(
 
   const onRepsText = useCallback((t: string) => {
     setRepsText(t);
-    
+    repsTextRef.current = t;
+
     const result = validateReps(t);
     if (result.valid && result.value !== undefined) {
       setReps(result.value);
@@ -219,37 +227,43 @@ export function useLiveWorkoutSession(
 
   // TAG-SPEC-003-INTEGRATION-weight-commit-validation
   const onWeightCommit = useCallback(() => {
-    const result = validateWeight(weightLbText);
+    const result = validateWeight(weightLbTextRef.current);
 
     if (!result.valid) {
       callbacks?.onError?.(result.error ?? "Invalid weight");
       // Reset to last valid value
       setWeightLbText(weightLb.toFixed(1));
+      weightLbTextRef.current = weightLb.toFixed(1);
       return;
     }
 
     if (result.value !== undefined) {
       setWeightLb(result.value);
       setWeightLbText(result.value.toFixed(1));
+      weightLbTextRef.current = result.value.toFixed(1);
+      callbacks?.onDismiss?.();
     }
-  }, [weightLb, weightLbText, callbacks]);
+  }, [weightLb, callbacks]);
 
   // TAG-SPEC-003-INTEGRATION-reps-commit-validation
   const onRepsCommit = useCallback(() => {
-    const result = validateReps(repsText);
+    const result = validateReps(repsTextRef.current);
 
     if (!result.valid) {
       callbacks?.onError?.(result.error ?? "Invalid reps");
       // Reset to last valid value
       setRepsText(String(reps));
+      repsTextRef.current = String(reps);
       return;
     }
 
     if (result.value !== undefined) {
       setReps(result.value);
       setRepsText(String(result.value));
+      repsTextRef.current = String(result.value);
+      callbacks?.onDismiss?.();
     }
-  }, [reps, repsText, callbacks]);
+  }, [reps, callbacks]);
 
   const decWeight = useCallback(() => {
     setWeightLb((w) => {

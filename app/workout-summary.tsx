@@ -11,6 +11,7 @@ import { useWorkoutStore, useIsHydrated, useJournalEntryForSession, useUser , up
 import { timeAgo } from "../src/lib/units";
 import WorkoutNotesSection from "../src/ui/components/Journal/WorkoutNotesSection";
 import { createJournalEntry, getDateFromTimestamp } from "../src/lib/journalModel";
+import { MuscleId } from "../src/data/consolidatedMuscleGroups";
 
 type WorkoutSummaryData = {
   sessionId: string;
@@ -143,7 +144,7 @@ export default function WorkoutSummary() {
     text: string;
     mood?: number;
     energy?: number;
-    soreness?: string[];
+    soreness?: MuscleId[];
   }) => {
     if (!user?.id || !session) return;
 

@@ -511,16 +511,14 @@ describe('authStore', () => {
         error: null,
       });
 
-      const { result } = renderHook(() => useAuthStore());
-
-      await act(async () => {
-        await result.current.signOut();
-      });
+      // Call signOut imperatively to avoid act() timing issues with
+      // Babel-transpiled async try/catch/finally
+      await useAuthStore.getState().signOut();
 
       // Verify that signOut was called
       expect(supabase.auth.signOut).toHaveBeenCalled();
 
-      // Check state directly from store (not through hook)
+      // Check state directly from store
       const storeState = useAuthStore.getState();
       expect(storeState.user).toBeNull();
       expect(storeState.session).toBeNull();

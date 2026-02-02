@@ -18,7 +18,7 @@ import {
   areFriends as checkAreFriends,
   getFriendStatus,
 } from "./friendsStore";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { shallow } from "zustand/shallow";
 
 const STORAGE_KEY = "feed.v2";
@@ -272,11 +272,18 @@ export function useVisibleFeed(viewerUserId: ID): {
   const postsSelector = useMemo(() => selectVisiblePostsForUser(viewerUserId), [viewerUserId]);
   const posts = useFeedStore(postsSelector, shallow);
 
-  const likeCountSelector = useMemo(() => (state) => (postId: ID) => selectLikeCount(postId)(state), []);
-  const likeCount = useFeedStore(likeCountSelector, shallow);
+  // Use stable callbacks that read from the store imperatively.
+  // Returning new function references from zustand selectors causes
+  // infinite re-renders with shallow comparison.
+  const likeCount = useCallback(
+    (postId: ID) => getLikeCount(postId),
+    []
+  );
 
-  const likedSelector = useMemo(() => (state) => (postId: ID) => selectHasUserLiked(postId, viewerUserId)(state), [viewerUserId]);
-  const liked = useFeedStore(likedSelector, shallow);
+  const liked = useCallback(
+    (postId: ID) => hasUserLiked(postId, viewerUserId),
+    [viewerUserId]
+  );
 
   return { posts, likeCount, liked };
 }

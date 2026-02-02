@@ -11,6 +11,7 @@ import JournalEntryModal from "../../../src/ui/components/Journal/JournalEntryMo
 import { useState } from "react";
 import { addJournalEntry } from "../../../src/lib/stores";
 import { createJournalEntry, getDateFromTimestamp } from "../../../src/lib/journalModel";
+import { MuscleId } from "../../../src/data/consolidatedMuscleGroups";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -41,7 +42,7 @@ export default function DayDetail() {
     text: string;
     mood?: number;
     energy?: number;
-    soreness?: string[];
+    soreness?: MuscleId[];
     date?: string;
   }) => {
     if (!user?.id) return;

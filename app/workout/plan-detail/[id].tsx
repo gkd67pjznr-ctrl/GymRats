@@ -1,5 +1,6 @@
 import { View, Text, Pressable, ScrollView, ActivityIndicator, Alert } from "react-native";
 import { useRouter, useLocalSearchParams, type Href } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { useThemeColors } from "../../../src/ui/theme";
 import { FR } from "../../../src/ui/forgerankStyle";
@@ -23,6 +24,7 @@ export default function PlanDetail() {
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
@@ -132,7 +134,12 @@ export default function PlanDetail() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x4, paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{
+        paddingTop: FR.space.x4 + insets.top,
+        paddingHorizontal: FR.space.x4,
+        paddingBottom: 100 + insets.bottom,
+        gap: FR.space.x4,
+      }}>
         {/* Header */}
         <View style={{ gap: FR.space.x2 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
@@ -327,7 +334,7 @@ export default function PlanDetail() {
       <View
         style={{
           position: "absolute",
-          bottom: 0,
+          bottom: insets.bottom,
           left: 0,
           right: 0,
           padding: FR.space.x4,
