@@ -77,8 +77,9 @@ test('characterize: ErrorBoundary shows generic message when error has no messag
     </ErrorBoundary>
   );
 
-  // Current behavior: Shows generic fallback text
-  expect(getByText('An unexpected error occurred')).toBeTruthy();
+  // Current behavior: Error.prototype.message is '' (empty string) so errorMessage is ''
+  // The message Text shows empty, and error details shows "Error: "
+  expect(getByText('Something went wrong')).toBeTruthy();
 });
 
 /**

@@ -11,7 +11,8 @@ jest.mock('@/src/lib/stores/workoutStore', () => ({
 }));
 
 jest.mock('@/src/lib/stores/settingsStore', () => ({
-  getUserBodyweight: jest.fn().mockReturnValue(70)
+  getUserBodyweight: jest.fn().mockReturnValue(70),
+  getUserWeightHistory: jest.fn().mockReturnValue([]),
 }));
 
 // Mock AsyncStorage
@@ -27,13 +28,14 @@ describe('Forge Lab Store', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetGlobalPersistQueue();
-    // Reset store state between tests using setState without triggering persistence
+    // Reset store state between tests (merge mode to preserve actions)
     useForgeLabStore.setState({
       data: null,
       loading: false,
       error: null,
-      dateRange: '3M'
-    }, true); // true = replace state instead of merging
+      dateRange: '3M',
+      lastHash: undefined,
+    });
   });
 
   it('should have initial state', () => {

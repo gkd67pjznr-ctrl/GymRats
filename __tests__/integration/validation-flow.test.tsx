@@ -131,6 +131,41 @@ jest.mock('@/src/ui/theme', () => ({
   })),
 }));
 
+// Mock NumberInput to render actual TextInput components for testing
+jest.mock('@/src/ui/components/LiveWorkout/NumberInput', () => {
+  const { View, Text, TextInput, Pressable } = require('react-native');
+  return {
+    NumberInput: jest.fn(({ value, textValue, onTextChange, onIncrement, onDecrement, onCommit, label, unit }: any) => (
+      <View>
+        <Text>{label}</Text>
+        <TextInput
+          testID={`input-${label}`}
+          value={textValue}
+          onChangeText={onTextChange}
+          onBlur={onCommit}
+        />
+        <Pressable onPress={onIncrement}><Text>+</Text></Pressable>
+        <Pressable onPress={onDecrement}><Text>-</Text></Pressable>
+      </View>
+    )),
+  };
+});
+
+// Mock FR (forgerankStyle)
+jest.mock('@/src/ui/forgerankStyle', () => ({
+  FR: {
+    space: { x1: 4, x2: 8, x3: 12, x4: 16, x5: 20, x6: 24 },
+    radius: { button: 12, card: 20, input: 8, soft: 6 },
+    type: {
+      h1: { fontSize: 32, fontWeight: '900' },
+      h2: { fontSize: 24, fontWeight: '900' },
+      sub: { fontSize: 14, fontWeight: '500' },
+      body: { fontSize: 16, fontWeight: '400' },
+      mono: { fontSize: 14, fontFamily: 'monospace' },
+    },
+  },
+}));
+
 // Use fake timers for predictable auto-dismiss testing
 jest.useFakeTimers();
 
@@ -155,6 +190,7 @@ function ValidationFlowIntegration(): ReactElement {
   const validationCallbacks: ValidationCallbacks = {
     onError: showError,
     onSuccess: showSuccess,
+    onDismiss: dismiss,
   };
 
   const session = useLiveWorkoutSession(
@@ -890,8 +926,8 @@ describe('Validation Flow - End-to-End Integration Tests', () => {
         fireEvent(weightInput, 'blur');
       });
 
-      // Should not show error
-      expect(queryByText(/Weight/)).toBeNull();
+      // Should not show error (regex excludes the "Weight" label text)
+      expect(queryByText(/Weight cannot/)).toBeNull();
       expect(weightInput.props.value).toBe('187.5');
     });
   });
@@ -909,8 +945,8 @@ describe('Validation Flow - End-to-End Integration Tests', () => {
         fireEvent(weightInput, 'blur');
       });
 
-      // Should not crash or show error (empty is treated as 0)
-      expect(weightInput.props.value).toBe('0');
+      // Should not crash or show error (empty is treated as 0, formatted as "0.0")
+      expect(weightInput.props.value).toBe('0.0');
     });
 
     it('should handle empty reps input gracefully', async () => {
@@ -942,7 +978,7 @@ describe('Validation Flow - End-to-End Integration Tests', () => {
       });
 
       // Should not show error (2000 is valid)
-      expect(queryByText(/Weight/)).toBeNull();
+      expect(queryByText(/Weight cannot/)).toBeNull();
     });
 
     it('should handle boundary values (100 reps)', async () => {
@@ -958,7 +994,7 @@ describe('Validation Flow - End-to-End Integration Tests', () => {
       });
 
       // Should not show error (100 is valid)
-      expect(queryByText(/Reps/)).toBeNull();
+      expect(queryByText(/Reps cannot/)).toBeNull();
     });
 
     it('should reject values just above boundaries', async () => {
@@ -1001,6 +1037,7 @@ describe('Validation Flow - End-to-End Integration Tests', () => {
         const callbacks: ValidationCallbacks = {
           onError: showError,
           onSuccess: showSuccess,
+          onDismiss: dismiss,
         };
 
         const session = useLiveWorkoutSession(

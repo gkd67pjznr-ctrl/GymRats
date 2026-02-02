@@ -53,6 +53,7 @@ export function ValidationToast(props: ValidationToastProps) {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevVisibleRef = useRef(props.visible);
 
   useEffect(() => {
     // Clear any existing timer
@@ -85,10 +86,12 @@ export function ValidationToast(props: ValidationToastProps) {
       timerRef.current = setTimeout(() => {
         dismissToast();
       }, AUTO_DISMISS_MS);
-    } else {
-      // Animate out immediately
+    } else if (prevVisibleRef.current) {
+      // Only animate out when transitioning from visible → hidden
       dismissToast();
     }
+
+    prevVisibleRef.current = props.visible;
 
     // Cleanup
     return () => {

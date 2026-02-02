@@ -487,8 +487,8 @@ export function sendMessage(threadId: string, senderId: ID, text: string): void 
   useChatStore.getState().sendMessage(threadId, senderId, text);
 }
 
-export function markThreadRead(threadId: string, userId: ID): void {
-  useChatStore.getState().markThreadRead(threadId, userId);
+export function markThreadRead(threadId: string, userId: ID, atMs?: number): void {
+  useChatStore.getState().markThreadRead(threadId, userId, atMs);
 }
 
 // ============================================================================

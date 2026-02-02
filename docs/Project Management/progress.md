@@ -149,7 +149,6 @@
 - PR celebration animations implemented ✅
 - Onboarding screens partially implemented
 - Many empty states missing
-- Input polish needed
 - `live-workout.tsx` is 577 lines (needs refactor)
 
 ---
@@ -185,8 +184,7 @@
 1. Implement protected routes
 2. Test sync functionality with real backend
 3. Polish onboarding (guided workout, feature highlights)
-4. Set input polish
-5. Rest timer enhancements
+4. Rest timer enhancements
 
 ### Medium Term (Next Month)
 1. Complete social feature integration

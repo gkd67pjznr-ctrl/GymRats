@@ -467,9 +467,12 @@ describe('socialStore', () => {
 
   describe('hydration', () => {
     it('should set hydrated flag after rehydration', async () => {
-      mockAsyncStorage.getItem.mockResolvedValueOnce(null);
+      mockAsyncStorage.getItem.mockResolvedValue(null);
 
-      renderHook(() => useSocialStore((s) => s.hydrated));
+      // Manually trigger rehydration
+      await act(async () => {
+        await useSocialStore.persist.rehydrate();
+      });
 
       await waitFor(() => {
         expect(useSocialStore.getState().hydrated).toBe(true);
@@ -479,7 +482,8 @@ describe('socialStore', () => {
 
   describe('persistence', () => {
     it('should persist state to AsyncStorage', async () => {
-      mockAsyncStorage.getItem.mockResolvedValueOnce(null);
+      mockAsyncStorage.getItem.mockResolvedValue(null);
+      mockAsyncStorage.setItem.mockResolvedValue(undefined);
 
       act(() => {
         createPost({
@@ -499,7 +503,9 @@ describe('socialStore', () => {
       expect(setItemCall).toBeDefined();
 
       const persistedValue = JSON.parse(setItemCall![1]);
-      expect(persistedValue.posts).toBeDefined();
+      // Zustand persist wraps state in { state: { ... }, version: N }
+      const stateData = persistedValue.state ?? persistedValue;
+      expect(stateData.posts).toBeDefined();
     });
   });
 });

@@ -47,14 +47,14 @@ describe('LiveWorkoutTogether Components', () => {
     });
 
     it('should render without crashing', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ReactionsBar
           reactions={[]}
           onAddReaction={mockOnAddReaction}
           currentUserId="test-user"
         />
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).toBeTruthy();
     });
 
     it('should show reaction counts', () => {

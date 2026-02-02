@@ -377,12 +377,15 @@ describe('chatStore', () => {
 
       act(() => {
         setTyping(threadId, OTHER_USER_ID, true);
+        // Advance timers to trigger the 500ms interval tick in the hook
+        jest.advanceTimersByTime(500);
       });
 
       expect(result.current).toBe(true);
 
       act(() => {
         setTyping(threadId, OTHER_USER_ID, false);
+        jest.advanceTimersByTime(500);
       });
 
       expect(result.current).toBe(false);
@@ -489,9 +492,12 @@ describe('chatStore', () => {
 
   describe('hydration', () => {
     it('should set hydrated flag after rehydration', async () => {
-      mockAsyncStorage.getItem.mockResolvedValueOnce(null);
+      mockAsyncStorage.getItem.mockResolvedValue(null);
 
-      renderHook(() => useChatStore((s) => s.hydrated));
+      // Manually trigger rehydration
+      await act(async () => {
+        await useChatStore.persist.rehydrate();
+      });
 
       await waitFor(() => {
         expect(useChatStore.getState().hydrated).toBe(true);

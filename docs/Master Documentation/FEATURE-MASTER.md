@@ -79,7 +79,7 @@ The core workout logging and tracking experience.
 - Premade plan browser
 - Calendar view (basic)
 
-**Next Up:** Routine-based workout flow, input polish, rest timer enhancements
+**Next Up:** Routine-based workout flow, rest timer enhancements
 
 ---
 
@@ -632,7 +632,6 @@ Seasonal content drops to keep things fresh.
 
 ### Phase 1: Core Workout Polish
 - Routine-based workout flow
-- Set input improvements
 - Rest timer enhancements
 - Protected routes
 

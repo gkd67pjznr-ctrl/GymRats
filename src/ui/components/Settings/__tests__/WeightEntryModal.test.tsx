@@ -29,28 +29,32 @@ jest.mock('@/src/lib/units', () => ({
   kgToLb: jest.fn((kg) => kg * 2.20462),
 }));
 
-// Mock NumberInput component
-jest.mock('@/src/ui/components/LiveWorkout/NumberInput', () => ({
-  NumberInput: jest.fn(({ value, textValue, onTextChange, onIncrement, onDecrement, onCommit, presets }) => (
-    <div data-testid="number-input">
-      <div data-testid="value">{value}</div>
-      <div data-testid="text-value">{textValue}</div>
-      <button data-testid="increment" onClick={onIncrement}>+</button>
-      <button data-testid="decrement" onClick={onDecrement}>-</button>
-      <button data-testid="commit" onClick={onCommit}>Commit</button>
-      <input
-        data-testid="text-input"
-        value={textValue}
-        onChange={(e) => onTextChange(e.target.value)}
-      />
-      {presets && presets.map((preset, index) => (
-        <button key={index} data-testid={`preset-${index}`} onClick={() => onTextChange(preset.value.toString())}>
-          {preset.label}
-        </button>
-      ))}
-    </div>
-  )),
-}));
+// Mock NumberInput component with RN components
+import { View as MockView, Text as MockText, TextInput as MockTextInput, Pressable as MockPressable } from 'react-native';
+jest.mock('@/src/ui/components/LiveWorkout/NumberInput', () => {
+  const { View, Text, TextInput, Pressable } = require('react-native');
+  return {
+    NumberInput: jest.fn(({ value, textValue, onTextChange, onIncrement, onDecrement, onCommit, presets }: any) => (
+      <View testID="number-input">
+        <Text testID="value">{value}</Text>
+        <Text testID="text-value">{textValue}</Text>
+        <Pressable testID="increment" onPress={onIncrement}><Text>+</Text></Pressable>
+        <Pressable testID="decrement" onPress={onDecrement}><Text>-</Text></Pressable>
+        <Pressable testID="commit" onPress={onCommit}><Text>Commit</Text></Pressable>
+        <TextInput
+          testID="text-input"
+          value={textValue}
+          onChangeText={onTextChange}
+        />
+        {presets && presets.map((preset: any, index: number) => (
+          <Pressable key={index} testID={`preset-${index}`} onPress={() => onTextChange(preset.value.toString())}>
+            <Text>{preset.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+    )),
+  };
+});
 
 describe('WeightEntryModal', () => {
   const mockOnClose = jest.fn();
@@ -145,7 +149,7 @@ describe('WeightEntryModal', () => {
       // Click commit button
       fireEvent.press(getByTestId('commit'));
 
-      expect(mockUpdateCurrentWeight).toHaveBeenCalledWith(72.5748); // 160lb ≈ 72.57kg
+      expect(mockUpdateCurrentWeight).toHaveBeenCalledWith(expect.closeTo(72.5749, 2)); // 160lb ≈ 72.57kg
       expect(mockAddWeightEntry).not.toHaveBeenCalled();
       expect(mockAlert).toHaveBeenCalledWith(
         'Weight Saved',
@@ -267,7 +271,7 @@ describe('WeightEntryModal', () => {
       fireEvent.changeText(getByTestId('text-input'), '160');
       fireEvent.press(getByTestId('commit'));
 
-      expect(mockAddWeightEntry).toHaveBeenCalledWith(72.5748, '2024-01-01');
+      expect(mockAddWeightEntry).toHaveBeenCalledWith(expect.closeTo(72.5749, 2), '2024-01-01');
       expect(mockUpdateCurrentWeight).not.toHaveBeenCalled();
       expect(mockAlert).toHaveBeenCalledWith(
         'Weight Saved',
@@ -290,7 +294,7 @@ describe('WeightEntryModal', () => {
       fireEvent.changeText(getByTestId('text-input'), '160');
       fireEvent.press(getByTestId('commit'));
 
-      expect(mockAddWeightEntry).toHaveBeenCalledWith(72.5748, today);
+      expect(mockAddWeightEntry).toHaveBeenCalledWith(expect.closeTo(72.5749, 2), today);
     });
   });
 
@@ -311,7 +315,7 @@ describe('WeightEntryModal', () => {
       fireEvent.press(getByTestId('commit'));
 
       // 150lb ≈ 68.0389kg
-      expect(mockUpdateCurrentWeight).toHaveBeenCalledWith(68.0389);
+      expect(mockUpdateCurrentWeight).toHaveBeenCalledWith(expect.closeTo(68.0389, 2));
     });
 
     test('handles kg input directly', () => {

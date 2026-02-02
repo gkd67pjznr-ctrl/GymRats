@@ -1,32 +1,16 @@
 // __tests__/lib/hangout/hangoutRepository.test.ts
 // Tests for hangout repository
 
-// Mock Supabase client
-const mockFrom = jest.fn().mockReturnThis();
-const mockInsert = jest.fn().mockReturnThis();
-const mockSelect = jest.fn().mockReturnThis();
-const mockUpdate = jest.fn().mockReturnThis();
-const mockEq = jest.fn().mockReturnThis();
-const mockSingle = jest.fn().mockReturnThis();
-const mockLimit = jest.fn().mockReturnThis();
-const mockOr = jest.fn().mockReturnThis();
-const mockCs = jest.fn().mockReturnThis();
-
-const mockSupabase = {
-  from: mockFrom,
-  insert: mockInsert,
-  select: mockSelect,
-  update: mockUpdate,
-  eq: mockEq,
-  single: mockSingle,
-  limit: mockLimit,
-  or: mockOr,
-  cs: mockCs,
-};
-
-jest.mock('../../../src/lib/supabase/client', () => ({
-  supabase: mockSupabase,
-}));
+// Mock must be self-contained in the factory to avoid hoisting issues
+// (jest.mock is hoisted above variable declarations)
+jest.mock('../../../src/lib/supabase/client', () => {
+  const chain: Record<string, jest.Mock> = {};
+  const methods = ['from', 'insert', 'select', 'update', 'eq', 'single', 'limit', 'or', 'cs', 'delete'];
+  for (const m of methods) {
+    chain[m] = jest.fn(() => chain);
+  }
+  return { supabase: chain };
+});
 
 // Mock error handler
 jest.mock('../../../src/lib/errorHandler', () => ({
@@ -43,10 +27,16 @@ import {
   getRoomUserPresences
 } from '../../../src/lib/hangout/hangoutRepository';
 
+// Get reference to the mock chain after imports
+const { supabase: mockChain } = require('../../../src/lib/supabase/client') as { supabase: Record<string, jest.Mock> };
+
 describe('hangoutRepository', () => {
   beforeEach(() => {
-    // Reset all mocks
     jest.clearAllMocks();
+    // Reset all chain methods to return the chain object
+    for (const key of Object.keys(mockChain)) {
+      mockChain[key].mockImplementation(() => mockChain);
+    }
   });
 
   describe('createHangoutRoom', () => {
@@ -61,10 +51,9 @@ describe('hangoutRepository', () => {
         updated_at: '2026-01-29T00:00:00Z',
       };
 
-      mockFrom.mockReturnValueOnce(mockSupabase);
-      mockInsert.mockResolvedValueOnce({ data: [mockData], error: null });
-      mockSelect.mockReturnValueOnce(mockSupabase);
-      mockSingle.mockResolvedValueOnce({ data: mockData, error: null });
+      // The chain: from().insert().select().single()
+      // single() is the terminal and should resolve
+      mockChain.single.mockResolvedValueOnce({ data: mockData, error: null });
 
       const result = await createHangoutRoom('user123', 'Test Room', 'default');
 
@@ -75,8 +64,8 @@ describe('hangoutRepository', () => {
     });
 
     it('should handle error when creating hangout room', async () => {
-      mockFrom.mockReturnValueOnce(mockSupabase);
-      mockInsert.mockResolvedValueOnce({ data: null, error: { message: 'Failed to create' } });
+      // single() resolves with error
+      mockChain.single.mockResolvedValueOnce({ data: null, error: { message: 'Failed to create' } });
 
       const result = await createHangoutRoom('user123', 'Test Room', 'default');
 
@@ -97,10 +86,8 @@ describe('hangoutRepository', () => {
         updated_at: '2026-01-29T00:00:00Z',
       };
 
-      mockFrom.mockReturnValueOnce(mockSupabase);
-      mockSelect.mockResolvedValueOnce({ data: mockData, error: null });
-      mockEq.mockReturnThis();
-      mockSingle.mockResolvedValueOnce({ data: mockData, error: null });
+      // The chain: from().select().eq().single()
+      mockChain.single.mockResolvedValueOnce({ data: mockData, error: null });
 
       const result = await getHangoutRoom('room123');
 
@@ -110,10 +97,7 @@ describe('hangoutRepository', () => {
     });
 
     it('should handle error when getting hangout room', async () => {
-      mockFrom.mockReturnValueOnce(mockSupabase);
-      mockSelect.mockResolvedValueOnce({ data: null, error: { message: 'Room not found' } });
-      mockEq.mockReturnThis();
-      mockSingle.mockResolvedValueOnce({ data: null, error: { message: 'Room not found' } });
+      mockChain.single.mockResolvedValueOnce({ data: null, error: { message: 'Room not found' } });
 
       const result = await getHangoutRoom('room123');
 
@@ -136,10 +120,8 @@ describe('hangoutRepository', () => {
         created_at: '2026-01-29T00:00:00Z',
       };
 
-      mockFrom.mockReturnValueOnce(mockSupabase);
-      mockInsert.mockResolvedValueOnce({ data: [mockDecoration], error: null });
-      mockSelect.mockReturnValueOnce(mockSupabase);
-      mockSingle.mockResolvedValueOnce({ data: mockDecoration, error: null });
+      // The chain: from().insert().select().single()
+      mockChain.single.mockResolvedValueOnce({ data: mockDecoration, error: null });
 
       const result = await addDecoration({
         roomId: 'room123',

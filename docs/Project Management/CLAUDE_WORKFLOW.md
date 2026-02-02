@@ -665,7 +665,7 @@ The workflow is **automatically invoked** when:
 - `docs/exercise-db-api.md` - Full documentation
 
 ---
-## DIRECTIVE: FIX EXPO ERROR LOGS
+## DIRECTIVE: FIX EXPO ERRORS
 
 **Trigger:** User says "fix errors" or similar request to fix expo errors
 

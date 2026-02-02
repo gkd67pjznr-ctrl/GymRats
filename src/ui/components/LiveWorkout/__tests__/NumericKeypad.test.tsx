@@ -65,13 +65,16 @@ describe('NumericKeypad', () => {
   });
 
   it('renders digits 0-9', () => {
-    const { getByText } = render(
+    const { getAllByText, getByText } = render(
       <NumericKeypad value="" onChange={onChangeMock} />
     );
 
-    for (let i = 0; i <= 9; i++) {
+    // Digits 1-9 appear once each
+    for (let i = 1; i <= 9; i++) {
       expect(getByText(i.toString())).toBeTruthy();
     }
+    // '0' appears twice: once in the display (value || '0') and once as the 0 button
+    expect(getAllByText('0').length).toBeGreaterThanOrEqual(2);
   });
 
   it('renders backspace button', () => {

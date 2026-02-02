@@ -232,8 +232,9 @@ describe('friendsStore', () => {
         sendFriendRequest(MY_USER_ID, OTHER_USER_ID);
       });
 
-      const myEdges = useFriendEdges(MY_USER_ID);
-      const otherEdges = useFriendEdges(OTHER_USER_ID);
+      // Use imperative getter since useFriendEdges is a hook
+      const myEdges = getFriendEdges(MY_USER_ID);
+      const otherEdges = getFriendEdges(OTHER_USER_ID);
 
       expect(myEdges).toHaveLength(1);
       expect(myEdges[0].userId).toBe(MY_USER_ID);
@@ -316,12 +317,13 @@ describe('friendsStore', () => {
 
   describe('hydration', () => {
     it('should set hydrated flag after rehydration', async () => {
-      mockAsyncStorage.getItem.mockResolvedValueOnce(null);
+      mockAsyncStorage.getItem.mockResolvedValue(null);
 
-      // Trigger store creation
-      renderHook(() => useFriendsStore((s) => s.hydrated));
+      // Manually trigger rehydration
+      await act(async () => {
+        await useFriendsStore.persist.rehydrate();
+      });
 
-      // Wait for hydration to complete
       await waitFor(() => {
         expect(useFriendsStore.getState().hydrated).toBe(true);
       });
@@ -330,7 +332,11 @@ describe('friendsStore', () => {
 
   describe('persistence', () => {
     it('should persist state to AsyncStorage', async () => {
-      mockAsyncStorage.getItem.mockResolvedValueOnce(null);
+      mockAsyncStorage.getItem.mockResolvedValue(null);
+      mockAsyncStorage.setItem.mockResolvedValue(undefined);
+
+      // Clear calls from beforeEach's setState which persists empty edges
+      mockAsyncStorage.setItem.mockClear();
 
       act(() => {
         sendFriendRequest(MY_USER_ID, OTHER_USER_ID);
@@ -342,12 +348,16 @@ describe('friendsStore', () => {
       });
 
       const calls = mockAsyncStorage.setItem.mock.calls;
-      const setItemCall = calls.find((call) => call[0] === 'friends.v2');
+      // Find the last call with the friends key (most recent persistence write)
+      const matchingCalls = calls.filter((call) => call[0] === 'friends.v2');
+      const setItemCall = matchingCalls[matchingCalls.length - 1];
       expect(setItemCall).toBeDefined();
 
       const persistedValue = JSON.parse(setItemCall![1]);
-      expect(persistedValue.edges).toBeDefined();
-      expect(persistedValue.edges.length).toBeGreaterThan(0);
+      // Zustand persist wraps state in { state: { ... }, version: N }
+      const stateData = persistedValue.state ?? persistedValue;
+      expect(stateData.edges).toBeDefined();
+      expect(stateData.edges.length).toBeGreaterThan(0);
     });
   });
 });

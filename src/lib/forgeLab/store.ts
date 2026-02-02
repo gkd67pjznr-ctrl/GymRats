@@ -3,6 +3,7 @@
  */
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ForgeLabState } from './types';
 import { compileForgeLabData } from './calculator';
 import { getWorkoutHistory } from '@/src/lib/stores/workoutStore';
@@ -147,7 +148,7 @@ export const useForgeLabStore = create<ForgeLabState>()(
     }),
     {
       name: 'forgeLabStore',
-      storage: createJSONStorage(() => localStorage)
+      storage: createJSONStorage(() => AsyncStorage)
     }
   )
 );
