@@ -35,6 +35,9 @@ export interface UserProfile {
   // Hangout room properties (optional for backward compatibility)
   hangoutRoomId?: string | null;
   hangoutRoomRole?: "owner" | "member" | null;
+  // Location for regional leaderboards (optional for backward compatibility)
+  locationCountry?: string | null;
+  locationRegion?: string | null;
 }
 
 /**
@@ -91,6 +94,9 @@ function toUserProfile(user: DatabaseUser): UserProfile {
     // Hangout room properties
     hangoutRoomId: user.hangout_room_id,
     hangoutRoomRole: user.hangout_room_role,
+    // Location for regional leaderboards
+    locationCountry: user.location_country,
+    locationRegion: user.location_region,
   };
 }
 

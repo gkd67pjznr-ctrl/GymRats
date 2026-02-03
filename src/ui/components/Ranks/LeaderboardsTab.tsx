@@ -21,6 +21,7 @@ import { supabase } from '../../../lib/supabase/client';
 import { EXERCISES_V1 } from '../../../data/exercises';
 import {
   filterByFriends,
+  filterByRegion,
   recomputeRanks,
   ensureCurrentUserVisible,
   type EnhancedLeaderboardEntry,
@@ -29,13 +30,20 @@ import {
 // Extended scope that includes regional (not in base leaderboardUtils)
 type ExtendedLeaderboardScope = 'global' | 'regional' | 'friends';
 
-type ExerciseRank = EnhancedLeaderboardEntry & { exerciseId: string };
+type ExerciseRank = EnhancedLeaderboardEntry & {
+  exerciseId: string;
+  country?: string | null;
+  region?: string | null;
+};
 
 export function LeaderboardsTab() {
   const c = useThemeColors();
   const user = useUser();
-  const { unitSystem } = useSettings();
+  const { unitSystem, location } = useSettings();
   const userId = user?.id ?? 'u_demo_me';
+
+  // Check if user has location set for regional leaderboards
+  const hasLocation = Boolean(location.country);
 
   // State
   const [scope, setScope] = useState<ExtendedLeaderboardScope>('global');
@@ -89,9 +97,12 @@ export function LeaderboardsTab() {
       const filtered = filterByFriends(rankings, friendUserIds, userId);
       return recomputeRanks(filtered);
     }
-    // Regional scope - TODO: implement when region data is available
+    if (scope === 'regional' && hasLocation) {
+      const filtered = filterByRegion(rankings, location.country, location.region);
+      return recomputeRanks(filtered);
+    }
     return rankings;
-  }, [selectedExercise, groupedRankings, scope, friendUserIds, userId]);
+  }, [selectedExercise, groupedRankings, scope, friendUserIds, userId, hasLocation, location]);
 
   // Ensure current user is visible
   const displayRankings = useMemo(() => {
@@ -99,7 +110,7 @@ export function LeaderboardsTab() {
   }, [filteredRankings, userId]);
 
   // Fetch leaderboard data
-  const fetchLeaderboard = useCallback(async (isRefresh = false) => {
+  const fetchLeaderboard = useCallback(async (isRefresh = false, forceRegional = false) => {
     if (isRefresh) {
       setRefreshing(true);
     } else {
@@ -108,8 +119,15 @@ export function LeaderboardsTab() {
     setError(null);
 
     try {
+      // Pass regional filter when in regional scope
+      const shouldUseRegionalFilter = forceRegional || (scope === 'regional' && hasLocation);
+      const requestBody = shouldUseRegionalFilter && hasLocation
+        ? { body: { country: location.country, region: location.region || undefined } }
+        : {};
+
       const { data, error: fetchError } = await supabase.functions.invoke(
-        'get-all-exercise-leaderboards'
+        'get-all-exercise-leaderboards',
+        requestBody
       );
 
       if (fetchError) throw fetchError;
@@ -128,11 +146,13 @@ export function LeaderboardsTab() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [selectedExercise]);
+  }, [selectedExercise, scope, hasLocation, location]);
 
+  // Fetch leaderboard when scope or location changes
   useEffect(() => {
     fetchLeaderboard();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scope]);
 
   const onRefresh = useCallback(() => {
     fetchLeaderboard(true);
@@ -148,44 +168,47 @@ export function LeaderboardsTab() {
 
   const ScopeToggle = () => (
     <View style={styles.scopeRow}>
-      {(['global', 'regional', 'friends'] as ExtendedLeaderboardScope[]).map((s) => (
-        <Pressable
-          key={s}
-          onPress={() => setScope(s)}
-          style={[
-            styles.scopeChip,
-            {
-              backgroundColor: scope === s ? c.primary : c.card,
-              borderColor: scope === s ? c.primary : c.border,
-              opacity: s === 'regional' ? 0.5 : 1, // Regional coming soon
-            },
-          ]}
-          disabled={s === 'regional'}
-        >
-          <Ionicons
-            name={
-              s === 'global'
-                ? 'globe-outline'
-                : s === 'regional'
-                ? 'location-outline'
-                : 'people-outline'
-            }
-            size={14}
-            color={scope === s ? '#fff' : c.text}
-          />
-          <Text
+      {(['global', 'regional', 'friends'] as ExtendedLeaderboardScope[]).map((s) => {
+        const isRegionalDisabled = s === 'regional' && !hasLocation;
+        return (
+          <Pressable
+            key={s}
+            onPress={() => setScope(s)}
             style={[
-              styles.scopeLabel,
+              styles.scopeChip,
               {
-                color: scope === s ? '#fff' : c.text,
-                fontWeight: scope === s ? '700' : '400',
+                backgroundColor: scope === s ? c.primary : c.card,
+                borderColor: scope === s ? c.primary : c.border,
+                opacity: isRegionalDisabled ? 0.5 : 1,
               },
             ]}
+            disabled={isRegionalDisabled}
           >
-            {s.charAt(0).toUpperCase() + s.slice(1)}
-          </Text>
-        </Pressable>
-      ))}
+            <Ionicons
+              name={
+                s === 'global'
+                  ? 'globe-outline'
+                  : s === 'regional'
+                  ? 'location-outline'
+                  : 'people-outline'
+              }
+              size={14}
+              color={scope === s ? '#fff' : c.text}
+            />
+            <Text
+              style={[
+                styles.scopeLabel,
+                {
+                  color: scope === s ? '#fff' : c.text,
+                  fontWeight: scope === s ? '700' : '400',
+                },
+              ]}
+            >
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 
@@ -339,12 +362,22 @@ export function LeaderboardsTab() {
       {/* Scope toggle */}
       <ScopeToggle />
 
-      {/* Regional coming soon note */}
-      {scope === 'regional' && (
+      {/* Regional scope info */}
+      {scope === 'regional' && hasLocation && (
+        <View style={[styles.comingSoon, { backgroundColor: c.card, borderColor: c.border }]}>
+          <Ionicons name="location" size={20} color={c.primary} />
+          <Text style={[styles.comingSoonText, { color: c.text }]}>
+            Showing users from {location.region ? `${location.region}, ` : ''}{location.country}
+          </Text>
+        </View>
+      )}
+
+      {/* Prompt to set location when regional is disabled */}
+      {!hasLocation && (
         <View style={[styles.comingSoon, { backgroundColor: c.card, borderColor: c.border }]}>
           <Ionicons name="information-circle-outline" size={20} color={c.muted} />
           <Text style={[styles.comingSoonText, { color: c.muted }]}>
-            Regional leaderboards coming soon. Add your zip code in Profile settings.
+            Set your location in Settings to unlock regional leaderboards.
           </Text>
         </View>
       )}

@@ -184,6 +184,9 @@ export type DatabaseUser = {
   // Hangout room columns
   hangout_room_id: string | null;
   hangout_room_role: "owner" | "member" | null;
+  // Location columns for regional leaderboards
+  location_country: string | null;
+  location_region: string | null;
 };
 
 /**
@@ -536,6 +539,9 @@ export type DatabaseUserInsert = Omit<
   // Hangout room fields
   hangout_room_id?: string | null;
   hangout_room_role?: "owner" | "member" | null;
+  // Location fields
+  location_country?: string | null;
+  location_region?: string | null;
 };
 
 export type DatabaseRoutineInsert = Pick<
@@ -613,6 +619,9 @@ export type DatabaseUserUpdate = Partial<
     // Hangout room fields
     | "hangout_room_id"
     | "hangout_room_role"
+    // Location fields
+    | "location_country"
+    | "location_region"
   >
 >;
 
@@ -843,6 +852,8 @@ export function mapDatabaseUser(dbUser: DatabaseUser): {
   totalSets: number | null;
   hangoutRoomId: string | null;
   hangoutRoomRole: 'owner' | 'member' | null;
+  locationCountry: string | null;
+  locationRegion: string | null;
 } {
   return {
     id: dbUser.id,
@@ -860,6 +871,8 @@ export function mapDatabaseUser(dbUser: DatabaseUser): {
     totalSets: dbUser.total_sets ?? null,
     hangoutRoomId: dbUser.hangout_room_id ?? null,
     hangoutRoomRole: dbUser.hangout_room_role ?? null,
+    locationCountry: dbUser.location_country ?? null,
+    locationRegion: dbUser.location_region ?? null,
   };
 }
 
