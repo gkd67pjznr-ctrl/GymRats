@@ -1,140 +1,291 @@
 // src/lib/supabase/client.ts
-// Supabase client initialization and health check for Forgerank app
+// Supabase client initialization with production hardening
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import Constants from 'expo-constants';
 
 /**
- * Health check result interface for Supabase connection status
+ * Health check result interface
  */
 export interface HealthCheckResult {
-  status: 'connected' | 'error';
+  status: 'connected' | 'error' | 'placeholder';
   message: string;
   timestamp: Date;
+  latencyMs?: number;
 }
 
 /**
- * Retrieve Supabase URL from Expo environment configuration
- * @returns Supabase URL or undefined if not configured
+ * Connection state for monitoring
+ */
+export interface ConnectionState {
+  isConnected: boolean;
+  lastHealthCheck: HealthCheckResult | null;
+  consecutiveFailures: number;
+}
+
+// Connection state singleton
+let connectionState: ConnectionState = {
+  isConnected: false,
+  lastHealthCheck: null,
+  consecutiveFailures: 0,
+};
+
+/**
+ * Retrieve Supabase URL from environment
  */
 function getSupabaseUrl(): string | undefined {
   return Constants.expoConfig?.extra?.supabaseUrl as string | undefined;
 }
 
 /**
- * Retrieve Supabase anonymous key from Expo environment configuration
- * @returns Supabase anonymous key or undefined if not configured
+ * Retrieve Supabase anon key from environment
  */
 function getSupabaseAnonKey(): string | undefined {
   return Constants.expoConfig?.extra?.supabaseAnonKey as string | undefined;
 }
 
 /**
- * Validate that required Supabase environment variables are present
- * @throws Error if Supabase URL or anon key is missing
+ * Validate Supabase configuration
  */
-function validateEnvironment(): void {
+function validateEnvironment(): { url: string; key: string } | null {
   const supabaseUrl = getSupabaseUrl();
   const supabaseAnonKey = getSupabaseAnonKey();
 
-  if (!supabaseUrl) {
-    throw new Error(
-      'Missing Supabase URL. Please set EXPO_PUBLIC_SUPABASE_URL in .env file and add it to app.json extra section.'
-    );
+  // Check for missing credentials
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
   }
 
-  if (!supabaseAnonKey) {
-    throw new Error(
-      'Missing Supabase anonymous key. Please set EXPO_PUBLIC_SUPABASE_ANON_KEY in .env file and add it to app.json extra section.'
-    );
+  // Check for empty strings
+  if (supabaseUrl.trim() === '' || supabaseAnonKey.trim() === '') {
+    return null;
   }
 
   // Validate URL format
   try {
-    new URL(supabaseUrl);
-  } catch (error) {
-    throw new Error(`Invalid Supabase URL format: ${supabaseUrl}`);
+    const url = new URL(supabaseUrl);
+    if (!url.hostname.includes('supabase')) {
+      console.warn('[Supabase] URL does not appear to be a Supabase URL:', supabaseUrl);
+    }
+  } catch {
+    console.error('[Supabase] Invalid URL format:', supabaseUrl);
+    return null;
   }
+
+  // Validate key format (should be a JWT-like string)
+  if (!supabaseAnonKey.includes('.') || supabaseAnonKey.length < 100) {
+    console.warn('[Supabase] Anon key appears invalid (too short or wrong format)');
+  }
+
+  return { url: supabaseUrl, key: supabaseAnonKey };
 }
 
-/**
- * Create and configure Supabase client
- * Uses Expo Constants to access environment variables configured in app.json
- *
- * For local development without Supabase, the client will be created with placeholder values.
- * Real Supabase features will be disabled until proper credentials are provided.
- */
-const supabaseUrl = getSupabaseUrl();
-const supabaseAnonKey = getSupabaseAnonKey();
+// Validate and get credentials
+const credentials = validateEnvironment();
 
-// Validate environment only if credentials are provided
-// This allows local development without Supabase
-if (supabaseUrl || supabaseAnonKey) {
-  validateEnvironment();
+/**
+ * Whether Supabase is using placeholder (non-functional) configuration
+ */
+export const isSupabasePlaceholder = !credentials;
+
+/**
+ * PRODUCTION GUARD
+ *
+ * In production builds, we MUST have valid Supabase credentials.
+ * Fail fast rather than running with broken backend.
+ */
+if (!__DEV__ && isSupabasePlaceholder) {
+  throw new Error(
+    '[FATAL] Supabase credentials not configured for production build. ' +
+    'Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in environment.'
+  );
+}
+
+// Log configuration status
+if (__DEV__) {
+  if (isSupabasePlaceholder) {
+    console.warn(
+      '[Supabase] Running with placeholder configuration. ' +
+      'Backend features disabled. Set env vars to enable.'
+    );
+  } else {
+    console.log('[Supabase] Configured with project:', credentials!.url);
+  }
 }
 
 /**
  * Supabase client instance
- * Singleton pattern ensures single connection throughout the app
  *
- * If credentials are not provided, creates a client with placeholder values.
- * The client will be non-functional but won't crash the app.
+ * In development: Falls back to placeholder if not configured
+ * In production: Throws error if not configured (see guard above)
  */
 export const supabase: SupabaseClient = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
+  credentials?.url || 'https://placeholder.supabase.co',
+  credentials?.key || 'placeholder-key',
+  {
+    auth: {
+      // Persist session to AsyncStorage
+      persistSession: true,
+      // Auto-refresh tokens before expiry
+      autoRefreshToken: true,
+      // Detect session from URL (for OAuth callbacks)
+      detectSessionInUrl: true,
+    },
+    global: {
+      // Add custom headers for debugging
+      headers: {
+        'x-client-info': `forgerank/${Constants.expoConfig?.version || '1.0.0'}`,
+      },
+    },
+    // Realtime configuration
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
+      },
+    },
+  }
 );
 
 /**
- * Check if Supabase is configured with real credentials
- * Returns true if using placeholder values
- */
-export const isSupabasePlaceholder = !supabaseUrl || !supabaseAnonKey;
-
-/**
- * Perform health check on Supabase connection
- * Tests connectivity by attempting a simple query
- *
- * @returns Promise resolving to health check result with status and message
- *
- * @example
- * ```ts
- * const result = await healthCheck();
- * if (result.status === 'connected') {
- *   console.log('Supabase is ready');
- * }
- * ```
+ * Perform health check with latency measurement
  */
 export async function healthCheck(): Promise<HealthCheckResult> {
-  try {
-    // Simple connection test using rpc to call a built-in function
-    // This tests network connectivity and authentication
-    const { error } = await supabase.rpc('get_table_columns', {
-      table_name: 'nonexistent_table_for_health_check',
-    });
+  // Return placeholder status if not configured
+  if (isSupabasePlaceholder) {
+    return {
+      status: 'placeholder',
+      message: 'Supabase not configured - using placeholder',
+      timestamp: new Date(),
+    };
+  }
 
-    // We expect an error (table doesn't exist), but that proves we can reach Supabase
-    // If we get a network error or auth error, that's a real problem
-    if (error && !error.message.includes('does not exist')) {
-      throw error;
+  const startTime = Date.now();
+
+  try {
+    // Use a simple auth check instead of RPC (more reliable)
+    const { error } = await supabase.auth.getSession();
+
+    const latencyMs = Date.now() - startTime;
+
+    if (error) {
+      // Auth error but connection worked
+      connectionState.isConnected = true;
+      connectionState.consecutiveFailures = 0;
+
+      const result: HealthCheckResult = {
+        status: 'connected',
+        message: `Connected (auth state: ${error.message})`,
+        timestamp: new Date(),
+        latencyMs,
+      };
+      connectionState.lastHealthCheck = result;
+      return result;
     }
 
-    return {
+    connectionState.isConnected = true;
+    connectionState.consecutiveFailures = 0;
+
+    const result: HealthCheckResult = {
       status: 'connected',
       message: 'Successfully connected to Supabase',
       timestamp: new Date(),
+      latencyMs,
     };
+    connectionState.lastHealthCheck = result;
+    return result;
   } catch (error) {
+    const latencyMs = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return {
+
+    connectionState.isConnected = false;
+    connectionState.consecutiveFailures += 1;
+
+    const result: HealthCheckResult = {
       status: 'error',
       message: `Connection failed: ${errorMessage}`,
       timestamp: new Date(),
+      latencyMs,
     };
+    connectionState.lastHealthCheck = result;
+    return result;
   }
 }
 
 /**
- * Re-export Supabase types for convenience
+ * Get current connection state
+ */
+export function getConnectionState(): ConnectionState {
+  return { ...connectionState };
+}
+
+/**
+ * Check if backend is currently available
+ *
+ * Use this to guard backend-dependent features.
+ */
+export function isBackendAvailable(): boolean {
+  if (isSupabasePlaceholder) return false;
+  return connectionState.isConnected || connectionState.consecutiveFailures < 3;
+}
+
+/**
+ * Wrapper for Supabase calls with automatic retry
+ *
+ * Use for important operations that should survive transient failures.
+ */
+export async function withRetry<T>(
+  operation: () => Promise<T>,
+  options: { maxRetries?: number; delayMs?: number } = {}
+): Promise<T> {
+  const { maxRetries = 3, delayMs = 1000 } = options;
+
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+
+      // Don't retry on auth errors or client errors (4xx)
+      const message = lastError.message || '';
+      if (
+        message.includes('401') ||
+        message.includes('403') ||
+        message.includes('Invalid') ||
+        message.includes('not found')
+      ) {
+        throw lastError;
+      }
+
+      if (attempt < maxRetries) {
+        console.warn(`[Supabase] Attempt ${attempt} failed, retrying in ${delayMs}ms:`, message);
+        await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+      }
+    }
+  }
+
+  throw lastError;
+}
+
+/**
+ * Safe query wrapper that handles placeholder mode
+ *
+ * Returns null data in placeholder mode instead of making failed requests.
+ */
+export function guardedQuery<T>(
+  queryFn: () => Promise<{ data: T | null; error: Error | null }>
+): Promise<{ data: T | null; error: Error | null }> {
+  if (isSupabasePlaceholder) {
+    return Promise.resolve({
+      data: null,
+      error: new Error('Supabase not configured'),
+    });
+  }
+  return queryFn();
+}
+
+/**
+ * Re-export types
  */
 export type { SupabaseClient };

@@ -20,6 +20,10 @@ import { initializeVoiceManager } from '@/src/lib/voice/VoiceManager';
 import { setupNotificationResponseListener } from '@/src/lib/notifications/notificationService';
 import { useBuddyStore } from '@/src/lib/stores/buddyStore';
 import { PersistentTabBar } from '@/src/ui/components/PersistentTabBar';
+import { initializeSentry, setSentryUser, clearSentryUser } from '@/src/lib/monitoring/sentry';
+
+// Initialize Sentry FIRST (before any other code that might crash)
+initializeSentry();
 
 // Initialize WebBrowser for auth sessions
 WebBrowser.maybeCompleteAuthSession();
@@ -74,6 +78,15 @@ export default function RootLayout() {
   useEffect(() => {
     const authCleanup = setupAuthListener();
 
+    // Set up Sentry user tracking
+    const unsubscribeAuth = useAuthStore.subscribe((state) => {
+      if (state.user) {
+        setSentryUser(state.user.id, state.user.email || undefined);
+      } else {
+        clearSentryUser();
+      }
+    });
+
     // Fallback: Ensure loading is set to false after 3 seconds
     const fallbackTimer = setTimeout(() => {
       const { loading } = useAuthStore.getState();
@@ -84,6 +97,7 @@ export default function RootLayout() {
 
     return () => {
       clearTimeout(fallbackTimer);
+      unsubscribeAuth();
       authCleanup?.();
     };
   }, []);

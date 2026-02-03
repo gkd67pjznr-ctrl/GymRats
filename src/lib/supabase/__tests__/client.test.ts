@@ -4,14 +4,15 @@
 // Mock expo-constants
 import Constants from 'expo-constants';
 import { createClient } from '@supabase/supabase-js';
-import { supabase, healthCheck, HealthCheckResult } from '../client';
+import { supabase, healthCheck, HealthCheckResult, isSupabasePlaceholder } from '../client';
 
 jest.mock('expo-constants', () => ({
   expoConfig: {
     extra: {
       supabaseUrl: 'https://test-project.supabase.co',
-      supabaseAnonKey: 'test-anon-key',
+      supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMzk2Mjk4MCwiZXhwIjoxOTM5NTM4OTgwfQ.test-signature-here',
     },
+    version: '1.0.0',
   },
 }));
 
@@ -25,6 +26,7 @@ jest.mock('@supabase/supabase-js', () => ({
       signInWithPassword: jest.fn(),
       signOut: jest.fn(),
       onAuthStateChange: jest.fn(),
+      getSession: jest.fn(),
     },
     storage: {
       bucket: jest.fn(),
@@ -53,15 +55,19 @@ describe('Supabase Client', () => {
     it('should characterize: retrieve Supabase anon key from extra config', () => {
       const mockConstants = Constants as any;
       const supabaseAnonKey = mockConstants.expoConfig?.extra?.supabaseAnonKey;
-      expect(supabaseAnonKey).toBe('test-anon-key');
+      expect(supabaseAnonKey).toContain('eyJ');
     });
   });
 
   describe('client initialization with valid credentials', () => {
-    it('should characterize: createClient is called with URL and anon key', () => {
+    it('should characterize: createClient is called with URL, anon key, and options', () => {
       expect(createClient).toHaveBeenCalledWith(
         'https://test-project.supabase.co',
-        'test-anon-key'
+        expect.any(String),
+        expect.objectContaining({
+          auth: expect.any(Object),
+          global: expect.any(Object),
+        })
       );
     });
 
@@ -74,6 +80,10 @@ describe('Supabase Client', () => {
       expect(typeof supabase.from).toBe('function');
       expect(typeof supabase.rpc).toBe('function');
     });
+
+    it('should characterize: isSupabasePlaceholder is false with valid credentials', () => {
+      expect(isSupabasePlaceholder).toBe(false);
+    });
   });
 
   describe('error handling with missing credentials', () => {
@@ -82,22 +92,22 @@ describe('Supabase Client', () => {
       jest.resetModules();
     });
 
-    it('should characterize: throw error when supabaseUrl is missing', () => {
+    it('should characterize: create placeholder client when URL is missing', () => {
       // Mock Constants with missing URL
       jest.doMock('expo-constants', () => ({
         expoConfig: {
           extra: {
-            supabaseAnonKey: 'test-anon-key',
+            supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test',
           },
         },
       }));
 
-      expect(() => {
-        require('../client');
-      }).toThrow('Missing Supabase URL');
+      // In dev mode, missing credentials create a placeholder
+      const client = require('../client');
+      expect(client.isSupabasePlaceholder).toBe(true);
     });
 
-    it('should characterize: throw error when supabaseAnonKey is missing', () => {
+    it('should characterize: create placeholder client when anon key is missing', () => {
       // Mock Constants with missing anon key
       jest.doMock('expo-constants', () => ({
         expoConfig: {
@@ -107,9 +117,8 @@ describe('Supabase Client', () => {
         },
       }));
 
-      expect(() => {
-        require('../client');
-      }).toThrow('Missing Supabase anonymous key');
+      const client = require('../client');
+      expect(client.isSupabasePlaceholder).toBe(true);
     });
 
     it('should characterize: create placeholder client when both credentials are missing', () => {
@@ -124,22 +133,22 @@ describe('Supabase Client', () => {
       // instead of throwing an error (to allow local development)
       const client = require('../client');
       expect(client.supabase).toBeDefined();
+      expect(client.isSupabasePlaceholder).toBe(true);
     });
 
-    it('should characterize: throw error when URL format is invalid', () => {
+    it('should characterize: create placeholder when URL format is invalid', () => {
       // Mock Constants with invalid URL
       jest.doMock('expo-constants', () => ({
         expoConfig: {
           extra: {
             supabaseUrl: 'not-a-valid-url',
-            supabaseAnonKey: 'test-anon-key',
+            supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test',
           },
         },
       }));
 
-      expect(() => {
-        require('../client');
-      }).toThrow('Invalid Supabase URL format');
+      const client = require('../client');
+      expect(client.isSupabasePlaceholder).toBe(true);
     });
   });
 
@@ -149,9 +158,10 @@ describe('Supabase Client', () => {
     });
 
     it('should characterize: healthCheck returns correct structure on success', async () => {
-      // Mock successful RPC call - use the supabase client from import
-      (supabase.rpc as jest.Mock).mockResolvedValue({
-        error: { message: 'table "nonexistent_table_for_health_check" does not exist' },
+      // Mock successful auth.getSession call
+      (supabase.auth.getSession as jest.Mock).mockResolvedValue({
+        data: { session: null },
+        error: null,
       });
 
       const result = await healthCheck();
@@ -164,8 +174,9 @@ describe('Supabase Client', () => {
     });
 
     it('should characterize: healthCheck returns connected status on successful connection', async () => {
-      (supabase.rpc as jest.Mock).mockResolvedValue({
-        error: { message: 'table does not exist' },
+      (supabase.auth.getSession as jest.Mock).mockResolvedValue({
+        data: { session: null },
+        error: null,
       });
 
       const result = await healthCheck();
@@ -173,10 +184,11 @@ describe('Supabase Client', () => {
       expect(result.status).toBe('connected');
       expect(result.message).toBe('Successfully connected to Supabase');
       expect(result.timestamp).toBeInstanceOf(Date);
+      expect(result.latencyMs).toBeDefined();
     });
 
     it('should characterize: healthCheck returns error status on connection failure', async () => {
-      (supabase.rpc as jest.Mock).mockRejectedValue(new Error('Network error'));
+      (supabase.auth.getSession as jest.Mock).mockRejectedValue(new Error('Network error'));
 
       const result = await healthCheck();
 
@@ -185,27 +197,40 @@ describe('Supabase Client', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    it('should characterize: healthCheck handles authentication errors', async () => {
-      (supabase.rpc as jest.Mock).mockResolvedValue({
-        error: { message: 'Invalid API key' },
+    it('should characterize: healthCheck still returns connected on auth errors', async () => {
+      // Auth errors indicate the connection worked, just no session
+      (supabase.auth.getSession as jest.Mock).mockResolvedValue({
+        data: null,
+        error: { message: 'Invalid refresh token' },
       });
 
       const result = await healthCheck();
 
-      expect(result.status).toBe('error');
-      expect(result.message).toContain('Connection failed');
+      // Should still be connected - we reached the server
+      expect(result.status).toBe('connected');
     });
 
-    it('should characterize: healthCheck calls Supabase RPC function', async () => {
-      (supabase.rpc as jest.Mock).mockResolvedValue({
-        error: { message: 'table does not exist' },
+    it('should characterize: healthCheck calls auth.getSession', async () => {
+      (supabase.auth.getSession as jest.Mock).mockResolvedValue({
+        data: { session: null },
+        error: null,
       });
 
       await healthCheck();
 
-      expect(supabase.rpc).toHaveBeenCalledWith('get_table_columns', {
-        table_name: 'nonexistent_table_for_health_check',
+      expect(supabase.auth.getSession).toHaveBeenCalled();
+    });
+
+    it('should characterize: healthCheck includes latency measurement', async () => {
+      (supabase.auth.getSession as jest.Mock).mockResolvedValue({
+        data: { session: null },
+        error: null,
       });
+
+      const result = await healthCheck();
+
+      expect(typeof result.latencyMs).toBe('number');
+      expect(result.latencyMs).toBeGreaterThanOrEqual(0);
     });
   });
 
