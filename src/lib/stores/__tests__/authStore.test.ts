@@ -41,6 +41,8 @@ function toUserProfile(dbUser: DatabaseUser) {
     totalSets: (dbUser as any).total_sets || null,
     hangoutRoomId: (dbUser as any).hangout_room_id || null,
     hangoutRoomRole: (dbUser as any).hangout_room_role || null,
+    locationCountry: (dbUser as any).location_country || null,
+    locationRegion: (dbUser as any).location_region || null,
   };
 }
 
@@ -65,7 +67,7 @@ jest.mock('../../supabase/client', () => ({
 
 describe('authStore', () => {
   // Mock database user response (with all new UserProfile fields)
-  const mockDatabaseUser: DatabaseUser = {
+  const mockDatabaseUser = {
     id: 'user-123',
     email: 'test@example.com',
     display_name: 'Test User',
@@ -81,7 +83,22 @@ describe('authStore', () => {
     total_sets: null,
     hangout_room_id: null,
     hangout_room_role: null,
-  };
+    location_country: null,
+    location_region: null,
+    // Gamification fields (required by DatabaseUser type)
+    total_xp: 0,
+    current_level: 1,
+    xp_to_next_level: 100,
+    level_up_celebration_shown: null,
+    current_streak: 0,
+    longest_streak: 0,
+    last_workout_date: null,
+    workout_calendar: [],
+    forge_tokens: 0,
+    tokens_earned_total: 0,
+    tokens_spent_total: 0,
+    milestones_completed: [],
+  } as DatabaseUser;
 
   // Convert to camelCase for store state (basic fields)
   const mockUserProfile = mapDatabaseUser(mockDatabaseUser);
@@ -98,6 +115,8 @@ describe('authStore', () => {
     totalSets: null,
     hangoutRoomId: null,
     hangoutRoomRole: null,
+    locationCountry: null,
+    locationRegion: null,
   };
 
   // Alias for clarity

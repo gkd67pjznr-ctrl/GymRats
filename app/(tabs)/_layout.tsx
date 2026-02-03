@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "../../src/ui/theme";
 import { useIsAuthenticated, useAuthLoading } from "../../src/lib/stores";
+import { TOP_BAR_HEIGHT } from "../../src/ui/components/GlobalTopBar";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useIsAuthenticated();
@@ -41,7 +42,7 @@ export default function TabsLayout() {
             display: 'none', // Hidden - using PersistentTabBar instead
           },
           sceneStyle: {
-            paddingTop: insets.top * 0.75,
+            paddingTop: insets.top + TOP_BAR_HEIGHT,
             paddingBottom: 60, // Space for persistent tab bar
             backgroundColor: c.bg,
           },

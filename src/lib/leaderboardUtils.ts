@@ -1,7 +1,7 @@
 // src/lib/leaderboardUtils.ts
 // Utility functions for leaderboard filtering, ranking, and user visibility
 
-export type LeaderboardScope = 'friends' | 'global';
+export type LeaderboardScope = 'friends' | 'global' | 'regional';
 
 export type EnhancedLeaderboardEntry = {
   rank: number;
@@ -28,6 +28,34 @@ export function filterByFriends<T extends { userId: string; rank: number }>(
   return entries.filter(
     (entry) => friendUserIds.has(entry.userId) || entry.userId === currentUserId
   );
+}
+
+/**
+ * Filter leaderboard entries to only include users from a specific region
+ * @param entries - Raw leaderboard entries with location data
+ * @param country - Country to filter by (case-insensitive)
+ * @param region - Optional region/state to filter by (case-insensitive)
+ * @returns Filtered entries from the specified region
+ */
+export function filterByRegion<T extends { country?: string | null; region?: string | null }>(
+  entries: T[],
+  country: string,
+  region?: string
+): T[] {
+  const countryLower = country.toLowerCase();
+  const regionLower = region?.toLowerCase();
+
+  return entries.filter((entry) => {
+    // Must match country
+    if (!entry.country || entry.country.toLowerCase() !== countryLower) {
+      return false;
+    }
+    // If region filter specified, must also match region
+    if (regionLower && (!entry.region || entry.region.toLowerCase() !== regionLower)) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /**

@@ -184,6 +184,39 @@ export async function updateUserProfile(updates: {
 }
 
 /**
+ * Update current user's location for regional leaderboards
+ * @param location - Country and region, or null values to clear
+ * @returns true if successful, false otherwise
+ */
+export async function updateUserLocation(location: {
+  country: string | null;
+  region: string | null;
+}): Promise<boolean> {
+  try {
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      throw new Error('Not authenticated');
+    }
+
+    const { error } = await supabase
+      .from('users')
+      .update({
+        location_country: location.country || null,
+        location_region: location.region || null,
+      })
+      .eq('id', user.id);
+
+    if (error) throw error;
+
+    return true;
+  } catch (error) {
+    logError({ context: 'UserProfileRepository', error, userMessage: 'Failed to update location' });
+    return false;
+  }
+}
+
+/**
  * User profile repository object
  */
 export const userProfileRepository = {
@@ -191,4 +224,5 @@ export const userProfileRepository = {
   getUserProfile,
   getUserProfiles,
   updateUserProfile,
+  updateUserLocation,
 };

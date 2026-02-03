@@ -12,6 +12,7 @@ import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { migrateLocalToCloud, importFromCSV } from "../src/lib/migration/dataMigrator";
 import type { MigrationProgress } from "../src/lib/migration/dataMigrator";
 import { WeightEntryModal } from "../src/ui/components/Settings/WeightEntryModal";
+import { LocationEntryModal } from "../src/ui/components/Settings/LocationEntryModal";
 import { kgToLb } from "../src/lib/units";
 
 function Row(props: {
@@ -86,6 +87,9 @@ export default function SettingsScreen() {
   // Weight entry modal state
   const [showWeightModal, setShowWeightModal] = useState(false);
   const [weightModalMode, setWeightModalMode] = useState<'current' | 'historical'>('current');
+
+  // Location entry modal state
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   // Migration state
   const [showMigrationModal, setShowMigrationModal] = useState(false);
@@ -468,6 +472,36 @@ export default function SettingsScreen() {
                   <Text style={{ fontWeight: '700', fontSize: 12 }}>Add Historical</Text>
                 </Pressable>
               </View>
+            }
+          />
+        </View>
+
+        {/* Location for Regional Leaderboards */}
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Row
+            title="Location"
+            subtitle={
+              settings.location.country
+                ? `${settings.location.region ? `${settings.location.region}, ` : ''}${settings.location.country}`
+                : 'Not set - Set to compete in regional leaderboards'
+            }
+            right={
+              <Pressable
+                onPress={() => setShowLocationModal(true)}
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 14,
+                  borderRadius: 12,
+                  backgroundColor: c.bg,
+                  borderWidth: 1,
+                  borderColor: c.border,
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ fontWeight: '700', fontSize: 12 }}>
+                  {settings.location.country ? 'Change' : 'Set Location'}
+                </Text>
+              </Pressable>
             }
           />
         </View>
@@ -1167,6 +1201,12 @@ export default function SettingsScreen() {
         onClose={handleCloseWeightModal}
         mode={weightModalMode}
         initialWeightKg={settings.bodyweight}
+      />
+
+      {/* Location Entry Modal */}
+      <LocationEntryModal
+        visible={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
       />
     </ProtectedRoute>
   );

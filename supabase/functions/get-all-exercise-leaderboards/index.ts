@@ -1,6 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 
+// Request body type for regional filtering
+type RequestBody = {
+  country?: string;
+  region?: string;
+};
+
 // Supabase client from environment variables
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -13,6 +19,18 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Parse optional regional filter from POST body
+    let regionFilter: RequestBody = {};
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        if (body.country) regionFilter.country = body.country;
+        if (body.region) regionFilter.region = body.region;
+      } catch {
+        // No body or invalid JSON - continue without filter
+      }
+    }
+
     const { data: workouts, error } = await supabase.from('workouts').select('user_id, sets');
     if (error) throw error;
 
@@ -43,19 +61,55 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { data: users, error: usersError } = await supabase.from('users').select('id, display_name');
+    // Fetch users with location data for regional filtering
+    const { data: users, error: usersError } = await supabase
+      .from('users')
+      .select('id, display_name, location_country, location_region');
     if (usersError) throw usersError;
-    const userMap = new Map(users.map(u => [u.id, u.display_name || 'Anonymous']));
+
+    // Build user map with location data
+    const userMap = new Map(users.map(u => [u.id, {
+      displayName: u.display_name || 'Anonymous',
+      country: u.location_country,
+      region: u.location_region,
+    }]));
+
+    // Build set of eligible user IDs if regional filtering is active
+    let eligibleUserIds: Set<string> | null = null;
+    if (regionFilter.country) {
+      eligibleUserIds = new Set();
+      for (const user of users) {
+        // Match by country (required)
+        if (user.location_country?.toLowerCase() === regionFilter.country.toLowerCase()) {
+          // If region filter is specified, also match by region
+          if (regionFilter.region) {
+            if (user.location_region?.toLowerCase() === regionFilter.region.toLowerCase()) {
+              eligibleUserIds.add(user.id);
+            }
+          } else {
+            // Country match only
+            eligibleUserIds.add(user.id);
+          }
+        }
+      }
+    }
 
     let allRankings: any[] = [];
     userExerciseStats.forEach((userStats, userId) => {
+      // Skip users not in eligible set (if regional filtering is active)
+      if (eligibleUserIds && !eligibleUserIds.has(userId)) return;
+
+      const userData = userMap.get(userId);
       userStats.forEach((stats, exerciseId) => {
         allRankings.push({
           userId,
           exerciseId,
-          userName: userMap.get(userId) || 'Anonymous',
+          userName: userData?.displayName || 'Anonymous',
           value: stats.bestE1RM,
           display: `${stats.bestE1RM.toFixed(1)} kg`,
+          // Include location data in response for transparency
+          country: userData?.country || null,
+          region: userData?.region || null,
         });
       });
     });
