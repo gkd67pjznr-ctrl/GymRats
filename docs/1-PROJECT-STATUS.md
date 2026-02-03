@@ -23,7 +23,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 |---------------|--------|----------|---------|
 | Workout Core | 🔄 In Progress | 14/20 | Live logging, history, routines |
 | Workout Logging UX | ✅ Done | 10/10 | Hevy-style redesign complete |
-| Workout Drawer | 🔄 In Progress | 5/8 | Phase 1 complete, drawer + hub + navigation |
+| Workout Drawer | 🔄 In Progress | 7/8 | Phase 2 in progress: rest timer + PR cue integration |
 | Exercise Library | ✅ Done | 3/3 | 100+ exercises with muscle groups |
 | Scoring & Ranks | ✅ Done | 5/5 | 0-1000 scoring, 20 ranks/exercise |
 | AI Gym Buddy | 🔄 In Progress | 9/11 | 9 personalities, IAP integrated |

@@ -17,7 +17,12 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 import { useThemeColors } from '@/src/ui/theme';
-import { useWorkoutDrawerStore } from '@/src/lib/stores/workoutDrawerStore';
+import {
+  useWorkoutDrawerStore,
+  useRestTimer,
+  usePendingCue,
+  useDrawerPosition,
+} from '@/src/lib/stores/workoutDrawerStore';
 import {
   useCurrentSession,
   updateCurrentSession,
@@ -59,25 +64,38 @@ const DEFAULT_REST_SECONDS = 90;
 
 export function DrawerContent() {
   const c = useThemeColors();
-  const { collapseDrawer, endWorkout } = useWorkoutDrawerStore();
+  const {
+    collapseDrawer,
+    endWorkout,
+    startRestTimer,
+    clearRestTimer,
+    setPendingCue,
+    clearPendingCue,
+  } = useWorkoutDrawerStore();
   const session = useCurrentSession();
   const scrollRef = useRef<ScrollView>(null);
+  const drawerPosition = useDrawerPosition();
 
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
 
-  // Rest timer state
+  // Rest timer state from store (persists across drawer collapse/expand)
+  const restTimer = useRestTimer();
   const [restTimerVisible, setRestTimerVisible] = useState(false);
-  const [restStartTime, setRestStartTime] = useState<number | null>(null);
 
-  // PR cue toast state
-  const [currentCue, setCurrentCue] = useState<InstantCue | null>(null);
+  // PR cue from store
+  const pendingCue = usePendingCue();
 
   // Track done state locally (synced with session)
   const doneBySetId = session?.doneBySetId ?? {};
 
   // Get user settings for rest timer
   const settings = getSettings();
+
+  // Show rest timer overlay only when drawer is expanded
+  useEffect(() => {
+    setRestTimerVisible(drawerPosition === 'expanded' && restTimer.isActive);
+  }, [drawerPosition, restTimer.isActive]);
 
   // Update timer every second
   useEffect(() => {
@@ -177,15 +195,15 @@ export function DrawerContent() {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
         }
 
-        // Start rest timer
-        setRestStartTime(Date.now());
-        setRestTimerVisible(true);
+        // Start rest timer via store (persists across drawer collapse)
+        const restSeconds = settings.defaultRestSeconds ?? DEFAULT_REST_SECONDS;
+        startRestTimer(restSeconds);
 
-        // TODO: PR detection requires more integration work
-        // Will be added in Phase 2 with proper exercise state tracking
+        // TODO: PR detection - will be integrated with perSetCue
+        // When PR is detected, call setPendingCue(cue) to show it
       }
     }
-  }, [doneBySetId, session, settings.hapticsEnabled]);
+  }, [doneBySetId, session, settings.hapticsEnabled, settings.defaultRestSeconds, startRestTimer]);
 
   // Update weight for a set
   const handleWeightChange = useCallback((setId: string, text: string) => {
@@ -326,23 +344,23 @@ export function DrawerContent() {
 
   // Rest timer done handler
   const handleRestTimerDone = useCallback(() => {
-    setRestStartTime(null);
+    clearRestTimer();
     // Haptic feedback when rest is over
     if (settings.hapticsEnabled && Platform.OS === 'ios') {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     }
-  }, [settings.hapticsEnabled]);
+  }, [settings.hapticsEnabled, clearRestTimer]);
 
-  // Close rest timer
+  // Close rest timer (dismiss without completing)
   const handleRestTimerClose = useCallback(() => {
     setRestTimerVisible(false);
-    setRestStartTime(null);
-  }, []);
+    clearRestTimer();
+  }, [clearRestTimer]);
 
   // Clear cue toast
   const handleClearCue = useCallback(() => {
-    setCurrentCue(null);
-  }, []);
+    clearPendingCue();
+  }, [clearPendingCue]);
 
   // Dismiss keyboard on scroll
   const handleScrollBeginDrag = useCallback(() => {
@@ -478,17 +496,20 @@ export function DrawerContent() {
         </View>
       </View>
 
-      {/* PR Cue Toast */}
-      <InstantCueToast
-        cue={currentCue}
-        onClear={handleClearCue}
-        randomHoldMs={randomHighlightDurationMs}
-      />
+      {/* PR Cue Toast - only show when drawer is expanded */}
+      {drawerPosition === 'expanded' && (
+        <InstantCueToast
+          cue={pendingCue}
+          onClear={handleClearCue}
+          randomHoldMs={randomHighlightDurationMs}
+        />
+      )}
 
-      {/* Rest Timer Overlay */}
+      {/* Rest Timer Overlay - synced with store state */}
       <RestTimerOverlay
         visible={restTimerVisible}
-        initialSeconds={settings.defaultRestSeconds ?? DEFAULT_REST_SECONDS}
+        initialSeconds={restTimer.totalSeconds || settings.defaultRestSeconds || DEFAULT_REST_SECONDS}
+        startedAtMs={restTimer.startedAtMs}
         onClose={handleRestTimerClose}
         onDone={handleRestTimerDone}
         workoutId={session?.id}

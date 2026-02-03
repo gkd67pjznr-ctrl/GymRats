@@ -1,7 +1,7 @@
 # Feature: Collapsible Workout Drawer
 
-**Status:** Phase 1 Complete
-**Phase:** 1 of 4 (Complete)
+**Status:** Phase 2 In Progress
+**Phase:** 2 of 4 (In Progress)
 **Priority:** P0 - Core UX Redesign
 **Created:** 2026-02-02
 
@@ -125,7 +125,6 @@ RootLayout
   - [x] `app/routines/[routineId].tsx` - Start workout from routine detail
   - [x] `app/workout/plan-detail/[id].tsx` - Start workout from plan detail
   - [x] `app/workout/start.tsx` - Free workout and routine preview modal
-- [ ] Migrate rest timer and PR celebration (Phase 2)
 
 ### Phase 1.5: Polish & Edge Cases ✅
 - [x] Handle keyboard interactions (dismiss on scroll)
@@ -135,6 +134,30 @@ RootLayout
 - [x] Haptic feedback on set completion
 - [ ] Handle orientation changes (deferred - low priority)
 - [ ] Performance optimization (deferred - test on device first)
+
+---
+
+### Phase 2: Rest Timer & PR Celebration Integration 🔄
+- [x] Lift rest timer state to `workoutDrawerStore`
+  - [x] Add `restTimer` state: `{ isActive, totalSeconds, startedAtMs }`
+  - [x] Add `startRestTimer()`, `stopRestTimer()`, `clearRestTimer()` actions
+  - [x] Rest timer persists across drawer collapse/expand
+- [x] Compact timer on DrawerEdge
+  - [x] Show circular progress + countdown when timer active
+  - [x] Timer continues running when drawer collapsed
+  - [x] Visual distinction (card background + accent border)
+- [x] Full RestTimerOverlay synced with store
+  - [x] Add `startedAtMs` prop for time synchronization
+  - [x] Timer resumes correctly when drawer re-expands
+  - [x] Only visible when drawer is expanded
+- [x] Lift PR cue state to store
+  - [x] Add `pendingCue` and `hasPendingCue` state
+  - [x] Add `setPendingCue()` and `clearPendingCue()` actions
+  - [x] PR toast only shows when drawer expanded
+  - [x] Glowing star indicator on edge when PR pending
+- [x] Update tests (26 tests passing)
+- [ ] Timer completion notification/haptic when collapsed (needs testing)
+- [ ] Integrate actual PR detection with `setPendingCue()`
 
 ---
 

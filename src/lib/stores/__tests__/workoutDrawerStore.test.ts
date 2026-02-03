@@ -7,6 +7,13 @@ describe('workoutDrawerStore', () => {
     useWorkoutDrawerStore.setState({
       position: 'closed',
       hasActiveWorkout: false,
+      restTimer: {
+        isActive: false,
+        totalSeconds: 0,
+        startedAtMs: null,
+      },
+      pendingCue: null,
+      hasPendingCue: false,
     });
   });
 
@@ -116,6 +123,117 @@ describe('workoutDrawerStore', () => {
       workoutDrawerActions.endWorkout();
       expect(workoutDrawerActions.getPosition()).toBe('closed');
       expect(workoutDrawerActions.hasActiveWorkout()).toBe(false);
+    });
+  });
+
+  describe('rest timer', () => {
+    it('starts with inactive rest timer', () => {
+      const { restTimer } = useWorkoutDrawerStore.getState();
+      expect(restTimer.isActive).toBe(false);
+      expect(restTimer.totalSeconds).toBe(0);
+      expect(restTimer.startedAtMs).toBeNull();
+    });
+
+    it('starts rest timer with given seconds', () => {
+      const beforeMs = Date.now();
+      useWorkoutDrawerStore.getState().startRestTimer(90);
+      const afterMs = Date.now();
+
+      const { restTimer } = useWorkoutDrawerStore.getState();
+      expect(restTimer.isActive).toBe(true);
+      expect(restTimer.totalSeconds).toBe(90);
+      expect(restTimer.startedAtMs).toBeGreaterThanOrEqual(beforeMs);
+      expect(restTimer.startedAtMs).toBeLessThanOrEqual(afterMs);
+    });
+
+    it('stops rest timer', () => {
+      useWorkoutDrawerStore.getState().startRestTimer(90);
+      useWorkoutDrawerStore.getState().stopRestTimer();
+
+      const { restTimer } = useWorkoutDrawerStore.getState();
+      expect(restTimer.isActive).toBe(false);
+      // Should preserve totalSeconds and startedAtMs when stopped
+      expect(restTimer.totalSeconds).toBe(90);
+      expect(restTimer.startedAtMs).not.toBeNull();
+    });
+
+    it('clears rest timer completely', () => {
+      useWorkoutDrawerStore.getState().startRestTimer(90);
+      useWorkoutDrawerStore.getState().clearRestTimer();
+
+      const { restTimer } = useWorkoutDrawerStore.getState();
+      expect(restTimer.isActive).toBe(false);
+      expect(restTimer.totalSeconds).toBe(0);
+      expect(restTimer.startedAtMs).toBeNull();
+    });
+
+    it('clears rest timer when workout ends', () => {
+      useWorkoutDrawerStore.getState().startWorkout();
+      useWorkoutDrawerStore.getState().startRestTimer(90);
+      useWorkoutDrawerStore.getState().endWorkout();
+
+      const { restTimer } = useWorkoutDrawerStore.getState();
+      expect(restTimer.isActive).toBe(false);
+      expect(restTimer.totalSeconds).toBe(0);
+      expect(restTimer.startedAtMs).toBeNull();
+    });
+
+    it('provides imperative access to rest timer', () => {
+      workoutDrawerActions.startRestTimer(120);
+      const timer = workoutDrawerActions.getRestTimer();
+      expect(timer.isActive).toBe(true);
+      expect(timer.totalSeconds).toBe(120);
+
+      workoutDrawerActions.clearRestTimer();
+      expect(workoutDrawerActions.getRestTimer().isActive).toBe(false);
+    });
+  });
+
+  describe('PR cue', () => {
+    const mockCue = {
+      kind: 'weight' as const,
+      exerciseId: 'bench',
+      intensity: 'high' as const,
+      newValue: 100,
+      oldValue: 95,
+      unit: 'kg' as const,
+    };
+
+    it('starts with no pending cue', () => {
+      expect(useWorkoutDrawerStore.getState().pendingCue).toBeNull();
+      expect(useWorkoutDrawerStore.getState().hasPendingCue).toBe(false);
+    });
+
+    it('sets pending cue', () => {
+      useWorkoutDrawerStore.getState().setPendingCue(mockCue);
+
+      expect(useWorkoutDrawerStore.getState().pendingCue).toEqual(mockCue);
+      expect(useWorkoutDrawerStore.getState().hasPendingCue).toBe(true);
+    });
+
+    it('clears pending cue', () => {
+      useWorkoutDrawerStore.getState().setPendingCue(mockCue);
+      useWorkoutDrawerStore.getState().clearPendingCue();
+
+      expect(useWorkoutDrawerStore.getState().pendingCue).toBeNull();
+      expect(useWorkoutDrawerStore.getState().hasPendingCue).toBe(false);
+    });
+
+    it('clears pending cue when workout ends', () => {
+      useWorkoutDrawerStore.getState().startWorkout();
+      useWorkoutDrawerStore.getState().setPendingCue(mockCue);
+      useWorkoutDrawerStore.getState().endWorkout();
+
+      expect(useWorkoutDrawerStore.getState().pendingCue).toBeNull();
+      expect(useWorkoutDrawerStore.getState().hasPendingCue).toBe(false);
+    });
+
+    it('provides imperative access to PR cue', () => {
+      workoutDrawerActions.setPendingCue(mockCue);
+      expect(workoutDrawerActions.getPendingCue()).toEqual(mockCue);
+
+      workoutDrawerActions.clearPendingCue();
+      expect(workoutDrawerActions.getPendingCue()).toBeNull();
     });
   });
 });

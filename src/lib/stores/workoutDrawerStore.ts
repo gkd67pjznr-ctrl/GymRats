@@ -2,11 +2,21 @@
 // Global state for the collapsible workout drawer
 
 import { create } from 'zustand';
+import type { InstantCue } from '@/src/ui/components/LiveWorkout/InstantCueToast';
 
 /**
  * Drawer position states
  */
 export type DrawerPosition = 'closed' | 'collapsed' | 'expanded';
+
+/**
+ * Rest timer state
+ */
+interface RestTimerState {
+  isActive: boolean;
+  totalSeconds: number;
+  startedAtMs: number | null;
+}
 
 /**
  * Workout drawer store state
@@ -18,6 +28,13 @@ interface WorkoutDrawerState {
   // Whether there's an active workout (drawer should be accessible)
   hasActiveWorkout: boolean;
 
+  // Rest timer state (persists across drawer collapse/expand)
+  restTimer: RestTimerState;
+
+  // PR cue queue (shown when drawer expands, or on edge when collapsed)
+  pendingCue: InstantCue | null;
+  hasPendingCue: boolean;
+
   // Animation progress (0 = closed, 0.1 = collapsed/edge visible, 1 = expanded)
   // This is controlled by Reanimated, store just tracks logical state
 
@@ -28,6 +45,15 @@ interface WorkoutDrawerState {
   startWorkout: () => void;
   endWorkout: () => void;
   setPosition: (position: DrawerPosition) => void;
+
+  // Rest timer actions
+  startRestTimer: (seconds: number) => void;
+  stopRestTimer: () => void;
+  clearRestTimer: () => void;
+
+  // PR cue actions
+  setPendingCue: (cue: InstantCue | null) => void;
+  clearPendingCue: () => void;
 }
 
 /**
@@ -42,6 +68,13 @@ interface WorkoutDrawerState {
 export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
   position: 'closed',
   hasActiveWorkout: false,
+  restTimer: {
+    isActive: false,
+    totalSeconds: 0,
+    startedAtMs: null,
+  },
+  pendingCue: null,
+  hasPendingCue: false,
 
   /**
    * Open the drawer to expanded state
@@ -84,7 +117,14 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
   endWorkout: () => {
     set({
       hasActiveWorkout: false,
-      position: 'closed'
+      position: 'closed',
+      restTimer: {
+        isActive: false,
+        totalSeconds: 0,
+        startedAtMs: null,
+      },
+      pendingCue: null,
+      hasPendingCue: false,
     });
   },
 
@@ -97,6 +137,64 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
       return;
     }
     set({ position });
+  },
+
+  /**
+   * Start rest timer with given duration
+   */
+  startRestTimer: (seconds: number) => {
+    set({
+      restTimer: {
+        isActive: true,
+        totalSeconds: seconds,
+        startedAtMs: Date.now(),
+      },
+    });
+  },
+
+  /**
+   * Stop rest timer (pause, but keep state)
+   */
+  stopRestTimer: () => {
+    set((state) => ({
+      restTimer: {
+        ...state.restTimer,
+        isActive: false,
+      },
+    }));
+  },
+
+  /**
+   * Clear rest timer completely
+   */
+  clearRestTimer: () => {
+    set({
+      restTimer: {
+        isActive: false,
+        totalSeconds: 0,
+        startedAtMs: null,
+      },
+    });
+  },
+
+  /**
+   * Set a pending PR cue (shown when drawer expands or on edge)
+   */
+  setPendingCue: (cue: InstantCue | null) => {
+    set({
+      pendingCue: cue,
+      hasPendingCue: !!cue,
+    });
+  },
+
+  /**
+   * Clear pending PR cue
+   */
+  clearPendingCue: () => {
+    set({
+      pendingCue: null,
+      hasPendingCue: false,
+    });
   },
 }));
 
@@ -132,6 +230,34 @@ export function useIsDrawerVisible(): boolean {
   return useWorkoutDrawerStore((state) => state.position !== 'closed');
 }
 
+/**
+ * Hook to get rest timer state
+ */
+export function useRestTimer(): RestTimerState {
+  return useWorkoutDrawerStore((state) => state.restTimer);
+}
+
+/**
+ * Hook to check if rest timer is active
+ */
+export function useIsRestTimerActive(): boolean {
+  return useWorkoutDrawerStore((state) => state.restTimer.isActive);
+}
+
+/**
+ * Hook to get pending PR cue
+ */
+export function usePendingCue(): InstantCue | null {
+  return useWorkoutDrawerStore((state) => state.pendingCue);
+}
+
+/**
+ * Hook to check if there's a pending cue
+ */
+export function useHasPendingCue(): boolean {
+  return useWorkoutDrawerStore((state) => state.hasPendingCue);
+}
+
 // ============================================================================
 // Imperative API for non-React code
 // ============================================================================
@@ -144,4 +270,16 @@ export const workoutDrawerActions = {
   endWorkout: () => useWorkoutDrawerStore.getState().endWorkout(),
   getPosition: () => useWorkoutDrawerStore.getState().position,
   hasActiveWorkout: () => useWorkoutDrawerStore.getState().hasActiveWorkout,
+  // Rest timer
+  startRestTimer: (seconds: number) => useWorkoutDrawerStore.getState().startRestTimer(seconds),
+  stopRestTimer: () => useWorkoutDrawerStore.getState().stopRestTimer(),
+  clearRestTimer: () => useWorkoutDrawerStore.getState().clearRestTimer(),
+  getRestTimer: () => useWorkoutDrawerStore.getState().restTimer,
+  // PR cues
+  setPendingCue: (cue: InstantCue | null) => useWorkoutDrawerStore.getState().setPendingCue(cue),
+  clearPendingCue: () => useWorkoutDrawerStore.getState().clearPendingCue(),
+  getPendingCue: () => useWorkoutDrawerStore.getState().pendingCue,
 };
+
+// Re-export RestTimerState type for consumers
+export type { RestTimerState };

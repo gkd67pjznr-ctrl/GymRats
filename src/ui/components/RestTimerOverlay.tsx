@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, AppState, AppStateStatus, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from 'expo-haptics';
@@ -14,6 +14,7 @@ type Props = {
   onClose: () => void; // hides timer completely
   onDone?: () => void; // called when timer hits 0
   workoutId?: string; // optional workout ID for notification data
+  startedAtMs?: number | null; // if provided, sync timer with this start time
 };
 
 function clampInt(n: number, min: number, max: number) {
@@ -78,32 +79,57 @@ export function RestTimerOverlay(props: Props) {
   // slide animation: panel only (overlay)
   const panelY = useRef(new Animated.Value(220)).current; // off-screen-ish
 
+  // Calculate remaining time from startedAtMs if provided
+  const calculateRemainingSeconds = useCallback(() => {
+    if (props.startedAtMs) {
+      const elapsed = Math.floor((Date.now() - props.startedAtMs) / 1000);
+      return Math.max(0, props.initialSeconds - elapsed);
+    }
+    return props.initialSeconds;
+  }, [props.startedAtMs, props.initialSeconds]);
+
   useEffect(() => {
     if (!props.visible) return;
-    // when shown, reset and start running
+
+    // When shown, calculate remaining time
+    const remaining = calculateRemainingSeconds();
     setExpanded(false);
-    setSecondsLeft(props.initialSeconds);
+    setSecondsLeft(remaining);
     setInitialSeconds(props.initialSeconds);
-    setIsRunning(true);
-    hasPlayedStartSoundRef.current = false;
+    setIsRunning(remaining > 0);
+
+    // Only play start sound if this is a fresh timer (not resuming)
+    if (!props.startedAtMs) {
+      hasPlayedStartSoundRef.current = false;
+    }
 
     // Clean up any existing notification when timer starts
     cancelRestTimerNotification().catch(console.error);
-  }, [props.visible, props.initialSeconds]);
+  }, [props.visible, props.initialSeconds, props.startedAtMs, calculateRemainingSeconds]);
 
   useEffect(() => {
     if (!props.visible) return;
     if (!isRunning) return;
 
     const t = setInterval(() => {
-      setSecondsLeft((s) => {
-        if (s <= 1) return 0;
-        return s - 1;
-      });
+      if (props.startedAtMs) {
+        // Sync with startedAtMs for accuracy
+        const remaining = calculateRemainingSeconds();
+        setSecondsLeft(remaining);
+        if (remaining <= 0) {
+          setIsRunning(false);
+        }
+      } else {
+        // Countdown mode
+        setSecondsLeft((s) => {
+          if (s <= 1) return 0;
+          return s - 1;
+        });
+      }
     }, 1000);
 
     return () => clearInterval(t);
-  }, [props.visible, isRunning]);
+  }, [props.visible, isRunning, props.startedAtMs, calculateRemainingSeconds]);
 
   // Handle app state changes for background notifications
   useEffect(() => {
