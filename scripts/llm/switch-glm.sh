@@ -10,7 +10,7 @@ const path = require('path');
 
 const settingsPath = path.join('$PROJECT_DIR', '.claude', 'settings.local.json');
 const templatePath = path.join('$SCRIPT_DIR', 'glm-template.json');
-const keyPath = path.join(require('os').homedir(), '.config', 'forgerank', '.env.glm');
+const keyPath = path.join(require('os').homedir(), '.config', 'gymrats', '.env.glm');
 
 // Read GLM key
 if (!fs.existsSync(keyPath)) {

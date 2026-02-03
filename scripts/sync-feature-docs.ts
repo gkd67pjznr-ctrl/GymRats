@@ -16,13 +16,12 @@ import * as path from 'path';
 
 // Repository paths
 const REPOSITORIES = [
-  '/Users/tmac/Documents/Projects/Forgerank',           // Main repository
-  '/Users/tmac/Documents/Projects/Forgerank-devs',      // Devs repository
-  '/Users/tmac/Documents/Projects/Forgerank-glm',       // GLM repository
-  '/Users/tmac/Documents/Projects/Forgerank-qwen'       // Current repository (this one)
+  '/Users/tmac/Documents/Projects/GymRats',             // Main repository
+  '/Users/tmac/Documents/Projects/GymRats-wt1',         // Worktree 1
+  '/Users/tmac/Documents/Projects/GymRats-wt2'          // Worktree 2
 ];
 
-const CURRENT_REPO = '/Users/tmac/Documents/Projects/Forgerank';
+const CURRENT_REPO = '/Users/tmac/Documents/Projects/GymRats';
 
 // Key documentation files to synchronize
 const DOCS_TO_SYNC = [

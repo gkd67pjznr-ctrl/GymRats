@@ -10,7 +10,7 @@ const path = require('path');
 
 const settingsPath = path.join('$PROJECT_DIR', '.claude', 'settings.local.json');
 const templatePath = path.join('$SCRIPT_DIR', 'openrouter-template.json');
-const keyPath = path.join(require('os').homedir(), '.config', 'forgerank', '.env.openrouter');
+const keyPath = path.join(require('os').homedir(), '.config', 'gymrats', '.env.openrouter');
 
 // Read OpenRouter key
 if (!fs.existsSync(keyPath)) {

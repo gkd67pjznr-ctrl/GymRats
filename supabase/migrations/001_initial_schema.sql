@@ -1,5 +1,5 @@
 -- Migration: 001_initial_schema.sql
--- Description: Initial database schema for Forgerank app
+-- Description: Initial database schema for GymRats app
 -- Created: 2026-01-25
 -- Dependencies: None
 

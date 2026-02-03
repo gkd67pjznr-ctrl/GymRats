@@ -1,6 +1,6 @@
 # Live Workout Together Service
 
-The Live Workout Together service provides real-time session management and presence tracking for collaborative workout experiences in Forgerank.
+The Live Workout Together service provides real-time session management and presence tracking for collaborative workout experiences in GymRats.
 
 ## Overview
 

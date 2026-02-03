@@ -85,9 +85,9 @@ Each worktree has its own `.claude/settings.local.json`. To run different models
 2. Edit `.claude/settings.local.json` directly, or
 3. Run the switch script from within that worktree
 
-Example: Run Qwen3-Coder in `forgerank-glm` while keeping Opus in `Forgerank`:
-- `Forgerank/.claude/settings.local.json` → direct Anthropic (Opus)
-- `forgerank-glm/.claude/settings.local.json` → OpenRouter (Qwen3-Coder in sonnet slot)
+Example: Run Qwen3-Coder in `GymRats-wt1` while keeping Opus in `GymRats`:
+- `GymRats/.claude/settings.local.json` → direct Anthropic (Opus)
+- `GymRats-wt1/.claude/settings.local.json` → OpenRouter (Qwen3-Coder in sonnet slot)
 
 ---
 
@@ -448,7 +448,7 @@ For Exacto variants (better tool calling), append `:exacto` to the model ID (e.g
 
 **Tool calling failures:** Try the `:exacto` variant of your model (e.g., `qwen/qwen3-coder:exacto`). Exacto routes to providers with the highest measured tool-calling accuracy.
 
-**API key issues:** Run `bash scripts/llm/save-openrouter-key.sh` to re-save your key. Key is stored at `~/.config/forgerank/.env.openrouter`.
+**API key issues:** Run `bash scripts/llm/save-openrouter-key.sh` to re-save your key. Key is stored at `~/.config/gymrats/.env.openrouter`.
 
 **Changes not taking effect:** Restart Claude Code after any configuration change.
 

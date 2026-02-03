@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully created the `liveWorkoutStore.ts` Zustand store for managing live workout session state in the Forgerank React Native application.
+Successfully created the `liveWorkoutStore.ts` Zustand store for managing live workout session state in the GymRats React Native application.
 
 ## Files Created
 

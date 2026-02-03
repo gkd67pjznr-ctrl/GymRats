@@ -10,9 +10,9 @@ const path = require('path');
 const os = require('os');
 
 const settingsPath = path.join('$PROJECT_DIR', '.claude', 'settings.local.json');
-const glmKeyPath = path.join(os.homedir(), '.config', 'forgerank', '.env.glm');
-const deepseekKeyPath = path.join(os.homedir(), '.config', 'forgerank', '.env.deepseek');
-const orKeyPath = path.join(os.homedir(), '.config', 'forgerank', '.env.openrouter');
+const glmKeyPath = path.join(os.homedir(), '.config', 'gymrats', '.env.glm');
+const deepseekKeyPath = path.join(os.homedir(), '.config', 'gymrats', '.env.deepseek');
+const orKeyPath = path.join(os.homedir(), '.config', 'gymrats', '.env.openrouter');
 
 // Read settings
 let settings = {};

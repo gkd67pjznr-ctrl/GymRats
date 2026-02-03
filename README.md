@@ -1,4 +1,4 @@
-# Forgerank
+# GymRats
 
 A competitive lifting app built around **verified strength ranks**,
 **per-set PR detection**, and **real-time workout feedback**.

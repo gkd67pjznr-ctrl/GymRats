@@ -134,7 +134,7 @@ export const supabase: SupabaseClient = createClient(
     global: {
       // Add custom headers for debugging
       headers: {
-        'x-client-info': `forgerank/${Constants.expoConfig?.version || '1.0.0'}`,
+        'x-client-info': `gymrats/${Constants.expoConfig?.version || '1.0.0'}`,
       },
     },
     // Realtime configuration

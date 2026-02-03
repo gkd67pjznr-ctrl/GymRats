@@ -128,7 +128,7 @@ For full workflow details, see `docs/Project Management/CLAUDE_WORKFLOW.md`:
 
 ## Project Overview
 
-Forgerank is a React Native workout tracking app built with Expo. Key features:
+GymRats is a React Native workout tracking app built with Expo. Key features:
 - Live workout logging with real-time PR detection
 - 20-rank scoring system per exercise (Iron → Mythic)
 - Social feed with posts, reactions, and friend filtering
@@ -207,7 +207,7 @@ src/
 │   ├── auth/               # OAuth (Google, Apple)
 │   ├── premadePlans/       # Pre-built workout plans
 │   ├── workoutModel.ts     # Core workout types
-│   ├── forgerankScoring.ts # Scoring algorithm
+│   ├── GrScoring.ts        # Scoring algorithm
 │   ├── ranks.ts            # Rank ladder utilities
 │   ├── perSetCue.ts        # PR detection per set
 │   ├── e1rm.ts             # Estimated 1-rep max (Epley formula)
@@ -246,7 +246,7 @@ type WorkoutSession = {
 };
 ```
 
-### Forgerank Scoring (`src/lib/forgerankScoring.ts`)
+### GymRank Scoring (`src/lib/GrScoring.ts`)
 
 Scoring algorithm that rates sets from 0-1000:
 - **Base strength** (dominant): e1RM/bodyweight ratio using nonlinear curve

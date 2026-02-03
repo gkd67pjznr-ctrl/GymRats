@@ -71,7 +71,7 @@ Any switching implementation **must preserve existing keys** (like `enabledMcpjs
 |---|-----------|---------|----------------|
 | 1 | **GLM config template** | Defines the 5 GLM env vars with a key placeholder | JSON file |
 | 2 | **OpenRouter config template** | Defines the 6 OpenRouter env vars with a key placeholder | JSON file |
-| 3 | **Key storage** | Securely stores API keys on disk per provider | `.env.<provider>` dotenv files at `~/.config/forgerank/` (chmod 600) |
+| 3 | **Key storage** | Securely stores API keys on disk per provider | `.env.<provider>` dotenv files at `~/.config/gymrats/` (chmod 600) |
 | 4 | **Switch-to-GLM script** | Reads template, substitutes key, merges into `settings.local.json` | Shell script |
 | 5 | **Switch-to-OpenRouter script** | Same pattern, 6 vars instead of 5 | Shell script |
 | 6 | **Switch-to-Claude script** | Removes all backend env vars from `settings.local.json` | Shell script |
@@ -105,8 +105,8 @@ scripts/
 ```
 
 Credential storage:
-- `~/.config/forgerank/.env.glm` (GLM key)
-- `~/.config/forgerank/.env.openrouter` (OpenRouter key)
+- `~/.config/gymrats/.env.glm` (GLM key)
+- `~/.config/gymrats/.env.openrouter` (OpenRouter key)
 
 ---
 
@@ -166,7 +166,7 @@ The model names are customizable. Some alternative presets:
 Both follow the same pattern:
 
 1. Takes an API key as argument
-2. Creates `~/.config/forgerank/` directory if it doesn't exist
+2. Creates `~/.config/gymrats/` directory if it doesn't exist
 3. Writes the key to the provider's dotenv file
 4. Sets file permissions to 600 (owner read/write only)
 5. Confirms success
@@ -241,7 +241,7 @@ if ANTHROPIC_BASE_URL is absent                  → "Backend: Anthropic (native
 else                                             → "Backend: Custom ({url})"
 ```
 
-Also reports which provider keys are saved in `~/.config/forgerank/`.
+Also reports which provider keys are saved in `~/.config/gymrats/`.
 
 **Usage:**
 ```bash
@@ -364,14 +364,14 @@ Extracted from ADK test suite (`test_switch.py`, 715 lines of tests):
 | `pricing.yaml` (service type/plan) | Not relevant to simple switching |
 | Worktree integration | Not using worktrees for backend switching |
 | Init wizard (interactive prompts) | `save-*-key.sh` scripts cover key setup |
-| Shell config cleanup | We store keys in `~/.config/forgerank/`, not in shell exports |
+| Shell config cleanup | We store keys in `~/.config/gymrats/`, not in shell exports |
 | Windows console compatibility | macOS only for now |
 
 ---
 
 ## 10. Security Considerations
 
-1. **Key file permissions**: All files in `~/.config/forgerank/` get `chmod 600` (owner read/write only)
+1. **Key file permissions**: All files in `~/.config/gymrats/` get `chmod 600` (owner read/write only)
 2. **Never commit keys**: Key files are outside the repo. `settings.local.json` will contain actual key values after switching -- `.claude/settings.local.json` is already in `.gitignore`
 3. **Masked display**: Status output shows only first 8 chars of any key (`sk-or-v1-...`)
 
@@ -382,13 +382,13 @@ Extracted from ADK test suite (`test_switch.py`, 715 lines of tests):
 After implementation, verify:
 
 **GLM:**
-- [ ] `save-glm-key.sh` creates `~/.config/forgerank/.env.glm` with correct format and 600 permissions
+- [ ] `save-glm-key.sh` creates `~/.config/gymrats/.env.glm` with correct format and 600 permissions
 - [ ] `switch-glm.sh` adds exactly 5 env vars to `settings.local.json`
 - [ ] `switch-glm.sh` preserves `enabledMcpjsonServers` and any other existing keys
 - [ ] `switch-glm.sh` substitutes the actual key value (no `__GLM_API_KEY__` in output)
 
 **OpenRouter:**
-- [ ] `save-openrouter-key.sh` creates `~/.config/forgerank/.env.openrouter` with correct format and 600 permissions
+- [ ] `save-openrouter-key.sh` creates `~/.config/gymrats/.env.openrouter` with correct format and 600 permissions
 - [ ] `switch-openrouter.sh` adds exactly 6 env vars to `settings.local.json`
 - [ ] `switch-openrouter.sh` includes `ANTHROPIC_API_KEY: ""` in the output
 - [ ] `switch-openrouter.sh` preserves all non-backend keys
@@ -445,7 +445,7 @@ OpenRouter acts as a universal adapter. Any model it supports can be used by set
 Every provider switch follows the same 3-step pattern:
 
 1. **Template**: A JSON file with the env var overrides and a key placeholder
-2. **Key storage**: A dotenv file at `~/.config/forgerank/.env.<provider>` (chmod 600)
+2. **Key storage**: A dotenv file at `~/.config/gymrats/.env.<provider>` (chmod 600)
 3. **Switch script**: Reads key, substitutes into template, merges into `settings.local.json`
 
 Adding a new direct-compatible provider is always: one template + one save script + one switch script. The revert (`switch-claude.sh`) and status scripts are shared across all providers.

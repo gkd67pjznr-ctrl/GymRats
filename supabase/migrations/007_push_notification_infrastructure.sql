@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Migration: 007_push_notification_infrastructure.sql
--- Description: Push notification infrastructure for Forgerank
+-- Description: Push notification infrastructure for GymRats
 -- Created: 2026-02-01
 -- ============================================================================
 

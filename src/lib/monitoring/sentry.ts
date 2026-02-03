@@ -49,7 +49,7 @@ export function initializeSentry(): void {
       enableAutoPerformanceTracing: true,
 
       // App version for release tracking
-      release: `forgerank@${Constants.expoConfig?.version || '1.0.0'}`,
+      release: `gymrats@${Constants.expoConfig?.version || '1.0.0'}`,
 
       // Environment tag
       environment: __DEV__ ? 'development' : 'production',

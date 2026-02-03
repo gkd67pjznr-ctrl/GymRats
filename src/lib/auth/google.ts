@@ -49,7 +49,7 @@ const GOOGLE_DISCOVERY_URL =
  * Uses the app scheme configured in app.json
  */
 function getRedirectUri(): string {
-  const scheme = Constants.expoConfig?.scheme || 'forgerank';
+  const scheme = Constants.expoConfig?.scheme || 'gymrats';
   // Use the simple scheme://path format for deep linking
   // This works better with Supabase OAuth than makeRedirectUri
   const redirectUri = `${scheme}://auth`;
