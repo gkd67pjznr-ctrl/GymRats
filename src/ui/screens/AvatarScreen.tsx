@@ -1,7 +1,8 @@
 // src/ui/screens/AvatarScreen.tsx
 // Avatar management screen
 
-import { View, Text, ScrollView, Pressable, Alert, StyleSheet } from "react-native";
+import { useState } from "react";
+import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { makeDesignSystem } from "../designSystem";
 import { useThemeColors } from "../theme";
@@ -10,13 +11,35 @@ import { useAvatarStore } from "../../lib/avatar/avatarStore";
 import { useAvatarGrowth } from "../../lib/stores/userStatsStore";
 import { AvatarView } from "../components/Avatar/AvatarView";
 import { AvatarCreator } from "../components/Avatar/AvatarCreator";
+import { ArtStylePickerModal } from "../components/Avatar/ArtStylePickerModal";
+import { AvatarCosmeticsModal } from "../components/Avatar/AvatarCosmeticsModal";
 import { getGrowthStageDescription, getGrowthStagePercentage } from "../../lib/avatar/growthCalculator";
-import { AVATAR_ART_STYLES, getArtStyleMetadata } from "../../lib/avatar/avatarUtils";
+import { getArtStyleMetadata } from "../../lib/avatar/avatarUtils";
+import { useInventory } from "../../lib/stores/gamificationStore";
+import type { UserInventory } from "../../lib/gamification/shop";
+
+// Helper to get cosmetics status label
+function getEquippedCosmeticsLabel(inventory: UserInventory): string {
+  const hasCustomHair = inventory.equippedHairstyle && inventory.equippedHairstyle !== "hair_default";
+  const hasCustomOutfit = inventory.equippedOutfit && inventory.equippedOutfit !== "outfit_default";
+  const hasAccessories = inventory.equippedAccessories?.length > 0 &&
+    !inventory.equippedAccessories.includes("acc_none");
+
+  const customCount = [hasCustomHair, hasCustomOutfit, hasAccessories].filter(Boolean).length;
+
+  if (customCount === 0) return "Default look";
+  if (customCount === 1) return "1 item equipped";
+  return `${customCount} items equipped`;
+}
 
 export default function AvatarScreen() {
   const router = useRouter();
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
+
+  // Modal state
+  const [artStyleModalVisible, setArtStyleModalVisible] = useState(false);
+  const [cosmeticsModalVisible, setCosmeticsModalVisible] = useState(false);
 
   const user = useUser();
   // Avatar customization from avatarStore
@@ -24,6 +47,8 @@ export default function AvatarScreen() {
   // Growth data from unified userStatsStore
   const avatarGrowth = useAvatarGrowth();
   const { stage: growthStage, heightScale, volumeTotal, setsTotal, avgRank } = avatarGrowth;
+  // Inventory for cosmetics status
+  const inventory = useInventory();
 
   if (!user) {
     return (
@@ -159,33 +184,37 @@ export default function AvatarScreen() {
           </Text>
 
           <Pressable
-            onPress={() => {
-              // TODO: Implement art style change
-              Alert.alert("Feature Coming Soon", "Art style changing will be available in a future update.");
-            }}
+            onPress={() => setArtStyleModalVisible(true)}
             style={[styles.customizeOption, { borderColor: c.border }]}
           >
-            <Text style={[styles.optionTitle, { color: c.text }]}>
-              Change Art Style
-            </Text>
-            <Text style={[styles.optionSubtitle, { color: c.muted }]}>
-              {artStyleMeta?.name || "Not set"}
-            </Text>
+            <View style={styles.optionRow}>
+              <View style={styles.optionInfo}>
+                <Text style={[styles.optionTitle, { color: c.text }]}>
+                  Change Art Style
+                </Text>
+                <Text style={[styles.optionSubtitle, { color: c.muted }]}>
+                  {artStyleMeta?.name || "Not set"}
+                </Text>
+              </View>
+              <Text style={[styles.optionArrow, { color: c.muted }]}>›</Text>
+            </View>
           </Pressable>
 
           <Pressable
-            onPress={() => {
-              // TODO: Implement cosmetics
-              Alert.alert("Feature Coming Soon", "Avatar cosmetics will be available in a future update.");
-            }}
+            onPress={() => setCosmeticsModalVisible(true)}
             style={[styles.customizeOption, { borderColor: c.border }]}
           >
-            <Text style={[styles.optionTitle, { color: c.text }]}>
-              Avatar Cosmetics
-            </Text>
-            <Text style={[styles.optionSubtitle, { color: c.muted }]}>
-              {cosmetics ? "Customized" : "Not set"}
-            </Text>
+            <View style={styles.optionRow}>
+              <View style={styles.optionInfo}>
+                <Text style={[styles.optionTitle, { color: c.text }]}>
+                  Avatar Cosmetics
+                </Text>
+                <Text style={[styles.optionSubtitle, { color: c.muted }]}>
+                  {getEquippedCosmeticsLabel(inventory)}
+                </Text>
+              </View>
+              <Text style={[styles.optionArrow, { color: c.muted }]}>›</Text>
+            </View>
           </Pressable>
         </View>
 
@@ -205,6 +234,24 @@ export default function AvatarScreen() {
           </Pressable>
         </View>
       </View>
+
+      {/* Art Style Picker Modal */}
+      <ArtStylePickerModal
+        visible={artStyleModalVisible}
+        onClose={() => setArtStyleModalVisible(false)}
+        currentStyle={artStyle}
+      />
+
+      {/* Avatar Cosmetics Modal */}
+      <AvatarCosmeticsModal
+        visible={cosmeticsModalVisible}
+        onClose={() => setCosmeticsModalVisible(false)}
+        userId={user.id}
+        displayName={user.displayName}
+        avatarUrl={user.avatarUrl}
+        artStyle={artStyle}
+        growthStage={growthStage}
+      />
     </ScrollView>
   );
 }
@@ -289,6 +336,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
   },
+  optionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  optionInfo: {
+    flex: 1,
+  },
   optionTitle: {
     fontSize: 18,
     fontWeight: "700",
@@ -296,6 +351,11 @@ const styles = StyleSheet.create({
   },
   optionSubtitle: {
     fontSize: 14,
+  },
+  optionArrow: {
+    fontSize: 24,
+    fontWeight: "300",
+    marginLeft: 8,
   },
   buttonContainer: {
     flexDirection: "row",
