@@ -17,7 +17,7 @@ type TabConfig = {
 
 const TABS: TabConfig[] = [
   { name: "Home", href: "/(tabs)", icon: "home-outline", iconFocused: "home" },
-  { name: "Friends", href: "/(tabs)/feed", icon: "people-outline", iconFocused: "people" },
+  { name: "Ranks", href: "/(tabs)/ranks", icon: "trophy-outline", iconFocused: "trophy" },
   { name: "Workout", href: "/(tabs)/workout", icon: "barbell-outline", iconFocused: "barbell" },
   { name: "Forge Lab", href: "/forge-lab", icon: "analytics-outline", iconFocused: "analytics" },
   { name: "Profile", href: "/(tabs)/profile", icon: "person-outline", iconFocused: "person" },

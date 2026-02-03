@@ -27,7 +27,8 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | Exercise Library | ✅ Done | 3/3 | 100+ exercises with muscle groups |
 | Scoring & Ranks | ✅ Done | 5/5 | 0-1000 scoring, 20 ranks/exercise |
 | AI Gym Buddy | 🔄 In Progress | 9/11 | 9 personalities, IAP integrated |
-| Body Model | 🔄 In Progress | 3/5 | Muscle visualization complete |
+| Body Model | ✅ Done | 5/5 | Moved to Forge Lab sub-tab |
+| Ranks Tab | ✅ Done | 10/10 | My Ranks + Leaderboards sub-tabs |
 | Authentication | 🔄 In Progress | 7/10 | Email working, OAuth needs setup |
 | Social & Feed | 🔄 In Progress | 9/15 | Local complete, backend connected |
 | Gamification | ✅ Done | 12/12 | XP, levels, streaks, tokens, store |
@@ -42,7 +43,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | Forge Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
 | Forge Milestones | ✅ Done | 5/5 | 30 achievements implemented |
 
-**Launch Total:** 131/167 features (78%)
+**Launch Total:** 143/177 features (81%)
 
 ---
 
@@ -110,6 +111,16 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 - Lifetime stats (volume, sets, workouts, PRs)
 - Avatar growth derived from unified stats
 - Automatic migration from legacy avatar store
+
+### Ranks Tab (NEW)
+- My Ranks sub-tab showing all logged exercises sorted by rank
+- Expandable rank cards with sparkline history (30d/90d/1y/all timeframes)
+- Best weight, reps, e1RM display per exercise
+- Leaderboards sub-tab with Global/Regional/Friends scope
+- Friend comparison modal with side-by-side stats
+- Shareable rank cards with tier-colored gradients (via react-native-view-shot)
+- Rank-up and tier-up local notifications
+- Settings toggles for sharing, notifications, and friend comparison
 
 ### Training Journal
 - Per-workout notes integration
@@ -194,6 +205,28 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Recent Updates (Last 30 Days)
 
+### 2026-02-03
+- **Ranks Tab Complete** - Full implementation of comprehensive ranking system
+  - Created `app/(tabs)/ranks.tsx` with My Ranks and Leaderboards sub-tabs
+  - Built `ExerciseRankCard` with expandable inline cards showing rank badge, progress bar, sparkline
+  - Built `ExerciseRankList` with sorting options (rank/recent/alphabetical/volume)
+  - Built `RankSparkline` using victory-native with timeframe toggle (30d/90d/1y/all)
+  - Built `LeaderboardsTab` with Global/Regional/Friends scope and exercise dropdown
+  - Built `FriendCompareModal` for side-by-side friend comparison
+  - Built `ShareableRankCard` designed for image capture with tier gradients
+  - Created `rankCardGenerator.ts` for sharing via react-native-view-shot
+  - Created `rankNotifications.ts` for rank-up and tier-up local notifications
+  - Added `rankTypes.ts` with ExerciseRankSummary, SparklineTimeframe, etc.
+  - Created `useExerciseRanks.ts` hook for computing ranks from userStatsStore
+- **Body Model Moved** - Relocated to Forge Lab as "Body Map" sub-tab
+  - Created `BodyModelCard.tsx` reusable component
+  - Updated `ForgeLabScreen.tsx` with Analytics/Body Map sub-tab toggle
+  - Deleted `app/(tabs)/body.tsx`
+- **Tab Bar Updated** - Replaced Friends tab with Ranks tab (trophy icon)
+- **Settings Extended** - Added rankSettings and location to settingsStore
+- **Dependencies Documented** - Created comprehensive PROJECT-DEPENDENCIES.md
+- **react-native-view-shot** installed for shareable card screenshots
+
 ### 2026-02-02 (Evening)
 - **Workout Drawer Phase 1 Complete** - Collapsible drawer system fully implemented
 - Created `WorkoutDrawer` component with gesture-based collapse/expand (swipe right to collapse, swipe left from edge to expand)
@@ -266,8 +299,8 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 ## Top 3 Priorities
 
 1. **Workout Drawer Phase 2** - Migrate rest timer and PR celebration to drawer
-2. **Exercise Card Enhancements** - Add rank icons, PR hints, rank-up targets
-3. **Avatar Customization UI** - Art style and cosmetics UI
+2. **Avatar Customization UI** - Art style and cosmetics UI
+3. **Regional Leaderboards** - Implement zip code → region mapping and regional leaderboard filtering
 
 ---
 
