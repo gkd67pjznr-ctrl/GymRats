@@ -1074,7 +1074,7 @@ exports[`FriendAvatar should render with resting status 1`] = `
             "top": -6,
           },
           {
-            "backgroundColor": undefined,
+            "backgroundColor": "#FFB020",
             "borderColor": "#ffffff",
           },
         ]
@@ -1653,7 +1653,7 @@ exports[`FriendAvatar status badges should show Resting badge for resting status
             "top": -6,
           },
           {
-            "backgroundColor": undefined,
+            "backgroundColor": "#FFB020",
             "borderColor": "#ffffff",
           },
         ]

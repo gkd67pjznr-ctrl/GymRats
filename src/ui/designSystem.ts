@@ -1,18 +1,23 @@
 // src/ui/designSystem.ts
 /**
- * FORGERANK — Design System (v1)
- * A layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.
- * Dark UI with sharp contrast, neon accents, minimal UI chrome, and punchy micro-feedback.
- * Enhanced with multiple color palette options with emotional meaning.
+ * FORGERANK — Design System (v1) - DEPRECATED
  *
- * This file is intentionally framework-agnostic.
- * - You can use these tokens in RN StyleSheet or inline styles.
- * - Keep theme.ts free to map these into your existing useThemeColors().
+ * @deprecated This file is maintained for backwards compatibility only.
+ * Use the new design system instead:
  *
- * For complete visual style documentation, see:
- * - docs/visual-style/ui-aesthetic-implementation.md
- * - docs/visual-style/visual-style-guide.md
- * - docs/visual-style/implementation-roadmap.md
+ * ```typescript
+ * import { colors, surface, text, spacing, corners } from '@/src/design';
+ * import { Surface, Card, Text, Button } from '@/src/design/primitives';
+ * import { useTheme, useThemeColors } from '@/src/design/themes';
+ * ```
+ *
+ * The new design system provides:
+ * - Layered token architecture (primitives → semantic → components)
+ * - Theme installation system (colors + typography + motion + audio + haptics)
+ * - Elevation-aware surfaces and glassmorphism
+ * - Celebration effects and particle systems
+ *
+ * Migration guide: See docs/features/design-system/feature-design-system.md
  */
 
 export type DSMode = "dark" | "light";
@@ -26,6 +31,7 @@ export type Tone = {
   card: string;
   card2: string;
   text: string;
+  textSecondary: string;
   muted: string;
   border: string;
   overlay: string;
@@ -34,14 +40,17 @@ export type Tone = {
   success: string;
   danger: string;
   warn: string;
+  warning: string;
   info: string;
+  error: string;
 
   // brand / accents
   accent: string;
   accent2: string;
   accentSoft: string;
+  purple: string; // For legendary/premium UI elements
 
-  // “rank” palette hooks
+  // "rank" palette hooks
   iron: string;
   bronze: string;
   silver: string;
@@ -176,6 +185,7 @@ export function makeDesignSystem(mode: DSMode = "dark", accent: Accent = "toxic"
           card: "#111118",
           card2: "#151522",
           text: "#F2F4FF",
+          textSecondary: "#D4D4D8",
           muted: "#A9AEC7",
           border: "#26263A",
           overlay: "rgba(0,0,0,0.55)",
@@ -184,12 +194,15 @@ export function makeDesignSystem(mode: DSMode = "dark", accent: Accent = "toxic"
           success: "#20FF9A",
           danger: "#FF2D55",
           warn: "#FFB020",
+          warning: "#FFB020",
           info: "#3A8DFF",
+          error: "#FF2D55",
 
           // accents
           accent: a.accent,
           accent2: a.accent2,
           accentSoft: a.soft,
+          purple: "#B388FF", // For legendary/premium UI elements
 
           // rank hues (use sparingly, mostly for badges)
           iron: "#7B7E8A",
@@ -206,6 +219,7 @@ export function makeDesignSystem(mode: DSMode = "dark", accent: Accent = "toxic"
           card: "#FFFFFF",
           card2: "#F0F2FF",
           text: "#0C0D14",
+          textSecondary: "#374151",
           muted: "#4D5266",
           border: "#D7DAEA",
           overlay: "rgba(0,0,0,0.25)",
@@ -213,11 +227,14 @@ export function makeDesignSystem(mode: DSMode = "dark", accent: Accent = "toxic"
           success: "#00B86B",
           danger: "#E6002D",
           warn: "#C27500",
+          warning: "#C27500",
           info: "#1C66FF",
+          error: "#E6002D",
 
           accent: a.accent,
           accent2: a.accent2,
           accentSoft: "#EAF3EA",
+          purple: "#7C4DFF", // For legendary/premium UI elements
 
           iron: "#6C6F7A",
           bronze: "#9B6B3D",
@@ -354,6 +371,7 @@ export function makeDesignSystemFromPalette(mode: DSMode = "dark", palette: any)
     card: palette.colors?.card || "#111118",
     card2: "#151522", // Keep this as is since it's not in the extended palette
     text: palette.colors?.text || "#F2F4FF",
+    textSecondary: palette.colors?.textSecondary || "#D4D4D8",
     muted: palette.colors?.muted || "#A9AEC7",
     border: palette.colors?.border || "#26263A",
     overlay: "rgba(0,0,0,0.55)",
@@ -362,12 +380,15 @@ export function makeDesignSystemFromPalette(mode: DSMode = "dark", palette: any)
     success: palette.colors?.success || "#20FF9A",
     danger: palette.colors?.danger || "#FF2D55",
     warn: palette.colors?.warning || "#FFB020",
+    warning: palette.colors?.warning || "#FFB020",
     info: palette.colors?.info || "#3A8DFF",
+    error: palette.colors?.danger || "#FF2D55",
 
     // accents
     accent: palette.colors?.accent || ACCENTS[accent].accent,
     accent2: palette.colors?.accent2 || ACCENTS[accent].accent2,
     accentSoft: palette.colors?.soft || ACCENTS[accent].soft,
+    purple: palette.colors?.purple || "#B388FF", // For legendary/premium UI elements
 
     // rank hues
     iron: palette.colors?.iron || "#7B7E8A",

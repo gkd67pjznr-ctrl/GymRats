@@ -1,17 +1,31 @@
 // app/live-workout-together.tsx
-// Live Workout Together main screen
+// Workout with Friends - Train together in real-time
 
 import { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Text, Pressable } from "react-native";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import { makeDesignSystem } from "../src/ui/designSystem";
-import { useThemeColors } from "../src/ui/theme";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+
+// New Design System imports
+import {
+  Surface,
+  Card,
+  Text,
+  colors,
+  surface,
+  text,
+  border,
+  corners,
+  spacing,
+  backgroundGradients,
+} from "../src/design";
+import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { useUser } from "../src/lib/stores/authStore";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { LiveWorkoutTogether } from "../src/ui/components/LiveWorkoutTogether/LiveWorkoutTogether";
 import { useLiveWorkoutStore } from "../src/lib/stores/liveWorkoutStore";
 
-// Mock data for presence users - this would come from real-time backend in production
+// Types for presence users and reactions
 export type PresenceUser = {
   id: string;
   name: string;
@@ -29,23 +43,30 @@ export type Reaction = {
   timestamp: number;
 };
 
-export default function LiveWorkoutTogetherScreen() {
-  const c = useThemeColors();
-  const ds = makeDesignSystem("dark", "toxic");
-  const router = useRouter();
-  const params = useLocalSearchParams();
+function getReactionEmoji(type: Reaction['type']): string {
+  const emojiMap: Record<Reaction['type'], string> = {
+    fire: '🔥',
+    muscle: '💪',
+    heart: '❤️',
+    clap: '👏',
+    rocket: '🚀',
+    thumbsup: '👍',
+  };
+  return emojiMap[type];
+}
 
+export default function WorkoutWithFriendsScreen() {
+  const router = useRouter();
   const user = useUser();
   const { sets } = useLiveWorkoutStore();
 
-  // State for Live Workout Together
+  // State for presence users and reactions
   const [users, setUsers] = useState<PresenceUser[]>([]);
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [activeReactions, setActiveReactions] = useState<{ reaction: string; userName: string }[]>([]);
 
   // Mock data - in production this would come from real-time presence service
   useEffect(() => {
-    // Simulate some friends working out together
     const mockUsers: PresenceUser[] = [
       {
         id: "friend1",
@@ -75,7 +96,6 @@ export default function LiveWorkoutTogetherScreen() {
 
     setUsers(mockUsers);
 
-    // Simulate some reactions
     const mockReactions: Reaction[] = [
       {
         id: "1",
@@ -109,7 +129,6 @@ export default function LiveWorkoutTogetherScreen() {
 
     setReactions([...reactions, newReaction]);
 
-    // Show animation for the reaction
     setActiveReactions([...
       activeReactions,
       { reaction: getReactionEmoji(type), userName: user.displayName || "You" }
@@ -127,8 +146,18 @@ export default function LiveWorkoutTogetherScreen() {
   if (!user) {
     return (
       <ProtectedRoute>
-        <View style={[styles.container, { backgroundColor: c.bg }]}>
-          <Text style={{ color: c.text }}>Please sign in to use Live Workout Together.</Text>
+        <View style={styles.container}>
+          <LinearGradient
+            colors={backgroundGradients.screenDepth.colors as unknown as readonly [string, string, ...string[]]}
+            start={backgroundGradients.screenDepth.start}
+            end={backgroundGradients.screenDepth.end}
+            locations={backgroundGradients.screenDepth.locations as unknown as readonly [number, number, ...number[]] | undefined}
+            style={StyleSheet.absoluteFill}
+          />
+          <ScreenHeader title="Workout with Friends" />
+          <View style={styles.centered}>
+            <Text variant="body" color="muted">Please sign in to workout with friends.</Text>
+          </View>
         </View>
       </ProtectedRoute>
     );
@@ -136,21 +165,44 @@ export default function LiveWorkoutTogetherScreen() {
 
   return (
     <ProtectedRoute>
-      <View style={[styles.container, { backgroundColor: c.bg }]}>
+      <View style={styles.container}>
+        {/* Background gradient */}
+        <LinearGradient
+          colors={backgroundGradients.screenDepth.colors as unknown as readonly [string, string, ...string[]]}
+          start={backgroundGradients.screenDepth.start}
+          end={backgroundGradients.screenDepth.end}
+          locations={backgroundGradients.screenDepth.locations as unknown as readonly [number, number, ...number[]] | undefined}
+          style={StyleSheet.absoluteFill}
+        />
+
+        {/* Top glow accent */}
+        <LinearGradient
+          colors={backgroundGradients.topGlow.colors as unknown as readonly [string, string, ...string[]]}
+          start={backgroundGradients.topGlow.start}
+          end={backgroundGradients.topGlow.end}
+          style={styles.topGlow}
+        />
+
+        {/* Header with safe area */}
+        <ScreenHeader title="Workout with Friends" />
+
         <ScrollView
+          style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
+          {/* Header section */}
           <View style={styles.header}>
-            <Text style={[styles.title, { color: c.text }]}>Live Workout Together</Text>
-            <Text style={[styles.subtitle, { color: c.muted }]}>
-              Work out with friends in real-time
+            <Text variant="h2" color="primary">
+              Train Together
+            </Text>
+            <Text variant="body" color="muted">
+              Work out with friends in real-time. Cheer each other on!
             </Text>
           </View>
 
           {/* Live Workout Together Component */}
-          <View style={styles.liveWorkoutContainer}>
+          <Card variant="elevated" size="md" style={styles.liveWorkoutCard}>
             <LiveWorkoutTogether
               users={users}
               reactions={reactions}
@@ -159,43 +211,57 @@ export default function LiveWorkoutTogetherScreen() {
               activeReactions={activeReactions}
               onReactionAnimationComplete={handleReactionAnimationComplete}
             />
-          </View>
+          </Card>
 
           {/* Workout Stats */}
-          <View style={[styles.statsContainer, { backgroundColor: c.card, borderColor: c.border }]}>
-            <Text style={[styles.statsTitle, { color: c.text }]}>Your Workout Stats</Text>
+          <Card variant="default" size="md" style={styles.statsCard}>
+            <Text variant="label" color="primary" bold style={styles.statsTitle}>
+              Your Workout Stats
+            </Text>
             <View style={styles.statsGrid}>
               <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: ds.tone.accent }]}>{sets.length}</Text>
-                <Text style={[styles.statLabel, { color: c.muted }]}>Sets</Text>
+                <Text variant="h2" style={{ color: colors.toxic.primary }}>
+                  {sets.length}
+                </Text>
+                <Text variant="caption" color="muted">Sets</Text>
               </View>
               <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: ds.tone.accent }]}>{users.length}</Text>
-                <Text style={[styles.statLabel, { color: c.muted }]}>Friends</Text>
+                <Text variant="h2" style={{ color: colors.toxic.primary }}>
+                  {users.length}
+                </Text>
+                <Text variant="caption" color="muted">Friends</Text>
               </View>
               <View style={styles.statItem}>
-                <Text style={[styles.statValue, { color: ds.tone.accent }]}>{reactions.length}</Text>
-                <Text style={[styles.statLabel, { color: c.muted }]}>Reactions</Text>
+                <Text variant="h2" style={{ color: colors.toxic.primary }}>
+                  {reactions.length}
+                </Text>
+                <Text variant="caption" color="muted">Reactions</Text>
               </View>
             </View>
-          </View>
+          </Card>
 
           {/* Action Buttons */}
           <View style={styles.actionsContainer}>
             <Pressable
-              style={[styles.actionButton, { backgroundColor: ds.tone.accent }]}
               onPress={navigateToLiveWorkout}
+              style={({ pressed }) => [
+                styles.primaryButton,
+                pressed && styles.buttonPressed
+              ]}
             >
-              <Text style={[styles.actionButtonText, { color: c.bg }]}>
+              <Text variant="label" style={styles.primaryButtonText}>
                 Start Workout Together
               </Text>
             </Pressable>
 
             <Pressable
-              style={[styles.actionButton, { backgroundColor: c.bg, borderColor: c.border }]}
               onPress={() => router.back()}
+              style={({ pressed }) => [
+                styles.secondaryButton,
+                pressed && styles.buttonPressed
+              ]}
             >
-              <Text style={[styles.actionButtonText, { color: c.text }]}>
+              <Text variant="label" color="primary">
                 Back to Workout
               </Text>
             </Pressable>
@@ -206,82 +272,81 @@ export default function LiveWorkoutTogetherScreen() {
   );
 }
 
-function getReactionEmoji(type: Reaction['type']): string {
-  const emojiMap: Record<Reaction['type'], string> = {
-    fire: '🔥',
-    muscle: '💪',
-    heart: '❤️',
-    clap: '👏',
-    rocket: '🚀',
-    thumbsup: '👍',
-  };
-  return emojiMap[type];
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: surface.base,
+  },
+  topGlow: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    pointerEvents: "none",
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
-    padding: 16,
-    gap: 16,
-    paddingBottom: 32,
+    padding: spacing.lg,
+    paddingBottom: spacing["2xl"],
+    gap: spacing.lg,
   },
   header: {
-    marginBottom: 24,
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "900",
-    marginBottom: 8,
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  subtitle: {
-    fontSize: 16,
-    lineHeight: 22,
+  liveWorkoutCard: {
+    gap: spacing.md,
   },
-  liveWorkoutContainer: {
-    marginBottom: 24,
-  },
-  statsContainer: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 24,
+  statsCard: {
+    gap: spacing.md,
   },
   statsTitle: {
-    fontSize: 18,
-    fontWeight: "900",
-    marginBottom: 16,
+    marginBottom: spacing.xs,
   },
   statsGrid: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 16,
+    gap: spacing.md,
   },
   statItem: {
     flex: 1,
     alignItems: "center",
-    gap: 4,
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: "900",
-  },
-  statLabel: {
-    fontSize: 14,
-    fontWeight: "700",
+    gap: spacing.xs,
   },
   actionsContainer: {
-    gap: 12,
+    gap: spacing.sm,
+    marginTop: spacing.md,
   },
-  actionButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 1,
+  primaryButton: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: corners.button,
+    backgroundColor: colors.toxic.primary,
     alignItems: "center",
   },
-  actionButtonText: {
-    fontSize: 16,
+  primaryButtonText: {
+    color: surface.base,
     fontWeight: "900",
+  },
+  secondaryButton: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: corners.button,
+    backgroundColor: surface.raised,
+    borderWidth: 1,
+    borderColor: border.subtle,
+    alignItems: "center",
+  },
+  buttonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
   },
 });

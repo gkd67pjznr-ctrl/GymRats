@@ -167,6 +167,20 @@ export const useCurrentSessionStore = create<CurrentSessionState>()(
         if (error) {
           if (__DEV__) console.error('[currentSessionStore] Hydration failed:', error);
         } else {
+          // Check if session is stale (older than 24 hours)
+          const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+          const session = state?.session;
+
+          if (session && session.startedAtMs) {
+            const sessionAge = Date.now() - session.startedAtMs;
+            if (sessionAge > SESSION_EXPIRY_MS) {
+              if (__DEV__) {
+                console.log('[currentSessionStore] Clearing stale session (older than 24 hours)');
+              }
+              state?.clearSession();
+            }
+          }
+
           // Mark as hydrated after loading from storage
           state?.setHydrated(true);
         }

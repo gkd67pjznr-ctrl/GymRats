@@ -3,8 +3,36 @@
 ## Overview
 Implementation of the Forgerank visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency. This system creates a unique aesthetic that maintains workout tracking performance while adding distinctive personality elements.
 
-**Status:** In Progress | **Progress:** 4/8 sub-features complete (50%)
-**Last Updated:** 2026-02-01
+**Status:** In Progress | **Progress:** 6/8 sub-features complete (75%)
+**Last Updated:** 2026-02-03
+
+---
+
+## Related: Modern Design System Architecture
+
+A new layered design system has been implemented that supersedes some of the technical infrastructure here:
+
+**See:** `docs/features/design-system/feature-design-system.md`
+
+**New System Features:**
+- Token-based architecture (primitives → semantic → components)
+- Surface elevation system (6 depth levels)
+- Theme installation system (toxic, electric, ember, ice)
+- Primitive components (Surface, Card, Text, Button)
+- Art/celebration system with particle effects
+- Full backwards compatibility with legacy `useThemeColors()` and `makeDesignSystem()`
+
+**New Imports:**
+```typescript
+// Tokens
+import { colors, surface, text, border, spacing, corners } from '@/src/design';
+
+// Components
+import { Surface, Card, Text, Button } from '@/src/design/primitives';
+
+// Gradients
+import { backgroundGradients, cardGradients } from '@/src/design';
+```
 
 ---
 

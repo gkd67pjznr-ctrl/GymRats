@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, AppState, AppStateStatus, Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from "../theme";
 import { scheduleRestTimerNotification, cancelRestTimerNotification } from "@/src/lib/notifications/notificationService";
@@ -62,6 +63,7 @@ function formatMMSS(totalSeconds: number) {
 
 export function RestTimerOverlay(props: Props) {
   const c = useThemeColors();
+  const insets = useSafeAreaInsets();
   const [appState, setAppState] = useState(AppState.currentState);
 
   // pill always shows when visible, panel expands on tap
@@ -199,7 +201,7 @@ export function RestTimerOverlay(props: Props) {
           position: "absolute",
           left: 0,
           right: 0,
-          bottom: 14,
+          bottom: Math.max(insets.bottom, 14) + 70, // Account for tab bar + safe area
           zIndex: 999,
           alignItems: "center",
         }}
@@ -242,7 +244,7 @@ export function RestTimerOverlay(props: Props) {
           position: "absolute",
           left: 12,
           right: 12,
-          bottom: 70,
+          bottom: Math.max(insets.bottom, 14) + 130, // Account for tab bar + pill + safe area
           zIndex: 1000,
           transform: [{ translateY: panelY }],
         }}

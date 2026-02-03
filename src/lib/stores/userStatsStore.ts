@@ -2,6 +2,7 @@
 // Unified store for all user statistics - single source of truth
 // Consolidates avatar growth, profile stats, XP, and Forge DNA calculations
 
+import { useMemo } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
@@ -479,7 +480,13 @@ export function useIsUserStatsHydrated(): boolean {
 }
 
 export function useAvatarGrowth(): DerivedAvatarGrowth {
-  return useUserStatsStore((state) => state.getAvatarGrowth());
+  const lifetimeStats = useUserStatsStore((state) => state.lifetimeStats);
+  const exerciseStats = useUserStatsStore((state) => state.exerciseStats);
+
+  return useMemo(
+    () => deriveAvatarGrowth(lifetimeStats, exerciseStats),
+    [lifetimeStats, exerciseStats]
+  );
 }
 
 // ========== Imperative Getters ==========

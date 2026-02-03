@@ -6,6 +6,19 @@ A Finch-inspired virtual gym avatar that grows as the user works out, living in 
 ## Current Implementation Status
 **Status:** In Progress | **Progress:** 8/8 features
 
+---
+
+## Recent Updates (2026-02-03)
+
+### Design System Migration
+- **HangoutScreen.tsx** migrated to new design system:
+  - Added `ScreenHeader` component for proper safe area handling
+  - Added `LinearGradient` backgrounds (`screenDepth`, `topGlow`)
+  - Using `Text` primitive from `@/src/design`
+  - Using semantic tokens (`surface`, `backgroundGradients`)
+- **HangoutRoom.tsx** updated:
+  - Added `onAddDecoration` prop to interface for decoration functionality
+
 ### Completed Features (P0 - MVP)
 ✅ **Avatar Creation**
 - Avatar creation UI with art style selection

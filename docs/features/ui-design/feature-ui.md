@@ -5,6 +5,16 @@ Visual design, theming, components, and polish. The "mysterious, exclusive" aest
 
 ---
 
+## Related: Modern Design System Architecture (2026-02-03)
+
+A new layered design system has been implemented. See `docs/features/design-system/feature-design-system.md` for:
+- Token-based architecture (primitives → semantic → components)
+- Surface elevation system (6 depth levels)
+- Primitive components (Surface, Card, Text, Button)
+- Screen migrations with ScreenHeader and LinearGradient backgrounds
+
+---
+
 ## Sub-Features
 
 ### Done - Dark Theme Foundation

@@ -1,4 +1,4 @@
-# Feature: Live Workout Together
+# Feature: Workout with Friends (formerly Live Workout Together)
 
 ## Overview
 Real-time social workout experience — see friends working out, join shared sessions, or follow guided workouts led by a partner.
@@ -6,6 +6,20 @@ Real-time social workout experience — see friends working out, join shared ses
 **Status:** ✅ Implemented | **Progress:** 4/4 features complete
 **Priority:** Post-launch v2
 **Source:** 2026-01-29 brainstorm interview
+
+---
+
+## Recent Updates (2026-02-03)
+
+### Screen Rename and Design System Migration
+- **Renamed:** "Live Workout Together" → "Workout with Friends" for clarity
+- **File:** `app/live-workout-together.tsx` updated with new design system
+- **Changes:**
+  - Added `ScreenHeader` component for proper safe area handling
+  - Added `LinearGradient` backgrounds (`screenDepth`, `topGlow`)
+  - Using `Card` and `Text` primitives from `@/src/design`
+  - Using semantic tokens (`surface`, `text`, `border`, `corners`, `spacing`)
+  - Fixed header collision with top of phone screen
 
 ---
 

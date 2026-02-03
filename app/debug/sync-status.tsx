@@ -3,11 +3,14 @@
 
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, Text, View, Pressable, ActivityIndicator } from "react-native";
+import { ScrollView, Text, View, Pressable, ActivityIndicator, Alert } from "react-native";
 import { useSyncState } from "../../src/lib/hooks/useSyncStatus";
 import { networkMonitor } from "../../src/lib/sync/NetworkMonitor";
 import { useThemeColors } from "../../src/ui/theme";
 import { FR } from "../../src/ui/forgerankStyle";
+import { useWorkoutStore } from "../../src/lib/stores/workoutStore";
+import { useRoutinesStore } from "../../src/lib/stores/routinesStore";
+import { clearCurrentSession } from "../../src/lib/stores";
 
 type SyncStatusDisplay = {
   status: 'idle' | 'syncing' | 'success' | 'error';
@@ -53,6 +56,66 @@ export default function SyncStatusScreen() {
   const isOnline = networkMonitor.isOnline();
 
   const [syncing, setSyncing] = useState(false);
+
+  // Data counts
+  const workoutSessions = useWorkoutStore((s) => s.sessions);
+  const routines = useRoutinesStore((s) => s.routines);
+  const clearWorkoutSessions = useWorkoutStore((s) => s.clearSessions);
+  const clearRoutines = useRoutinesStore((s) => s.clearRoutines);
+
+  const handleClearWorkouts = () => {
+    Alert.alert(
+      "Clear Workout History",
+      `This will permanently delete ${workoutSessions.length} workout sessions. This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete All",
+          style: "destructive",
+          onPress: () => {
+            clearWorkoutSessions();
+            Alert.alert("Done", "All workout sessions cleared.");
+          },
+        },
+      ]
+    );
+  };
+
+  const handleClearRoutines = () => {
+    Alert.alert(
+      "Clear Routines",
+      `This will permanently delete ${routines.length} routines. This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete All",
+          style: "destructive",
+          onPress: () => {
+            clearRoutines();
+            Alert.alert("Done", "All routines cleared.");
+          },
+        },
+      ]
+    );
+  };
+
+  const handleClearCurrentSession = () => {
+    Alert.alert(
+      "Clear Active Workout",
+      "This will clear any in-progress workout session.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Clear",
+          style: "destructive",
+          onPress: () => {
+            clearCurrentSession();
+            Alert.alert("Done", "Active workout cleared.");
+          },
+        },
+      ]
+    );
+  };
 
   async function handleSyncAll() {
     setSyncing(true);
@@ -260,6 +323,86 @@ export default function SyncStatusScreen() {
           <Text style={{ color: c.muted, ...FR.type.sub }}>
             • <Text style={{ color: c.text }}>Red:</Text> Error occurred
           </Text>
+        </View>
+
+        {/* Danger Zone - Data Reset */}
+        <View style={{ ...FR.card({ card: c.card, border: '#ef4444' }), gap: 12 }}>
+          <Text style={{ color: '#ef4444', ...FR.type.h2 }}>Danger Zone</Text>
+          <Text style={{ color: c.muted, ...FR.type.sub }}>
+            Use these buttons to clear local data. This cannot be undone.
+          </Text>
+
+          {/* Current Data Counts */}
+          <View style={{ backgroundColor: `${c.border}40`, borderRadius: 8, padding: 12, gap: 4 }}>
+            <Text style={{ color: c.muted, ...FR.type.sub }}>
+              Workouts: <Text style={{ color: c.text, fontWeight: "700" }}>{workoutSessions.length}</Text>
+            </Text>
+            <Text style={{ color: c.muted, ...FR.type.sub }}>
+              Routines: <Text style={{ color: c.text, fontWeight: "700" }}>{routines.length}</Text>
+            </Text>
+          </View>
+
+          {/* Clear Active Workout */}
+          <Pressable
+            onPress={handleClearCurrentSession}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 8,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: FR.radius.button,
+              backgroundColor: '#f97316',
+              opacity: pressed ? 0.8 : 1,
+            })}
+          >
+            <Text style={{ color: '#fff', ...FR.type.body, fontWeight: "900" }}>
+              Clear Active Workout
+            </Text>
+          </Pressable>
+
+          {/* Clear Workouts */}
+          <Pressable
+            onPress={handleClearWorkouts}
+            disabled={workoutSessions.length === 0}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 8,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: FR.radius.button,
+              backgroundColor: workoutSessions.length === 0 ? c.border : '#ef4444',
+              opacity: pressed ? 0.8 : 1,
+            })}
+          >
+            <Text style={{ color: '#fff', ...FR.type.body, fontWeight: "900" }}>
+              Clear All Workouts ({workoutSessions.length})
+            </Text>
+          </Pressable>
+
+          {/* Clear Routines */}
+          <Pressable
+            onPress={handleClearRoutines}
+            disabled={routines.length === 0}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 8,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: FR.radius.button,
+              backgroundColor: routines.length === 0 ? c.border : '#ef4444',
+              opacity: pressed ? 0.8 : 1,
+            })}
+          >
+            <Text style={{ color: '#fff', ...FR.type.body, fontWeight: "900" }}>
+              Clear All Routines ({routines.length})
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </View>

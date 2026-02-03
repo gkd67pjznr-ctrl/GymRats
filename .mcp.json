@@ -13,6 +13,10 @@
         "-y",
         "@modelcontextprotocol/server-sequential-thinking"
       ]
+    },
+    "design-systems": {
+      "type": "http",
+      "url": "https://design-systems-mcp.southleft.com/mcp"
     }
   }
 }

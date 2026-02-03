@@ -17,6 +17,7 @@ import type { HangoutRoom } from "../../../lib/hangout/hangoutTypes";
 interface HangoutRoomProps {
   roomId?: string;
   onCustomizeAvatar?: () => void;
+  onAddDecoration?: () => void;
 }
 
 export function HangoutRoom(props: HangoutRoomProps) {

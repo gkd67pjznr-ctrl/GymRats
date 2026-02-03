@@ -1,20 +1,24 @@
 // src/ui/screens/HangoutScreen.tsx
-// Hangout room screen
+// Hangout room screen with new design system
 
 import { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { makeDesignSystem } from "../designSystem";
-import { useThemeColors } from "../theme";
+import { LinearGradient } from "expo-linear-gradient";
+
+// New Design System imports
+import {
+  Text,
+  surface,
+  backgroundGradients,
+} from "../../design";
+import { ScreenHeader } from "../components/ScreenHeader";
 import { useUser } from "../../lib/stores/authStore";
-import { useHangoutStore , useIsHangoutHydrated } from "../../lib/hangout/hangoutStore";
+import { useHangoutStore, useIsHangoutHydrated } from "../../lib/hangout/hangoutStore";
 import { HangoutRoom } from "../components/Hangout/HangoutRoom";
 
 export default function HangoutScreen() {
   const router = useRouter();
-  const c = useThemeColors();
-  const ds = makeDesignSystem("dark", "toxic");
-
   const user = useUser();
   const hydrated = useIsHangoutHydrated();
 
@@ -31,34 +35,77 @@ export default function HangoutScreen() {
 
   if (!user) {
     return (
-      <View style={[styles.container, { backgroundColor: c.bg }]}>
-        <Text style={[styles.errorText, { color: c.text }]}>
-          Please sign in to view the hangout room.
-        </Text>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={backgroundGradients.screenDepth.colors as unknown as readonly [string, string, ...string[]]}
+          start={backgroundGradients.screenDepth.start}
+          end={backgroundGradients.screenDepth.end}
+          locations={backgroundGradients.screenDepth.locations as unknown as readonly [number, number, ...number[]] | undefined}
+          style={StyleSheet.absoluteFill}
+        />
+        <ScreenHeader title="Hangout" />
+        <View style={styles.centered}>
+          <Text variant="body" color="muted">
+            Please sign in to view the hangout room.
+          </Text>
+        </View>
       </View>
     );
   }
 
   if (!hydrated) {
     return (
-      <View style={[styles.container, { backgroundColor: c.bg }]}>
-        <Text style={[styles.loadingText, { color: c.muted }]}>
-          Loading hangout room...
-        </Text>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={backgroundGradients.screenDepth.colors as unknown as readonly [string, string, ...string[]]}
+          start={backgroundGradients.screenDepth.start}
+          end={backgroundGradients.screenDepth.end}
+          locations={backgroundGradients.screenDepth.locations as unknown as readonly [number, number, ...number[]] | undefined}
+          style={StyleSheet.absoluteFill}
+        />
+        <ScreenHeader title="Hangout" />
+        <View style={styles.centered}>
+          <Text variant="body" color="muted">
+            Loading hangout room...
+          </Text>
+        </View>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: c.bg }]}>
-      <HangoutRoom
-        onAddDecoration={() => {
-          // TODO: Implement decoration addition
-        }}
-        onCustomizeAvatar={() => {
-          router.push("/avatar");
-        }}
+    <View style={styles.container}>
+      {/* Background gradient */}
+      <LinearGradient
+        colors={backgroundGradients.screenDepth.colors as unknown as readonly [string, string, ...string[]]}
+        start={backgroundGradients.screenDepth.start}
+        end={backgroundGradients.screenDepth.end}
+        locations={backgroundGradients.screenDepth.locations as unknown as readonly [number, number, ...number[]] | undefined}
+        style={StyleSheet.absoluteFill}
       />
+
+      {/* Top glow accent */}
+      <LinearGradient
+        colors={backgroundGradients.topGlow.colors as unknown as readonly [string, string, ...string[]]}
+        start={backgroundGradients.topGlow.start}
+        end={backgroundGradients.topGlow.end}
+        style={styles.topGlow}
+      />
+
+      {/* Header with safe area */}
+      <ScreenHeader title="Hangout" />
+
+      {/* Hangout Room Content */}
+      <View style={styles.content}>
+        <HangoutRoom
+          onAddDecoration={() => {
+            // TODO: Implement decoration addition
+          }}
+          onCustomizeAvatar={() => {
+            router.push("/avatar");
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -66,15 +113,22 @@ export default function HangoutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: surface.base,
   },
-  errorText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 50,
+  topGlow: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    pointerEvents: "none",
   },
-  loadingText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 50,
+  content: {
+    flex: 1,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
