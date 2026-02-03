@@ -1,39 +1,18 @@
-import { View, ActivityIndicator } from "react-native";
-import { Tabs, Redirect } from "expo-router";
+import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "../../src/ui/theme";
-import { useIsAuthenticated, useAuthLoading } from "../../src/lib/stores";
 import { TOP_BAR_HEIGHT } from "../../src/ui/components/GlobalTopBar";
 
-function AuthGuard({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = useIsAuthenticated();
-  const loading = useAuthLoading();
-
-  // Show loading spinner while checking auth
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  // If not authenticated, redirect to login using Redirect component
-  if (!isAuthenticated) {
-    return <Redirect href="/auth/login" />;
-  }
-
-  return <>{children}</>;
-}
+// Note: Authentication is now handled centrally in app/_layout.tsx via useRouteProtection
+// This layout no longer needs an AuthGuard wrapper
 
 export default function TabsLayout() {
   const c = useThemeColors();
   const insets = useSafeAreaInsets();
 
   return (
-    <AuthGuard>
-      <Tabs
+    <Tabs
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: c.text,
@@ -97,7 +76,6 @@ export default function TabsLayout() {
             ),
           }}
         />
-      </Tabs>
-    </AuthGuard>
+    </Tabs>
   );
 }

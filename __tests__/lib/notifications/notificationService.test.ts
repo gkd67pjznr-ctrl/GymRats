@@ -10,6 +10,8 @@ import {
   requestNotificationPermission,
   sendFriendRequestNotification,
   sendDirectMessageNotification,
+  sendReactionNotification,
+  sendCommentNotification,
   registerPushToken,
 } from '@/src/lib/notifications/notificationService';
 import { updateSettings } from '@/src/lib/stores/settingsStore';
@@ -383,6 +385,113 @@ describe('Notification Service', () => {
       require('expo-notifications').getPermissionsAsync.mockRejectedValue(new Error('Permission error'));
 
       await expect(registerPushToken()).resolves.not.toThrow();
+    });
+  });
+
+  describe('sendReactionNotification', () => {
+    it('should send reaction notification when enabled', async () => {
+      await sendReactionNotification('reactor1', 'Jane Doe', 'author1', 'post1', 'fire');
+
+      // Should call fetch (for sendPushNotification)
+      expect(global.fetch).toHaveBeenCalled();
+    });
+
+    it('should not send notification when reacting to own post', async () => {
+      // Clear fetch calls
+      (global.fetch as jest.Mock).mockClear();
+
+      await sendReactionNotification('author1', 'Jane Doe', 'author1', 'post1', 'fire');
+
+      // Should not call fetch when reacting to own post
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should not send notification when reactions are disabled', async () => {
+      // Disable reaction notifications
+      updateSettings({
+        notificationPrefs: {
+          reactions: false,
+        } as any,
+      });
+
+      // Clear fetch calls
+      (global.fetch as jest.Mock).mockClear();
+
+      await sendReactionNotification('reactor1', 'Jane Doe', 'author1', 'post1', 'fire');
+
+      // Should not call fetch
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should map emotes to friendly labels', async () => {
+      await sendReactionNotification('reactor1', 'Jane Doe', 'author1', 'post1', 'crown');
+
+      // Should have called fetch with the right body
+      const fetchCall = (global.fetch as jest.Mock).mock.calls[0];
+      const body = JSON.parse(fetchCall[1].body);
+      expect(body.payload.body).toContain('crowned');
+    });
+
+    it('should handle errors gracefully', async () => {
+      // Mock fetch to throw error
+      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(sendReactionNotification('reactor1', 'Jane Doe', 'author1', 'post1', 'fire')).resolves.not.toThrow();
+    });
+  });
+
+  describe('sendCommentNotification', () => {
+    it('should send comment notification when enabled', async () => {
+      await sendCommentNotification('commenter1', 'John Smith', 'author1', 'post1', 'comment1', 'Great workout!');
+
+      // Should call fetch (for sendPushNotification)
+      expect(global.fetch).toHaveBeenCalled();
+    });
+
+    it('should not send notification when commenting on own post', async () => {
+      // Clear fetch calls
+      (global.fetch as jest.Mock).mockClear();
+
+      await sendCommentNotification('author1', 'John Smith', 'author1', 'post1', 'comment1', 'Great workout!');
+
+      // Should not call fetch when commenting on own post
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should not send notification when comments are disabled', async () => {
+      // Disable comment notifications
+      updateSettings({
+        notificationPrefs: {
+          comments: false,
+        } as any,
+      });
+
+      // Clear fetch calls
+      (global.fetch as jest.Mock).mockClear();
+
+      await sendCommentNotification('commenter1', 'John Smith', 'author1', 'post1', 'comment1', 'Great workout!');
+
+      // Should not call fetch
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should truncate long comment bodies', async () => {
+      const longComment = 'This is a very long comment that should be truncated to fit within the notification body limits because it exceeds fifty characters.';
+
+      await sendCommentNotification('commenter1', 'John Smith', 'author1', 'post1', 'comment1', longComment);
+
+      // Should have called fetch with truncated body
+      const fetchCall = (global.fetch as jest.Mock).mock.calls[0];
+      const body = JSON.parse(fetchCall[1].body);
+      expect(body.payload.body).toContain('...');
+      expect(body.payload.body.length).toBeLessThan(100);
+    });
+
+    it('should handle errors gracefully', async () => {
+      // Mock fetch to throw error
+      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(sendCommentNotification('commenter1', 'John Smith', 'author1', 'post1', 'comment1', 'Great workout!')).resolves.not.toThrow();
     });
   });
 });

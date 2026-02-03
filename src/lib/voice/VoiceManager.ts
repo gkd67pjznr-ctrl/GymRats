@@ -17,33 +17,237 @@ import { useBuddyStore } from '../stores/buddyStore';
  *
  * For now, we use placeholder sounds from Mixkit.
  */
+/**
+ * Placeholder audio URLs by trigger type
+ * In production, these would be distinct AI-generated voice files
+ */
+const PLACEHOLDER_AUDIO = {
+  pr: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',       // Heavy/impactful sound
+  rep: 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3',      // Rep achievement
+  e1rm: 'https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3',     // Max strength
+  rank: 'https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3',     // Level up
+  volume: 'https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3',   // Volume milestone
+  start: 'https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3',    // Session start
+  mid: 'https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3',      // Mid-session
+  final: 'https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3',    // Final set
+  end: 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3',      // Session end
+  streak: 'https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3',   // Streak
+  return: 'https://assets.mixkit.co/active_storage/sfx/2001/2001-preview.mp3',   // Return/welcome back
+  rest: 'https://assets.mixkit.co/active_storage/sfx/2005/2005-preview.mp3',     // Long rest
+};
+
 const VOICE_LINE_ASSETS: Record<string, string> = {
-  // Placeholder mappings - in real app, these would be actual voice files
-  'trash-heavy-1': 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  'trash-heavy-2': 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  'trash-rep-1': 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3',
-  'trash-rep-2': 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3',
-  'trash-start-1': 'https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3',
-  'trash-start-2': 'https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3',
-  'trash-end-1': 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3',
-  'trash-end-2': 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3',
-  // Savage buddy voice lines
-  'savage-heavy-1': 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  'savage-heavy-2': 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  'savage-rep-1': 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3',
-  'savage-rep-2': 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3',
-  'savage-start-1': 'https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3',
-  'savage-start-2': 'https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3',
-  'savage-end-1': 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3',
-  'savage-end-2': 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3',
-  // Anime buddy voice lines
-  'anime-power-1': 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  'anime-power-2': 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  'anime-start-1': 'https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3',
-  'anime-start-2': 'https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3',
-  'anime-end-1': 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3',
-  'anime-end-2': 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3',
-  // Add more mappings as needed
+  // =================================================================
+  // TRASH TALKER (Legendary) - Roasts with love
+  // =================================================================
+  'trash-heavy-1': PLACEHOLDER_AUDIO.pr,
+  'trash-heavy-2': PLACEHOLDER_AUDIO.pr,
+  'trash-rep-1': PLACEHOLDER_AUDIO.rep,
+  'trash-rep-2': PLACEHOLDER_AUDIO.rep,
+  'trash-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'trash-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'trash-rank-1': PLACEHOLDER_AUDIO.rank,
+  'trash-rank-2': PLACEHOLDER_AUDIO.rank,
+  'trash-volume-1': PLACEHOLDER_AUDIO.volume,
+  'trash-volume-2': PLACEHOLDER_AUDIO.volume,
+  'trash-start-1': PLACEHOLDER_AUDIO.start,
+  'trash-start-2': PLACEHOLDER_AUDIO.start,
+  'trash-mid-1': PLACEHOLDER_AUDIO.mid,
+  'trash-mid-2': PLACEHOLDER_AUDIO.mid,
+  'trash-final-1': PLACEHOLDER_AUDIO.final,
+  'trash-final-2': PLACEHOLDER_AUDIO.final,
+  'trash-end-1': PLACEHOLDER_AUDIO.end,
+  'trash-end-2': PLACEHOLDER_AUDIO.end,
+  'trash-streak-1': PLACEHOLDER_AUDIO.streak,
+  'trash-streak-2': PLACEHOLDER_AUDIO.streak,
+  'trash-return-1': PLACEHOLDER_AUDIO.return,
+  'trash-return-2': PLACEHOLDER_AUDIO.return,
+  'trash-rest-1': PLACEHOLDER_AUDIO.rest,
+  'trash-rest-2': PLACEHOLDER_AUDIO.rest,
+
+  // =================================================================
+  // SAVAGE (Premium) - Brutally honest, dark humor
+  // =================================================================
+  'savage-heavy-1': PLACEHOLDER_AUDIO.pr,
+  'savage-heavy-2': PLACEHOLDER_AUDIO.pr,
+  'savage-rep-1': PLACEHOLDER_AUDIO.rep,
+  'savage-rep-2': PLACEHOLDER_AUDIO.rep,
+  'savage-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'savage-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'savage-rank-1': PLACEHOLDER_AUDIO.rank,
+  'savage-rank-2': PLACEHOLDER_AUDIO.rank,
+  'savage-volume-1': PLACEHOLDER_AUDIO.volume,
+  'savage-volume-2': PLACEHOLDER_AUDIO.volume,
+  'savage-start-1': PLACEHOLDER_AUDIO.start,
+  'savage-start-2': PLACEHOLDER_AUDIO.start,
+  'savage-mid-1': PLACEHOLDER_AUDIO.mid,
+  'savage-mid-2': PLACEHOLDER_AUDIO.mid,
+  'savage-final-1': PLACEHOLDER_AUDIO.final,
+  'savage-final-2': PLACEHOLDER_AUDIO.final,
+  'savage-end-1': PLACEHOLDER_AUDIO.end,
+  'savage-end-2': PLACEHOLDER_AUDIO.end,
+  'savage-streak-1': PLACEHOLDER_AUDIO.streak,
+  'savage-streak-2': PLACEHOLDER_AUDIO.streak,
+  'savage-return-1': PLACEHOLDER_AUDIO.return,
+  'savage-return-2': PLACEHOLDER_AUDIO.return,
+
+  // =================================================================
+  // ANIME SENSEI (Premium) - Dramatic power-up energy
+  // =================================================================
+  'anime-power-1': PLACEHOLDER_AUDIO.pr,
+  'anime-power-2': PLACEHOLDER_AUDIO.pr,
+  'anime-rep-1': PLACEHOLDER_AUDIO.rep,
+  'anime-rep-2': PLACEHOLDER_AUDIO.rep,
+  'anime-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'anime-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'anime-rank-1': PLACEHOLDER_AUDIO.rank,
+  'anime-rank-2': PLACEHOLDER_AUDIO.rank,
+  'anime-volume-1': PLACEHOLDER_AUDIO.volume,
+  'anime-volume-2': PLACEHOLDER_AUDIO.volume,
+  'anime-start-1': PLACEHOLDER_AUDIO.start,
+  'anime-start-2': PLACEHOLDER_AUDIO.start,
+  'anime-mid-1': PLACEHOLDER_AUDIO.mid,
+  'anime-mid-2': PLACEHOLDER_AUDIO.mid,
+  'anime-final-1': PLACEHOLDER_AUDIO.final,
+  'anime-final-2': PLACEHOLDER_AUDIO.final,
+  'anime-end-1': PLACEHOLDER_AUDIO.end,
+  'anime-end-2': PLACEHOLDER_AUDIO.end,
+  'anime-streak-1': PLACEHOLDER_AUDIO.streak,
+  'anime-streak-2': PLACEHOLDER_AUDIO.streak,
+  'anime-return-1': PLACEHOLDER_AUDIO.return,
+  'anime-return-2': PLACEHOLDER_AUDIO.return,
+
+  // =================================================================
+  // ACTION HERO (Premium) - One-liners, machismo
+  // =================================================================
+  'action-heavy-1': PLACEHOLDER_AUDIO.pr,
+  'action-heavy-2': PLACEHOLDER_AUDIO.pr,
+  'action-rep-1': PLACEHOLDER_AUDIO.rep,
+  'action-rep-2': PLACEHOLDER_AUDIO.rep,
+  'action-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'action-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'action-rank-1': PLACEHOLDER_AUDIO.rank,
+  'action-rank-2': PLACEHOLDER_AUDIO.rank,
+  'action-volume-1': PLACEHOLDER_AUDIO.volume,
+  'action-volume-2': PLACEHOLDER_AUDIO.volume,
+  'action-start-1': PLACEHOLDER_AUDIO.start,
+  'action-start-2': PLACEHOLDER_AUDIO.start,
+  'action-mid-1': PLACEHOLDER_AUDIO.mid,
+  'action-mid-2': PLACEHOLDER_AUDIO.mid,
+  'action-final-1': PLACEHOLDER_AUDIO.final,
+  'action-final-2': PLACEHOLDER_AUDIO.final,
+  'action-end-1': PLACEHOLDER_AUDIO.end,
+  'action-end-2': PLACEHOLDER_AUDIO.end,
+  'action-streak-1': PLACEHOLDER_AUDIO.streak,
+  'action-streak-2': PLACEHOLDER_AUDIO.streak,
+  'action-return-1': PLACEHOLDER_AUDIO.return,
+  'action-return-2': PLACEHOLDER_AUDIO.return,
+
+  // =================================================================
+  // DRILL SERGEANT (Premium) - Barking orders, no-nonsense
+  // =================================================================
+  'sergeant-heavy-1': PLACEHOLDER_AUDIO.pr,
+  'sergeant-heavy-2': PLACEHOLDER_AUDIO.pr,
+  'sergeant-rep-1': PLACEHOLDER_AUDIO.rep,
+  'sergeant-rep-2': PLACEHOLDER_AUDIO.rep,
+  'sergeant-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'sergeant-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'sergeant-rank-1': PLACEHOLDER_AUDIO.rank,
+  'sergeant-rank-2': PLACEHOLDER_AUDIO.rank,
+  'sergeant-volume-1': PLACEHOLDER_AUDIO.volume,
+  'sergeant-volume-2': PLACEHOLDER_AUDIO.volume,
+  'sergeant-start-1': PLACEHOLDER_AUDIO.start,
+  'sergeant-start-2': PLACEHOLDER_AUDIO.start,
+  'sergeant-mid-1': PLACEHOLDER_AUDIO.mid,
+  'sergeant-mid-2': PLACEHOLDER_AUDIO.mid,
+  'sergeant-final-1': PLACEHOLDER_AUDIO.final,
+  'sergeant-final-2': PLACEHOLDER_AUDIO.final,
+  'sergeant-end-1': PLACEHOLDER_AUDIO.end,
+  'sergeant-end-2': PLACEHOLDER_AUDIO.end,
+  'sergeant-streak-1': PLACEHOLDER_AUDIO.streak,
+  'sergeant-streak-2': PLACEHOLDER_AUDIO.streak,
+  'sergeant-return-1': PLACEHOLDER_AUDIO.return,
+  'sergeant-return-2': PLACEHOLDER_AUDIO.return,
+
+  // =================================================================
+  // ZEN MASTER (Premium) - Calm, philosophical
+  // =================================================================
+  'zen-heavy-1': PLACEHOLDER_AUDIO.pr,
+  'zen-heavy-2': PLACEHOLDER_AUDIO.pr,
+  'zen-rep-1': PLACEHOLDER_AUDIO.rep,
+  'zen-rep-2': PLACEHOLDER_AUDIO.rep,
+  'zen-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'zen-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'zen-rank-1': PLACEHOLDER_AUDIO.rank,
+  'zen-rank-2': PLACEHOLDER_AUDIO.rank,
+  'zen-volume-1': PLACEHOLDER_AUDIO.volume,
+  'zen-volume-2': PLACEHOLDER_AUDIO.volume,
+  'zen-start-1': PLACEHOLDER_AUDIO.start,
+  'zen-start-2': PLACEHOLDER_AUDIO.start,
+  'zen-mid-1': PLACEHOLDER_AUDIO.mid,
+  'zen-mid-2': PLACEHOLDER_AUDIO.mid,
+  'zen-final-1': PLACEHOLDER_AUDIO.final,
+  'zen-final-2': PLACEHOLDER_AUDIO.final,
+  'zen-end-1': PLACEHOLDER_AUDIO.end,
+  'zen-end-2': PLACEHOLDER_AUDIO.end,
+  'zen-streak-1': PLACEHOLDER_AUDIO.streak,
+  'zen-streak-2': PLACEHOLDER_AUDIO.streak,
+  'zen-return-1': PLACEHOLDER_AUDIO.return,
+  'zen-return-2': PLACEHOLDER_AUDIO.return,
+
+  // =================================================================
+  // GOTH GYM RAT (Premium) - Dark, brain-rot aesthetic
+  // =================================================================
+  'goth-heavy-1': PLACEHOLDER_AUDIO.pr,
+  'goth-heavy-2': PLACEHOLDER_AUDIO.pr,
+  'goth-rep-1': PLACEHOLDER_AUDIO.rep,
+  'goth-rep-2': PLACEHOLDER_AUDIO.rep,
+  'goth-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'goth-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'goth-rank-1': PLACEHOLDER_AUDIO.rank,
+  'goth-rank-2': PLACEHOLDER_AUDIO.rank,
+  'goth-volume-1': PLACEHOLDER_AUDIO.volume,
+  'goth-volume-2': PLACEHOLDER_AUDIO.volume,
+  'goth-start-1': PLACEHOLDER_AUDIO.start,
+  'goth-start-2': PLACEHOLDER_AUDIO.start,
+  'goth-mid-1': PLACEHOLDER_AUDIO.mid,
+  'goth-mid-2': PLACEHOLDER_AUDIO.mid,
+  'goth-final-1': PLACEHOLDER_AUDIO.final,
+  'goth-final-2': PLACEHOLDER_AUDIO.final,
+  'goth-end-1': PLACEHOLDER_AUDIO.end,
+  'goth-end-2': PLACEHOLDER_AUDIO.end,
+  'goth-streak-1': PLACEHOLDER_AUDIO.streak,
+  'goth-streak-2': PLACEHOLDER_AUDIO.streak,
+  'goth-return-1': PLACEHOLDER_AUDIO.return,
+  'goth-return-2': PLACEHOLDER_AUDIO.return,
+
+  // =================================================================
+  // LEGENDARY MYSTERY (Legendary) - Theme-warping presence
+  // =================================================================
+  'mystery-heavy-1': PLACEHOLDER_AUDIO.pr,
+  'mystery-heavy-2': PLACEHOLDER_AUDIO.pr,
+  'mystery-rep-1': PLACEHOLDER_AUDIO.rep,
+  'mystery-rep-2': PLACEHOLDER_AUDIO.rep,
+  'mystery-e1rm-1': PLACEHOLDER_AUDIO.e1rm,
+  'mystery-e1rm-2': PLACEHOLDER_AUDIO.e1rm,
+  'mystery-rank-1': PLACEHOLDER_AUDIO.rank,
+  'mystery-rank-2': PLACEHOLDER_AUDIO.rank,
+  'mystery-volume-1': PLACEHOLDER_AUDIO.volume,
+  'mystery-volume-2': PLACEHOLDER_AUDIO.volume,
+  'mystery-start-1': PLACEHOLDER_AUDIO.start,
+  'mystery-start-2': PLACEHOLDER_AUDIO.start,
+  'mystery-mid-1': PLACEHOLDER_AUDIO.mid,
+  'mystery-mid-2': PLACEHOLDER_AUDIO.mid,
+  'mystery-final-1': PLACEHOLDER_AUDIO.final,
+  'mystery-final-2': PLACEHOLDER_AUDIO.final,
+  'mystery-end-1': PLACEHOLDER_AUDIO.end,
+  'mystery-end-2': PLACEHOLDER_AUDIO.end,
+  'mystery-streak-1': PLACEHOLDER_AUDIO.streak,
+  'mystery-streak-2': PLACEHOLDER_AUDIO.streak,
+  'mystery-return-1': PLACEHOLDER_AUDIO.return,
+  'mystery-return-2': PLACEHOLDER_AUDIO.return,
+  'mystery-rest-1': PLACEHOLDER_AUDIO.rest,
+  'mystery-rest-2': PLACEHOLDER_AUDIO.rest,
 };
 
 /**
@@ -296,7 +500,48 @@ export async function stopAllVoiceLines(): Promise<void> {
  * Preloads all voice lines for a given buddy to reduce latency.
  */
 export async function preloadBuddyVoiceLines(buddyId: string): Promise<void> {
-  // In a real implementation, we would look up the buddy's voice lines
-  // from buddyData and preload them all
-  console.log(`[VoiceManager] Preloading voice lines for buddy ${buddyId} would be implemented here`);
+  // Import buddies dynamically to avoid circular dependencies
+  const { buddies } = await import('../buddyData');
+
+  const buddy = buddies.find(b => b.id === buddyId);
+  if (!buddy || !buddy.voiceLines) {
+    console.log(`[VoiceManager] No voice lines found for buddy ${buddyId}`);
+    return;
+  }
+
+  // Collect all voice line IDs from the buddy
+  const voiceLineIds: string[] = [];
+  for (const triggerVoiceLines of Object.values(buddy.voiceLines)) {
+    if (triggerVoiceLines) {
+      voiceLineIds.push(...triggerVoiceLines);
+    }
+  }
+
+  // Preload all voice lines in parallel
+  console.log(`[VoiceManager] Preloading ${voiceLineIds.length} voice lines for buddy ${buddyId}`);
+  await Promise.allSettled(voiceLineIds.map(id => VoiceManager.preload(id)));
+}
+
+/**
+ * Get a random voice line ID for a buddy and trigger type
+ *
+ * @param buddyId - Buddy ID
+ * @param triggerType - Trigger type (e.g., 'pr_weight', 'session_start')
+ * @returns Voice line ID or undefined if not found
+ */
+export async function getVoiceLineForTrigger(
+  buddyId: string,
+  triggerType: string
+): Promise<string | undefined> {
+  const { buddies } = await import('../buddyData');
+
+  const buddy = buddies.find(b => b.id === buddyId);
+  if (!buddy?.voiceLines) return undefined;
+
+  const voiceLines = buddy.voiceLines[triggerType as keyof typeof buddy.voiceLines];
+  if (!voiceLines || voiceLines.length === 0) return undefined;
+
+  // Pick a random voice line from the pool
+  const randomIndex = Math.floor(Math.random() * voiceLines.length);
+  return voiceLines[randomIndex];
 }
