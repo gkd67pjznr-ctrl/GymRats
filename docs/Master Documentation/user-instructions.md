@@ -8,15 +8,67 @@ Whenever a new feature is built that requires special usage instructions, those 
 
 ## Table of Contents
 
-1. [Supabase Database Migrations](#supabase-database-migrations)
-2. [SQLPro Studio Connection Guide](#sqlpro-studio-connection-guide)
-3. [ExerciseDB Sync Status](#exercisedb-sync-status)
-4. [SQL Database Schema Review](#sql-database-schema-review)
-5. [Editing Exercise Names](#editing-exercise-names)
-6. [Adding Images to PR Celebrations](#adding-images-to-pr-celebrations)
-7. [Customizing AI Gym Buddy Personalities](#customizing-ai-gym-buddy-personalities)
-8. [Adding Custom Avatar Art Styles](#adding-custom-avatar-art-styles)
-9. [Configuring Forge Lab Analytics](#configuring-forge-lab-analytics)
+1. [Production Services Setup](#production-services-setup)
+2. [Supabase Database Migrations](#supabase-database-migrations)
+3. [SQLPro Studio Connection Guide](#sqlpro-studio-connection-guide)
+4. [ExerciseDB Sync Status](#exercisedb-sync-status)
+5. [SQL Database Schema Review](#sql-database-schema-review)
+6. [Editing Exercise Names](#editing-exercise-names)
+7. [Adding Images to PR Celebrations](#adding-images-to-pr-celebrations)
+8. [Customizing AI Gym Buddy Personalities](#customizing-ai-gym-buddy-personalities)
+9. [Adding Custom Avatar Art Styles](#adding-custom-avatar-art-styles)
+10. [Configuring Forge Lab Analytics](#configuring-forge-lab-analytics)
+
+---
+
+## Production Services Setup
+
+Before deploying to production, you must configure external services for crash reporting, in-app purchases, and backend connectivity.
+
+**Full documentation:** See `docs/Master Documentation/PRODUCTION-SETUP.md`
+
+### Required Environment Variables
+
+Create a `.env` file with these variables:
+
+```bash
+# Supabase (REQUIRED - app will crash in prod without these)
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...your-anon-key
+
+# Sentry (crash reporting)
+EXPO_PUBLIC_SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
+
+# RevenueCat (in-app purchases for buddy unlocks)
+EXPO_PUBLIC_REVENUECAT_APPLE_KEY=appl_xxx
+EXPO_PUBLIC_REVENUECAT_GOOGLE_KEY=goog_xxx
+
+# Google OAuth
+EXPO_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+```
+
+### Service Setup Checklist
+
+| Service | Dashboard | What You Need |
+|---------|-----------|---------------|
+| **Sentry** | https://sentry.io | Create project, get DSN |
+| **RevenueCat** | https://revenuecat.com | Create project, connect stores, get API keys |
+| **Supabase** | https://supabase.com | Project URL and anon key (already have) |
+| **Google OAuth** | https://console.cloud.google.com | OAuth 2.0 client ID |
+
+### Code Locations
+
+| Service | File | Notes |
+|---------|------|-------|
+| Sentry | `src/lib/monitoring/sentry.ts` | Initialized in `app/_layout.tsx` |
+| RevenueCat | `src/lib/iap/RevenueCatService.ts` | Replaces expo-iap |
+| Supabase | `src/lib/supabase/client.ts` | Production guard throws if unconfigured |
+
+### Production Behavior
+
+- **Sentry:** Only active in production builds (`__DEV__` = false)
+- **Supabase:** Throws fatal error if credentials missing in prod
+- **RevenueCat:** Gracefully disabled if keys not set
 
 ---
 

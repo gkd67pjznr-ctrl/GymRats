@@ -32,6 +32,13 @@ module.exports = {
       'expo-router',
       'expo-iap',
       [
+        '@sentry/react-native/expo',
+        {
+          organization: process.env.SENTRY_ORG || 'forgerank',
+          project: process.env.SENTRY_PROJECT || 'forgerank-mobile',
+        },
+      ],
+      [
         'expo-splash-screen',
         {
           image: './assets/images/splash-icon.png',
@@ -53,6 +60,9 @@ module.exports = {
       supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL || '',
       supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
       googleClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '',
+      sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN || '',
+      revenueCatAppleKey: process.env.EXPO_PUBLIC_REVENUECAT_APPLE_KEY || '',
+      revenueCatGoogleKey: process.env.EXPO_PUBLIC_REVENUECAT_GOOGLE_KEY || '',
     },
   },
 };

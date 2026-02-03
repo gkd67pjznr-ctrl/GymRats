@@ -4,27 +4,27 @@
 
 Competition among friends and the broader community through various ranking systems and opt-in challenges. Encourages engagement and friendly competition without affecting core Forgerank scoring integrity. All competitive features are designed to be **supportive, not toxic** -- we steer away from body comparison and toward celebrating effort, strength progress, and consistency.
 
-**Launch status:** Post-launch feature (not included in MVP).
+**Launch status:** Phase 1 implemented (scope toggle, overall tab, user visibility).
 
 ---
 
 ## Sub-Features
 
 ### 1. Per-Exercise Leaderboard
-- [ ] Rank friends by Forgerank score per exercise
-- [ ] Show top 10 friends per exercise
+- [x] Rank friends by Forgerank score per exercise
+- [x] Show top 5 per exercise (with user visible if outside top 5)
 - [ ] Display score and rank tier
 - [ ] Filter by exercise category
-- [ ] See your position highlighted
-- [ ] Toggle between friends-only and global views
+- [x] See your position highlighted (accent background + primary text)
+- [x] Toggle between friends-only and global views
 
 ---
 
 ### 2. Overall Forgerank Leaderboard
-- [ ] Average Forgerank across all exercises
+- [x] Average Forgerank across all exercises
 - [ ] Or total combined score option
-- [ ] Friends-only view
-- [ ] Global view
+- [x] Friends-only view
+- [x] Global view
 - [ ] Weekly/monthly/all-time filters
 
 ---
@@ -122,17 +122,21 @@ Competitive features must stay **supportive and effort-focused**:
 - Gym membership/location (for gym-level boards)
 - Challenge opt-in state
 
-**Leaderboard Entry:**
+**Leaderboard Entry (Implemented):**
 ```typescript
+// Base entry from Supabase edge functions
 type LeaderboardEntry = {
+  rank: number;
   userId: string;
-  username: string;
-  avatarUrl?: string;
-  value: number;      // score/volume/level
-  rank: number;       // position in leaderboard
-  change?: number;    // position change since last period
-  tier?: string;      // rank tier for Forgerank
-  scope: 'friends' | 'gym' | 'global';
+  userName: string;
+  value: number;
+  display: string;
+};
+
+// Enhanced entry with visibility flags (src/lib/leaderboardUtils.ts)
+type EnhancedLeaderboardEntry = LeaderboardEntry & {
+  isCurrentUser?: boolean;
+  showSeparator?: boolean;
 };
 ```
 
@@ -160,14 +164,14 @@ LIMIT 20;
 
 ## UI Design
 
-**Leaderboard Screen:**
-- Tab bar: Exercise | Overall | Volume | Level | Challenges
-- Scope toggle: Friends | Gym | Global
-- List view with position numbers
-- User avatar + name + score
-- Highlight current user's position
-- Pull-to-refresh
-- Personal progress indicator (your trend arrow)
+**Leaderboard Screen (Implemented):**
+- Tab bar (horizontal scroll): Overall | Exercises | Users | Volume | Streaks
+- Scope toggle: Global | Friends (pill buttons below tabs)
+- List view with rank badges (1-3 get primary accent)
+- User name + value display
+- Current user highlighted with accent background + primary text
+- Pull-to-refresh (RefreshControl)
+- Separator ("...") shown when user is outside top N
 
 **Leaderboard Card (Mini View):**
 - Top 3 friends for an exercise
@@ -213,3 +217,36 @@ LIMIT 20;
 
 **See also:**
 - [feature-competitions.md](./feature-competitions.md) -- Online PL meets & BB shows
+
+---
+
+## Implementation Notes
+
+### Phase 1 (Completed 2026-02-02)
+
+**Files Created:**
+- `src/lib/leaderboardUtils.ts` - Utility functions for filtering, ranking, user visibility
+- `__tests__/lib/leaderboardUtils.test.ts` - 21 test cases
+
+**Files Modified:**
+- `app/(tabs)/leaderboard.tsx` - Enhanced with scope toggle, overall tab, pull-to-refresh
+
+**Features Implemented:**
+1. **Overall Tab** - New first tab showing average Forgerank score across all exercises
+2. **Scope Toggle** (Friends/Global) - Client-side filtering using `useFriendEdges` hook
+3. **Pull-to-Refresh** - RefreshControl on ScrollView
+4. **User Position Visibility** - Current user always visible with accent highlighting; separator ("...") shown when user is outside top N
+
+**Utility Functions:**
+```typescript
+// src/lib/leaderboardUtils.ts
+filterByFriends(entries, friendUserIds, currentUserId) // Filter to friends + self
+recomputeRanks(entries) // Recalculate ranks after filtering
+ensureCurrentUserVisible(entries, userId, maxVisible) // Guarantee user visibility
+computeOverallRankings(exerciseRankings) // Average e1RM across exercises
+```
+
+**Edge Cases Handled:**
+- No friends (Friends view shows only current user)
+- User not in top N (shows separator + user's actual rank)
+- Empty leaderboards (contextual empty states)
