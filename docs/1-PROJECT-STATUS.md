@@ -56,6 +56,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 - Rest timer with haptic notifications
 - PR detection (weight, rep, e1RM) with toast notifications
 - Exercise blocks from routines
+- **Input Polish:** Custom numeric keypad, +/- steppers with configurable increments (2.5/5/10/45 lb), weight presets (135-405 lb), rep presets (5-15), auto-fill from previous sets, plate calculator
 
 ### History & Tracking
 - Full workout history list
@@ -164,7 +165,6 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 |---|------|-------------|
 | 7 | Push Notifications | Social activity, milestones |
 | 8 | Protected Routes | Authentication guards |
-| 9 | Input Polish | Number pad, steppers, auto-fill |
 
 ---
 
@@ -215,6 +215,14 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
   - Created `Avatar/index.ts` for component exports
   - Purchase flow with confirmation, token deduction, and auto-equip
   - Haptic feedback on selection, success, and error states
+- **Input Polish Verified Complete** - Confirmed existing implementation includes:
+  - Custom `NumericKeypad` component (calculator-style, haptics, decimal support)
+  - `NumberInput` with +/- steppers (52x52px touch targets, step options 2.5/5/10/45)
+  - Weight presets (95, 135, 185, 225, 275, 315, 405 lb)
+  - Rep presets (5, 8, 10, 12, 15)
+  - Auto-fill from session defaults per exercise
+  - Copy previous set functionality
+  - Plate calculator for visual weight breakdown
 - **Ranks Tab Complete** - Full implementation of comprehensive ranking system
   - Created `app/(tabs)/ranks.tsx` with My Ranks and Leaderboards sub-tabs
   - Built `ExerciseRankCard` with expandable inline cards showing rank badge, progress bar, sparkline
