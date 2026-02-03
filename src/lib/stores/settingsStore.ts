@@ -30,6 +30,20 @@ export interface RestTimerFeedbackPreferences {
   visualProgress: boolean;
 }
 
+// Rank-related settings
+export interface RankSettings {
+  showFriendComparison: boolean;
+  enableRankUpNotifications: boolean;
+  allowRankSharing: boolean;
+}
+
+// Location data for regional leaderboards
+export interface LocationData {
+  zipCode: string;
+  region: string; // State/province
+  country: string;
+}
+
 export interface Settings {
   hapticsEnabled: boolean;
   soundsEnabled: boolean;
@@ -59,6 +73,10 @@ export interface Settings {
   audioCues: AudioCuePreferences;
   // Rest timer feedback preferences
   restTimerFeedback: RestTimerFeedbackPreferences;
+  // Rank-related settings
+  rankSettings: RankSettings;
+  // Location data for regional leaderboards
+  location: LocationData;
 }
 
 const DEFAULTS: Settings = {
@@ -97,6 +115,16 @@ const DEFAULTS: Settings = {
     voice: true,
     notification: true,
     visualProgress: true,
+  },
+  rankSettings: {
+    showFriendComparison: true,
+    enableRankUpNotifications: true,
+    allowRankSharing: true,
+  },
+  location: {
+    zipCode: '',
+    region: '',
+    country: '',
   },
 };
 
@@ -202,6 +230,8 @@ export const useSettingsStore = create<SettingsState>()(
         notificationPrefs: state.notificationPrefs,
         audioCues: state.audioCues,
         restTimerFeedback: state.restTimerFeedback,
+        rankSettings: state.rankSettings,
+        location: state.location,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
@@ -228,6 +258,8 @@ export const selectSettings = (state: SettingsState): Settings => ({
   notificationPrefs: state.notificationPrefs,
   audioCues: state.audioCues,
   restTimerFeedback: state.restTimerFeedback,
+  rankSettings: state.rankSettings,
+  location: state.location,
 });
 
 // Hook for accessing settings (matches old API)
@@ -249,6 +281,8 @@ export function useSettings(): Settings {
   const notificationPrefs = useSettingsStore((state) => state.notificationPrefs);
   const audioCues = useSettingsStore((state) => state.audioCues);
   const restTimerFeedback = useSettingsStore((state) => state.restTimerFeedback);
+  const rankSettings = useSettingsStore((state) => state.rankSettings);
+  const location = useSettingsStore((state) => state.location);
 
   // Memoize the settings object to prevent unnecessary re-renders
   return useMemo(
@@ -269,8 +303,10 @@ export function useSettings(): Settings {
       notificationPrefs,
       audioCues,
       restTimerFeedback,
+      rankSettings,
+      location,
     }),
-    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback]
+    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location]
   );
 }
 
@@ -294,6 +330,8 @@ export function getSettings(): Settings {
     notificationPrefs: state.notificationPrefs,
     audioCues: state.audioCues,
     restTimerFeedback: state.restTimerFeedback,
+    rankSettings: state.rankSettings,
+    location: state.location,
   };
 }
 

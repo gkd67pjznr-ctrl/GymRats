@@ -2,7 +2,7 @@
  * Forge Lab Screen - Main analytics dashboard
  */
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useForgeLab, useIsPremiumUser } from '@/src/lib/forgeLab/useForgeLab';
 import { makeDesignSystem } from '@/src/ui/designSystem';
@@ -13,6 +13,9 @@ import MuscleBalanceCard from './MuscleBalanceCard';
 import RankProgressionCard from './RankProgressionCard';
 import IntegrationDataCard from './IntegrationDataCard';
 import PremiumLockOverlay from './PremiumLockOverlay';
+import { BodyModelCard } from './BodyModelCard';
+
+type SubTab = 'analytics' | 'body';
 
 const ForgeLabScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -21,6 +24,7 @@ const ForgeLabScreen: React.FC = () => {
   const isPremium = useIsPremiumUser();
 
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  const [activeSubTab, setActiveSubTab] = useState<SubTab>('analytics');
 
   // Date range options
   const dateRanges = ['1W', '1M', '3M', '6M', '1Y', 'ALL'];
@@ -47,6 +51,32 @@ const ForgeLabScreen: React.FC = () => {
     );
   }
 
+  // Sub-tab toggle component
+  const SubTabToggle = ({ label, tab }: { label: string; tab: SubTab }) => (
+    <Pressable
+      onPress={() => setActiveSubTab(tab)}
+      style={[
+        styles.subTabButton,
+        {
+          backgroundColor: activeSubTab === tab ? ds.tone.accent : 'transparent',
+          borderColor: activeSubTab === tab ? ds.tone.accent : ds.tone.border,
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.subTabLabel,
+          {
+            color: activeSubTab === tab ? ds.tone.bg : ds.tone.text,
+            fontWeight: activeSubTab === tab ? '700' : '500',
+          },
+        ]}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: ds.tone.bg }]}>
       {/* Header */}
@@ -57,94 +87,108 @@ const ForgeLabScreen: React.FC = () => {
         </Text>
       </View>
 
-      {/* Date Range Selector */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.dateRangeContainer}
-        contentContainerStyle={styles.dateRangeContent}
-      >
-        {dateRanges.map(range => (
-          <TouchableOpacity
-            key={range}
-            style={[
-              styles.dateRangeButton,
-              {
-                backgroundColor: dateRange === range ? ds.tone.accent : ds.tone.card,
-                borderColor: ds.tone.accent,
-              },
-              dateRange === range && styles.dateRangeButtonSelected
-            ]}
-            onPress={() => setDateRange(range as any)}
+      {/* Sub-tab toggle */}
+      <View style={[styles.subTabRow, { borderBottomColor: ds.tone.border }]}>
+        <SubTabToggle label="Analytics" tab="analytics" />
+        <SubTabToggle label="Body Map" tab="body" />
+      </View>
+
+      {activeSubTab === 'body' ? (
+        // Body Model sub-tab
+        <BodyModelCard fullScreen />
+      ) : (
+        // Analytics sub-tab
+        <>
+          {/* Date Range Selector */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.dateRangeContainer}
+            contentContainerStyle={styles.dateRangeContent}
           >
-            <Text
-              style={[
-                styles.dateRangeText,
-                {
-                  color: dateRange === range ? ds.tone.bg : ds.tone.text
-                }
-              ]}
-            >
-              {range}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+            {dateRanges.map(range => (
+              <TouchableOpacity
+                key={range}
+                style={[
+                  styles.dateRangeButton,
+                  {
+                    backgroundColor: dateRange === range ? ds.tone.accent : ds.tone.card,
+                    borderColor: ds.tone.accent,
+                  },
+                  dateRange === range && styles.dateRangeButtonSelected
+                ]}
+                onPress={() => setDateRange(range as any)}
+              >
+                <Text
+                  style={[
+                    styles.dateRangeText,
+                    {
+                      color: dateRange === range ? ds.tone.bg : ds.tone.text
+                    }
+                  ]}
+                >
+                  {range}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Weight Graph (Free) */}
-        <WeightGraphCard
-          data={data?.weightHistory || []}
-          isLoading={loading}
-        />
+          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+            {/* Weight Graph (Free) */}
+            <WeightGraphCard
+              data={data?.weightHistory || []}
+              isLoading={loading}
+            />
 
-        {/* Strength Curves (Premium) */}
-        <View style={styles.cardContainer}>
-          <StrengthCurveCard
-            exercises={data?.exerciseStats || []}
-            selectedExercise={selectedExercise}
-            onSelectExercise={setSelectedExercise}
-            isLoading={loading}
-          />
-          {!isPremium && <PremiumLockOverlay featureName="Strength Curves" />}
-        </View>
+            {/* Strength Curves (Premium) */}
+            <View style={styles.cardContainer}>
+              <StrengthCurveCard
+                exercises={data?.exerciseStats || []}
+                selectedExercise={selectedExercise}
+                onSelectExercise={setSelectedExercise}
+                isLoading={loading}
+              />
+              {!isPremium && <PremiumLockOverlay featureName="Strength Curves" />}
+            </View>
 
-        {/* Volume Trends (Premium) */}
-        <View style={styles.cardContainer}>
-          <VolumeTrendCard
-            exercises={data?.exerciseStats || []}
-            isLoading={loading}
-          />
-          {!isPremium && <PremiumLockOverlay featureName="Volume Trends" />}
-        </View>
+            {/* Volume Trends (Premium) */}
+            <View style={styles.cardContainer}>
+              <VolumeTrendCard
+                exercises={data?.exerciseStats || []}
+                isLoading={loading}
+              />
+              {!isPremium && <PremiumLockOverlay featureName="Volume Trends" />}
+            </View>
 
-        {/* Muscle Group Balance (Premium) */}
-        <View style={styles.cardContainer}>
-          <MuscleBalanceCard
-            data={data?.muscleGroupVolume || []}
-            isLoading={loading}
-          />
-          {!isPremium && <PremiumLockOverlay featureName="Muscle Balance" />}
-        </View>
+            {/* Muscle Group Balance (Premium) */}
+            <View style={styles.cardContainer}>
+              <MuscleBalanceCard
+                data={data?.muscleGroupVolume || []}
+                isLoading={loading}
+              />
+              {!isPremium && <PremiumLockOverlay featureName="Muscle Balance" />}
+            </View>
 
-        {/* Rank Progression (Premium) */}
-        <View style={styles.cardContainer}>
-          <RankProgressionCard
-            exercises={data?.exerciseStats || []}
-            isLoading={loading}
-          />
-          {!isPremium && <PremiumLockOverlay featureName="Rank Progression" />}
-        </View>
+            {/* Rank Progression (Premium) */}
+            <View style={styles.cardContainer}>
+              <RankProgressionCard
+                exercises={data?.exerciseStats || []}
+                isLoading={loading}
+              />
+              {!isPremium && <PremiumLockOverlay featureName="Rank Progression" />}
+            </View>
 
-        {/* Integration Data (Premium) */}
-        <View style={styles.cardContainer}>
-          <IntegrationDataCard
-            data={data?.integrationData}
-            isLoading={loading}
-          />
-          {!isPremium && <PremiumLockOverlay featureName="Integration Data" />}
-        </View>
-      </ScrollView>
+            {/* Integration Data (Premium) */}
+            <View style={styles.cardContainer}>
+              <IntegrationDataCard
+                data={data?.integrationData}
+                isLoading={loading}
+              />
+              {!isPremium && <PremiumLockOverlay featureName="Integration Data" />}
+            </View>
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 };
@@ -164,6 +208,23 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
+  },
+  subTabRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    gap: 10,
+    borderBottomWidth: 1,
+  },
+  subTabButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  subTabLabel: {
+    fontSize: 14,
   },
   dateRangeContainer: {
     paddingHorizontal: 20,
