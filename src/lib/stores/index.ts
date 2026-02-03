@@ -263,3 +263,31 @@ export {
   type ShopItem,
   type ShopCategory,
 } from "../gamification/shop";
+
+// User Stats (unified stats store)
+export {
+  useUserStatsStore,
+  useLifetimeStats,
+  useExerciseStats,
+  useForgeRank,
+  useConsistencyMetrics,
+  useVarietyMetrics,
+  useIsUserStatsHydrated,
+  useAvatarGrowth,
+  getForgeRank,
+  getLifetimeStats,
+  getExerciseStats,
+  getAvatarGrowth,
+  processUserStatsWorkout,
+  syncUserStatsConsistency,
+  rebuildUserStatsFromHistory,
+  getGrowthStageDescription,
+  type ExerciseStats,
+  type LifetimeStats,
+  type ConsistencyMetrics,
+  type VarietyMetrics,
+  type ForgeRank,
+  type ProcessWorkoutResult,
+  type DerivedAvatarGrowth,
+  type RankTier,
+} from "./userStatsStore";

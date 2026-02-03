@@ -7,6 +7,7 @@ import { makeDesignSystem } from "../designSystem";
 import { useThemeColors } from "../theme";
 import { useUser } from "../../lib/stores/authStore";
 import { useAvatarStore } from "../../lib/avatar/avatarStore";
+import { useAvatarGrowth } from "../../lib/stores/userStatsStore";
 import { AvatarView } from "../components/Avatar/AvatarView";
 import { AvatarCreator } from "../components/Avatar/AvatarCreator";
 import { getGrowthStageDescription, getGrowthStagePercentage } from "../../lib/avatar/growthCalculator";
@@ -18,16 +19,11 @@ export default function AvatarScreen() {
   const ds = makeDesignSystem("dark", "toxic");
 
   const user = useUser();
-  const {
-    artStyle,
-    growthStage,
-    heightScale,
-    cosmetics,
-    volumeTotal,
-    setsTotal,
-    avgRank,
-    hydrated
-  } = useAvatarStore();
+  // Avatar customization from avatarStore
+  const { artStyle, cosmetics, hydrated } = useAvatarStore();
+  // Growth data from unified userStatsStore
+  const avatarGrowth = useAvatarGrowth();
+  const { stage: growthStage, heightScale, volumeTotal, setsTotal, avgRank } = avatarGrowth;
 
   if (!user) {
     return (

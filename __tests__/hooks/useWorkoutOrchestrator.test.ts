@@ -287,6 +287,86 @@ jest.mock('../../src/lib/sound/soundUtils', () => ({
   areSoundsEnabled: jest.fn(() => false),
 }));
 
+// Mock avatar store
+const mockAvatarStoreState = {
+  growthStage: 1,
+  heightScale: 0.3,
+  volumeTotal: 0,
+  setsTotal: 0,
+  avgRank: 0,
+  updateGrowth: jest.fn(() => Promise.resolve(true)),
+};
+
+jest.mock('../../src/lib/avatar/avatarStore', () => ({
+  useAvatarStore: Object.assign(
+    jest.fn((selector) => selector ? selector(mockAvatarStoreState) : mockAvatarStoreState),
+    { getState: jest.fn(() => mockAvatarStoreState) }
+  ),
+}));
+
+// Mock userStatsStore - the unified store for user statistics
+const mockProcessUserStatsWorkoutResult = {
+  prs: [],
+  rankUps: [],
+  forgeRank: { score: 100, rank: 1, tier: 'iron', progressToNext: 0, components: { strength: 0, consistency: 0, progress: 0, variety: 0 }, lastCalculatedMs: Date.now() },
+  avatarGrowth: { stage: 1, heightScale: 0.3, volumeTotal: 500, setsTotal: 2, avgRank: 3, milestoneReached: false },
+  volumeAddedKg: 500,
+  setsAdded: 2,
+};
+
+jest.mock('../../src/lib/stores/userStatsStore', () => ({
+  processUserStatsWorkout: jest.fn(() => mockProcessUserStatsWorkoutResult),
+  syncUserStatsConsistency: jest.fn(),
+  getGrowthStageDescription: jest.fn((stage) => {
+    if (stage <= 3) return "Just Starting";
+    if (stage <= 6) return "Making Progress";
+    return "Building Consistency";
+  }),
+}));
+
+// Mock rankTops
+jest.mock('../../src/data/rankTops', () => ({
+  getVerifiedTop: jest.fn((exerciseId) => {
+    const tops: Record<string, { exerciseId: string; topE1RMKg: number }> = {
+      'bench': { exerciseId: 'bench', topE1RMKg: 200 },
+      'squat': { exerciseId: 'squat', topE1RMKg: 300 },
+      'deadlift': { exerciseId: 'deadlift', topE1RMKg: 400 },
+      'ohp': { exerciseId: 'ohp', topE1RMKg: 150 },
+    };
+    return tops[exerciseId];
+  }),
+}));
+
+// Mock ranks
+jest.mock('../../src/lib/ranks', () => ({
+  buildRankThresholdsKg: jest.fn((topE1RMKg) => {
+    // Generate 20 thresholds
+    const thresholds: number[] = [];
+    for (let i = 1; i <= 20; i++) {
+      thresholds.push(topE1RMKg * Math.pow(i / 20, 1.75));
+    }
+    return thresholds;
+  }),
+  getRankFromE1RMKg: jest.fn((e1rmKg, thresholds) => {
+    let rankIndex = 0;
+    for (let i = 0; i < thresholds.length; i++) {
+      if (e1rmKg >= thresholds[i]) {
+        rankIndex = i;
+      }
+    }
+    return { rankIndex, progressToNext: 0.5 };
+  }),
+}));
+
+// Mock e1rm
+jest.mock('../../src/lib/e1rm', () => ({
+  estimate1RM_Epley: jest.fn((weightKg, reps) => {
+    if (reps <= 0) return 0;
+    if (reps === 1) return weightKg;
+    return weightKg * (1 + reps / 30);
+  }),
+}));
+
 // Mock useGamificationWorkoutFinish module
 jest.mock('../../src/lib/hooks/useGamificationWorkoutFinish', () => ({
   processGamificationWorkout: jest.fn(() => ({
@@ -843,6 +923,63 @@ describe('useWorkoutOrchestrator', () => {
 
       expect(result.current.recapCues).toBeDefined();
       expect(Array.isArray(result.current.recapCues)).toBe(true);
+    });
+
+    it('should update user stats on workout completion', () => {
+      const { processUserStatsWorkout, syncUserStatsConsistency } = require('../../src/lib/stores/userStatsStore');
+
+      const { result } = renderHook(() =>
+        useWorkoutOrchestrator({
+          plan: mockPlan,
+          unit: 'lb',
+        })
+      );
+
+      act(() => {
+        result.current.finishWorkout();
+      });
+
+      // Unified stats should be processed
+      expect(processUserStatsWorkout).toHaveBeenCalled();
+
+      // Consistency should be synced from gamification
+      expect(syncUserStatsConsistency).toHaveBeenCalled();
+    });
+
+    it('should show milestone toast when avatar reaches milestone stage', () => {
+      const { processUserStatsWorkout } = require('../../src/lib/stores/userStatsStore');
+
+      // Mock to return a milestone
+      processUserStatsWorkout.mockReturnValueOnce({
+        prs: [],
+        rankUps: [],
+        forgeRank: { score: 200, rank: 5, tier: 'bronze', progressToNext: 0.5, components: { strength: 100, consistency: 50, progress: 30, variety: 20 }, lastCalculatedMs: Date.now() },
+        avatarGrowth: { stage: 5, heightScale: 0.4, volumeTotal: 600, setsTotal: 2, avgRank: 3, milestoneReached: true, previousStage: 4 },
+        volumeAddedKg: 600,
+        setsAdded: 2,
+      });
+
+      const mockOnHaptic = jest.fn();
+      const mockOnSound = jest.fn();
+
+      const { result } = renderHook(() =>
+        useWorkoutOrchestrator({
+          plan: mockPlan,
+          unit: 'lb',
+          onHaptic: mockOnHaptic,
+          onSound: mockOnSound,
+        })
+      );
+
+      act(() => {
+        result.current.finishWorkout();
+      });
+
+      // Should show milestone message with high intensity
+      expect(result.current.instantCue?.message).toBe('Avatar Growth Milestone!');
+      expect(result.current.instantCue?.intensity).toBe('high');
+      expect(mockOnHaptic).toHaveBeenCalledWith('pr');
+      expect(mockOnSound).toHaveBeenCalledWith('pr');
     });
   });
 

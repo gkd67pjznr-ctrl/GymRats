@@ -4,7 +4,7 @@
 A Finch-inspired virtual gym avatar that grows as the user works out, living in a shared hangout room with friends. The avatar represents the user's commitment to self-care and fitness journey — not just gamification, but emotional investment.
 
 ## Current Implementation Status
-**Status:** In Progress | **Progress:** 7/8 features
+**Status:** In Progress | **Progress:** 8/8 features
 
 ### Completed Features (P0 - MVP)
 ✅ **Avatar Creation**
@@ -14,8 +14,11 @@ A Finch-inspired virtual gym avatar that grows as the user works out, living in 
 
 ✅ **Avatar Growth System**
 - Growth calculation algorithms
-- Avatar growth state management
+- Avatar growth state management (now unified in `userStatsStore`)
 - Growth visualization with height scaling
+- **Workout integration:** Avatar grows automatically after each workout
+- **Milestone celebrations:** Special toasts at stages 5, 10, 15, 20
+- **Unified Stats Store (NEW):** Growth is now derived from `userStatsStore` - single source of truth for all user statistics
 
 ✅ **Hangout Room Core**
 - Database schema for hangout rooms, decorations, and presence
@@ -64,10 +67,18 @@ src/
 ├── lib/
 │   ├── avatar/
 │   │   ├── avatarTypes.ts         # Avatar types and interfaces
-│   │   ├── avatarStore.ts         # Zustand store for avatar state
+│   │   ├── avatarStore.ts         # Zustand store for art style & cosmetics
 │   │   ├── avatarRepository.ts    # Supabase database operations
-│   │   ├── growthCalculator.ts    # Avatar growth algorithms
+│   │   ├── growthCalculator.ts    # Avatar growth algorithms (legacy)
 │   │   └── avatarUtils.ts         # Utility functions
+│   ├── userStats/                 # NEW: Unified statistics module
+│   │   ├── types.ts               # ExerciseStats, LifetimeStats, ForgeRank, etc.
+│   │   ├── forgeRankCalculator.ts # Forge Rank (40/30/20/10 formula)
+│   │   ├── deriveAvatarGrowth.ts  # Avatar growth derived from stats
+│   │   ├── statsCalculators.ts    # PR detection, volume tracking
+│   │   └── index.ts               # Module exports
+│   ├── stores/
+│   │   └── userStatsStore.ts      # NEW: Single source of truth for user stats
 │   ├── hangout/
 │   │   ├── hangoutTypes.ts        # Hangout room types
 │   │   ├── hangoutStore.ts        # Zustand store for room state

@@ -22,6 +22,7 @@ import {
   type RankTier,
 } from '@/src/lib/profile/profileStats';
 import { useWorkoutStore } from '@/src/lib/stores/workoutStore';
+import { useLifetimeStats } from '@/src/lib/stores/userStatsStore';
 import { kgToLb } from '@/src/lib/units';
 
 interface ProfileStatsCardProps {
@@ -34,7 +35,11 @@ export function ProfileStatsCard({ limit = 5, style }: ProfileStatsCardProps) {
   const ds = makeDesignSystem('dark', 'toxic');
   const sessions = useWorkoutStore((s) => s.sessions);
 
-  // Calculate stats from workout history
+  // Use unified stats store for totals (single source of truth)
+  const lifetimeStats = useLifetimeStats();
+
+  // Calculate exercise-specific stats from workout history
+  // (for now, keep using calculateProfileStats for exercise details)
   const stats = useMemo(() => calculateProfileStats(sessions), [sessions]);
 
   // Get top exercises by rank
@@ -79,15 +84,15 @@ export function ProfileStatsCard({ limit = 5, style }: ProfileStatsCardProps) {
         ))}
       </View>
 
-      {/* Stats Footer */}
+      {/* Stats Footer - uses unified userStatsStore for totals */}
       <View style={styles.footer}>
         <View style={styles.statItem}>
-          <Text style={[styles.statValue, { color: c.accent }]}>{stats.totalSets}</Text>
+          <Text style={[styles.statValue, { color: c.accent }]}>{lifetimeStats.totalSets}</Text>
           <Text style={[styles.statLabel, { color: c.muted }]}>Total Sets</Text>
         </View>
         <View style={styles.statItem}>
           <Text style={[styles.statValue, { color: c.accent }]}>
-            {(stats.totalVolume / 1000).toFixed(1)}k
+            {(lifetimeStats.totalVolumeKg / 1000).toFixed(1)}k
           </Text>
           <Text style={[styles.statLabel, { color: c.muted }]}>Volume (kg)</Text>
         </View>
