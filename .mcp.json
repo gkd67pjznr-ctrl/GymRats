@@ -17,6 +17,22 @@
     "design-systems": {
       "type": "http",
       "url": "https://design-systems-mcp.southleft.com/mcp"
+    },
+    "words": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "casual-mcp-server-words"
+      ],
+      "env": {}
+    },
+    "urbandictionary": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "urban-dictionary-mcp"
+      ],
+      "env": {}
     }
   }
 }
