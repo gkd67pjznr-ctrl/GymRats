@@ -4,7 +4,7 @@
 A Finch-inspired virtual gym avatar that grows as the user works out, living in a shared hangout room with friends. The avatar represents the user's commitment to self-care and fitness journey — not just gamification, but emotional investment.
 
 ## Current Implementation Status
-**Status:** In Progress | **Progress:** 6/8 features
+**Status:** In Progress | **Progress:** 7/8 features
 
 ### Completed Features (P0 - MVP)
 ✅ **Avatar Creation**
@@ -157,13 +157,13 @@ Added columns to existing `users` table:
 ✅ Avatar growth system implementation
 ✅ Hangout room core with static avatars
 
-### Phase 2 (In Progress - P1 - Polish)
+### Phase 2 (Completed - P1 - Polish)
 ✅ Real-time presence tracking (complete with subscriptions)
 ✅ Shop extension (decorations and cosmetics added as purchasable)
-🔄 Shop UI for browsing and purchasing items
-🔄 Avatar customization interface
-🔄 Room decoration placement UI
-🔄 Room admin controls
+✅ Shop UI for browsing and purchasing items
+✅ Avatar customization interface
+✅ Slot-based room decoration system
+⏸️ Room admin controls (deferred - optional polish)
 
 ### Phase 3 (Pending - P2 - Enhancement)
 🕒 Additional art styles (IAP)

@@ -35,7 +35,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | UI Themes & Visual Style | 🔄 In Progress | 6/12 | Documentation complete |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
 | Onboarding | 🔄 In Progress | 3/7 | Welcome/profile complete |
-| Avatar & Hangout Room | 🔄 In Progress | 7/8 | Shop, avatar customizer, decorations, presence all done |
+| Avatar & Hangout Room | 🔄 In Progress | 8/8 | Phase 2 complete - shop, customizer, decorations, presence, tests all done |
 | Workout Replay | ✅ Done | 5/5 | Cinematic summaries complete |
 | Forge DNA | ✅ Done | 4/4 | Visualization complete |
 | Forge Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
@@ -178,28 +178,32 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 ### Feature Completeness
 - **Total Features**: 216
 - **Implemented Features**: 136
-- **Progress**: 63%
-- **Launch Target**: 135/167 (81%)
+- **Progress**: 64%
+- **Launch Target**: 138/167 (83%)
 
 ---
 
 ## Recent Updates (Last 30 Days)
 
 ### 2026-02-02
+- **Avatar & Hangout Room Phase 2 complete:** 8/8 features implemented
+- Added slot-based room decoration system (10 pre-defined slots, tap-to-swap)
+- Built AvatarCustomizer component with emoji-based preview
+- Built ShopScreen component with category tabs and filters
+- Extended shop system with room_decorations and avatar_cosmetics categories
+- Added 33 new purchasable items (13 decorations, 20 avatar cosmetics)
+- Updated UserInventory to support avatar equipment tracking
+- Updated gamificationStore with roomDecorations state and equipRoomDecoration action
 - Redesigned workout logging UI to match Hevy/Liftoff style (SetRow, ExerciseCard, WorkoutControls, WorkoutActions)
 - Removed clutter from live workout screen (WorkoutNotes, RecapCues removed from default view)
 - Set rows now borderless with flex columns, circular check buttons, accent exercise names
 - Prominent Add Exercise button with accent tint, simplified secondary controls
 - Merged glm-work: shop system, avatar customizer, decorations, presence tests
-- Extended shop system with room_decorations and avatar_cosmetics categories
-- Added 33 new purchasable items (13 decorations, 20 avatar cosmetics)
-- Updated UserInventory to support avatar equipment tracking
 - Backend sync testing complete - all 13 migrations applied to Supabase
 - Fixed database SQL issues: duplicate policy names, RLS recursion, missing extensions
 - Verified database connectivity - all tables accessible via RLS policies
 - 79/82 test suites passing (1371/1403 tests)
 - Fixed integration test helper credential detection
-- Updated migration files with correct SQL patterns for reference
 - Added 73 new presence system tests (presenceTracker, decorationManager, FriendAvatar)
 - All 1,371 tests now passing (100% pass rate)
 - Fixed all failing test suites
