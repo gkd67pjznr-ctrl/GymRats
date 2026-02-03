@@ -3,10 +3,13 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useThemeColors } from "../../src/ui/theme";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { useRoutines } from "../../src/lib/stores";
+import { useRoutines, ensureCurrentSession } from "../../src/lib/stores";
 import { makeFreePlan, makePlanFromRoutine, type PlannedExercise } from "../../src/lib/workoutPlanModel";
 import { setCurrentPlan } from "../../src/lib/workoutPlanStore";
 import { RoutinePreviewModal } from "../../src/ui/components/LiveWorkout/RoutinePreviewModal";
+import { useWorkoutDrawerStore } from "../../src/lib/stores/workoutDrawerStore";
+import { EXERCISES_V1 } from "../../src/data/exercises";
+import type { RoutineExercise } from "../../src/lib/routinesModel";
 
 export default function StartWorkout() {
   const c = useThemeColors();
@@ -17,12 +20,21 @@ export default function StartWorkout() {
   const [previewRoutine, setPreviewRoutine] = useState<{
     id: string;
     name: string;
-    exercises: typeof routines;
+    exercises: RoutineExercise[];
   } | null>(null);
 
   function startFree() {
     setCurrentPlan(makeFreePlan());
-    router.push("/live-workout");
+
+    // Set up session with first exercise and open drawer
+    const firstExerciseId = EXERCISES_V1[0]?.id ?? null;
+    ensureCurrentSession({
+      selectedExerciseId: firstExerciseId,
+      exerciseBlocks: firstExerciseId ? [firstExerciseId] : [],
+    });
+
+    const { startWorkout } = useWorkoutDrawerStore.getState();
+    startWorkout();
   }
 
   function showRoutinePreview(routineId: string) {
@@ -55,11 +67,16 @@ export default function StartWorkout() {
     setCurrentPlan(plan);
 
     setPreviewRoutine(null);
-    // Pass plan via params to ensure it's available on mount (avoid race condition with Zustand persist)
-    router.push({
-      pathname: "/live-workout",
-      params: { planData: JSON.stringify(plan) }
-    } as any);
+
+    // Set up session with routine exercises and open drawer
+    const exerciseIds = previewRoutine.exercises.map(e => e.exerciseId);
+    ensureCurrentSession({
+      selectedExerciseId: exerciseIds[0] ?? null,
+      exerciseBlocks: exerciseIds,
+    });
+
+    const { startWorkout } = useWorkoutDrawerStore.getState();
+    startWorkout();
   }
 
   function cancelPreview() {

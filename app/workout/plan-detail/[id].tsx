@@ -12,6 +12,8 @@ import { EXERCISES_V1 } from "../../../src/data/exercises";
 import { makeDesignSystem } from "../../../src/ui/designSystem";
 import { getCategoryInfo } from "../../../src/lib/premadePlans/categories";
 import { ScreenHeader } from "../../../src/ui/components/ScreenHeader";
+import { useWorkoutDrawerStore } from "../../../src/lib/stores/workoutDrawerStore";
+import { ensureCurrentSession } from "../../../src/lib/stores/currentSessionStore";
 
 /**
  * Plan Detail Screen
@@ -72,7 +74,7 @@ export default function PlanDetail() {
               const formatted = formatProgress(progress);
 
               Alert.alert(
-                "Plan Started! 🎉",
+                "Plan Started!",
                 `"${routine.name}" is now in your routines.\n\n${formatted.displayText}\n\nReady to start your first workout?`,
                 [
                   {
@@ -81,7 +83,16 @@ export default function PlanDetail() {
                   },
                   {
                     text: "Start Workout",
-                    onPress: () => router.push("/live-workout" as Href),
+                    onPress: () => {
+                      // Set up session with plan exercises and open drawer
+                      const exerciseIds = routine.exercises.map(e => e.exerciseId);
+                      ensureCurrentSession({
+                        selectedExerciseId: exerciseIds[0] ?? null,
+                        exerciseBlocks: exerciseIds,
+                      });
+                      const { startWorkout } = useWorkoutDrawerStore.getState();
+                      startWorkout();
+                    },
                   },
                 ]
               );

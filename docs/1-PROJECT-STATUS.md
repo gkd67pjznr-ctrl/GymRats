@@ -1,7 +1,7 @@
 # PROJECT STATUS
 
 **Last Updated:** 2026-02-02
-**Current Phase:** Phase 2 - Advanced Features (AI Gym Buddy, Analytics, and Social Enhancements)
+**Current Phase:** Phase 1.5 - Workout UX Overhaul (Collapsible Drawer System)
 
 ---
 
@@ -21,8 +21,9 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
-| Workout Core | 🔄 In Progress | 12/20 | Live logging, history, routines |
+| Workout Core | 🔄 In Progress | 14/20 | Live logging, history, routines |
 | Workout Logging UX | ✅ Done | 10/10 | Hevy-style redesign complete |
+| Workout Drawer | 🔄 In Progress | 5/8 | Phase 1 complete, drawer + hub + navigation |
 | Exercise Library | ✅ Done | 3/3 | 100+ exercises with muscle groups |
 | Scoring & Ranks | ✅ Done | 5/5 | 0-1000 scoring, 20 ranks/exercise |
 | AI Gym Buddy | 🔄 In Progress | 9/11 | 9 personalities, IAP integrated |
@@ -185,6 +186,26 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Recent Updates (Last 30 Days)
 
+### 2026-02-02 (Evening)
+- **Workout Drawer Phase 1 Complete** - Collapsible drawer system fully implemented
+- Created `WorkoutDrawer` component with gesture-based collapse/expand (swipe right to collapse, swipe left from edge to expand)
+- Created `workoutDrawerStore` with Zustand (15 tests passing)
+- Redesigned workout tab as "Workout Hub" with organized sections:
+  - Active Workout Banner (shows elapsed time, set count, exercises)
+  - Quick Start grid (Freestyle, My Routines)
+  - Recent Routines with quick access
+  - Discover section (Browse Plans, AI Generator)
+  - Social section (Workout Together)
+- Updated ALL navigation entry points to use drawer directly:
+  - `app/routines/index.tsx` - Quick start from routine list
+  - `app/routines/[routineId].tsx` - Start workout from routine detail
+  - `app/workout/plan-detail/[id].tsx` - Start workout from plan
+  - `app/workout/start.tsx` - Free workout and routine preview
+- Deep links and notifications open drawer instead of navigating
+- `live-workout.tsx` kept for tutorial and "workout together" modes
+- Created feature docs: `docs/features/workout-drawer/feature-workout-drawer.md`
+- Created vision doc: `docs/AskUQ/2026-02-02-workout-ux-vision.md`
+
 ### 2026-02-02
 - **Avatar & Hangout Room Phase 2 complete:** 8/8 features implemented
 - Added slot-based room decoration system (10 pre-defined slots, tap-to-swap)
@@ -232,9 +253,9 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Top 3 Priorities
 
-1. **Avatar Completion** - Finish growth system and customization UI
-2. **OAuth Setup** - Complete Google/Apple sign-in configuration
-3. ~~**Backend Testing**~~ - ✅ Complete - All migrations applied, sync verified
+1. **Workout Drawer Phase 2** - Migrate rest timer and PR celebration to drawer
+2. **Exercise Card Enhancements** - Add rank icons, PR hints, rank-up targets
+3. **Workout Drawer Phase 3** - Plan/routine context display in drawer header
 
 ---
 

@@ -10,6 +10,7 @@
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
 | [Workout Core](#workout-core) | In Progress | 12/20 | [Details](../features/workout-feature-workouts.md) |
+| [Workout Drawer System](#workout-drawer-system) | **In Progress** | 5/8 | [Details](../features/workout-drawer/feature-workout-drawer.md) |
 | [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](../features/workout-feature-workout-logging-ux.md) |
 | [Exercise Library](#exercise-library) | Done | 3/3 | [Details](../features/workout-feature-exercises.md) |
 | [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](../features/workout-feature-scoring.md) |
@@ -79,7 +80,36 @@ The core workout logging and tracking experience.
 - Premade plan browser
 - Calendar view (basic)
 
-**Next Up:** Routine-based workout flow, rest timer enhancements
+**Next Up:** Collapsible Drawer System (see below)
+
+---
+
+## Workout Drawer System
+**Status:** In Progress | **Progress:** 5/8 features (Phase 1 Complete)
+**NEW - 2026-02-02**
+
+Revolutionary slide-in drawer for workout logging that allows users to continue using the app while maintaining an active workout session.
+
+**Completed (Phase 1):**
+- [x] Collapsible drawer slides in from right edge
+- [x] Thin "peek" edge visible when collapsed (~24px)
+- [x] Swipe gestures: right to collapse, left from edge to expand
+- [x] Workout Hub tab redesign with organized sections
+- [x] All navigation entry points use drawer directly
+
+**Remaining (Phase 2+):**
+- [ ] Rest timer integration in drawer
+- [ ] PR celebration in drawer
+- [ ] Plan/routine context display in drawer header
+
+**Key Files:**
+- `src/ui/components/WorkoutDrawer/` - Drawer components
+- `src/lib/stores/workoutDrawerStore.ts` - State management (15 tests)
+- `app/(tabs)/workout.tsx` - Redesigned as Workout Hub
+
+**Key Differentiator:** No other workout app has this UX. Users can check feed, profile, or friends while workout drawer stays accessible on the edge.
+
+See [feature-workout-drawer.md](../features/workout-drawer/feature-workout-drawer.md) for full details.
 
 ---
 

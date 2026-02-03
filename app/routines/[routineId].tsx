@@ -2,13 +2,14 @@ import { View, Text, Pressable, ScrollView, Alert } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useThemeColors } from "../../src/ui/theme";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { deleteRoutine, upsertRoutine, useRoutine, clearCurrentSession, hasCurrentSession } from "../../src/lib/stores";
+import { deleteRoutine, upsertRoutine, useRoutine, clearCurrentSession, hasCurrentSession, ensureCurrentSession } from "../../src/lib/stores";
 import { setCurrentPlan } from "../../src/lib/workoutPlanStore";
 import type { RoutineExercise } from "../../src/lib/routinesModel";
 import { EXERCISES_V1 } from "../../src/data/exercises";
 import { makePlanFromRoutine } from "../../src/lib/workoutPlanModel";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
+import { useWorkoutDrawerStore } from "../../src/lib/stores/workoutDrawerStore";
 
 function nameForExercise(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -128,8 +129,15 @@ export default function RoutineDetail() {
     // Set as current plan
     setCurrentPlan(plan);
 
-    // Navigate to live workout
-    router.replace("/live-workout");
+    // Set up session with routine exercises and open drawer
+    const exerciseIds = routine.exercises.map(e => e.exerciseId);
+    ensureCurrentSession({
+      selectedExerciseId: exerciseIds[0] ?? null,
+      exerciseBlocks: exerciseIds,
+    });
+
+    const { startWorkout } = useWorkoutDrawerStore.getState();
+    startWorkout();
   }
 
   return (

@@ -1,4 +1,8 @@
 // app/live-workout.tsx
+// NOTE: This screen is being migrated to the WorkoutDrawer system.
+// For regular workouts, the drawer is now the primary interface.
+// This screen is kept for backwards compatibility and special modes (tutorial, live-together).
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -9,6 +13,7 @@ import { useThemeColors } from "../src/ui/theme";
 import { getSettings } from "../src/lib/stores";
 import { useCurrentPlan, setCurrentPlan } from "../src/lib/workoutPlanStore";
 import type { WorkoutPlan } from "../src/lib/workoutPlanModel";
+import { useWorkoutDrawerStore } from "../src/lib/stores/workoutDrawerStore";
 
 // Components
 import { ExercisePicker } from "../src/ui/components/LiveWorkout/ExercisePicker";
@@ -141,6 +146,33 @@ export default function LiveWorkout() {
   const c = useThemeColors();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ tutorial?: string; together?: string }>();
+
+  // Check if this is a special mode that needs the full screen
+  const isTutorialMode = params.tutorial === 'true';
+  const isTogetherMode = params.together === 'true';
+  const useDrawerInstead = !isTutorialMode && !isTogetherMode;
+
+  // Redirect to drawer for regular workouts
+  const redirectedRef = useRef(false);
+  useEffect(() => {
+    if (useDrawerInstead && !redirectedRef.current) {
+      redirectedRef.current = true;
+      // Open the drawer and go back to previous screen
+      const { hasActiveWorkout, startWorkout, openDrawer } = useWorkoutDrawerStore.getState();
+      if (hasActiveWorkout) {
+        openDrawer();
+      } else {
+        startWorkout();
+      }
+      // Navigate back (drawer will be open)
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/(tabs)/workout');
+      }
+    }
+  }, [useDrawerInstead, router]);
 
   // Plan data
   const plan = useCurrentPlan();
@@ -191,9 +223,7 @@ export default function LiveWorkout() {
     persisted,
   });
 
-  // Tutorial state
-  const params = useLocalSearchParams<{ tutorial?: string }>();
-  const isTutorialMode = params.tutorial === 'true';
+  // Tutorial state (isTutorialMode is defined at top of component)
   const { tutorialStep, tutorialCompleted, advanceTutorialStep, completeTutorial } = useOnboardingStore();
   const showTutorial = isTutorialMode && !tutorialCompleted;
 

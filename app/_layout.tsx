@@ -20,6 +20,9 @@ import { initializeVoiceManager } from '@/src/lib/voice/VoiceManager';
 import { setupNotificationResponseListener } from '@/src/lib/notifications/notificationService';
 import { useBuddyStore } from '@/src/lib/stores/buddyStore';
 import { PersistentTabBar } from '@/src/ui/components/PersistentTabBar';
+import { WorkoutDrawer } from '@/src/ui/components/WorkoutDrawer';
+import { useWorkoutDrawerStore } from '@/src/lib/stores/workoutDrawerStore';
+import { ensureCurrentSession } from '@/src/lib/stores/currentSessionStore';
 
 // Initialize WebBrowser for auth sessions
 WebBrowser.maybeCompleteAuthSession();
@@ -166,6 +169,19 @@ export default function RootLayout() {
         } catch (err) {
           console.error('[RootLayout] Failed to exchange code:', err);
         }
+        return;
+      }
+
+      // Handle live-workout deep links - open drawer instead of navigating
+      if (url.includes('/live-workout')) {
+        const { hasActiveWorkout, startWorkout, openDrawer } = useWorkoutDrawerStore.getState();
+        if (hasActiveWorkout) {
+          openDrawer();
+        } else {
+          ensureCurrentSession({ selectedExerciseId: 'bench', exerciseBlocks: ['bench'] });
+          startWorkout();
+        }
+        return;
       }
     });
 
@@ -183,10 +199,14 @@ export default function RootLayout() {
 
       // Handle different notification types
       if (screen === 'live-workout') {
-        // Already handled by OS bringing app to foreground
-        // Optionally navigate to live workout if not already there
-        if (router.canGoBack()) {
-          router.replace('/live-workout');
+        // Open the workout drawer instead of navigating
+        const { hasActiveWorkout, startWorkout, openDrawer } = useWorkoutDrawerStore.getState();
+        if (hasActiveWorkout) {
+          openDrawer();
+        } else {
+          // Create session and open drawer
+          ensureCurrentSession({ selectedExerciseId: 'bench', exerciseBlocks: ['bench'] });
+          startWorkout();
         }
       } else if (screen === 'friends') {
         // Navigate to friends screen (friend requests)
@@ -231,6 +251,7 @@ export default function RootLayout() {
               <Stack.Screen name="auth/verify-email" options={{ presentation: 'card' }} />
             </Stack>
             <PersistentTabBar />
+            <WorkoutDrawer />
           </View>
           <StatusBar style="auto" />
         </ThemeProvider>

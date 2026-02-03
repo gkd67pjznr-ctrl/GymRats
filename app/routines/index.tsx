@@ -2,12 +2,13 @@ import { View, Text, Pressable, ScrollView, Alert } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useThemeColors } from "../../src/ui/theme";
 // [MIGRATED 2026-01-23] Using Zustand stores
-import { useRoutines, clearCurrentSession, hasCurrentSession } from "../../src/lib/stores";
+import { useRoutines, clearCurrentSession, hasCurrentSession, ensureCurrentSession } from "../../src/lib/stores";
 import { setCurrentPlan } from "../../src/lib/workoutPlanStore";
 import { makePlanFromRoutine } from "../../src/lib/workoutPlanModel";
 import type { RoutineExercise } from "../../src/lib/routinesModel";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
+import { useWorkoutDrawerStore } from "../../src/lib/stores/workoutDrawerStore";
 
 /**
  * Convert RoutineExercise to PlannedExercise for WorkoutPlan
@@ -39,7 +40,16 @@ export default function RoutinesHome() {
       });
 
       setCurrentPlan(plan);
-      router.replace("/live-workout");
+
+      // Set up session with routine exercises and open drawer
+      const exerciseIds = routine.exercises.map(e => e.exerciseId);
+      ensureCurrentSession({
+        selectedExerciseId: exerciseIds[0] ?? null,
+        exerciseBlocks: exerciseIds,
+      });
+
+      const { startWorkout } = useWorkoutDrawerStore.getState();
+      startWorkout();
     };
 
     if (hasActiveSession) {
