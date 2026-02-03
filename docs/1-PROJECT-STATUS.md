@@ -206,6 +206,13 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 ## Recent Updates (Last 30 Days)
 
 ### 2026-02-03
+- **Workout Drawer Phase 2** - Rest timer and PR cue integration
+  - Lifted rest timer state to `workoutDrawerStore` (persists across collapse/expand)
+  - Added compact circular timer display on `DrawerEdge` when collapsed
+  - Synced `RestTimerOverlay` with store via `startedAtMs` prop
+  - Added PR cue infrastructure: `pendingCue`, `setPendingCue()`, `clearPendingCue()`
+  - Glowing star indicator on edge when PR pending
+  - 26 tests passing (11 new tests)
 - **Ranks Tab Complete** - Full implementation of comprehensive ranking system
   - Created `app/(tabs)/ranks.tsx` with My Ranks and Leaderboards sub-tabs
   - Built `ExerciseRankCard` with expandable inline cards showing rank badge, progress bar, sparkline
@@ -312,9 +319,9 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Top 3 Priorities
 
-1. **Workout Drawer Phase 2** - Migrate rest timer and PR celebration to drawer
-2. **Avatar Customization UI** - Art style and cosmetics UI
-3. **Regional Leaderboards** - Implement zip code → region mapping and regional leaderboard filtering
+1. **Regional Leaderboards** - Implement zip code → region mapping and regional leaderboard filtering
+2. **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations
+3. **Onboarding Flow Completion** - Buddy selection, goal setting, initial workout guidance
 
 ---
 
