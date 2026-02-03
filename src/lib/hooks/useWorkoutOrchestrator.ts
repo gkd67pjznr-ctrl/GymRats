@@ -33,6 +33,8 @@ import { areSoundsEnabled } from "../sound/soundUtils";
 // Journal integration
 import { createJournalEntry, getDateFromTimestamp } from "../journalModel";
 import { addJournalEntry } from "../stores";
+// User Stats integration (unified store for avatar growth, profile stats, etc.)
+import { processUserStatsWorkout, syncUserStatsConsistency, getGrowthStageDescription } from "../stores/userStatsStore";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -316,7 +318,30 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       currentStreak,
       plan?.completionPct === 100
     );
-    processGamificationWorkout(workoutForGamification);
+    const gamificationResult = processGamificationWorkout(workoutForGamification);
+
+    // Process unified user stats (avatar growth, exercise stats, Forge Rank, etc.)
+    // This is the single entry point for all user statistics
+    const workoutResult = processUserStatsWorkout(sessionObj);
+    const avatarMilestoneReached = workoutResult.avatarGrowth.milestoneReached;
+
+    // Sync consistency metrics from gamification to user stats
+    const newStreak = useGamificationStore.getState().profile.currentStreak;
+    const longestStreak = useGamificationStore.getState().profile.longestStreak;
+    syncUserStatsConsistency(newStreak, longestStreak);
+
+    // Show milestone message if avatar leveled up to a milestone stage
+    if (avatarMilestoneReached) {
+      const { stage } = workoutResult.avatarGrowth;
+      const stageDescription = getGrowthStageDescription(stage);
+      setInstantCue({
+        message: `Avatar Growth Milestone!`,
+        detail: `Stage ${stage}: ${stageDescription}`,
+        intensity: "high"
+      });
+      onHaptic?.('pr');
+      onSound?.('pr');
+    }
 
     // Generate recap cues
     const grouped = groupSetsByExercise(sets);
@@ -362,8 +387,8 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       workoutDurationMs: now - start,
     });
 
-    // Show behavior trigger message if present
-    if (behaviorTriggers) {
+    // Show behavior trigger message if present (unless avatar milestone was reached)
+    if (!avatarMilestoneReached && behaviorTriggers) {
       const formatted = formatCueMessage(behaviorTriggers);
       setInstantCue({
         message: formatted.title,
@@ -387,7 +412,7 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
 
       onHaptic?.('light');
       onSound?.('light');
-    } else {
+    } else if (!avatarMilestoneReached) {
       // Evaluate session completion triggers
       const sessionCue = evaluateSessionTriggers({
         session: sessionObj,
