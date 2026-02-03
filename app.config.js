@@ -32,7 +32,7 @@ module.exports = {
       'expo-router',
       'expo-iap',
       [
-        '@sentry/react-native/expo',
+        '@sentry/react-native',
         {
           organization: process.env.SENTRY_ORG || 'forgerank',
           project: process.env.SENTRY_PROJECT || 'forgerank-mobile',
