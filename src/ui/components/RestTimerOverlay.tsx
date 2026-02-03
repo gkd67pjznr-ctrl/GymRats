@@ -105,6 +105,9 @@ export function RestTimerOverlay(props: Props) {
 
   // Handle app state changes for background notifications
   useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      setAppState(nextAppState);
+    };
     const subscription = AppState.addEventListener('change', handleAppStateChange);
     return () => subscription.remove();
   }, []);
@@ -115,7 +118,9 @@ export function RestTimerOverlay(props: Props) {
 
     // Only schedule notification if app is in background
     if (appState !== 'active') {
-      scheduleBackgroundNotification(secondsLeft);
+      scheduleRestTimerNotification(secondsLeft)
+        .then((id) => { if (id) setScheduledNotificationId(id); })
+        .catch(console.error);
     }
   }, [props.visible, isRunning, secondsLeft, appState]);
 

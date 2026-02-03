@@ -6,6 +6,7 @@ import { useWorkoutSessions } from "../../src/lib/stores";
 import { durationMs, formatDateShort, formatTimeShort, formatDuration } from "../../src/lib/workoutModel";
 import { EXERCISES_V1 } from "../../src/data/exercises";
 import { kgToLb } from "../../src/lib/units";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -42,8 +43,9 @@ export default function WorkoutDetail() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 40 }}>
-        <Text style={{ color: c.text, fontSize: 22, fontWeight: "900" }}>
+      <ScreenHeader title="Workout Detail" />
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 100 }}>
+        <Text style={{ color: c.muted, fontSize: 14, fontWeight: "600" }}>
           {formatDateShort(session.startedAtMs)} • {formatTimeShort(session.startedAtMs)}
         </Text>
 

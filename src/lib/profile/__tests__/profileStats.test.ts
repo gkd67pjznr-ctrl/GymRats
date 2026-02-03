@@ -15,9 +15,9 @@ import type { WorkoutSession } from '../../workoutModel';
 // Mock the rankTops data
 jest.mock('../../../data/rankTops', () => ({
   RANK_TOPS: [
-    { liftId: 'bench', topE1RMKg: 225, lifter: 'Julius Maddox' },
-    { liftId: 'squat', topE1RMKg: 265, lifter: 'Ray Williams' },
-    { liftId: 'deadlift', topE1RMKg: 360, lifter: 'Hafthor Bjornsson' },
+    { exerciseId: 'bench', topE1RMKg: 225, displayName: 'Bench Press' },
+    { exerciseId: 'squat', topE1RMKg: 265, displayName: 'Back Squat' },
+    { exerciseId: 'deadlift', topE1RMKg: 360, displayName: 'Deadlift' },
   ],
 }));
 

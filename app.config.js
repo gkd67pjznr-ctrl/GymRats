@@ -10,6 +10,9 @@ module.exports = {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      infoPlist: {
+        UIViewControllerBasedStatusBarAppearance: true,
+      },
     },
     android: {
       adaptiveIcon: {

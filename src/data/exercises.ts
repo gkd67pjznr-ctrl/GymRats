@@ -22,8 +22,8 @@ export type Exercise = {
 };
 
 // === Legacy Export ===
-// Maps to popular exercises for backwards compat with existing UI
-export const EXERCISES_V1: Exercise[] = getPopularExercises().map((ex) => ({
+// Full exercise list for name lookups across the codebase
+export const EXERCISES_V1: Exercise[] = getAllExercises().map((ex) => ({
   id: ex.id,
   name: ex.name,
 }));

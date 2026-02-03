@@ -9,10 +9,14 @@ Whenever a new feature is built that requires special usage instructions, those 
 ## Table of Contents
 
 1. [Supabase Database Migrations](#supabase-database-migrations)
-2. [Adding Images to PR Celebrations](#adding-images-to-pr-celebrations)
-3. [Customizing AI Gym Buddy Personalities](#customizing-ai-gym-buddy-personalities)
-4. [Adding Custom Avatar Art Styles](#adding-custom-avatar-art-styles)
-5. [Configuring Forge Lab Analytics](#configuring-forge-lab-analytics)
+2. [SQLPro Studio Connection Guide](#sqlpro-studio-connection-guide)
+3. [ExerciseDB Sync Status](#exercisedb-sync-status)
+4. [SQL Database Schema Review](#sql-database-schema-review)
+5. [Editing Exercise Names](#editing-exercise-names)
+6. [Adding Images to PR Celebrations](#adding-images-to-pr-celebrations)
+7. [Customizing AI Gym Buddy Personalities](#customizing-ai-gym-buddy-personalities)
+8. [Adding Custom Avatar Art Styles](#adding-custom-avatar-art-styles)
+9. [Configuring Forge Lab Analytics](#configuring-forge-lab-analytics)
 
 ---
 
@@ -44,6 +48,261 @@ The user discovery/search feature requires migration `005_user_search.sql` to be
 **Verification:**
 
 After applying, you can verify the migration worked by testing the user search in the Friends screen.
+
+---
+
+## SQLPro Studio Connection Guide
+
+Connect SQLPro Studio (macOS) to your Supabase PostgreSQL database for direct SQL access.
+
+### Connection Settings
+
+| Field | Value |
+|-------|-------|
+| **Host** | `db.<your-project-ref>.supabase.co` |
+| **Port** | `5432` |
+| **Database** | `postgres` |
+| **User** | `postgres` |
+| **Password** | Your Supabase database password (set during project creation) |
+| **SSL Mode** | Required (`require` or `verify-full`) |
+
+### Step-by-Step
+
+1. Open SQLPro Studio
+2. Click **New Connection** > **PostgreSQL**
+3. Enter the connection details from the table above
+4. Your project ref is in your Supabase URL: `https://<project-ref>.supabase.co`
+5. Enable **SSL** (check "Use SSL" or set SSL Mode to "Require")
+6. Click **Connect**
+
+### Finding Your Database Password
+
+- **If you remember it**: Use the password you set when creating the Supabase project
+- **If you forgot it**: Go to Supabase Dashboard > Project Settings > Database > Reset database password
+
+### Useful Queries
+
+```sql
+-- List all tables
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public' ORDER BY table_name;
+
+-- Check RLS policies
+SELECT tablename, policyname, cmd, qual
+FROM pg_policies WHERE schemaname = 'public';
+
+-- Check table row counts
+SELECT schemaname, relname, n_live_tup
+FROM pg_stat_user_tables ORDER BY n_live_tup DESC;
+```
+
+### Troubleshooting
+
+- **Connection refused**: Ensure SSL is enabled; Supabase requires SSL for all direct connections
+- **Authentication failed**: Reset your database password in Supabase Dashboard > Settings > Database
+- **Timeout**: Some networks block port 5432; try using Supabase's pooler on port `6543` instead
+
+---
+
+## ExerciseDB Sync Status
+
+### Current State: Infrastructure Built, Never Executed
+
+The ExerciseDB RapidAPI sync system was built but never run. Here's what exists:
+
+### What's Built
+
+| Component | File | Status |
+|-----------|------|--------|
+| Sync Script | `scripts/syncExercises.js` | Complete but never executed |
+| Sync Service | `src/lib/exerciseAPI/syncService.ts` | Complete TypeScript service |
+| API Client | `src/lib/exerciseAPI/exerciseDBClient.ts` | RapidAPI client |
+| Config | `src/lib/exerciseAPI/config.ts` | API key placeholder |
+| Output File | `src/data/exerciseDB-synced.json` | Empty (0 bytes) |
+
+### What's Actually in the App
+
+The app uses `src/data/exercises-raw.json` (~873 exercises) from the **free-exercise-db** open-source project (not ExerciseDB/RapidAPI). This data is loaded by `src/data/exerciseDatabase.ts`.
+
+### If You Want to Run the ExerciseDB Sync
+
+1. Get a RapidAPI key for ExerciseDB
+2. Set the API key in `src/lib/exerciseAPI/config.ts`
+3. Run: `node scripts/syncExercises.js`
+4. Output will be written to `src/data/exerciseDB-synced.json`
+5. Update `exerciseDatabase.ts` to merge or replace data
+
+### Recommendation
+
+The free-exercise-db data (873 exercises) is already comprehensive. The ExerciseDB RapidAPI would add GIF animations and more metadata but requires a paid API subscription. Consider whether the additional data justifies the API cost before running the sync.
+
+---
+
+## SQL Database Schema Review
+
+### Overview
+
+The Supabase PostgreSQL database has **23 tables** with RLS enabled, covering auth, workouts, social, gamification, and shop systems.
+
+### Tables by Domain
+
+**Authentication & Users:**
+- `profiles` - User profiles (username, display name, avatar, bio)
+- `user_settings` - Preferences (units, theme, notifications)
+
+**Workouts:**
+- `workout_sessions` - Completed workouts with duration and metadata
+- `workout_sets` - Individual sets (weight, reps, exercise)
+- `exercise_prs` - Personal records tracking (weight, rep, e1RM PRs)
+- `routines` / `routine_exercises` - User-created workout routines
+- `forgerank_snapshots` - Scoring history snapshots
+
+**Social:**
+- `posts` - Social feed posts
+- `post_reactions` - Likes/reactions on posts
+- `comments` - Comments on posts
+- `friendships` - Friend connections (requester/addressee model)
+- `messages` - Direct messages between users
+- `blocks` - User blocking
+
+**Gamification:**
+- `user_xp` - XP and level tracking
+- `user_streaks` - Workout streak tracking
+- `user_tokens` - Forge Token balances
+- `user_milestones` - Achievement/milestone completion
+
+**Shop & Avatar:**
+- `shop_items` - Purchasable items catalog
+- `user_inventory` - Owned items
+- `user_purchases` - Purchase history / IAP receipts
+
+**Journal:**
+- `journal_entries` - Daily training journal entries
+
+### Schema Quality: 7.5/10
+
+**What's Good:**
+- RLS enabled on all tables with proper policies
+- UUID primary keys everywhere
+- Consistent `created_at` / `updated_at` timestamps
+- Proper foreign key relationships
+- 40+ indexes for query performance
+- `updated_at` auto-update triggers on key tables
+
+**Issues Found (by priority):**
+
+**High Priority:**
+1. `profiles.username` needs a UNIQUE constraint (currently allows duplicates)
+2. `friendships` needs a unique constraint on `(requester_id, addressee_id)` to prevent duplicate requests
+3. Several RLS policies use subqueries that could cause recursion under load
+
+**Medium Priority:**
+4. `exercise_prs` should have a composite unique constraint on `(user_id, exercise_id, pr_type)`
+5. Missing index on `messages(receiver_id, created_at)` for inbox queries
+6. `workout_sets.reps` allows NULL but should probably default to 0
+7. Some `ON DELETE` behaviors are CASCADE where RESTRICT would be safer
+
+**Low Priority:**
+8. `shop_items` has no `category` index (used for filtering)
+9. Several tables missing `updated_at` trigger (journal_entries, user_milestones)
+10. `blocks` table could benefit from a composite index on `(blocker_id, blocked_id)`
+
+### Applying Fixes
+
+To fix the high-priority issues, run this SQL in Supabase SQL Editor:
+
+d
+  ON messages(receiver_id, created_at DESC);
+```
+
+---
+
+## Editing Exercise Names
+
+The app uses **1590 exercises** loaded from `src/data/exercises-raw.json`. These come from two sources:
+
+- **873 exercises** from the [free-exercise-db](https://github.com/yuhonas/free-exercise-db) open-source project (IDs like `Barbell_Bench_Press_-_Medium_Grip`)
+- **717 exercises** imported from the wger API (IDs prefixed with `wger_`, e.g. `wger_bicep_curl_123`)
+
+### The Problem
+
+Many exercise names are verbose or awkward:
+- `Barbell_Bench_Press_-_Medium_Grip` shows as "Barbell Bench Press - Medium Grip"
+- `wger_Standing_Alternating_Dumbbell_Biceps_Curl` shows as "Standing Alternating Dumbbell Biceps Curl"
+- Some names include unnecessary detail like grip width, stance variation, or redundant qualifiers
+
+### File to Edit
+
+**`src/data/exercises-raw.json`**
+
+This is a JSON array of exercise objects. Each exercise looks like:
+
+```json
+{
+  "id": "Barbell_Bench_Press_-_Medium_Grip",
+  "name": "Barbell Bench Press - Medium Grip",
+  "force": "push",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": ["chest"],
+  "secondaryMuscles": ["shoulders", "triceps"],
+  "instructions": ["..."],
+  "category": "strength",
+  "images": ["..."]
+}
+```
+
+### How to Rename an Exercise
+
+1. Open `src/data/exercises-raw.json`
+2. Search for the exercise by its current name
+3. Change only the `"name"` field to your preferred display name
+4. **Do NOT change the `"id"` field** — the ID is used as a database key for workout history, routines, and PR tracking
+
+**Example: Shorten a verbose name**
+
+```json
+// Before:
+{ "id": "Barbell_Bench_Press_-_Medium_Grip", "name": "Barbell Bench Press - Medium Grip", ... }
+
+// After:
+{ "id": "Barbell_Bench_Press_-_Medium_Grip", "name": "Bench Press", ... }
+```
+
+**Example: Clean up a wger name**
+
+```json
+// Before:
+{ "id": "wger_standing_alternating_dumbbell_biceps_curl", "name": "Standing Alternating Dumbbell Biceps Curl", ... }
+
+// After:
+{ "id": "wger_standing_alternating_dumbbell_biceps_curl", "name": "Alternating DB Curl", ... }
+```
+
+### Bulk Rename Tips
+
+- Use your editor's find & replace to batch-rename patterns:
+  - Remove `"Barbell "` prefix where the equipment field already says `"barbell"`
+  - Remove `" - Medium Grip"` suffixes (most exercises default to medium grip)
+  - Shorten `"Dumbbell"` to `"DB"` if you prefer
+- After editing, restart the Expo dev server to see changes
+
+### Where Names Appear
+
+Exercise names from this file appear everywhere in the app:
+- Live workout exercise picker
+- Routine builder add-exercise list
+- Workout history details
+- Social feed workout posts
+- Forge Lab analytics charts
+
+### Important Notes
+
+- **Never change the `id` field** — changing an ID will break all historical data linked to that exercise
+- The `id` is never shown to users in the UI (it was previously shown on the routine add-exercise page, but that has been fixed)
+- If you delete an exercise entirely, any routines or workout history referencing it will show the raw ID instead of a name
+- The 10 "popular" exercises are defined in `src/data/exerciseDatabase.ts` in the `POPULAR_EXERCISE_IDS` set — you can change which exercises appear in the "Popular" section there
 
 ---
 

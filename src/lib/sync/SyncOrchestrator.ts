@@ -8,6 +8,7 @@ import type { Session } from '@supabase/supabase-js';
 import type { WorkoutSession } from '../workoutModel';
 import type { Routine } from '../routinesModel';
 import type { FriendEdge , WorkoutPost } from '../socialModel';
+import { supabase, isSupabasePlaceholder } from '../supabase/client';
 
 /**
  * Store configuration for sync
@@ -105,6 +106,63 @@ class SyncOrchestratorClass {
   }
 
   /**
+   * Ensure a user profile row exists in the users table.
+   * Required before any sync operations that reference user_id via foreign keys.
+   *
+   * Uses upsert to handle both INSERT and UPDATE in one call,
+   * avoiding race conditions with concurrent sign-ins.
+   */
+  private async ensureUserProfile(userId: string, session?: Session): Promise<void> {
+    if (isSupabasePlaceholder) return;
+
+    try {
+      // Check if user row exists
+      const { data, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      if (data) return; // Already exists
+
+      if (error && error.code !== 'PGRST116') {
+        // PGRST116 = not found, which is expected
+        console.error('[SyncOrchestrator] Error checking user profile:', error);
+      }
+
+      // Create user profile row using upsert to handle race conditions
+      const email = session?.user?.email ?? '';
+      const displayName = session?.user?.user_metadata?.full_name
+        ?? session?.user?.user_metadata?.name
+        ?? email.split('@')[0]
+        ?? 'User';
+
+      const { error: upsertError } = await supabase
+        .from('users')
+        .upsert({
+          id: userId,
+          email,
+          display_name: displayName,
+        }, { onConflict: 'id' });
+
+      if (upsertError) {
+        // RLS policy may block insert - log but don't crash sync
+        // The user row may be created by a database trigger instead
+        if (__DEV__) {
+          console.warn('[SyncOrchestrator] Could not create user profile (may need DB trigger):', upsertError.message);
+        }
+      } else if (__DEV__) {
+        console.log('[SyncOrchestrator] Created user profile for', email);
+      }
+    } catch (err) {
+      // Don't let profile creation failure block all sync operations
+      if (__DEV__) {
+        console.warn('[SyncOrchestrator] ensureUserProfile error:', err);
+      }
+    }
+  }
+
+  /**
    * Handle user sign in
    */
   async onSignIn(userId: string, session?: Session): Promise<void> {
@@ -117,6 +175,9 @@ class SyncOrchestratorClass {
       }
       return;
     }
+
+    // Ensure user profile exists before syncing stores with FK constraints
+    await this.ensureUserProfile(userId, session);
 
     // Sync all stores that sync on sign in
     const syncPromises: Promise<void>[] = [];

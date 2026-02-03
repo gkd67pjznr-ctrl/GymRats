@@ -8,6 +8,7 @@ import type { RoutineExercise } from "../../src/lib/routinesModel";
 import { EXERCISES_V1 } from "../../src/data/exercises";
 import { makePlanFromRoutine } from "../../src/lib/workoutPlanModel";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 
 function nameForExercise(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -133,9 +134,9 @@ export default function RoutineDetail() {
 
   return (
     <ProtectedRoute>
+      <ScreenHeader title={routine?.name ?? "Routine"} />
       <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 40 }}>
-        <Text style={{ color: c.text, fontSize: 22, fontWeight: "900" }}>{routine.name}</Text>
+        <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 100 }}>
 
         {/* Start Workout Button */}
         <Pressable

@@ -30,45 +30,41 @@ export function WorkoutControls({
   return (
     <View style={styles.container}>
       {/* Primary: Add Exercise button */}
-      {!planMode && (
+      <Pressable
+        onPress={onAddExercise}
+        style={({ pressed }) => [
+          styles.addButton,
+          {
+            backgroundColor: c.primary + "18",
+            borderColor: c.primary + "40",
+            opacity: pressed ? 0.7 : 1,
+          },
+        ]}
+      >
+        <Ionicons name="add" size={20} color={c.primary} />
+        <Text style={[styles.addButtonText, { color: c.primary }]}>
+          Add Exercise
+        </Text>
+      </Pressable>
+
+      {/* Secondary controls row */}
+      <View style={styles.secondaryRow}>
         <Pressable
-          onPress={onAddExercise}
+          onPress={onChangeSelected}
           style={({ pressed }) => [
-            styles.addButton,
+            styles.secondaryButton,
             {
-              backgroundColor: c.primary + "18",
-              borderColor: c.primary + "40",
+              backgroundColor: c.card,
+              borderColor: c.border,
               opacity: pressed ? 0.7 : 1,
             },
           ]}
         >
-          <Ionicons name="add" size={20} color={c.primary} />
-          <Text style={[styles.addButtonText, { color: c.primary }]}>
-            Add Exercise
+          <Ionicons name="swap-horizontal" size={14} color={c.muted} />
+          <Text style={[styles.secondaryText, { color: c.muted }]}>
+            Switch
           </Text>
         </Pressable>
-      )}
-
-      {/* Secondary controls row */}
-      <View style={styles.secondaryRow}>
-        {!planMode && (
-          <Pressable
-            onPress={onChangeSelected}
-            style={({ pressed }) => [
-              styles.secondaryButton,
-              {
-                backgroundColor: c.card,
-                borderColor: c.border,
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
-          >
-            <Ionicons name="swap-horizontal" size={14} color={c.muted} />
-            <Text style={[styles.secondaryText, { color: c.muted }]}>
-              Switch
-            </Text>
-          </Pressable>
-        )}
 
         <Pressable
           onPress={onToggleFocus}

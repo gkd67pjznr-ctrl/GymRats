@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useEffect, useRef } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
@@ -127,9 +128,44 @@ export default function RootLayout() {
   // Handle deep links for OAuth callbacks
   useEffect(() => {
     const subscription = Linking.addEventListener('url', async ({ url }) => {
+      if (__DEV__) {
+        console.log('[RootLayout] Deep link received:', url);
+      }
+
+      // Handle Supabase OAuth callback with hash fragment tokens
       if (url.includes('#') && url.includes('access_token')) {
-        // Supabase OAuth callback - let Supabase handle it
-        await supabase.auth.getSession();
+        try {
+          const hashIndex = url.indexOf('#');
+          const hashParams = new URLSearchParams(url.substring(hashIndex + 1));
+          const access_token = hashParams.get('access_token');
+          const refresh_token = hashParams.get('refresh_token');
+
+          if (access_token && refresh_token) {
+            if (__DEV__) {
+              console.log('[RootLayout] Setting session from deep link tokens');
+            }
+            await supabase.auth.setSession({ access_token, refresh_token });
+          }
+        } catch (err) {
+          console.error('[RootLayout] Failed to process OAuth callback:', err);
+        }
+        return;
+      }
+
+      // Handle PKCE flow with code query parameter
+      if (url.includes('code=')) {
+        try {
+          const urlObj = new URL(url);
+          const code = urlObj.searchParams.get('code');
+          if (code) {
+            if (__DEV__) {
+              console.log('[RootLayout] Exchanging PKCE code from deep link');
+            }
+            await supabase.auth.exchangeCodeForSession(code);
+          }
+        } catch (err) {
+          console.error('[RootLayout] Failed to exchange code:', err);
+        }
       }
     });
 
@@ -178,30 +214,21 @@ export default function RootLayout() {
   }, [router]);
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <ErrorBoundary name="root">
       <SafeAreaProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <View style={{ flex: 1, position: 'relative' }}>
-            <Stack>
+            <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen
                 name="onboarding"
-                options={{
-                  headerShown: false,
-                  presentation: 'card',
-                }}
+                options={{ presentation: 'card' }}
               />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="live-workout" options={{ headerShown: false }} />
-              <Stack.Screen name="auth/login" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="auth/signup" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="auth/forgot-password" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="auth/reset-password" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="auth/verify-email" options={{ headerShown: false, presentation: 'card' }} />
-              <Stack.Screen name="hangout/index" options={{ headerShown: false }} />
-              <Stack.Screen name="avatar/index" options={{ headerShown: false }} />
-              <Stack.Screen name="live-workout-together" options={{ headerShown: false }} />
-              <Stack.Screen name="live-workout-with-friends" options={{ headerShown: false }} />
+              <Stack.Screen name="auth/login" options={{ presentation: 'card' }} />
+              <Stack.Screen name="auth/signup" options={{ presentation: 'card' }} />
+              <Stack.Screen name="auth/forgot-password" options={{ presentation: 'card' }} />
+              <Stack.Screen name="auth/reset-password" options={{ presentation: 'card' }} />
+              <Stack.Screen name="auth/verify-email" options={{ presentation: 'card' }} />
             </Stack>
             <PersistentTabBar />
           </View>
@@ -209,5 +236,6 @@ export default function RootLayout() {
         </ThemeProvider>
       </SafeAreaProvider>
     </ErrorBoundary>
+    </GestureHandlerRootView>
   );
 }

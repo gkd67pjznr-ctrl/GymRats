@@ -1,6 +1,7 @@
 import { ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColors } from "../../../src/ui/theme";
+import { ScreenHeader } from "../../../src/ui/components/ScreenHeader";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { useWorkoutSessions, useJournalEntriesForDate, useUser } from "../../../src/lib/stores";
 import { startOfDayMs, formatDateShort, formatTimeShort, formatDuration, durationMs } from "../../../src/lib/workoutModel";
@@ -73,10 +74,8 @@ export default function DayDetail() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenHeader title={formatDateShort(dayStart)} />
       <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 40 }}>
-        <Text style={{ color: c.text, fontSize: 22, fontWeight: "900" }}>
-          {formatDateShort(dayStart)}
-        </Text>
 
         {/* Add Journal Entry Button */}
         <TouchableOpacity

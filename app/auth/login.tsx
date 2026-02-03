@@ -1,15 +1,17 @@
 // app/auth/login.tsx
 // Login screen with email, password, and OAuth (Google & Apple)
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput, Pressable, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useThemeColors } from "@/src/ui/theme";
 import { useAuth, useAuthLoading, useAuthError, useUser } from "@/src/lib/stores";
+import { useAuthStore } from "@/src/lib/stores/authStore";
 import { OAuthButton } from "@/src/ui/components/OAuthButton";
 import { KeyboardAwareScrollView } from "@/src/ui/components/KeyboardAwareScrollView";
 import { useGoogleAuth } from "@/src/lib/auth/google";
 import { useAppleAuth } from "@/src/lib/auth/apple";
 import { getOAuthErrorMessage, type OAuthError } from "@/src/lib/auth/oauth";
+import { supabase } from "@/src/lib/supabase/client";
 
 /**
  * Email validation regex
@@ -59,11 +61,57 @@ export default function LoginScreen() {
     },
   });
 
+  // Check for existing Supabase session on mount
+  // This handles cases where OAuth completed via deep link but the auth store
+  // hasn't synced yet (e.g., after Expo Go hot-reload during OAuth flow)
+  const hasNavigatedRef = useRef(false);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkExistingSession() {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (cancelled || hasNavigatedRef.current) return;
+
+        if (data.session) {
+          if (__DEV__) {
+            console.log('[Login] Found existing session on mount, waiting for auth store...');
+          }
+          // Session exists in Supabase - wait for auth store to sync
+          const checkAndNavigate = () => {
+            if (cancelled || hasNavigatedRef.current) return;
+            const { user: storeUser } = useAuthStore.getState();
+            if (storeUser) {
+              hasNavigatedRef.current = true;
+              setIsGoogleLoading(false);
+              setIsAppleLoading(false);
+              router.replace("/(tabs)");
+            }
+          };
+
+          // Check immediately, then retry after delays
+          checkAndNavigate();
+          if (!hasNavigatedRef.current) setTimeout(checkAndNavigate, 500);
+          if (!hasNavigatedRef.current) setTimeout(checkAndNavigate, 1500);
+          if (!hasNavigatedRef.current) setTimeout(checkAndNavigate, 3000);
+        }
+      } catch (err) {
+        // Ignore - normal login flow will proceed
+      }
+    }
+
+    checkExistingSession();
+    return () => { cancelled = true; };
+  }, []);
+
   // Watch for auth state changes to navigate after successful OAuth
   useEffect(() => {
-    if (user && authStore.session && isGoogleLoading) {
-      // OAuth was successful and session is now active
+    if (hasNavigatedRef.current) return;
+    if (user && authStore.session) {
+      // Session is active - navigate to home
+      hasNavigatedRef.current = true;
       setIsGoogleLoading(false);
+      setIsAppleLoading(false);
       router.replace("/(tabs)");
     }
   }, [user, authStore.session]);
@@ -152,7 +200,15 @@ export default function LoginScreen() {
    */
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true);
-    await signInWithGoogle();
+    try {
+      // Race the OAuth flow against a timeout - in Expo Go, the WebBrowser
+      // may not resolve if the deep link is handled externally
+      const timeoutPromise = new Promise<void>((resolve) => setTimeout(resolve, 30000));
+      await Promise.race([signInWithGoogle(), timeoutPromise]);
+    } finally {
+      // Always reset loading - navigation handled by auth state useEffect
+      setIsGoogleLoading(false);
+    }
   }
 
   /**
@@ -160,7 +216,11 @@ export default function LoginScreen() {
    */
   async function handleAppleSignIn() {
     setIsAppleLoading(true);
-    await signInWithApple();
+    try {
+      await signInWithApple();
+    } finally {
+      setIsAppleLoading(false);
+    }
   }
 
   return (

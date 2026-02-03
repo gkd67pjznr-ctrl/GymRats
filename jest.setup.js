@@ -12,9 +12,33 @@ jest.mock('react-native-reanimated', () => {
   return Reanimated;
 });
 
+// Mock react-native-safe-area-context (needed by ScreenHeader)
+jest.mock('react-native-safe-area-context', () => {
+  const insets = { top: 0, right: 0, bottom: 0, left: 0 };
+  return {
+    SafeAreaProvider: ({ children }) => children,
+    SafeAreaView: ({ children }) => children,
+    useSafeAreaInsets: () => insets,
+    useSafeAreaFrame: () => ({ x: 0, y: 0, width: 390, height: 844 }),
+    SafeAreaInsetsContext: {
+      Consumer: ({ children }) => children(insets),
+    },
+  };
+});
+
 // Mock react-native-confetti-cannon
 jest.mock('react-native-confetti-cannon', () => ({
   ConfettiCannon: 'ConfettiCannon',
+}));
+
+// Mock expo-file-system/legacy (SDK 54 migration)
+jest.mock('expo-file-system/legacy', () => ({
+  getInfoAsync: jest.fn(() => Promise.resolve({ exists: true, size: 1024 })),
+  readAsStringAsync: jest.fn(() => Promise.resolve('base64data')),
+  writeAsStringAsync: jest.fn(() => Promise.resolve()),
+  deleteAsync: jest.fn(() => Promise.resolve()),
+  documentDirectory: '/mock/documents/',
+  cacheDirectory: '/mock/cache/',
 }));
 
 // Mock expo-haptics

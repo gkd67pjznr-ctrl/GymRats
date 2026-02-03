@@ -1,5 +1,5 @@
 // app/create-post.tsx
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Pressable, Text, TextInput, View, Image, Alert, ActivityIndicator } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -8,6 +8,7 @@ import { createPost, type PostVisibility } from "../src/lib/stores/feedStore";
 import { uploadPostPhoto } from "../src/lib/supabase/storage";
 import type { ID } from "../src/lib/socialModel";
 import { useThemeColors } from "../src/ui/theme";
+import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { KeyboardAwareScrollView } from "../src/ui/components/KeyboardAwareScrollView";
 
 const ME: ID = "u_demo_me";
@@ -90,24 +91,17 @@ export default function CreatePostScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: "Create Post",
-          headerLeft: () => (
-            <Pressable onPress={() => router.back()} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
-              <Text style={{ color: c.text, fontWeight: "900" }}>Back</Text>
-            </Pressable>
-          ),
-          headerRight: () => (
-            <Pressable onPress={onPublish} disabled={!canPublish} style={{ paddingHorizontal: 8, paddingVertical: 4, opacity: canPublish ? 1 : 0.45 }}>
-              <Text style={{ color: c.text, fontWeight: "900" }}>Post</Text>
-            </Pressable>
-          ),
-        }}
+      <ScreenHeader
+        title="Create Post"
+        rightAction={
+          <Pressable onPress={onPublish} disabled={!canPublish} style={{ paddingHorizontal: 8, paddingVertical: 4, opacity: canPublish ? 1 : 0.45 }}>
+            <Text style={{ color: c.text, fontWeight: "900" }}>Post</Text>
+          </Pressable>
+        }
       />
 
       <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 24 }}>
+        <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 100 }}>
           {/* Photo Upload */}
           <View
             style={{

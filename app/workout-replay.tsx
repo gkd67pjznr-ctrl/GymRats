@@ -15,6 +15,7 @@ import { PRHighlight } from '../src/ui/components/WorkoutReplay/PRHighlight';
 import { RankChangeDisplay } from '../src/ui/components/WorkoutReplay/RankChangeDisplay';
 import { BuddySignOff } from '../src/ui/components/WorkoutReplay/BuddySignOff';
 import { ReplayControls } from '../src/ui/components/WorkoutReplay/ReplayControls';
+import { ScreenHeader } from '../src/ui/components/ScreenHeader';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -95,6 +96,7 @@ export default function WorkoutReplayScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: c.bg }]}>
+      <ScreenHeader title="Workout Replay" />
       {/* Confetti for PR celebrations */}
       {hasPRs && (
         <ConfettiCannon
@@ -116,7 +118,6 @@ export default function WorkoutReplayScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: c.text }]}>Workout Complete!</Text>
           <Text style={[styles.subtitle, { color: c.muted }]}>
             {new Date(replay.endedAtMs).toLocaleDateString()}
           </Text>

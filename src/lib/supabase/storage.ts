@@ -1,7 +1,7 @@
 // src/lib/supabase/storage.ts
 // Supabase Storage utilities for image uploads (avatars, post photos)
 
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { supabase } from "./client";
 import { logError } from "../errorHandler";
 

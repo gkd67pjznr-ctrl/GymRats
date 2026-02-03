@@ -4,6 +4,7 @@
 import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { FriendEdge } from '../../socialModel';
 import type { DatabaseFriendship, DatabaseFriendshipInsert } from '../../supabase/types';
+import { isValidUUID } from '../../uid';
 declare const __DEV__: boolean | undefined;
 
 /**
@@ -72,7 +73,7 @@ export const friendRepository: FriendRepository = {
     const { data, error } = await supabase
       .from('friendships')
       .select('*')
-      .or(`user_id.eq.${userId},and.friend_id.eq.${userId}`)
+      .or(`user_id.eq.${userId},friend_id.eq.${userId}`)
       .order('updated_at', { ascending: false });
 
     if (error) {
@@ -100,7 +101,7 @@ export const friendRepository: FriendRepository = {
     const { data, error } = await supabase
       .from('friendships')
       .select('*')
-      .or(`user_id.eq.${userId},and.friend_id.eq.${userId}`)
+      .or(`user_id.eq.${userId},friend_id.eq.${userId}`)
       .gt('updated_at', sinceDate)
       .order('updated_at', { ascending: false });
 
@@ -173,7 +174,11 @@ export const friendRepository: FriendRepository = {
       return;
     }
 
-    const insertData = edges.map(e => toDatabaseInsert(e));
+    // Filter out edges with non-UUID IDs (e.g. demo data like "u_demo_3")
+    const validEdges = edges.filter(e => isValidUUID(e.userId) && isValidUUID(e.otherUserId));
+    if (validEdges.length === 0) return;
+
+    const insertData = validEdges.map(e => toDatabaseInsert(e));
 
     const { error } = await supabase
       .from('friendships')

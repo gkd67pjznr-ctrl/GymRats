@@ -7,6 +7,7 @@ import type { PlanCategory } from "../../../src/lib/premadePlans/types";
 import { usePlansByCategory, hydratePremadePlansStore } from "../../../src/lib/premadePlans/store";
 import { getCategoryInfo } from "../../../src/lib/premadePlans/categories";
 import { makeDesignSystem } from "../../../src/ui/designSystem";
+import { ScreenHeader } from "../../../src/ui/components/ScreenHeader";
 
 /**
  * Plan List - Shows all plans in a category
@@ -51,13 +52,13 @@ export default function PlanList() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3 }}>
+      <ScreenHeader title={categoryInfo.name} />
+      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3, paddingBottom: 100 }}>
         {/* Header */}
         <View style={{ gap: FR.space.x2 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
             <Text style={{ fontSize: 48 }}>{categoryInfo.icon}</Text>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: c.text, ...FR.type.h1 }}>{categoryInfo.name}</Text>
               <Text style={{ color: categoryInfo.color, ...FR.type.body, fontWeight: "700" }}>
                 {categoryInfo.tagline}
               </Text>

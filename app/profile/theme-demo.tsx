@@ -2,9 +2,10 @@
 // Theme demo screen showcasing themed components
 
 import { View, Text, ScrollView, Alert } from "react-native";
-import { useRouter, Stack } from "expo-router";
+import { useRouter } from "expo-router";
 import { useThemeColors } from "@/src/ui/theme";
 import { ProtectedRoute } from "@/src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "@/src/ui/components/ScreenHeader";
 import { ThemePreview } from "@/src/ui/components/ThemePreview";
 import { ThemedButton } from "@/src/ui/components/ThemedButton";
 import { useActivePalette, useActiveIllustration } from "@/src/lib/stores/themeStore";
@@ -47,19 +48,7 @@ export default function ThemeDemoScreen() {
 
   return (
     <ProtectedRoute>
-      <Stack.Screen
-        options={{
-          title: "Theme Demo",
-          headerLeft: () => (
-            <ThemedButton
-              title="Back"
-              variant="outline"
-              size="small"
-              onPress={() => router.back()}
-            />
-          ),
-        }}
-      />
+      <ScreenHeader title="Theme Demo" />
 
       <ScrollView
         style={{ flex: 1, backgroundColor: c.bg }}

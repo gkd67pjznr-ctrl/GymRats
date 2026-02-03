@@ -934,8 +934,8 @@ export function setupAuthListener(
           });
 
           // Sync gamification data from server
-          const { pullFromServer: pullGamification } = require('../stores/gamificationStore');
-          pullGamification().catch(err => {
+          const { useGamificationStore } = require('../stores/gamificationStore');
+          useGamificationStore.getState().pullFromServer().catch((err: unknown) => {
             console.error('[authStore] Gamification sync error:', err);
           });
         }

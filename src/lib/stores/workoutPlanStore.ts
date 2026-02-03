@@ -10,7 +10,7 @@ import { logError } from "../errorHandler";
 import { safeJSONParse } from "../storage/safeJSONParse";
 import type { SyncMetadata } from "../sync/syncTypes";
 import { getUser } from "./authStore";
-import { supabase } from "../supabase/client";
+// supabase import removed - plan sync is local-only until current_plan_id column is added
 import { networkMonitor } from "../sync/NetworkMonitor";
 
 const STORAGE_KEY = "currentPlan.v2"; // Bumped from v1 for Zustand migration
@@ -72,20 +72,9 @@ export const useWorkoutPlanStore = create<WorkoutPlanState>()(
         set({ _sync: { ...get()._sync, syncStatus: 'syncing', syncError: null } });
 
         try {
-          // Fetch current plan from user profile
-          const { data, error } = await supabase
-            .from('users')
-            .select('current_plan_id')
-            .eq('id', user.id)
-            .single();
-
-          if (error && error.code !== 'PGRST116') {
-            throw error;
-          }
-
-          // Note: This is a simplified version
-          // In production, you'd fetch the actual plan from plans table
-          // For now, the plan is stored locally and just synced as a selection
+          // Note: Plan sync is local-only for now.
+          // The current_plan_id column doesn't exist on the users table yet.
+          // When plan sync is implemented, add a migration for the column first.
 
           set({
             _sync: {

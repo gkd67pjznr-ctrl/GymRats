@@ -8,6 +8,7 @@ import { makeDesignSystem } from "../../src/ui/designSystem";
 import { FR } from "../../src/ui/forgerankStyle";
 import { useThemeColors, useThemeRadius } from "../../src/ui/theme";
 import { KeyboardAwareScrollView } from "../../src/ui/components/KeyboardAwareScrollView";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 
 /**
  * AI Plan Generator
@@ -42,12 +43,12 @@ export default function AIGeneratePlan() {
 if (isNativeApp) {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x4 }}>
+      <ScreenHeader title="AI Plan Generator" />
+      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x4, paddingBottom: 100 }}>
         <View style={{ gap: FR.space.x2 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
             <Text style={{ fontSize: 48 }}>🤖</Text>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: c.text, ...FR.type.h1 }}>AI Generator</Text>
               <Text style={{ color: "#9B59B6", ...FR.type.body, fontWeight: "700" }}>
                 Web Only Feature
               </Text>
@@ -143,13 +144,13 @@ if (isNativeApp) {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenHeader title="AI Plan Generator" />
       <KeyboardAwareScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x4, paddingBottom: 100 }}>
         {/* Header */}
         <View style={{ gap: FR.space.x2 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
             <Text style={{ fontSize: 48 }}>🤖</Text>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: c.text, ...FR.type.h1 }}>AI Generator</Text>
               <Text style={{ color: "#9B59B6", ...FR.type.body, fontWeight: "700" }}>
                 Custom workout plans
               </Text>

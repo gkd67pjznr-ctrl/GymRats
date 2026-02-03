@@ -2,12 +2,13 @@
 // Profile editing screen with display name and avatar management
 import { useState, useEffect } from "react";
 import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, Image, ScrollView } from "react-native";
-import { useRouter, Stack, Link } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useThemeColors } from "@/src/ui/theme";
 import { useUser, useAuth } from "@/src/lib/stores";
 import { KeyboardAwareScrollView } from "@/src/ui/components/KeyboardAwareScrollView";
 import { ProtectedRoute } from "@/src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "@/src/ui/components/ScreenHeader";
 import { generateAvatarUrl } from "@/src/lib/supabase/storage";
 
 /**
@@ -179,29 +180,27 @@ export default function ProfileEditScreen() {
 
   return (
     <ProtectedRoute>
-      <Stack.Screen
-        options={{
-          title: "Edit Profile",
-          headerLeft: () => (
-            <Pressable onPress={() => router.back()} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
-              <Text style={{ color: c.text, fontWeight: "900" }}>Cancel</Text>
-            </Pressable>
-          ),
-          headerRight: () => (
-            <Pressable onPress={handleSave} disabled={isSaving} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
-              <Text style={{ color: isSaving ? c.muted : "#4ECDC4", fontWeight: "900" }}>
-                {isSaving ? "Saving..." : "Save"}
-              </Text>
-            </Pressable>
-          ),
-        }}
+      <ScreenHeader
+        title="Edit Profile"
+        leftAction={
+          <Pressable onPress={() => router.back()} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
+            <Text style={{ color: c.text, fontWeight: "700" }}>Cancel</Text>
+          </Pressable>
+        }
+        rightAction={
+          <Pressable onPress={handleSave} disabled={isSaving} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
+            <Text style={{ color: isSaving ? c.muted : "#4ECDC4", fontWeight: "700" }}>
+              {isSaving ? "Saving..." : "Save"}
+            </Text>
+          </Pressable>
+        }
       />
 
       <KeyboardAwareScrollView
         contentContainerStyle={{
           padding: 24,
           gap: 24,
-          paddingBottom: 40,
+          paddingBottom: 100,
         }}
       >
         {/* Avatar Section */}

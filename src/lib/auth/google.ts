@@ -450,13 +450,76 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
       }
 
       if (result.type === 'success') {
-        // The browser will redirect to the app's deep link
-        // Supabase's URL listener in _layout.tsx will handle the session
-        // Return a pending result - the actual session will be established
-        // when the deep link is processed
+        // openAuthSessionAsync intercepts the redirect URL, so the
+        // Linking event listener won't fire. We need to extract the
+        // tokens from result.url and establish the session ourselves.
+        if (result.url) {
+          if (__DEV__) {
+            console.log('[Google OAuth] Processing callback URL');
+          }
+
+          // Supabase returns tokens in the URL hash fragment:
+          // forgerank://auth#access_token=xxx&refresh_token=yyy&...
+          const hashIndex = result.url.indexOf('#');
+          if (hashIndex !== -1) {
+            const hashParams = new URLSearchParams(result.url.substring(hashIndex + 1));
+            const access_token = hashParams.get('access_token');
+            const refresh_token = hashParams.get('refresh_token');
+
+            if (access_token && refresh_token) {
+              const { error: sessionError } = await supabase.auth.setSession({
+                access_token,
+                refresh_token,
+              });
+
+              if (sessionError) {
+                if (__DEV__) {
+                  console.error('[Google OAuth] Failed to set session:', sessionError);
+                }
+                return {
+                  success: false,
+                  error: {
+                    type: 'supabase_error',
+                    message: sessionError.message,
+                    originalError: sessionError,
+                  },
+                };
+              }
+
+              if (__DEV__) {
+                console.log('[Google OAuth] Session established successfully');
+              }
+            }
+          }
+
+          // Also handle PKCE flow where code is in query params:
+          // forgerank://auth?code=xxx
+          const urlObj = new URL(result.url);
+          const code = urlObj.searchParams.get('code');
+          if (code) {
+            const { error: codeError } = await supabase.auth.exchangeCodeForSession(code);
+            if (codeError) {
+              if (__DEV__) {
+                console.error('[Google OAuth] Code exchange failed:', codeError);
+              }
+              return {
+                success: false,
+                error: {
+                  type: 'supabase_error',
+                  message: codeError.message,
+                  originalError: codeError,
+                },
+              };
+            }
+
+            if (__DEV__) {
+              console.log('[Google OAuth] PKCE session established successfully');
+            }
+          }
+        }
+
         return {
           success: true,
-          // user: undefined - will be populated by auth state change
         };
       }
 

@@ -7,6 +7,7 @@ import { setCurrentPlan } from "../../src/lib/workoutPlanStore";
 import { makePlanFromRoutine } from "../../src/lib/workoutPlanModel";
 import type { RoutineExercise } from "../../src/lib/routinesModel";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 
 /**
  * Convert RoutineExercise to PlannedExercise for WorkoutPlan
@@ -62,24 +63,17 @@ export default function RoutinesHome() {
   return (
     <ProtectedRoute>
       <View style={{ flex: 1, backgroundColor: c.bg }}>
+        <ScreenHeader
+          title="Routines"
+          rightAction={
+            <Link href="/routines/create" asChild>
+              <Pressable>
+                <Text style={{ color: c.primary, fontWeight: "700", fontSize: 15 }}>+ New</Text>
+              </Pressable>
+            </Link>
+          }
+        />
         <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 40 }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
-          <Text style={{ color: c.text, fontSize: 22, fontWeight: "900" }}>Routines</Text>
-          <Link href="/routines/create" asChild>
-            <Pressable
-              style={{
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: c.border,
-                backgroundColor: c.card,
-              }}
-            >
-              <Text style={{ color: c.text, fontWeight: "900" }}>+ New</Text>
-            </Pressable>
-          </Link>
-        </View>
 
         {routines.length === 0 ? (
           <Text style={{ color: c.muted }}>No routines yet. Tap &quot;+ New&quot;.</Text>

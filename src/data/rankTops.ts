@@ -14,6 +14,7 @@
 // Re-export from exerciseDatabase for backwards compatibility
 export {
   VERIFIED_TOPS,
+  VERIFIED_TOPS as RANK_TOPS,
   getVerifiedTop,
   hasVerifiedTop,
   getAllVerifiedTops,

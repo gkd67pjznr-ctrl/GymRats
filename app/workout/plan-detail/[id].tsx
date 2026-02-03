@@ -11,6 +11,7 @@ import { makePlanFromRoutine } from "../../../src/lib/workoutPlanModel";
 import { EXERCISES_V1 } from "../../../src/data/exercises";
 import { makeDesignSystem } from "../../../src/ui/designSystem";
 import { getCategoryInfo } from "../../../src/lib/premadePlans/categories";
+import { ScreenHeader } from "../../../src/ui/components/ScreenHeader";
 
 /**
  * Plan Detail Screen
@@ -134,8 +135,9 @@ export default function PlanDetail() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenHeader title={plan.name ?? "Plan Detail"} />
       <ScrollView contentContainerStyle={{
-        paddingTop: FR.space.x4 + insets.top,
+        paddingTop: FR.space.x4,
         paddingHorizontal: FR.space.x4,
         paddingBottom: 100 + insets.bottom,
         gap: FR.space.x4,
@@ -145,7 +147,6 @@ export default function PlanDetail() {
           <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>
             <Text style={{ fontSize: 48 }}>{categoryInfo.icon}</Text>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: c.text, ...FR.type.h1 }}>{plan.name}</Text>
               <View
                 style={{
                   paddingHorizontal: FR.space.x2,

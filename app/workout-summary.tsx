@@ -12,6 +12,7 @@ import { timeAgo } from "../src/lib/units";
 import WorkoutNotesSection from "../src/ui/components/Journal/WorkoutNotesSection";
 import { createJournalEntry, getDateFromTimestamp } from "../src/lib/journalModel";
 import { MuscleId } from "../src/data/consolidatedMuscleGroups";
+import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 
 type WorkoutSummaryData = {
   sessionId: string;
@@ -191,6 +192,7 @@ export default function WorkoutSummary() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <ScreenHeader title="Workout Complete" />
       <ScrollView
         contentContainerStyle={{
           padding: FR.space.x4,
@@ -200,7 +202,6 @@ export default function WorkoutSummary() {
       >
         {/* Header */}
         <View style={{ gap: FR.space.x2, alignItems: "center" }}>
-          <Text style={[FR.type.h1, { color: c.text }]}>Workout Complete!</Text>
           <Text style={[FR.type.body, { color: c.muted }]}>
             {endedAtMs ? timeAgo(endedAtMs) : "Just now"}
           </Text>

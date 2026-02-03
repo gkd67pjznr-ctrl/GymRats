@@ -3,10 +3,11 @@
 
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView, Pressable, Alert } from "react-native";
-import { useRouter, Stack } from "expo-router";
+import { useRouter } from "expo-router";
 import { useThemeColors } from "@/src/ui/theme";
 import { useThemeStore, useActivePalette } from "@/src/lib/stores/themeStore";
 import { ProtectedRoute } from "@/src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "@/src/ui/components/ScreenHeader";
 import { ThemeIllustration } from "@/src/lib/themeDatabase";
 import { ThemedButton } from "@/src/ui/components/ThemedButton";
 import { IllustrationView } from "@/src/ui/components/IllustrationView";
@@ -212,20 +213,11 @@ export default function IllustrationsGalleryScreen() {
 
   return (
     <ProtectedRoute>
-      <Stack.Screen
-        options={{
-          title: "Illustrations",
-          headerLeft: () => (
-            <Pressable onPress={() => router.back()} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
-              <Text style={{ color: c.text, fontWeight: "900" }}>Back</Text>
-            </Pressable>
-          ),
-        }}
-      />
+      <ScreenHeader title="Illustrations" />
 
       <ScrollView
         style={{ flex: 1, backgroundColor: c.bg }}
-        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
+        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 100 }}
       >
         {/* Header */}
         <View style={{ gap: 8 }}>

@@ -14,6 +14,7 @@ import {
 import { useRouter } from "expo-router";
 import { useThemeColors } from "../src/ui/theme";
 import { makeDesignSystem } from "../src/ui/designSystem";
+import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { useJournalEntries, useUser , addJournalEntry } from "../src/lib/stores";
 import JournalEntryCard from "../src/ui/components/Journal/JournalEntryCard";
 import JournalEntryModal from "../src/ui/components/Journal/JournalEntryModal";
@@ -176,13 +177,14 @@ export default function JournalScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Training Journal</Text>
-        <TouchableOpacity onPress={handleAddEntry} style={styles.addButton}>
-          <Text style={[styles.addButtonText, { color: ds.tone.accent }]}>+ New</Text>
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title="Journal"
+        rightAction={
+          <TouchableOpacity onPress={handleAddEntry} style={styles.addButton}>
+            <Text style={[styles.addButtonText, { color: ds.tone.accent }]}>+ New</Text>
+          </TouchableOpacity>
+        }
+      />
 
       {/* Statistics */}
       <View style={[styles.statsContainer, { backgroundColor: colors.card }]}>
@@ -373,7 +375,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingBottom: 100,
   },
   emptyState: {
     alignItems: "center",

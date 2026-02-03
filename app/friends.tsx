@@ -1,5 +1,5 @@
 // app/friends.tsx
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect, useState, useCallback } from "react";
 import { Pressable, ScrollView, Text, View, ActivityIndicator, RefreshControl, TextInput } from "react-native";
 import { useUser } from "../src/lib/stores/authStore";
@@ -22,6 +22,7 @@ import type { ID } from "../src/lib/socialModel";
 import type { UserProfile } from "../src/lib/sync/repositories/userProfileRepository";
 import { useThemeColors } from "../src/ui/theme";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { SyncStatusIndicator } from "../src/ui/components/SyncStatusIndicator";
 import { FR } from "../src/ui/forgerankStyle";
 
@@ -126,20 +127,11 @@ export default function FriendsScreen() {
 
   return (
     <ProtectedRoute>
-      <Stack.Screen
-        options={{
-          title: "Friends",
-          headerLeft: () => (
-            <Pressable onPress={() => router.back()} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
-              <Text style={{ color: c.text, fontWeight: "900" }}>Back</Text>
-            </Pressable>
-          ),
-        }}
-      />
+      <ScreenHeader title="Friends" />
 
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <ScrollView
-          contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 24 }}
+          contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 100 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

@@ -8,6 +8,7 @@ import { useThemeColors } from "../src/ui/theme";
 import { useSettings, updateSettings, usePersonality } from "../src/lib/stores";
 import { useAuthStore, useIsEmailVerified, useUser } from "../src/lib/stores/authStore";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { migrateLocalToCloud, importFromCSV } from "../src/lib/migration/dataMigrator";
 import type { MigrationProgress } from "../src/lib/migration/dataMigrator";
 import { WeightEntryModal } from "../src/ui/components/Settings/WeightEntryModal";
@@ -275,9 +276,9 @@ export default function SettingsScreen() {
 
   return (
     <ProtectedRoute>
+      <ScreenHeader title="Settings" />
       <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <ScrollView contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}>
-        <Text style={{ fontSize: 22, fontWeight: "900", color: c.text }}>Settings</Text>
+        <ScrollView contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 100 }}>
 
         {/* Avatar Section */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 16, gap: 12 }}>

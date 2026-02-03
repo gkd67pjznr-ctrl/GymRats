@@ -93,7 +93,8 @@ export function getRankFromE1RMKg(e1rmKg: number, thresholdsKg: number[]) {
  */
 export function buildAllThresholds(tops: VerifiedTop[], cfg: RankConfig = DEFAULT_RANK_CONFIG) {
   const map: Record<string, number[]> = {};
-  for (const t of tops) map[t.liftId] = buildRankThresholdsKg(t.topE1RMKg, cfg);
+  if (!tops) return map;
+  for (const t of tops) map[t.exerciseId] = buildRankThresholdsKg(t.topE1RMKg, cfg);
   return map;
 }
 

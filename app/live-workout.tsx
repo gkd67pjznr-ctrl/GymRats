@@ -423,6 +423,15 @@ export default function LiveWorkout() {
     }));
   }, [pickerState.selectedExerciseId, pickerState.exerciseBlocks]);
 
+  // Sync sets and done state to persisted store so finishWorkout can read them
+  useEffect(() => {
+    updateCurrentSession((s: any) => ({
+      ...s,
+      sets: session.sets,
+      doneBySetId: session.doneBySetId,
+    }));
+  }, [session.sets, session.doneBySetId]);
+
   // Auto-fill weight/reps from last workout when exercise changes
   useEffect(() => {
     if (pickerState.selectedExerciseId && syncQuickAddToExercise) {
@@ -430,30 +439,44 @@ export default function LiveWorkout() {
     }
   }, [pickerState.selectedExerciseId, syncQuickAddToExercise]);
 
-  // Add set to the workout
+  // Add set row to the workout (no cue/rest timer - those fire on checkmark)
   function addSetInternal(exerciseId: string, source: "quick" | "block") {
-    const result = session.addSet(exerciseId);
-    orchestrator.addSetForExercise(exerciseId, result.weightLb, result.reps);
+    session.addSet(exerciseId);
 
     if (source === "quick") {
       pickerState.setSelectedExerciseId(exerciseId);
     }
+  }
 
-    // Request notification permission on first rest timer use (contextual permission request)
-    if (!notificationPermissionRequestedRef.current) {
-      requestNotificationPermission().then((granted) => {
-        if (granted) {
-          console.log('Notification permission granted');
-        } else {
-          console.log('Notification permission denied');
-        }
-      });
-      notificationPermissionRequestedRef.current = true;
+  // Handle checkmark press: trigger cue/PR detection + rest timer
+  function handleToggleDone(setId: string) {
+    const wasDone = session.isDone(setId);
+    session.toggleDone(setId);
+
+    // Only trigger cue + rest timer when marking as done (not when unchecking)
+    if (!wasDone) {
+      const set = session.sets.find(s => s.id === setId);
+      if (set) {
+        const weightLb = session.kgToLb(set.weightKg);
+        orchestrator.addSetForExercise(set.exerciseId, weightLb, set.reps);
+      }
+
+      // Request notification permission on first rest timer use
+      if (!notificationPermissionRequestedRef.current) {
+        requestNotificationPermission().then((granted) => {
+          if (granted) {
+            console.log('Notification permission granted');
+          } else {
+            console.log('Notification permission denied');
+          }
+        });
+        notificationPermissionRequestedRef.current = true;
+      }
+
+      // Record rest start time and show rest timer
+      setRestStartTime(Date.now());
+      setRestVisible(true);
     }
-
-    // Record rest start time
-    setRestStartTime(Date.now());
-    setRestVisible(true);
   }
 
   const addSet = () => addSetInternal(pickerState.selectedExerciseId, "quick");
@@ -633,7 +656,7 @@ export default function LiveWorkout() {
               getPreviousSet={getPreviousSet}
               onAddSet={() => addSetForExercise(exerciseId)}
               onDeleteSet={session.deleteSet}
-              onToggleDone={session.toggleDone}
+              onToggleDone={handleToggleDone}
               onWeightChange={session.setWeightForSet}
               onRepsChange={session.setRepsForSet}
               isDone={session.isDone}

@@ -4,6 +4,7 @@
 import { supabase, isSupabasePlaceholder } from '../../supabase/client';
 import type { WorkoutSession } from '../../workoutModel';
 import type { DatabaseWorkout, DatabaseWorkoutInsert, DatabaseWorkoutUpdate } from '../../supabase/types';
+import { isValidUUID } from '../../uid';
 import { RealtimeChannel } from '@supabase/supabase-js';
 declare const __DEV__: boolean | undefined;
 
@@ -37,14 +38,18 @@ export interface WorkoutRepository {
  * Convert WorkoutSession to database insert format
  */
 function toDatabaseInsert(workout: WorkoutSession, userId: string): DatabaseWorkoutInsert {
+  // Validate foreign key IDs - null out non-UUID values from legacy uid() format
+  const routineId = workout.routineId && isValidUUID(workout.routineId) ? workout.routineId : null;
+  const planId = workout.planId && isValidUUID(workout.planId) ? workout.planId : null;
+
   return {
     user_id: userId,
     started_at: workout.startedAtMs,
     ended_at: workout.endedAtMs,
     sets: workout.sets,
-    routine_id: workout.routineId ?? null,
+    routine_id: routineId,
     routine_name: workout.routineName ?? null,
-    plan_id: workout.planId ?? null,
+    plan_id: planId,
     completion_pct: workout.completionPct ?? null,
   };
 }

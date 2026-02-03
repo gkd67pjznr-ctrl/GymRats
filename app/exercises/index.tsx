@@ -1,5 +1,6 @@
 import { ScrollView, Text, View } from "react-native";
 import { useThemeColors } from "../../src/ui/theme";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 import { EXERCISES_V1 } from "../../src/data/exercises";
 
 export default function ExercisesHome() {
@@ -7,8 +8,8 @@ export default function ExercisesHome() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 40 }}>
-        <Text style={{ color: c.text, fontSize: 22, fontWeight: "900" }}>Exercise Database</Text>
+      <ScreenHeader title="Exercise Database" />
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 100 }}>
         <Text style={{ color: c.muted }}>Scaffold. Next: search, filters, details, add custom exercises.</Text>
 
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12, gap: 6 }}>

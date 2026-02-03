@@ -5,6 +5,7 @@ import { getPlanCountByCategory } from "../../src/lib/premadePlans/store";
 import { makeDesignSystem } from "../../src/ui/designSystem";
 import { FR } from "../../src/ui/forgerankStyle";
 import { useThemeColors, useThemeRadius } from "../../src/ui/theme";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 
 /**
  * Browse Plans - Category Selection
@@ -21,10 +22,10 @@ export default function BrowsePlans() {
   
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3 }}>
+      <ScreenHeader title="Browse Plans" />
+      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3, paddingBottom: 100 }}>
         {/* Header */}
         <View style={{ gap: FR.space.x2 }}>
-          <Text style={{ color: c.text, ...FR.type.h1 }}>Browse Plans</Text>
           <Text style={{ color: c.muted, ...FR.type.sub }}>
             Choose a category to find the perfect workout plan
           </Text>

@@ -5,6 +5,7 @@ import { uid, type Routine } from "../../src/lib/routinesModel";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { upsertRoutine } from "../../src/lib/stores";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 
 const PRESET_NAMES = ["Push Day", "Pull Day", "Leg Day", "Upper", "Lower", "Full Body"];
 
@@ -27,8 +28,8 @@ export default function CreateRoutine() {
 
   return (
     <ProtectedRoute>
+      <ScreenHeader title="Create Routine" />
       <View style={{ flex: 1, backgroundColor: c.bg, padding: 16, gap: 12 }}>
-      <Text style={{ color: c.text, fontSize: 22, fontWeight: "900" }}>Create Routine</Text>
       <Text style={{ color: c.muted }}>
         Quick-create with a preset name (we’ll add full text input next).
       </Text>

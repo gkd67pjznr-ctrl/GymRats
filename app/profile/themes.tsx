@@ -3,10 +3,11 @@
 
 import { useState, useEffect } from "react";
 import { View, Text, Pressable, Alert, ScrollView, Image } from "react-native";
-import { useRouter, Stack, Link } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import { useThemeColors } from "@/src/ui/theme";
 import { useThemeStore, useActivePalette } from "@/src/lib/stores/themeStore";
 import { ProtectedRoute } from "@/src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "@/src/ui/components/ScreenHeader";
 import { ThemePalette } from "@/src/lib/themeDatabase";
 import { ThemePreview } from "@/src/ui/components/ThemePreview";
 
@@ -197,16 +198,7 @@ export default function ThemeSelectionScreen() {
 
   return (
     <ProtectedRoute>
-      <Stack.Screen
-        options={{
-          title: "Themes",
-          headerLeft: () => (
-            <Pressable onPress={() => router.back()} style={{ paddingHorizontal: 8, paddingVertical: 4 }}>
-              <Text style={{ color: c.text, fontWeight: "900" }}>Back</Text>
-            </Pressable>
-          ),
-        }}
-      />
+      <ScreenHeader title="App Themes" />
 
       <ScrollView
         style={{ flex: 1, backgroundColor: c.bg }}

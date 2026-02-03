@@ -6,6 +6,7 @@ import { useThemeColors } from "../src/ui/theme";
 import { useWorkoutSessions } from "../src/lib/stores";
 import { durationMs, formatDateShort, formatTimeShort, formatDuration } from "../src/lib/workoutModel";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
+import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 
 export default function History() {
   const c = useThemeColors();
@@ -36,8 +37,8 @@ export default function History() {
   return (
     <ProtectedRoute>
       <View style={{ flex: 1, backgroundColor: c.bg }}>
+        <ScreenHeader title="History" />
         <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 40 }}>
-        <Text style={{ color: c.text, fontSize: 22, fontWeight: "900" }}>History</Text>
 
         {sessions.length === 0 ? (
           <Text style={{ color: c.muted }}>No workouts logged yet. Finish a workout to save it.</Text>

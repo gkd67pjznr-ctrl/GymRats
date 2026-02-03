@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { EXERCISES_V1 } from "@/src/data/exercises";
+import { getPopularExercises } from "@/src/data/exerciseDatabase";
 import type { WorkoutPlan } from "@/src/lib/workoutPlanModel";
 
 export type PickerMode = null | "changeSelected" | "addBlock";
@@ -61,7 +61,7 @@ export function useExercisePickerState({
     if (currentPlannedExerciseId) {
       return currentPlannedExerciseId;
     }
-    return EXERCISES_V1[0]?.id ?? "bench";
+    return getPopularExercises()[0]?.id ?? "Barbell_Bench_Press_-_Medium_Grip";
   });
 
   // Initialize exercise blocks from persisted state, plan, or empty
@@ -91,12 +91,8 @@ export function useExercisePickerState({
     setExerciseBlocks((prev) => (prev.length ? prev : plannedExerciseIds.slice()));
   }, [planMode, plannedExerciseIds]);
 
-  // Open picker to add an exercise to the block (free workout mode only)
+  // Open picker to add an exercise to the block
   const openPickerToAdd = () => {
-    if (planMode) {
-      if (__DEV__) console.log("Cannot add exercises during a planned workout");
-      return;
-    }
     setPickerMode("addBlock");
   };
 
