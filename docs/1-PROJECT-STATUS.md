@@ -56,6 +56,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - Rest timer with haptic notifications
 - PR detection (weight, rep, e1RM) with toast notifications
 - Exercise blocks from routines
+- **Input Polish:** Custom numeric keypad, +/- steppers with configurable increments (2.5/5/10/45 lb), weight presets (135-405 lb), rep presets (5-15), auto-fill from previous sets, plate calculator
 
 ### History & Tracking
 - Full workout history list
@@ -171,7 +172,6 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 |---|------|-------------|
 | 7 | Push Notifications | Social activity, milestones |
 | 8 | Protected Routes | Authentication guards |
-| 9 | Input Polish | Number pad, steppers, auto-fill |
 
 ---
 
@@ -213,6 +213,10 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ## Recent Updates (Last 30 Days)
 
 ### 2026-02-03
+- **REBRAND: Forgerank → GymRats** - Complete app rename
+  - App name: GymRats, slug: gymrats, scheme: gymrats://
+  - Scoring feature: ForgeRank → GymRank
+  - 180+ files updated across codebase and documentation
 - **Workout Drawer Phase 2** - Rest timer and PR cue integration
   - Lifted rest timer state to `workoutDrawerStore` (persists across collapse/expand)
   - Added compact circular timer display on `DrawerEdge` when collapsed
@@ -220,6 +224,16 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
   - Added PR cue infrastructure: `pendingCue`, `setPendingCue()`, `clearPendingCue()`
   - Glowing star indicator on edge when PR pending
   - 26 tests passing (11 new tests)
+- **Avatar Customization UI Complete** - Full implementation of art style and cosmetics UI
+  - Created `ArtStylePickerModal` with 4 art styles (Bitmoji, Pixel, Retro, 3D Low-Poly)
+  - Created `AvatarCosmeticsModal` with Hair/Outfit/Accessories tabs and token balance
+  - Created `CosmeticItemCard` with rarity badges, status indicators, level requirements
+  - Created `CosmeticItemGrid` with category filtering and sorting (equipped → owned → cost)
+  - Updated `AvatarScreen` to use new modals instead of "Coming Soon" alerts
+  - Purchase flow with confirmation, token deduction, and auto-equip
+- **Input Polish Verified Complete** - Custom numeric keypad, steppers, presets, plate calculator
+- **Regional Leaderboards** - User location support with zip code → region mapping
+- **Global Top Bar** - Notification center with badge indicators
 - **Ranks Tab Complete** - Full implementation of comprehensive ranking system
   - Created `app/(tabs)/ranks.tsx` with My Ranks and Leaderboards sub-tabs
   - Built `ExerciseRankCard` with expandable inline cards showing rank badge, progress bar, sparkline
@@ -329,8 +343,8 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 ## Top 3 Priorities
 
-1. **Regional Leaderboards** - Implement zip code → region mapping and regional leaderboard filtering
-2. **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations
+1. **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations
+2. **Real-time Presence** - Supabase subscriptions for hangout room presence
 3. **Push Notifications** - Social activity alerts, milestone notifications, workout reminders
 
 ---
