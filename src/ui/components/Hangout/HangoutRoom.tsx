@@ -1,7 +1,7 @@
 // src/ui/components/Hangout/HangoutRoom.tsx
 // Main hangout room view component
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { makeDesignSystem } from "../../designSystem";
 import { useThemeColors } from "../../theme";
@@ -11,8 +11,9 @@ import { FriendAvatar } from "./FriendAvatar";
 import { RoomDecoration } from "./RoomDecoration";
 import { CreateRoomModal } from "./CreateRoomModal";
 import { DecorationPicker } from "./DecorationPicker";
-import { subscribeToRoomPresence, subscribeToRoomDecorations } from "../../../lib/hangout/presenceTracker";
-import type { HangoutRoom } from "../../../lib/hangout/hangoutTypes";
+import { subscribeToRoomDecorations } from "../../../lib/hangout/presenceTracker";
+import { joinHangoutRoom, leaveHangoutRoom, realtimePresence } from "../../../lib/hangout/realtimePresence";
+import type { HangoutRoom as HangoutRoomType, PresenceEvent } from "../../../lib/hangout/hangoutTypes";
 
 interface HangoutRoomProps {
   roomId?: string;
@@ -35,10 +36,27 @@ export function HangoutRoom(props: HangoutRoomProps) {
   const createRoom = useHangoutStore((state) => state.createRoom);
   const loading = useHangoutStore((state) => state.loading);
 
-  const [cleanupFunctions, setCleanupFunctions] = useState<(() => void)[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDecorationPicker, setShowDecorationPicker] = useState(false);
+  const [onlineCount, setOnlineCount] = useState(0);
+  const [recentJoin, setRecentJoin] = useState<string | null>(null);
   const addRoomDecoration = useHangoutStore((state) => state.addRoomDecoration);
+
+  // Handle presence events (join/leave)
+  const handlePresenceEvent = useCallback((event: PresenceEvent) => {
+    if (__DEV__) {
+      console.log('[HangoutRoom] Presence event:', event.type, event.userId);
+    }
+
+    if (event.type === 'join') {
+      // Show join notification briefly
+      setRecentJoin(event.presence.displayName || event.userId);
+      setTimeout(() => setRecentJoin(null), 3000);
+    }
+
+    // Update online count
+    setOnlineCount(realtimePresence.getOnlineCount());
+  }, []);
 
   // Load room data
   useEffect(() => {
@@ -53,30 +71,39 @@ export function HangoutRoom(props: HangoutRoomProps) {
     loadRoomData();
   }, [roomId, user, loadRoom, loadUserRoom]);
 
-  // Setup real-time subscriptions
+  // Join real-time presence when room is loaded
   useEffect(() => {
-    if (currentRoom?.id) {
-      // Subscribe to presence updates
-      const presenceCleanup = subscribeToRoomPresence(currentRoom.id);
+    if (!currentRoom?.id || !user) return;
 
-      // Subscribe to decoration updates
-      const decorationCleanup = subscribeToRoomDecorations(currentRoom.id);
+    let decorationCleanup: (() => void) | null = null;
 
-      // Store cleanup functions
-      setCleanupFunctions([presenceCleanup, decorationCleanup]);
+    const joinRoom = async () => {
+      // Join real-time presence channel
+      await joinHangoutRoom(
+        currentRoom.id,
+        user.id,
+        {
+          displayName: user.displayName,
+          avatarUrl: user.avatarUrl,
+        },
+        handlePresenceEvent
+      );
 
-      // Cleanup on unmount
-      return () => {
-        presenceCleanup();
-        decorationCleanup();
-      };
-    }
+      // Update online count
+      setOnlineCount(realtimePresence.getOnlineCount());
 
-    return () => {
-      // Cleanup any existing subscriptions
-      cleanupFunctions.forEach(cleanup => cleanup());
+      // Subscribe to decoration updates (still uses postgres_changes)
+      decorationCleanup = subscribeToRoomDecorations(currentRoom.id);
     };
-  }, [currentRoom?.id]);
+
+    joinRoom();
+
+    // Cleanup on unmount
+    return () => {
+      leaveHangoutRoom();
+      decorationCleanup?.();
+    };
+  }, [currentRoom?.id, user, handlePresenceEvent]);
 
   // Get friends' presences (excluding current user)
   const friendPresences = userPresences.filter(
@@ -125,12 +152,29 @@ export function HangoutRoom(props: HangoutRoomProps) {
     <View style={[styles.container, { backgroundColor: getRoomBackgroundColor(currentRoom) }]}>
       {/* Room Header */}
       <View style={[styles.header, { backgroundColor: c.card }]}>
-        <Text style={[styles.roomName, { color: c.text }]}>
-          {currentRoom.name}
-        </Text>
-        <Text style={[styles.roomOwner, { color: c.muted }]}>
-          Owner: {currentRoom.ownerId === user?.id ? "You" : "Friend"}
-        </Text>
+        <View style={styles.headerRow}>
+          <View style={styles.headerLeft}>
+            <Text style={[styles.roomName, { color: c.text }]}>
+              {currentRoom.name}
+            </Text>
+            <Text style={[styles.roomOwner, { color: c.muted }]}>
+              Owner: {currentRoom.ownerId === user?.id ? "You" : "Friend"}
+            </Text>
+          </View>
+          <View style={[styles.onlineBadge, { backgroundColor: ds.tone.accent + '20' }]}>
+            <View style={[styles.onlineDot, { backgroundColor: '#22c55e' }]} />
+            <Text style={[styles.onlineCount, { color: c.text }]}>
+              {onlineCount} online
+            </Text>
+          </View>
+        </View>
+        {recentJoin && (
+          <View style={[styles.joinNotification, { backgroundColor: ds.tone.accent + '20' }]}>
+            <Text style={[styles.joinText, { color: ds.tone.accent }]}>
+              {recentJoin} joined the room
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Room Content */}
@@ -243,7 +287,7 @@ export function HangoutRoom(props: HangoutRoomProps) {
 }
 
 // Helper function to get room background color
-function getRoomBackgroundColor(room: HangoutRoom): string {
+function getRoomBackgroundColor(room: HangoutRoomType): string {
   // Return theme-based background color
   const themeColors: Record<string, string> = {
     default: "#0a0a0a",
@@ -279,6 +323,14 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
   },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  headerLeft: {
+    flex: 1,
+  },
   roomName: {
     fontSize: 20,
     fontWeight: "900",
@@ -286,6 +338,33 @@ const styles = StyleSheet.create({
   },
   roomOwner: {
     fontSize: 14,
+  },
+  onlineBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 6,
+  },
+  onlineDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  onlineCount: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  joinNotification: {
+    marginTop: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  joinText: {
+    fontSize: 13,
+    fontWeight: "600",
   },
   roomContent: {
     flex: 1,

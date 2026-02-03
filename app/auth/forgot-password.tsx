@@ -3,15 +3,14 @@
 
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import { Pressable, ScrollView, Text, View, ActivityIndicator, TextInput } from "react-native";
+import { Pressable, View, ActivityIndicator, TextInput } from "react-native";
 import { useAuthStore } from "../../src/lib/stores/authStore";
-import { useThemeColors } from "../../src/ui/theme";
+import { Surface, Text, Button, Card, surface, text, border, corners, space } from "@/src/design";
 import { KeyboardAwareScrollView } from "../../src/ui/components/KeyboardAwareScrollView";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
 export default function ForgotPasswordScreen() {
-  const c = useThemeColors();
   const router = useRouter();
   const { resetPassword, loading, error, clearError } = useAuthStore();
 
@@ -51,156 +50,119 @@ export default function ForgotPasswordScreen() {
   // Success state
   if (formState === "success") {
     return (
-      <View style={{ flex: 1, backgroundColor: c.bg, justifyContent: "center", alignItems: "center", padding: 24 }}>
+      <Surface elevation="base" style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: space.sectionMd }}>
         <View style={{ maxWidth: 400, width: "100%", gap: 20, alignItems: "center" }}>
-          <View
+          <Card
             style={{
               width: 80,
               height: 80,
               borderRadius: 40,
-              backgroundColor: c.card,
-              borderWidth: 2,
-              borderColor: c.border,
               justifyContent: "center",
               alignItems: "center",
             }}
           >
             <Text style={{ fontSize: 40 }}>✉️</Text>
-          </View>
+          </Card>
 
-          <Text style={{ color: c.text, fontSize: 24, fontWeight: "900", textAlign: "center" }}>
-            Check your email
+          <Text variant="h2" align="center">Check your email</Text>
+
+          <Text variant="body" color="muted" align="center" style={{ lineHeight: 24 }}>
+            We've sent a password reset link to{"\n"}
+            <Text variant="body" bold>{email}</Text>
           </Text>
 
-          <Text style={{ color: c.muted, fontSize: 16, textAlign: "center", lineHeight: 24 }}>
-            We\'ve sent a password reset link to{"\n"}
-            <Text style={{ color: c.text, fontWeight: "700" }}>{email}</Text>
+          <Text variant="bodySmall" color="muted" align="center" style={{ lineHeight: 20 }}>
+            The link will expire in 24 hours. If you don't see it, check your spam folder.
           </Text>
 
-          <Text style={{ color: c.muted, fontSize: 14, textAlign: "center", lineHeight: 20 }}>
-            The link will expire in 24 hours. If you don\'t see it, check your spam folder.
-          </Text>
-
-          <Pressable
+          <Button
+            label="Back to Login"
             onPress={() => router.replace("/auth/login")}
-            style={{
-              marginTop: 20,
-              paddingVertical: 14,
-              paddingHorizontal: 24,
-              borderRadius: 12,
-              backgroundColor: c.card,
-              borderWidth: 1,
-              borderColor: c.border,
-              width: "100%",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Back to Login</Text>
-          </Pressable>
+            variant="secondary"
+            style={{ marginTop: 20, width: "100%" }}
+          />
         </View>
-      </View>
+      </Surface>
     );
   }
 
   return (
     <KeyboardAwareScrollView
-      style={{ flex: 1, backgroundColor: c.bg }}
-      contentContainerStyle={{ padding: 24, justifyContent: "center" }}
+      style={{ flex: 1, backgroundColor: surface.base }}
+      contentContainerStyle={{ padding: space.sectionMd, justifyContent: "center" }}
     >
-      <View style={{ maxWidth: 400, width: "100%", alignSelf: "center", gap: 24 }}>
+      <View style={{ maxWidth: 400, width: "100%", alignSelf: "center", gap: space.sectionMd }}>
         {/* Header */}
-        <View style={{ gap: 8 }}>
-          <Text style={{ color: c.text, fontSize: 32, fontWeight: "900" }}>
-            Forgot Password?
-          </Text>
-          <Text style={{ color: c.muted, fontSize: 16, lineHeight: 24 }}>
-            Enter your email address and we\'ll send you a link to reset your password.
+        <View style={{ gap: space.componentSm }}>
+          <Text variant="h1">Forgot Password?</Text>
+          <Text variant="body" color="secondary" style={{ lineHeight: 24 }}>
+            Enter your email address and we'll send you a link to reset your password.
           </Text>
         </View>
 
         {/* Error display */}
         {(formError || error) && (
-          <View
+          <Surface
+            elevation="raised"
+            radius="input"
             style={{
-              padding: 12,
-              borderRadius: 12,
-              backgroundColor: "#fee2e2",
+              padding: space.componentMd,
+              backgroundColor: `${text.danger}15`,
               borderWidth: 1,
-              borderColor: "#fca5a5",
+              borderColor: text.danger,
             }}
           >
-            <Text style={{ color: "#991b1b", fontSize: 14, fontWeight: "700" }}>
+            <Text variant="bodySmall" color="danger" bold>
               {formError || error}
             </Text>
-          </View>
+          </Surface>
         )}
+
         {/* Email input */}
-        <View style={{ gap: 8 }}>
-          <Text style={{ color: c.text, fontSize: 14, fontWeight: "700" }}>Email</Text>
+        <View style={{ gap: space.componentSm }}>
+          <Text variant="label">Email</Text>
           <TextInput
             value={email}
             onChangeText={setEmail}
             placeholder="Enter your email"
-            placeholderTextColor={c.muted}
+            placeholderTextColor={text.muted}
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="email-address"
             textContentType="emailAddress"
             style={{
-              backgroundColor: c.card,
+              backgroundColor: surface.raised,
               borderWidth: 1,
-              borderColor: c.border,
-              borderRadius: 12,
-              paddingHorizontal: 16,
+              borderColor: border.default,
+              borderRadius: corners.input,
+              paddingHorizontal: space.componentLg,
               paddingVertical: 14,
-              color: c.text,
+              color: text.primary,
               fontSize: 16,
             }}
           />
-          <Text
-            style={{
-              color: c.muted,
-              fontSize: 12,
-              marginTop: 4,
-            }}
-          >
-            We\'ll send a reset link to this address
+          <Text variant="caption" color="muted" style={{ marginTop: 4 }}>
+            We'll send a reset link to this address
           </Text>
         </View>
 
         {/* Submit button */}
-        <Pressable
+        <Button
+          label={formState === "loading" || loading ? "Sending..." : "Send Reset Link"}
           onPress={handleSubmit}
           disabled={formState === "loading" || loading}
-          style={{
-            paddingVertical: 16,
-            paddingHorizontal: 24,
-            borderRadius: 12,
-            backgroundColor: c.card,
-            borderWidth: 1,
-            borderColor: c.border,
-            alignItems: "center",
-            opacity: (formState === "loading" || loading) ? 0.5 : 1,
-          }}
-        >
-          {formState === "loading" || loading ? (
-            <ActivityIndicator color={c.text} />
-          ) : (
-            <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>
-              Send Reset Link
-            </Text>
-          )}
-        </Pressable>
+          variant="primary"
+        />
 
         {/* Back to login */}
         <Pressable
           onPress={() => router.back()}
           style={{
-            paddingVertical: 12,
+            paddingVertical: space.componentMd,
             alignItems: "center",
           }}
         >
-          <Text style={{ color: c.muted, fontWeight: "700" }}>Back to Login</Text>
+          <Text variant="label" color="muted">Back to Login</Text>
         </Pressable>
       </View>
     </KeyboardAwareScrollView>

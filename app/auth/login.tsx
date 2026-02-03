@@ -1,9 +1,9 @@
 // app/auth/login.tsx
 // Login screen with email, password, and OAuth (Google & Apple)
 import { useState, useEffect, useRef } from "react";
-import { View, Text, TextInput, Pressable, Alert } from "react-native";
+import { View, TextInput, Pressable, Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { useThemeColors } from "@/src/ui/theme";
+import { Surface, Text, Button, surface, text, border, corners, space } from "@/src/design";
 import { useAuth, useAuthLoading, useAuthError, useUser } from "@/src/lib/stores";
 import { useAuthStore } from "@/src/lib/stores/authStore";
 import { OAuthButton } from "@/src/ui/components/OAuthButton";
@@ -32,7 +32,6 @@ interface ValidationError {
  */
 export default function LoginScreen() {
   const router = useRouter();
-  const c = useThemeColors();
   const authStore = useAuth();
   const user = useUser();
   const loading = useAuthLoading();
@@ -190,9 +189,9 @@ export default function LoginScreen() {
    */
   function getInputBorderColor(field: keyof ValidationError): string {
     if (validationError[field]) {
-      return c.danger;
+      return text.danger;
     }
-    return c.border;
+    return border.default;
   }
 
   /**
@@ -224,28 +223,26 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
+    <Surface elevation="base" style={{ flex: 1 }}>
       <KeyboardAwareScrollView
         contentContainerStyle={{
-          padding: 24,
-          gap: 24,
+          padding: space.sectionMd,
+          gap: space.sectionMd,
           paddingBottom: 40,
           justifyContent: "center",
           minHeight: "100%",
         }}
       >
         {/* Header */}
-        <View style={{ gap: 8 }}>
-          <Text style={{ fontSize: 32, fontWeight: "900", color: c.text }}>
-            Welcome Back
-          </Text>
-          <Text style={{ fontSize: 16, color: c.muted }}>
+        <View style={{ gap: space.componentSm }}>
+          <Text variant="h1">Welcome Back</Text>
+          <Text variant="body" color="secondary">
             Sign in to continue your fitness journey
           </Text>
         </View>
 
         {/* OAuth Buttons */}
-        <View style={{ gap: 12 }}>
+        <View style={{ gap: space.componentMd }}>
           <OAuthButton
             provider="google"
             onPress={handleGoogleSignIn}
@@ -261,89 +258,80 @@ export default function LoginScreen() {
         </View>
 
         {/* Divider */}
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-          <View style={{ flex: 1, height: 1, backgroundColor: c.border }} />
-          <Text style={{ fontSize: 13, color: c.muted, fontWeight: "700" }}>
-            or sign in with email
-          </Text>
-          <View style={{ flex: 1, height: 1, backgroundColor: c.border }} />
+        <View style={{ flexDirection: "row", alignItems: "center", gap: space.componentMd }}>
+          <View style={{ flex: 1, height: 1, backgroundColor: border.default }} />
+          <Text variant="label" color="muted">or sign in with email</Text>
+          <View style={{ flex: 1, height: 1, backgroundColor: border.default }} />
         </View>
 
         {/* Form */}
-        <View style={{ gap: 16 }}>
+        <View style={{ gap: space.componentLg }}>
           {/* Email Input */}
-          <View style={{ gap: 8 }}>
-            <Text style={{ fontSize: 14, fontWeight: "700", color: c.text }}>
-              Email
-            </Text>
+          <View style={{ gap: space.componentSm }}>
+            <Text variant="label">Email</Text>
             <TextInput
               value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                // Clear error for this field when user starts typing
+              onChangeText={(inputText) => {
+                setEmail(inputText);
                 if (validationError.email) {
                   setValidationError((prev) => ({ ...prev, email: undefined }));
                 }
               }}
               placeholder="your@email.com"
-              placeholderTextColor={c.muted}
+              placeholderTextColor={text.muted}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="email-address"
               textContentType="emailAddress"
               style={{
-                backgroundColor: c.card,
+                backgroundColor: surface.raised,
                 borderWidth: 1,
                 borderColor: getInputBorderColor("email"),
-                borderRadius: 12,
-                padding: 16,
+                borderRadius: corners.input,
+                padding: space.componentLg,
                 fontSize: 16,
-                color: c.text,
+                color: text.primary,
               }}
             />
             {validationError.email && (
-              <Text style={{ fontSize: 12, color: c.danger, marginLeft: 4 }}>
+              <Text variant="caption" color="danger" style={{ marginLeft: 4 }}>
                 {validationError.email}
               </Text>
             )}
           </View>
 
           {/* Password Input */}
-          <View style={{ gap: 8 }}>
+          <View style={{ gap: space.componentSm }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={{ fontSize: 14, fontWeight: "700", color: c.text }}>
-                Password
-              </Text>
+              <Text variant="label">Password</Text>
               <Pressable onPress={handleForgotPassword}>
-                <Text style={{ fontSize: 12, fontWeight: "700", color: "#4ECDC4" }}>
-                  Forgot Password?
-                </Text>
+                <Text variant="caption" color="accent" bold>Forgot Password?</Text>
               </Pressable>
             </View>
             <View style={{ position: "relative" }}>
               <TextInput
                 value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
+                onChangeText={(inputText) => {
+                  setPassword(inputText);
                   if (validationError.password) {
                     setValidationError((prev) => ({ ...prev, password: undefined }));
                   }
                 }}
                 placeholder="Enter your password"
-                placeholderTextColor={c.muted}
+                placeholderTextColor={text.muted}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
                 textContentType="password"
                 style={{
-                  backgroundColor: c.card,
+                  backgroundColor: surface.raised,
                   borderWidth: 1,
                   borderColor: getInputBorderColor("password"),
-                  borderRadius: 12,
-                  padding: 16,
+                  borderRadius: corners.input,
+                  padding: space.componentLg,
                   fontSize: 16,
-                  color: c.text,
-                  paddingRight: 60, // Space for show/hide button
+                  color: text.primary,
+                  paddingRight: 60,
                 }}
               />
               <Pressable
@@ -355,13 +343,11 @@ export default function LoginScreen() {
                   padding: 8,
                 }}
               >
-                <Text style={{ fontSize: 14, fontWeight: "700", color: c.primary }}>
-                  {showPassword ? "Hide" : "Show"}
-                </Text>
+                <Text variant="label" color="accent">{showPassword ? "Hide" : "Show"}</Text>
               </Pressable>
             </View>
             {validationError.password && (
-              <Text style={{ fontSize: 12, color: c.danger, marginLeft: 4 }}>
+              <Text variant="caption" color="danger" style={{ marginLeft: 4 }}>
                 {validationError.password}
               </Text>
             )}
@@ -369,41 +355,34 @@ export default function LoginScreen() {
 
           {/* Auth Error Display */}
           {authError && (
-            <View
+            <Surface
+              elevation="raised"
+              radius="input"
               style={{
-                backgroundColor: `${c.danger}15`,
+                backgroundColor: `${text.danger}15`,
                 borderWidth: 1,
-                borderColor: c.danger,
-                borderRadius: 12,
-                padding: 12,
+                borderColor: text.danger,
+                padding: space.componentMd,
               }}
             >
-              <Text style={{ fontSize: 14, color: c.danger }}>{authError}</Text>
-            </View>
+              <Text variant="bodySmall" color="danger">{authError}</Text>
+            </Surface>
           )}
 
           {/* Login Button */}
-          <Pressable
+          <Button
+            label={loading ? "Signing In..." : "Sign In"}
             onPress={handleLogin}
             disabled={loading}
-            style={{
-              backgroundColor: "#4ECDC4",
-              borderRadius: 12,
-              padding: 16,
-              alignItems: "center",
-              opacity: loading ? 0.6 : 1,
-              marginTop: 8,
-            }}
-          >
-            <Text style={{ fontSize: 16, fontWeight: "900", color: "#ffffff" }}>
-              {loading ? "Signing In..." : "Sign In"}
-            </Text>
-          </Pressable>
+            variant="primary"
+            style={{ marginTop: space.componentSm }}
+          />
         </View>
 
         {/* Dev Login Button (DEV ONLY) */}
         {__DEV__ && (
-          <Pressable
+          <Button
+            label="👨‍💻 Dev Login (Quick)"
             onPress={async () => {
               const result = await authStore.devLogin();
               if (result.success) {
@@ -412,29 +391,18 @@ export default function LoginScreen() {
                 Alert.alert("Dev Login Error", result.error || "Failed to login");
               }
             }}
-            style={{
-              backgroundColor: "#FF6B6B",
-              borderRadius: 12,
-              padding: 12,
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontSize: 14, fontWeight: "900", color: "#ffffff" }}>
-              👨‍💻 Dev Login (Quick)
-            </Text>
-          </Pressable>
+            variant="danger"
+          />
         )}
 
         {/* Signup Link */}
         <View style={{ flexDirection: "row", justifyContent: "center", gap: 4 }}>
-          <Text style={{ fontSize: 14, color: c.muted }}>Don't have an account?</Text>
+          <Text variant="bodySmall" color="muted">Don't have an account?</Text>
           <Pressable onPress={navigateToSignup}>
-            <Text style={{ fontSize: 14, fontWeight: "700", color: "#4ECDC4" }}>
-              Sign Up
-            </Text>
+            <Text variant="bodySmall" color="accent" bold>Sign Up</Text>
           </Pressable>
         </View>
       </KeyboardAwareScrollView>
-    </View>
+    </Surface>
   );
 }

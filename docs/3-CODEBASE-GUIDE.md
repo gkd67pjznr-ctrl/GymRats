@@ -1,6 +1,6 @@
 # CODEBASE GUIDE
 
-**Last Updated:** 2026-02-02
+**Last Updated:** 2026-02-03
 **Purpose:** Architecture overview, technology stack, and development patterns
 
 ---
@@ -77,7 +77,7 @@ gymrats-glm/
 │   │   ├── forgeLab/           # Analytics system
 │   │   ├── forgeDNA/           # Training identity visualization
 │   │   ├── avatar/             # Avatar system
-│   │   ├── hangout/            # Hangout room
+│   │   ├── hangout/            # Hangout room + real-time presence
 │   │   ├── gamification/       # XP, levels, milestones
 │   │   ├── workoutModel.ts     # Core workout types
 │   │   ├── gymratsScoring.ts # Scoring algorithm
@@ -161,7 +161,7 @@ export const useMyStore = create<MyState>()(
 | `buddyStore` | AI buddy state | Personalities, IAP, triggers |
 | `journalStore` | Training journal | Entries, mood, energy |
 | `avatarStore` | Avatar system | Growth, customization |
-| `hangoutStore` | Hangout room | Presence, decorations |
+| `hangoutStore` | Hangout room | Presence, decorations, real-time |
 | `forgeLabStore` | Analytics data | Calculations, caching |
 
 ### Store Patterns

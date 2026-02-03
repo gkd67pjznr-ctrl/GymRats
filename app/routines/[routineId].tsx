@@ -1,6 +1,6 @@
-import { View, Text, Pressable, ScrollView, Alert } from "react-native";
+import { View, Pressable, ScrollView, Alert } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { useThemeColors } from "../../src/ui/theme";
+import { Surface, Text, Card, Button, text, space, corners, border } from "@/src/design";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { deleteRoutine, upsertRoutine, useRoutine, clearCurrentSession, hasCurrentSession, ensureCurrentSession } from "../../src/lib/stores";
 import { setCurrentPlan } from "../../src/lib/workoutPlanStore";
@@ -28,7 +28,6 @@ function toPlannedExercise(rx: RoutineExercise) {
 }
 
 export default function RoutineDetail() {
-  const c = useThemeColors();
   const router = useRouter();
   const { routineId } = useLocalSearchParams<{ routineId: string }>();
 
@@ -37,9 +36,9 @@ export default function RoutineDetail() {
   if (!routine) {
     return (
       <ProtectedRoute>
-        <View style={{ flex: 1, backgroundColor: c.bg, padding: 16 }}>
-          <Text style={{ color: c.text, fontWeight: "900" }}>Routine not found.</Text>
-        </View>
+        <Surface elevation="base" style={{ flex: 1, padding: space.componentLg }}>
+          <Text variant="h3">Routine not found.</Text>
+        </Surface>
       </ProtectedRoute>
     );
   }
@@ -80,13 +79,13 @@ export default function RoutineDetail() {
       style={{
         paddingVertical: 10,
         paddingHorizontal: 12,
-        borderRadius: 12,
+        borderRadius: corners.button,
         borderWidth: 1,
-        borderColor: c.border,
-        backgroundColor: c.card,
+        borderColor: border.default,
+        backgroundColor: 'rgba(255,255,255,0.03)',
       }}
     >
-      <Text style={{ color: c.text, fontWeight: "900" }}>{p.label}</Text>
+      <Text variant="label">{p.label}</Text>
     </Pressable>
   );
 
@@ -143,62 +142,41 @@ export default function RoutineDetail() {
   return (
     <ProtectedRoute>
       <ScreenHeader title={routine?.name ?? "Routine"} />
-      <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 100 }}>
+      <Surface elevation="base" style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={{ padding: space.componentLg, gap: space.componentMd, paddingBottom: 100 }}>
 
         {/* Start Workout Button */}
-        <Pressable
+        <Button
+          label="Start Workout"
           onPress={handleStartWorkout}
-          style={{
-            paddingVertical: 14,
-            paddingHorizontal: 16,
-            borderRadius: 14,
-            backgroundColor: c.primary,
-            alignItems: "center",
-            borderWidth: 1,
-            borderColor: c.border,
-          }}
-        >
-          <Text style={{ color: "#fff", fontSize: 16, fontWeight: "900" }}>Start Workout</Text>
-        </Pressable>
+          variant="primary"
+        />
 
         <Link href={`/routines/${routine.id}/add-exercise`} asChild>
-          <Pressable
-            style={{
-              paddingVertical: 12,
-              paddingHorizontal: 14,
-              borderRadius: 14,
-              borderWidth: 1,
-              borderColor: c.border,
-              backgroundColor: c.card,
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ color: c.text, fontWeight: "900" }}>+ Add Exercise</Text>
+          <Pressable>
+            <Card style={{ paddingVertical: space.componentMd, paddingHorizontal: 14, alignItems: "center" }}>
+              <Text variant="h4">+ Add Exercise</Text>
+            </Card>
           </Pressable>
         </Link>
 
         <View style={{ gap: 10 }}>
           {routine.exercises.length === 0 ? (
-            <Text style={{ color: c.muted }}>No exercises yet. Add some.</Text>
+            <Text variant="body" color="muted">No exercises yet. Add some.</Text>
           ) : (
             routine.exercises.map((rx, i) => (
-              <View
+              <Card
                 key={rx.id}
                 style={{
-                  borderWidth: 1,
-                  borderColor: c.border,
-                  borderRadius: 14,
-                  backgroundColor: c.card,
-                  padding: 12,
-                  gap: 8,
+                  padding: space.componentMd,
+                  gap: space.componentSm,
                 }}
               >
-                <Text style={{ color: c.text, fontWeight: "900" }}>
+                <Text variant="h4">
                   {i + 1}. {nameForExercise(rx.exerciseId)}
                 </Text>
 
-                <Text style={{ color: c.muted }}>
+                <Text variant="bodySmall" color="muted">
                   Targets: {rx.targetSets ?? "—"} sets •{" "}
                   {rx.targetRepsMin ?? "—"}–{rx.targetRepsMax ?? "—"} reps
                 </Text>
@@ -208,16 +186,16 @@ export default function RoutineDetail() {
                   <Btn label="↓" onPress={() => move(i, 1)} />
                   <Btn label="Remove" onPress={() => removeAt(i)} />
                 </View>
-              </View>
+              </Card>
             ))
           )}
         </View>
 
         <Pressable onPress={nuke} style={{ marginTop: 10 }}>
-          <Text style={{ color: c.muted, fontWeight: "900" }}>Delete routine</Text>
+          <Text variant="label" color="muted">Delete routine</Text>
         </Pressable>
         </ScrollView>
-      </View>
+      </Surface>
     </ProtectedRoute>
   );
 }

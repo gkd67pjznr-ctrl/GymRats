@@ -115,6 +115,23 @@ Level 6: 2,000 XP
 
 ---
 
+### Done - Profile Stats Card (Enhanced 2026-02-03)
+- [x] GymRank score display with tier badge
+- [x] Total PRs count with type breakdown (weight/rep/e1RM)
+- [x] Top exercises by rank (configurable limit)
+- [x] Exercise rank badges with tier colors
+- [x] Lifetime stats (total sets, volume, workouts)
+- [x] Progress bar per exercise showing rank progression
+
+**Implementation:** `src/ui/components/Profile/ProfileStatsCard.tsx`
+
+**Key Data Sources:**
+- `useGymRank()` from userStatsStore - overall training score
+- `useLifetimeStats()` from userStatsStore - totalPRs, weightPRs, repPRs, e1rmPRs, totalSets, totalVolumeKg, totalWorkouts
+- `calculateProfileStats()` - exercise-specific ranks and best lifts
+
+---
+
 ### Done - Backend Integration
 - [x] Gamification repository (`gamificationRepository.ts`)
 - [x] Gamification store with sync

@@ -33,7 +33,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Social & Feed | 🔄 In Progress | 9/15 | Local complete, backend connected |
 | Gamification | ✅ Done | 12/12 | XP, levels, streaks, tokens, store |
 | Notifications | 🔄 In Progress | 2/5 | Rest timer + Global Top Bar complete |
-| UI & Design | 🔄 In Progress | 14/15 | Design system + screen migrations |
+| UI & Design | 🔄 In Progress | 15/15 | Design system + screen migrations complete |
 | UI Themes & Visual Style | 🔄 In Progress | 6/12 | Documentation complete |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
 | Onboarding | ✅ Done | 7/7 | Full flow implemented, debug reset available |
@@ -105,13 +105,14 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - Forge Tokens currency system
 - Cosmetic store for avatar items and room decorations
 
-### Unified User Statistics (NEW)
+### Unified User Statistics (ENHANCED 2026-02-03)
 - Single source of truth for all user stats (`userStatsStore`)
 - GymRank composite score (40% strength, 30% consistency, 20% progress, 10% variety)
 - Per-exercise stats with PR detection (weight, rep, e1RM)
 - Lifetime stats (volume, sets, workouts, PRs)
 - Avatar growth derived from unified stats
 - Automatic migration from legacy avatar store
+- **Profile Stats Card:** GymRank score display, PR breakdown (weight/rep/e1RM), top exercises by rank, lifetime totals
 
 ### Ranks Tab (NEW)
 - My Ranks sub-tab showing all logged exercises sorted by rank
@@ -158,7 +159,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | # | Task | Description |
 |---|------|-------------|
 | 1 | Forge Lab Charting | Victory-native charts implemented |
-| 2 | Profile Stats | Show user's ranks, PRs, streaks |
+| ~~2~~ | ~~Profile Stats~~ | ✅ Done - GymRank, PR breakdown, top exercises |
 | 3 | Avatar Completion | Finish growth and customization |
 | 4 | Hangout Room | Real-time presence and decorations |
 | 5 | Leaderboards | Friends comparison |
@@ -213,6 +214,25 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ## Recent Updates (Last 30 Days)
 
 ### 2026-02-03
+- **Shop UI Polish** - Complete redesign with new design system
+  - Purchase confirmation modal with cost breakdown
+  - Category tabs with icons
+  - Sort by rarity or cost
+  - Rarity indicator lines on item cards
+  - Filter by affordable/owned items with count display
+  - Auto-equip after purchase
+  - Haptic feedback on all interactions
+  - Full migration to new design system (gradients, semantic tokens)
+- **Real-time Presence System** - Complete implementation using Supabase Presence API
+  - Created `realtimePresence.ts` with `RealtimePresenceManager` class
+  - Uses Supabase Presence API for instant real-time updates (no database round-trips)
+  - Heartbeat mechanism (30s) with automatic stale detection (60s timeout)
+  - Online count badge in hangout room header with join notifications
+  - Workout activity updates showing current exercise name
+  - Created React hooks: `useRealtimePresence()`, `useWorkoutPresenceUpdater()`
+  - Updated `currentSessionStore` to update presence on workout start/end
+  - Updated `HangoutRoom` component with online count and join notifications
+  - Created module index for clean exports
 - **REBRAND: Forgerank → GymRats** - Complete app rename
   - App name: GymRats, slug: gymrats, scheme: gymrats://
   - Scoring feature: ForgeRank → GymRank
@@ -344,7 +364,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ## Top 3 Priorities
 
 1. **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations
-2. **Real-time Presence** - Supabase subscriptions for hangout room presence
+2. ✅ **Real-time Presence** - Supabase Presence API for hangout room (COMPLETE 2026-02-03)
 3. **Push Notifications** - Social activity alerts, milestone notifications, workout reminders
 
 ---

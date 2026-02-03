@@ -1,6 +1,6 @@
 # GYMRATS FEATURE MASTER
 
-**Last Updated:** 2026-02-02
+**Last Updated:** 2026-02-03
 **Version:** v0.4 (Post-merge)
 
 ---
@@ -24,7 +24,7 @@
 | [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 6/12 | [Details](../features/ui-themes/feature-ui-themes.md) |
 | [Backend & Sync](#backend--sync) | **Done** | 10/10 | [Details](../features/backend-sync/feature-backend.md) |
 | [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/onboarding/feature-onboarding.md) |
-| [Avatar & Hangout Room](#avatar--hangout-room) | In Progress | 8/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
+| [Avatar & Hangout Room](#avatar--hangout-room) | **Done** | 8/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
 | [Workout Replay](#workout-replay) | **Done** | 5/5 | [Details](../features/workout-replay/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | **Done** | 4/4 | [Details](../features/forge-dna/feature-forge-dna.md) |
 | [Forge Lab (Analytics)](#forge-lab-analytics) | **Done** | 6/6 | [Details](../features/forge-lab/feature-forge-lab.md) |

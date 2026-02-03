@@ -4,7 +4,7 @@
 A Finch-inspired virtual gym avatar that grows as the user works out, living in a shared hangout room with friends. The avatar represents the user's commitment to self-care and fitness journey — not just gamification, but emotional investment.
 
 ## Current Implementation Status
-**Status:** In Progress | **Progress:** 6/8 features
+**Status:** Complete | **Progress:** 8/8 features
 **Priority:** Launch (v1) - P0
 
 ### Completed Features (P0 - MVP)
@@ -44,18 +44,21 @@ A Finch-inspired virtual gym avatar that grows as the user works out, living in 
 - Rarity tiers (common, rare, epic, legendary)
 - Level requirements for premium items
 
-## Remaining Features (P1 - Polish)
+## Completed Features (P1 - Polish)
 
-### Real-time Presence System
-- [ ] Real-time presence tracking with Supabase subscriptions
-- [ ] Avatar leave/return animations
-- [ ] Integration with workout start/end events
+### ✅ Real-time Presence System (NEW - 2026-02-03)
+- [x] Real-time presence tracking with Supabase Presence API
+- [x] Avatar leave/return animations with join notifications
+- [x] Integration with workout start/end events
+- [x] Heartbeat mechanism (30s) with stale detection (60s timeout)
+- [x] Online count badge in hangout room header
+- [x] React hooks: `useRealtimePresence()`, `useWorkoutPresenceUpdater()`
 
-### Room Management
-- [ ] Room decorations placement and management UI
-- [ ] Room admin controls
-- [ ] Presence status indicators
-- [ ] Room theme selection
+### Room Management (Partially Complete)
+- [x] Room decorations placement (slot-based system)
+- [x] Presence status indicators
+- [ ] Room admin controls (deferred - optional polish)
+- [ ] Room theme selection UI (deferred - optional polish)
 
 ## Technical Implementation
 

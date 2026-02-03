@@ -89,8 +89,10 @@ Real-time social workout experience — see friends working out, join shared ses
 
 **Real-Time Infrastructure:**
 - Supabase Realtime channels for session state
-- Presence tracking via Supabase Presence
+- Presence tracking via Supabase Presence API (`src/lib/hangout/realtimePresence.ts`)
 - Optimize for low latency (sets appear within 1-2 seconds)
+- Heartbeat mechanism (30s) with stale detection (60s timeout)
+- React hooks: `useRealtimePresence()`, `useWorkoutPresenceUpdater()`
 
 **Session Model:**
 ```typescript

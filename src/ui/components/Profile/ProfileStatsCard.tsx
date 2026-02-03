@@ -2,28 +2,25 @@
  * ProfileStatsCard Component
  *
  * Displays comprehensive profile stats including:
+ * - GymRank score (overall training score)
  * - Exercise ranks with tier colors
  * - Personal Records (best lifts)
- * - PR counts
+ * - PR counts breakdown (weight, rep, e1RM)
  * - Top exercises by rank
  */
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { Link, type Href } from 'expo-router';
-import { makeDesignSystem } from '@/src/ui/designSystem';
+import { View, Text, StyleSheet } from 'react-native';
 import { useThemeColors } from '@/src/ui/theme';
 import {
   calculateProfileStats,
   getTopExercisesByRank,
   getExerciseDisplayName,
   getRankTierColor,
-  type ProfileStats,
   type RankTier,
 } from '@/src/lib/profile/profileStats';
 import { useWorkoutStore } from '@/src/lib/stores/workoutStore';
-import { useLifetimeStats } from '@/src/lib/stores/userStatsStore';
-import { kgToLb } from '@/src/lib/units';
+import { useLifetimeStats, useGymRank } from '@/src/lib/stores/userStatsStore';
 
 interface ProfileStatsCardProps {
   limit?: number; // Number of top exercises to show
@@ -32,11 +29,11 @@ interface ProfileStatsCardProps {
 
 export function ProfileStatsCard({ limit = 5, style }: ProfileStatsCardProps) {
   const c = useThemeColors();
-  const ds = makeDesignSystem('dark', 'toxic');
   const sessions = useWorkoutStore((s) => s.sessions);
 
   // Use unified stats store for totals (single source of truth)
   const lifetimeStats = useLifetimeStats();
+  const gymRank = useGymRank();
 
   // Calculate exercise-specific stats from workout history
   // (for now, keep using calculateProfileStats for exercise details)
@@ -47,6 +44,9 @@ export function ProfileStatsCard({ limit = 5, style }: ProfileStatsCardProps) {
     () => getTopExercisesByRank(stats, limit),
     [stats, limit]
   );
+
+  // Get GymRank tier color
+  const gymRankTierColor = getGymRankTierColor(gymRank.tier);
 
   if (topExercises.length === 0) {
     return (
@@ -63,11 +63,47 @@ export function ProfileStatsCard({ limit = 5, style }: ProfileStatsCardProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: c.card, borderColor: c.border }, style]}>
-      {/* Header */}
+      {/* GymRank Score Header */}
+      <View style={styles.gymRankHeader}>
+        <View style={styles.gymRankInfo}>
+          <Text style={[styles.headerTitle, { color: c.text }]}>GymRank</Text>
+          <Text style={[styles.headerSubtitle, { color: c.muted }]}>
+            Overall training score
+          </Text>
+        </View>
+        <View style={[styles.gymRankBadge, { borderColor: gymRankTierColor }]}>
+          <Text style={[styles.gymRankScore, { color: gymRankTierColor }]}>
+            {gymRank.score}
+          </Text>
+          <Text style={[styles.gymRankTier, { color: gymRankTierColor }]}>
+            {gymRank.tier.charAt(0).toUpperCase() + gymRank.tier.slice(1)}
+          </Text>
+        </View>
+      </View>
+
+      {/* PR Summary */}
+      <View style={styles.prSummary}>
+        <View style={[styles.prTotalBadge, { backgroundColor: `${c.accent}15` }]}>
+          <Text style={[styles.prTotalValue, { color: c.accent }]}>
+            {lifetimeStats.totalPRs}
+          </Text>
+          <Text style={[styles.prTotalLabel, { color: c.muted }]}>Total PRs</Text>
+        </View>
+        <View style={styles.prBreakdown}>
+          <PRTypeBadge label="Weight" count={lifetimeStats.weightPRs} color="#FFD700" />
+          <PRTypeBadge label="Rep" count={lifetimeStats.repPRs} color="#00BFFF" />
+          <PRTypeBadge label="e1RM" count={lifetimeStats.e1rmPRs} color="#FF6B6B" />
+        </View>
+      </View>
+
+      {/* Section Divider */}
+      <View style={[styles.divider, { backgroundColor: c.border }]} />
+
+      {/* Top Exercises Header */}
       <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: c.text }]}>Your Lifts</Text>
+        <Text style={[styles.sectionTitle, { color: c.text }]}>Top Exercises</Text>
         <Text style={[styles.headerSubtitle, { color: c.muted }]}>
-          Based on your best e1RM for each exercise
+          Based on your best e1RM
         </Text>
       </View>
 
@@ -98,11 +134,45 @@ export function ProfileStatsCard({ limit = 5, style }: ProfileStatsCardProps) {
         </View>
         <View style={styles.statItem}>
           <Text style={[styles.statValue, { color: c.accent }]}>
-            {Object.keys(stats.exerciseRanks).length}
+            {lifetimeStats.totalWorkouts}
           </Text>
-          <Text style={[styles.statLabel, { color: c.muted }]}>Ranked</Text>
+          <Text style={[styles.statLabel, { color: c.muted }]}>Workouts</Text>
         </View>
       </View>
+    </View>
+  );
+}
+
+/**
+ * Get color for GymRank tier
+ */
+function getGymRankTierColor(tier: string): string {
+  const tierColors: Record<string, string> = {
+    iron: '#6B7280',
+    bronze: '#CD7F32',
+    silver: '#C0C0C0',
+    gold: '#FFD700',
+    platinum: '#E5E4E2',
+    diamond: '#B9F2FF',
+    mythic: '#FF00FF',
+  };
+  return tierColors[tier] || tierColors.iron;
+}
+
+/**
+ * PR Type Badge component
+ */
+interface PRTypeBadgeProps {
+  label: string;
+  count: number;
+  color: string;
+}
+
+function PRTypeBadge({ label, count, color }: PRTypeBadgeProps) {
+  return (
+    <View style={styles.prTypeBadge}>
+      <Text style={[styles.prTypeValue, { color }]}>{count}</Text>
+      <Text style={[styles.prTypeLabel, { color: 'rgba(255,255,255,0.5)' }]}>{label}</Text>
     </View>
   );
 }
@@ -167,6 +237,87 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 20,
     gap: 16,
+  },
+  // GymRank Header
+  gymRankHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  gymRankInfo: {
+    gap: 4,
+  },
+  gymRankBadge: {
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 16,
+    borderWidth: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  },
+  gymRankScore: {
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+  },
+  gymRankTier: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  // PR Summary
+  prSummary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  prTotalBadge: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  prTotalValue: {
+    fontSize: 24,
+    fontWeight: '900',
+    letterSpacing: -0.3,
+  },
+  prTotalLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
+  },
+  prBreakdown: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  prTypeBadge: {
+    alignItems: 'center',
+    gap: 2,
+  },
+  prTypeValue: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  prTypeLabel: {
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
+  },
+  // Divider
+  divider: {
+    height: 1,
+    marginVertical: 4,
+  },
+  // Section Title
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: -0.2,
   },
   header: {
     gap: 4,

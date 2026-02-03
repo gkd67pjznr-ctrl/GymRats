@@ -1,6 +1,6 @@
 # GymRats Documentation Hub
 
-**Last Updated:** 2026-02-02
+**Last Updated:** 2026-02-03
 
 ---
 
@@ -49,7 +49,7 @@
 | Forge Seasons | [features/forge-seasons/](features/forge-seasons/) | Planned |
 | Gamification | [features/gamification/](features/gamification/) | 12/12 |
 | Gym Finder | [features/gym-finder/](features/gym-finder/) | Planned |
-| Hangout Room | [features/hangout-room/](features/hangout-room/) | 4/8 |
+| Hangout Room | [features/hangout-room/](features/hangout-room/) | 8/8 ✅ |
 | Integrations | [features/integrations/](features/integrations/) | 5/5 |
 | Leaderboards | [features/leaderboards/](features/leaderboards/) | Planned |
 | Live Workout Together | [features/live-workout-together/](features/live-workout-together/) | Planned |

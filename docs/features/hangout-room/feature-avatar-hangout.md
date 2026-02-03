@@ -43,11 +43,16 @@ A Finch-inspired virtual gym avatar that grows as the user works out, living in 
 - HangoutRoom component for main room view
 - FriendAvatar component for friends' avatars
 
-✅ **Real-time Presence System** (NEW)
-- Supabase subscriptions for INSERT/UPDATE/DELETE events
+✅ **Real-time Presence System** (ENHANCED 2026-02-03)
+- **Supabase Presence API** for instant real-time updates (no database round-trips)
+- **Database subscriptions** for persistent presence tracking (postgres_changes)
 - Presence tracking with online/working_out/resting/offline statuses
-- FriendAvatar leave/return animations
-- Comprehensive test coverage (22 tests for presenceTracker, 13 for FriendAvatar)
+- FriendAvatar leave/return animations with join notifications
+- Heartbeat mechanism (30s interval) with automatic stale detection (60s timeout)
+- Online count badge in hangout room header
+- Workout activity updates showing current exercise name
+- React hooks: `useRealtimePresence()`, `useWorkoutPresenceUpdater()`
+- Comprehensive test coverage
 
 ✅ **Shop Extension** (NEW)
 - Added `room_decorations` and `avatar_cosmetics` to ShopCategory
@@ -55,19 +60,26 @@ A Finch-inspired virtual gym avatar that grows as the user works out, living in 
 - UserInventory updated with equippedHairstyle, equippedOutfit, equippedAccessories, ownedDecorations
 - Shop system handles all 8 categories (personalities, themes, card_skins, profile_badges, profile_frames, titles, room_decorations, avatar_cosmetics)
 
-## Remaining Features (P1 - Polish)
+## Completed Features (P1 - Polish)
 
-### Shop UI
-- [ ] Shop screen with category tabs for browsing items
-- [ ] Purchase confirmation UI with token balance display
-- [ ] Filter by affordable/owned items
+### ✅ Shop UI (Complete - 2026-02-03)
+- [x] Shop screen with category tabs for browsing items
+- [x] Purchase confirmation modal with cost breakdown
+- [x] Filter by affordable/owned items
+- [x] Sort by rarity or cost
+- [x] Rarity indicator lines on cards
+- [x] Icons for each category
+- [x] Item count display
+- [x] Auto-equip after purchase
+- [x] Haptic feedback throughout
+- [x] New design system integration (gradients, semantic tokens)
 
-### Avatar Customization UI
-- [ ] AvatarCustomizer component with cosmetic preview
-- [ ] Category selection (hair, outfits, accessories)
-- [ ] Save/equip functionality
+### Avatar Customization UI (Partial)
+- [x] AvatarCosmeticsModal with Hair/Outfit/Accessories tabs
+- [x] Category selection with filtering and sorting
+- [ ] Live avatar preview while selecting items
 
-### Room Decoration Management
+### Room Decoration Management (Deferred)
 - [ ] Decoration placement UI (drag-and-drop in room)
 - [ ] Room admin controls (approve/reject decorations)
 - [ ] Room theme selection UI
@@ -93,11 +105,14 @@ src/
 │   ├── stores/
 │   │   └── userStatsStore.ts      # NEW: Single source of truth for user stats
 │   ├── hangout/
-│   │   ├── hangoutTypes.ts        # Hangout room types
+│   │   ├── hangoutTypes.ts        # Hangout room types + presence types
 │   │   ├── hangoutStore.ts        # Zustand store for room state
 │   │   ├── hangoutRepository.ts   # Supabase database operations
-│   │   ├── presenceTracker.ts     # Real-time presence tracking
-│   │   └── decorationManager.ts   # Decoration system
+│   │   ├── presenceTracker.ts     # Database presence tracking (postgres_changes)
+│   │   ├── realtimePresence.ts    # Supabase Presence API integration (NEW)
+│   │   ├── useRealtimePresence.ts # React hooks for presence (NEW)
+│   │   ├── decorationManager.ts   # Decoration system
+│   │   └── index.ts               # Module exports (NEW)
 ├── ui/
 │   ├── components/
 │   │   ├── Avatar/

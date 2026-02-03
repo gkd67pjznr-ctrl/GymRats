@@ -1,6 +1,6 @@
-import { View, Text, Pressable, ScrollView, Alert } from "react-native";
+import { View, Pressable, ScrollView, Alert } from "react-native";
 import { Link, useRouter } from "expo-router";
-import { useThemeColors } from "../../src/ui/theme";
+import { Surface, Text, Card, surface, text, border, corners, space } from "@/src/design";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { useRoutines, clearCurrentSession, hasCurrentSession, ensureCurrentSession } from "../../src/lib/stores";
 import { setCurrentPlan } from "../../src/lib/workoutPlanStore";
@@ -23,7 +23,6 @@ function toPlannedExercise(rx: RoutineExercise) {
 }
 
 export default function RoutinesHome() {
-  const c = useThemeColors();
   const router = useRouter();
   const routines = useRoutines();
 
@@ -72,39 +71,35 @@ export default function RoutinesHome() {
 
   return (
     <ProtectedRoute>
-      <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <Surface elevation="base" style={{ flex: 1 }}>
         <ScreenHeader
           title="Routines"
           rightAction={
             <Link href="/routines/create" asChild>
               <Pressable>
-                <Text style={{ color: c.primary, fontWeight: "700", fontSize: 15 }}>+ New</Text>
+                <Text variant="label" color="accent">+ New</Text>
               </Pressable>
             </Link>
           }
         />
-        <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 40 }}>
+        <ScrollView contentContainerStyle={{ padding: space.componentLg, gap: space.componentMd, paddingBottom: 40 }}>
 
         {routines.length === 0 ? (
-          <Text style={{ color: c.muted }}>No routines yet. Tap &quot;+ New&quot;.</Text>
+          <Text variant="body" color="muted">No routines yet. Tap &quot;+ New&quot;.</Text>
         ) : (
           routines.map((r) => (
-            <View
+            <Card
               key={r.id}
               style={{
-                borderWidth: 1,
-                borderColor: c.border,
-                borderRadius: 14,
-                backgroundColor: c.card,
-                padding: 12,
-                gap: 8,
+                padding: space.componentMd,
+                gap: space.componentSm,
               }}
             >
               {/* Main content - tap to view details */}
               <Link href={`/routines/${r.id}`} asChild>
                 <Pressable style={{ gap: 6 }}>
-                  <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>{r.name}</Text>
-                  <Text style={{ color: c.muted }}>
+                  <Text variant="h4">{r.name}</Text>
+                  <Text variant="bodySmall" color="muted">
                     Exercises: {r.exercises.length} • Updated:{" "}
                     {new Date(r.updatedAtMs).toLocaleDateString()}
                   </Text>
@@ -117,20 +112,18 @@ export default function RoutinesHome() {
                 style={{
                   paddingVertical: 10,
                   paddingHorizontal: 14,
-                  borderRadius: 10,
-                  backgroundColor: c.primary,
+                  borderRadius: corners.button,
+                  backgroundColor: text.accent,
                   alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: c.border,
                 }}
               >
-                <Text style={{ color: "#fff", fontWeight: "900" }}>Start Workout</Text>
+                <Text variant="label" color="inverse">Start Workout</Text>
               </Pressable>
-            </View>
+            </Card>
           ))
         )}
         </ScrollView>
-      </View>
+      </Surface>
     </ProtectedRoute>
   );
 }
