@@ -264,6 +264,16 @@ export {
   type ShopCategory,
 } from "../gamification/shop";
 
+// Top Bar (notifications, dropdown state)
+export {
+  useTopBarStore,
+  useDropdownOpen,
+  useNotifications,
+  useUnreadCount,
+  useIsLoadingNotifications,
+  topBarActions,
+} from './topBarStore';
+
 // User Stats (unified stats store)
 export {
   useUserStatsStore,

@@ -4,7 +4,7 @@
 
 Push notifications with a MINIMAL philosophy. Forgerank respects the user's attention -- no nagging, no guilt trips, no "you haven't worked out in X days" reminders. Notifications exist only when they deliver immediate, essential value.
 
-**Total sub-features:** 4
+**Total sub-features:** 5
 
 ---
 
@@ -84,6 +84,37 @@ Push notifications with a MINIMAL philosophy. Forgerank respects the user's atte
 
 ---
 
+### 5. Global Top Bar & Notification Center
+
+- [✅] Persistent top bar on all authenticated screens
+- [✅] User avatar with tier-colored border based on level
+- [✅] Level badge overlay (bottom-right of avatar)
+- [✅] Compact XP progress bar (80x6px with gradient)
+- [✅] Notification bell with unread count badge
+- [✅] Dropdown notification list (max 25% screen height)
+- [✅] Mark as read on tap
+- [✅] Mark all as read action
+- [✅] Real-time notification subscription via Supabase
+- [✅] Hidden when workout drawer is expanded (full-screen mode)
+- [✅] Hidden on auth/onboarding screens
+- [✅] Settings and search placeholder icons
+
+**Priority:** P0 (launch)
+**Status:** ✅ COMPLETE - Fully implemented with topBarStore, 6 UI components
+
+**Components:**
+- `GlobalTopBar/index.tsx` - Main container with visibility logic
+- `TopBarAvatar.tsx` - Avatar + level badge composite
+- `XPProgressMini.tsx` - Compact animated XP bar
+- `NotificationBell.tsx` - Bell icon with unread badge
+- `NotificationDropdown.tsx` - Modal dropdown with notification list
+- `NotificationItem.tsx` - Individual notification row
+
+**Store:**
+- `topBarStore.ts` - Zustand store for dropdown state and notifications cache
+
+---
+
 ### Future / P2 - iOS Live Activities
 
 - [ ] Dynamic Island support for active workout
@@ -156,7 +187,7 @@ const requestNotificationPermission = async () => {
 
 ## Implementation Status
 
-**Overall Progress:** 1/4 sub-features complete (100% of P0, 0% of P1, 0% of P2)
+**Overall Progress:** 2/5 sub-features complete (100% of P0, 0% of P1, 0% of P2)
 
 ### Completed (P0 - Launch Required)
 - ✅ Rest timer push notifications (backgrounded) - Fully implemented and integrated
@@ -171,6 +202,13 @@ const requestNotificationPermission = async () => {
 - Friend requests notifications - Service functions complete (sendFriendRequestNotification), push notification logic implemented, tap-to-open routing pending, backend integration pending
 - Direct messages notifications - Service functions complete (sendDirectMessageNotification), push notification logic implemented with message preview and truncation, tap-to-open routing pending, backend integration pending
 - Competition results notifications - Settings complete, service function stubbed, push notification sending not yet implemented, requires competition feature
+
+### Completed (New)
+- ✅ Global Top Bar with notification center - Persistent top bar with avatar, level badge, XP progress, and notification dropdown
+- ✅ In-app notification bell with unread badge
+- ✅ Notification dropdown with real-time updates
+- ✅ Mark as read / Mark all as read functionality
+- ✅ Notification repository integration (Supabase)
 
 ### Not Started
 - iOS Live Activities (requires native Swift module)

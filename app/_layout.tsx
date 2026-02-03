@@ -21,6 +21,7 @@ import { setupNotificationResponseListener } from '@/src/lib/notifications/notif
 import { useBuddyStore } from '@/src/lib/stores/buddyStore';
 import { PersistentTabBar } from '@/src/ui/components/PersistentTabBar';
 import { WorkoutDrawer } from '@/src/ui/components/WorkoutDrawer';
+import { GlobalTopBar } from '@/src/ui/components/GlobalTopBar';
 import { useWorkoutDrawerStore } from '@/src/lib/stores/workoutDrawerStore';
 import { ensureCurrentSession } from '@/src/lib/stores/currentSessionStore';
 import { initializeSentry, setSentryUser, clearSentryUser } from '@/src/lib/monitoring/sentry';
@@ -253,6 +254,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <View style={{ flex: 1, position: 'relative' }}>
+            <GlobalTopBar />
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen
                 name="onboarding"

@@ -38,7 +38,7 @@ function fromDatabase(db: DatabaseNotification): AppNotification {
     body: db.body,
     postId: db.post_id ?? undefined,
     commentId: db.comment_id ?? undefined,
-    readAt: db.read_at ? new Date(db.read_at).getTime() : undefined,
+    readAtMs: db.read_at ? new Date(db.read_at).getTime() : undefined,
     createdAtMs: new Date(db.created_at).getTime(),
   };
 }

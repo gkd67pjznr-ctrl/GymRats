@@ -32,7 +32,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | Authentication | 🔄 In Progress | 7/10 | Email working, OAuth needs setup |
 | Social & Feed | 🔄 In Progress | 9/15 | Local complete, backend connected |
 | Gamification | ✅ Done | 12/12 | XP, levels, streaks, tokens, store |
-| Notifications | 🔄 In Progress | 1/4 | Rest timer complete |
+| Notifications | 🔄 In Progress | 2/5 | Rest timer + Global Top Bar complete |
 | UI & Design | 🔄 In Progress | 14/15 | Design system + screen migrations |
 | UI Themes & Visual Style | 🔄 In Progress | 6/12 | Documentation complete |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
@@ -43,7 +43,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | Forge Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
 | Forge Milestones | ✅ Done | 5/5 | 30 achievements implemented |
 
-**Launch Total:** 145/177 features (82%)
+**Launch Total:** 146/178 features (82%)
 
 ---
 
@@ -127,6 +127,13 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 - Daily journal entries independent of workouts
 - Mood, energy, and soreness tracking (1-5 star ratings)
 - Journal history with search, filtering, and statistics
+
+### Global Top Bar (NEW)
+- Persistent top bar with user avatar, level badge, and XP progress
+- Notification bell with unread count badge
+- Dropdown notification center with real-time updates
+- Mark as read / Mark all as read functionality
+- Hidden when workout drawer is expanded (full-screen mode)
 
 ### UI Foundation
 - Dark theme with accent colors
