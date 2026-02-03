@@ -24,7 +24,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['hypertrophy', 'intermediate', '6-day', 'split'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -46,7 +46,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['hypertrophy', 'beginner', '4-day', 'balanced'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -68,7 +68,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['bodyweight', 'beginner', 'fundamentals'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -89,7 +89,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['bodyweight', 'advanced', 'skills', 'gymnastics'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -110,7 +110,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['conditioning', 'beginner', 'endurance'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -131,7 +131,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['hiit', 'intermediate', 'fat-loss', 'conditioning'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -153,7 +153,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['abs', 'beginner', 'definition'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -174,7 +174,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['core', 'intermediate', 'functional', 'stability'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -196,7 +196,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['strength', 'beginner', 'powerlifting', 'compound'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 
@@ -217,7 +217,7 @@ export const SAMPLE_PLANS: PremadePlan[] = [
     ],
     tags: ['strength', 'advanced', 'powerlifting', 'competition'],
     source: 'curated',
-    authorName: 'Forgerank Team',
+    authorName: 'GymRats Team',
     createdAtMs: Date.now(),
   },
 ];

@@ -25,7 +25,7 @@ const PremiumLockOverlay: React.FC<PremiumLockOverlayProps> = ({ featureName }) 
             Premium Feature
           </Text>
           <Text style={[styles.description, { color: ds.tone.textSecondary }]}>
-            {featureName} is available with Forgerank Pro
+            {featureName} is available with GymRats Pro
           </Text>
           <TouchableOpacity
             style={[styles.upgradeButton, { backgroundColor: ds.tone.accent }]}

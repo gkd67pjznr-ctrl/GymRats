@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the implementation of extended theme database functionality for Forgerank, enhancing the visual system with support for audio, motion, and extended palette information.
+This document summarizes the implementation of extended theme database functionality for GymRats, enhancing the visual system with support for audio, motion, and extended palette information.
 
 ## Changes Made
 

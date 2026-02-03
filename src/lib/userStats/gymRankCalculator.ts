@@ -1,8 +1,8 @@
-// src/lib/userStats/forgeRankCalculator.ts
+// src/lib/userStats/gymRankCalculator.ts
 // Forge Rank calculation - composite score combining strength, consistency, progress, and variety
 
 import type {
-  ForgeRank,
+  GymRank,
   RankTier,
   ConsistencyMetrics,
   VarietyMetrics,
@@ -37,7 +37,7 @@ const TIER_THRESHOLDS: { tier: RankTier; minScore: number; maxRank: number }[] =
 /**
  * Input for calculating Forge Rank
  */
-export interface ForgeRankInput {
+export interface GymRankInput {
   /** Per-exercise stats (used for strength component) */
   exerciseStats: Record<string, ExerciseStats>;
   /** Consistency metrics */
@@ -136,7 +136,7 @@ function calculateVarietyComponent(variety: VarietyMetrics): number {
 /**
  * Main function to calculate Forge Rank
  */
-export function calculateForgeRank(input: ForgeRankInput): ForgeRank {
+export function calculateGymRank(input: GymRankInput): GymRank {
   const now = Date.now();
 
   // Calculate individual components (each 0-1000)

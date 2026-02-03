@@ -45,9 +45,9 @@ export type MuscleGroup =
   | 'triceps';
 
 /**
- * Enhanced exercise type used throughout Forgerank
+ * Enhanced exercise type used throughout GymRats
  */
-export type ForgerankExercise = {
+export type GrExercise = {
   id: string;
   name: string;
   force: 'push' | 'pull' | 'static';
@@ -60,7 +60,7 @@ export type ForgerankExercise = {
   category: 'strength' | 'stretching' | 'cardio' | 'plyometrics' | 'strongman' | 'powerlifting' | 'olympic weightlifting';
   images: string[];
 
-  // Forgerank-specific fields
+  // GymRats-specific fields
   isPopular: boolean; // Shown in quick picker
   verifiedTop?: number; // Verified e1RM in kg (if applicable)
 

@@ -1,4 +1,4 @@
-# FORGERANK TESTING PLAN
+# GYMRATS TESTING PLAN
 **Comprehensive Testing Strategy**
 
 ---

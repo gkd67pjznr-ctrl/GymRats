@@ -1,7 +1,7 @@
 /**
  * Default Theme Installation
  *
- * The "Toxic" theme - Forgerank's signature look.
+ * The "Toxic" theme - GymRats' signature look.
  * Dark mode with electric lime accents.
  */
 
@@ -229,7 +229,7 @@ const toxicGradients: ThemeGradients = {
 export const toxicTheme: ThemeInstallation = {
   id: 'toxic',
   name: 'Toxic',
-  description: 'Electric lime accents on deep black. The signature Forgerank look.',
+  description: 'Electric lime accents on deep black. The signature GymRats look.',
   tier: 'free',
 
   colors: toxicColors,
@@ -240,7 +240,7 @@ export const toxicTheme: ThemeInstallation = {
   gradients: toxicGradients,
 
   metadata: {
-    author: 'Forgerank',
+    author: 'GymRats',
     version: '1.0.0',
   },
 };

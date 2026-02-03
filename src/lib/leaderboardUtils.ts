@@ -84,7 +84,7 @@ export function ensureCurrentUserVisible<T extends { userId: string; rank: numbe
 }
 
 /**
- * Compute overall Forgerank rankings by averaging scores across exercises
+ * Compute overall GymRank rankings by averaging scores across exercises
  * @param exerciseRankings - Map of exerciseId to rankings
  * @param getScoreFromEntry - Function to extract score from entry
  * @returns Overall rankings sorted by average score descending

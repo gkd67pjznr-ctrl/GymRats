@@ -4,7 +4,7 @@
 import type { WorkoutSession } from './workoutModel';
 import type { WorkoutPost, WorkoutSnapshot } from './socialModel';
 import { EXERCISES_V1 } from '@/src/data/exercises';
-import { scoreForgerank, type Tier } from './forgerankScoring';
+import { scoreGymRank, type Tier } from './GrScoring';
 import { buildRankLadderFromTop } from './ranks';
 import { VERIFIED_TOPS, type VerifiedTop } from '@/src/data/exerciseDatabase';
 
@@ -159,8 +159,8 @@ export function calculateBestTierForSession(
 
     if (score > bestScore) {
       bestScore = score;
-      // Forgerank scoring would be more accurate here
-      const breakdown = scoreForgerank({
+      // GymRank scoring would be more accurate here
+      const breakdown = scoreGymRank({
         exerciseId,
         weight: bestSet.weightKg,
         reps: bestSet.reps,

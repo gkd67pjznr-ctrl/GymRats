@@ -39,7 +39,7 @@ Full gym ecosystem — discover gyms, read community reviews, see which friends 
 ---
 
 ### Planned - Gym-Level Leaderboards
-- [ ] Top lifters at your gym (by Forgerank)
+- [ ] Top lifters at your gym (by GymRats)
 - [ ] Volume leaders at your gym
 - [ ] Gym vs gym comparisons (average ranks)
 - [ ] Monthly gym champions
@@ -48,7 +48,7 @@ Full gym ecosystem — discover gyms, read community reviews, see which friends 
 
 ### Planned - Gym Partnerships
 - [ ] Featured gym listings (promoted placement)
-- [ ] Discount codes for Forgerank users
+- [ ] Discount codes for GymRats users
 - [ ] Gym-branded challenges
 - [ ] B2B revenue model (gyms pay for premium listing)
 - [ ] Analytics dashboard for gym owners (anonymized member data)
@@ -80,7 +80,7 @@ type Gym = {
   photos: string[];
   equipment: string[];
   isPartner: boolean;
-  memberCount: number;    // Forgerank users tagged here
+  memberCount: number;    // GymRats users tagged here
 };
 ```
 

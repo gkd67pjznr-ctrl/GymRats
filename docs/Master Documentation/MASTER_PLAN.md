@@ -1,4 +1,4 @@
-# FORGERANK MASTER PLAN
+# GYMRATS MASTER PLAN
 **The Vision, Strategy, and Roadmap**
 
 ---
@@ -12,9 +12,9 @@
 
 # VISION STATEMENT
 
-**Forgerank is a workout tracking app that feels alive.**
+**GymRats is a workout tracking app that feels alive.**
 
-It's not just a logging tool — it's a gym buddy with personality, a ranking system that means something, a growing avatar that represents your journey, and a social experience that keeps you coming back. Where other apps feel sterile and transactional, Forgerank feels like it knows you, celebrates with you, and pushes you to be better.
+It's not just a logging tool — it's a gym buddy with personality, a ranking system that means something, a growing avatar that represents your journey, and a social experience that keeps you coming back. Where other apps feel sterile and transactional, GymRats feels like it knows you, celebrates with you, and pushes you to be better.
 
 **Day-one goal:** Very polished, feature-rich, beautiful. Not a beta. Seamless, sleek, well-designed.
 
@@ -22,7 +22,7 @@ It's not just a logging tool — it's a gym buddy with personality, a ranking sy
 
 # CORE DIFFERENTIATORS
 
-## 1. Forgerank Scoring System
+## 1. GymRats Scoring System
 **What makes us different:** Static, verified standards.
 
 - **0-1000 score, 20 ranks per exercise** (Iron to Mythic)
@@ -126,7 +126,7 @@ See `docs/visual-style/` for comprehensive documentation including UI Aesthetic 
 ## Freemium + IAP Hybrid
 
 ### Free Tier (Core Experience)
-- Full workout logging + Forgerank scoring + ranks
+- Full workout logging + GymRats scoring + ranks
 - Social feed + friends + reactions
 - 2-3 starter gym buddy personalities (text-only)
 - Basic history/calendar + weight graph
@@ -169,14 +169,14 @@ Earned through gameplay, spent on cosmetics:
 
 # GAMIFICATION SYSTEMS
 
-## 1. Forgerank (Per-Exercise)
+## 1. GymRats (Per-Exercise)
 - 0-1000 score, 20 ranks per exercise
 - Based on e1RM against verified standards
 - Rank-up celebrations with animations + sound
 - Shareable moments via Workout Replay
 
 ## 2. User Level (XP System)
-- Separate from Forgerank (measures activity, not strength)
+- Separate from GymRats (measures activity, not strength)
 - Increases by logging workouts
 - Visual XP bar progression
 - Earns Forge Tokens for cosmetic store
@@ -227,7 +227,7 @@ Earned through gameplay, spent on cosmetics:
 | Sound effects | P0 | Audio cues per personality tier |
 | Haptic feedback | P0 | Physical response |
 | Workout Replay | P0 | Cinematic post-workout summary |
-| Share to in-app feed | P0 | Focus on Forgerank social, not external |
+| Share to in-app feed | P0 | Focus on GymRats social, not external |
 
 ## Avatar & Social Space
 | Feature | Priority | Notes |
@@ -474,7 +474,7 @@ What keeps users coming back when they're not lifting:
 
 ## Vs. Competition
 
-| Feature | Forgerank | Liftoff | Hevy | Strong | Finch |
+| Feature | GymRats | Liftoff | Hevy | Strong | Finch |
 |---------|-----------|---------|------|--------|-------|
 | Personality/cues | Yes (8-12) | No | No | No | No |
 | Static verified ranks | Yes | No | No | No | No |
@@ -553,7 +553,7 @@ Key decisions:
 
 ## 2026-01-25: Initial Interview
 Key decisions:
-- Forgerank scoring system confirmed (0-1000, 20 ranks, static standards)
+- GymRats scoring system confirmed (0-1000, 20 ranks, static standards)
 - Cue system with customizable personalities
 - Pure-inspired aesthetic (mysterious/exclusive)
 - Full social features in v1
@@ -563,5 +563,5 @@ Key decisions:
 ---
 
 **End of Master Plan v2.1**
-*This document is the source of truth for Forgerank's vision and strategy.*
+*This document is the source of truth for GymRats's vision and strategy.*
 *Updated from documentation organization on 2026-01-30.*

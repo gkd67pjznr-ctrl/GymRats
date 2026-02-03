@@ -1,4 +1,4 @@
-# Forgerank Asset Integration Guide
+# GymRats Asset Integration Guide
 
 ## Overview
 

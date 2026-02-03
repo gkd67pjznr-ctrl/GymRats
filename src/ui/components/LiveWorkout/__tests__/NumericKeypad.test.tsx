@@ -37,8 +37,8 @@ jest.mock('@/src/ui/theme', () => ({
   })),
 }));
 
-// Mock FR (forgerankStyle)
-jest.mock('@/src/ui/forgerankStyle', () => ({
+// Mock FR (GrStyle)
+jest.mock('@/src/ui/GrStyle', () => ({
   FR: {
     space: { x1: 4, x2: 8, x3: 12, x4: 16 },
     radius: { button: 12, card: 20, input: 8, soft: 6 },

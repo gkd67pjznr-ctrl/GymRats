@@ -96,7 +96,7 @@ This document describes the SQL schema for the Live Workout Together feature, wh
 - `timestamp_ms` (BIGINT): When the set was completed (milliseconds since epoch)
 - `e1rm_kg` (NUMERIC, nullable): Estimated 1-rep max
 - `is_pr` (BOOLEAN): Whether this is a personal record
-- `intensity_score` (NUMERIC, nullable): Forgerank score (0-1000)
+- `intensity_score` (NUMERIC, nullable): GymRats score (0-1000)
 - `created_at` (TIMESTAMPTZ): When record was created
 
 **Indexes**:

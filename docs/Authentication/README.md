@@ -1,6 +1,6 @@
 # Authentication Documentation
 
-This directory contains documentation related to authentication systems in the Forgerank application.
+This directory contains documentation related to authentication systems in the GymRats application.
 
 ## Contents
 

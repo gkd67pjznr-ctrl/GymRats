@@ -4,9 +4,9 @@
 **Previously:** Cue System
 
 ## Overview
-The AI Gym Buddy System is what gives Forgerank its personality. Instead of being a sterile spreadsheet, the app feels like having a reactive commentator in your corner -- a sports announcer who knows your lifts, celebrates your PRs, roasts your long rests, and hypes your finishing set. These are original characters, not chatbots. They react to what you do, not what you say.
+The AI Gym Buddy System is what gives GymRats its personality. Instead of being a sterile spreadsheet, the app feels like having a reactive commentator in your corner -- a sports announcer who knows your lifts, celebrates your PRs, roasts your long rests, and hypes your finishing set. These are original characters, not chatbots. They react to what you do, not what you say.
 
-**Core Differentiator:** Every other app is a spreadsheet. Forgerank has a cast of characters.
+**Core Differentiator:** Every other app is a spreadsheet. GymRats has a cast of characters.
 
 **Interaction Model:** Reactive commentary, not conversation. Think sports announcer or fight-game commentator -- triggered by in-session events and behavior patterns, never requiring user input.
 

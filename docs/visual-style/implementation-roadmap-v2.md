@@ -180,4 +180,4 @@
 - Industry recognition for unique aesthetic
 - Community engagement with themed content
 
-This roadmap provides a structured approach to enhancing Forgerank's visual system while preserving the functional efficiency that makes it effective for workout tracking.
+This roadmap provides a structured approach to enhancing GymRats's visual system while preserving the functional efficiency that makes it effective for workout tracking.

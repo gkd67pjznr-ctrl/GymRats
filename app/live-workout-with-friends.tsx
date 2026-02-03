@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { makeDesignSystem } from "../src/ui/designSystem";
-import { FR } from "../src/ui/forgerankStyle";
+import { FR } from "../src/ui/GrStyle";
 import { useThemeColors } from "../src/ui/theme";
 
 import { getSettings } from "../src/lib/stores";

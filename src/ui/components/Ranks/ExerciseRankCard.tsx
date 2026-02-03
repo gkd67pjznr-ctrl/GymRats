@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '../../theme';
-import { FR } from '../../forgerankStyle';
+import { FR } from '../../GrStyle';
 import { RankSparkline } from './RankSparkline';
 import { useExerciseSparkline } from '../../../lib/hooks/useExerciseRanks';
 import type { ExerciseRankSummary, SparklineTimeframe } from '../../../lib/types/rankTypes';

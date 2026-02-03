@@ -27,7 +27,7 @@ const MockedPlatform = Platform as jest.Mocked<typeof Platform>;
 // Mock dependencies
 jest.mock('expo-constants', () => ({
   expoConfig: {
-    scheme: 'forgerank',
+    scheme: 'gymrats',
     extra: {
       googleClientId: 'test-google-client-id.apps.googleusercontent.com',
     },
@@ -35,7 +35,7 @@ jest.mock('expo-constants', () => ({
 }));
 
 jest.mock('expo-auth-session', () => ({
-  makeRedirectUri: jest.fn(() => 'forgerank://auth'),
+  makeRedirectUri: jest.fn(() => 'gymrats://auth'),
   resolveDiscoveryAsync: jest.fn(),
   AuthRequest: jest.fn(),
 }));
@@ -139,7 +139,7 @@ describe('Google OAuth', () => {
         queryParams: {},
       });
 
-      const result = handleGoogleOAuthCallback('forgerank://other');
+      const result = handleGoogleOAuthCallback('gymrats://other');
       expect(result).toBeNull();
     });
 
@@ -151,7 +151,7 @@ describe('Google OAuth', () => {
         },
       });
 
-      const result = handleGoogleOAuthCallback('forgerank://auth?error=access_denied');
+      const result = handleGoogleOAuthCallback('gymrats://auth?error=access_denied');
 
       expect(result).toEqual({
         success: false,
@@ -170,7 +170,7 @@ describe('Google OAuth', () => {
         },
       });
 
-      const result = handleGoogleOAuthCallback('forgerank://auth?code=auth-code-123');
+      const result = handleGoogleOAuthCallback('gymrats://auth?code=auth-code-123');
 
       expect(result).toEqual({
         success: true,
@@ -186,7 +186,7 @@ describe('Google OAuth', () => {
         },
       });
 
-      const result = handleGoogleOAuthCallback('forgerank://auth?code=test-code&state=test-state');
+      const result = handleGoogleOAuthCallback('gymrats://auth?code=test-code&state=test-state');
 
       expect(result?.success).toBe(true);
     });

@@ -1,4 +1,4 @@
-# Forgerank Architecture
+# GymRats Architecture
 
 **Last Updated:** 2026-01-26
 
@@ -20,7 +20,7 @@
 ## Directory Structure
 
 ```
-forgerank/
+gymrats/
 ├── app/                        # Screens (expo-router)
 │   ├── (tabs)/                 # Tab navigator
 │   │   ├── index.tsx          # Home/dashboard
@@ -43,7 +43,7 @@ forgerank/
 │   │   ├── auth/              # OAuth helpers
 │   │   ├── premadePlans/      # Workout plans
 │   │   ├── workoutModel.ts    # Core types
-│   │   ├── forgerankScoring.ts # Scoring algorithm
+│   │   ├── gymratsScoring.ts # Scoring algorithm
 │   │   ├── ranks.ts           # Rank utilities
 │   │   ├── perSetCue.ts       # PR detection
 │   │   └── e1rm.ts            # e1RM calculation

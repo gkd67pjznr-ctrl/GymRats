@@ -1,4 +1,4 @@
-# Forgerank Visual Style Guide
+# GymRats Visual Style Guide
 
 ## Color Palette System
 
@@ -257,4 +257,4 @@
 - Color palette switch: < 100ms
 - Theme system memory overhead: < 50KB
 
-This style guide provides the foundation for implementing Forgerank's unique aesthetic while maintaining the functional efficiency users need for effective workout tracking.
+This style guide provides the foundation for implementing GymRats's unique aesthetic while maintaining the functional efficiency users need for effective workout tracking.

@@ -35,7 +35,7 @@
 
 ## Feature Overview
 
-The Live Workout Together feature enables real-time collaborative workout experiences in Forgerank. Users can:
+The Live Workout Together feature enables real-time collaborative workout experiences in GymRats. Users can:
 
 - **See friends' workout presence** in real-time
 - **Join shared workout sessions** where everyone works out independently but sees each other's progress
@@ -870,6 +870,6 @@ The live workout service integrates with the existing `currentSessionStore`:
 
 ## Conclusion
 
-The Live Workout Together feature transforms Forgerank from a solo workout tracker into a social fitness platform. By enabling real-time collaboration, shared experiences, and social motivation, it addresses the key challenge of workout adherence and makes fitness more engaging and enjoyable.
+The Live Workout Together feature transforms GymRats from a solo workout tracker into a social fitness platform. By enabling real-time collaboration, shared experiences, and social motivation, it addresses the key challenge of workout adherence and makes fitness more engaging and enjoyable.
 
-The implementation follows modern React Native patterns with Zustand for state management and Supabase for real-time capabilities, ensuring a responsive and scalable solution that integrates seamlessly with the existing Forgerank ecosystem.
+The implementation follows modern React Native patterns with Zustand for state management and Supabase for real-time capabilities, ensuring a responsive and scalable solution that integrates seamlessly with the existing GymRats ecosystem.

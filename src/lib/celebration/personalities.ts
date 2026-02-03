@@ -1,5 +1,5 @@
 // src/lib/celebration/personalities.ts
-// Multi-personality cue system for Forgerank
+// Multi-personality cue system for GymRats
 // Users can select their "gym buddy" personality
 
 import type { PRType } from '../perSetCueTypes';
@@ -16,7 +16,7 @@ export type CueContext =
   | 'pr_cardio'        // Cardio set detected
   | 'rest_timer'       // Rest timer finished
   | 'streak'           // Workout streak milestone
-  | 'rank_up'          // Forgerank rank increased
+  | 'rank_up'          // GymRank rank increased
   | 'fallback'         // General encouragement between sets
   | 'workout_start'    // Starting a workout
   | 'workout_end'      // Finishing a workout

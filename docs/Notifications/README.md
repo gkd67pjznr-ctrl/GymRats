@@ -1,6 +1,6 @@
 # Notifications Documentation
 
-This directory contains documentation related to the notification system in the Forgerank application.
+This directory contains documentation related to the notification system in the GymRats application.
 
 ## Contents
 

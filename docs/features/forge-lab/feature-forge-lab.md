@@ -95,7 +95,7 @@ type ForgeLabData = {
 - ✅ `victory-native` implemented with VictoryLineChart and VictoryBarChart wrapper components
 - Custom SVG for radar/heatmap visualizations
 - Smooth animations on data load
-- Dark theme support with Forgerank design system integration
+- Dark theme support with GymRats design system integration
 
 **Premium Gating:**
 - Weight graph: always visible, fully functional
@@ -131,7 +131,7 @@ type ForgeLabData = {
 ## Dependencies
 
 - Workout history (workoutStore)
-- Rank/score data (forgerankScoring.ts)
+- Rank/score data (gymratsScoring.ts)
 - Settings (bodyweight for weight graph)
 - Subscription status (premium gating)
 - Integration APIs (Apple Health, MFP, Whoop — post-launch)

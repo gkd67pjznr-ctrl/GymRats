@@ -292,4 +292,4 @@ The Live Workout Together SQL schema is now complete and ready for implementatio
 ✅ Provides comprehensive TypeScript support
 ✅ Includes full documentation
 
-The schema follows PostgreSQL best practices and aligns with the existing Forgerank database architecture.
+The schema follows PostgreSQL best practices and aligns with the existing GymRats database architecture.

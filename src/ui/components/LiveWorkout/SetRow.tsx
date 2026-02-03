@@ -16,7 +16,7 @@ import { Swipeable } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
 
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 import type { LoggedSet } from "../../../lib/loggerTypes";
 
 export interface SetRowProps {

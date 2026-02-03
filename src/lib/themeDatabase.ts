@@ -1,6 +1,6 @@
 // src/lib/themeDatabase.ts
 /**
- * Forgerank Theme Database
+ * GymRats Theme Database
  *
  * Manages the storage and retrieval of UI themes with emotional meaning.
  * Implements the layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.

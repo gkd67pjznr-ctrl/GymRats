@@ -151,8 +151,8 @@ jest.mock('@/src/ui/components/LiveWorkout/NumberInput', () => {
   };
 });
 
-// Mock FR (forgerankStyle)
-jest.mock('@/src/ui/forgerankStyle', () => ({
+// Mock FR (GrStyle)
+jest.mock('@/src/ui/GrStyle', () => ({
   FR: {
     space: { x1: 4, x2: 8, x3: 12, x4: 16, x5: 20, x6: 24 },
     radius: { button: 12, card: 20, input: 8, soft: 6 },

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Pressable, ScrollView, Text, View, Platform } from "react-native";
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 import { NumberInput } from "./NumberInput";
 import { PlateCalculator } from "./PlateCalculator";
 import * as Haptics from "expo-haptics";

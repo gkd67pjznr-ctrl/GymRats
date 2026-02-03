@@ -1,6 +1,6 @@
 # Project Dependencies
 
-This document lists all dependencies required for the Forgerank project. Use this as a reference when setting up new worktrees.
+This document lists all dependencies required for the GymRats project. Use this as a reference when setting up new worktrees.
 
 ---
 
@@ -158,8 +158,8 @@ plugins: [
   'expo-router',
   'expo-iap',
   ['@sentry/react-native', {
-    organization: 'forgerank',
-    project: 'forgerank-mobile',
+    organization: 'gymrats',
+    project: 'gymrats-mobile',
   }],
   ['expo-splash-screen', {
     image: './assets/images/splash-icon.png',
@@ -187,8 +187,8 @@ EXPO_PUBLIC_GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
 
 # Sentry Error Tracking
 EXPO_PUBLIC_SENTRY_DSN=https://xxx@sentry.io/xxx
-SENTRY_ORG=forgerank
-SENTRY_PROJECT=forgerank-mobile
+SENTRY_ORG=gymrats
+SENTRY_PROJECT=gymrats-mobile
 
 # RevenueCat (In-App Purchases)
 EXPO_PUBLIC_REVENUECAT_APPLE_KEY=appl_xxx
@@ -247,7 +247,7 @@ To ensure all worktrees have the same dependencies:
 cat package.json | grep -E '"[^"]+": "[^"]+"' | sort
 
 # Or copy package.json from main to worktree
-cp /path/to/Forgerank/package.json /path/to/Forgerank-wt2/
+cp /path/to/GymRats/package.json /path/to/GymRats-wt2/
 npm install
 ```
 

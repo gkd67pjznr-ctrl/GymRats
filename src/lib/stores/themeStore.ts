@@ -1,6 +1,6 @@
 // src/lib/stores/themeStore.ts
 /**
- * Forgerank Theme Store
+ * GymRats Theme Store
  *
  * Zustand store for managing UI theme state with persistence.
  * Implements the layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.
@@ -150,7 +150,7 @@ export const useThemeStore = create<ThemeState>()(
       },
     }),
     {
-      name: 'forgerank-theme.v1',
+      name: 'gymrats-theme.v1',
       storage: createQueuedJSONStorage(),
       partialize: (state) => ({
         database: state.database,

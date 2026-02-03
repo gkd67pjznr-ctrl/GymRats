@@ -1,10 +1,10 @@
 # OAuth Setup Guide
 
-This guide covers the setup and configuration of Google OAuth and Apple Sign In for the Forgerank application.
+This guide covers the setup and configuration of Google OAuth and Apple Sign In for the GymRats application.
 
 ## Overview
 
-Forgerank supports OAuth authentication with:
+GymRats supports OAuth authentication with:
 - **Google OAuth**: Available on iOS, Android, and web
 - **Apple Sign In**: Available on iOS 13+, macOS 10.15+, and web
 
@@ -36,7 +36,7 @@ The OAuth integration uses:
                            │
                            ▼
                     ┌──────────────┐
-                    │   Forgerank  │
+                    │   GymRats  │
                     │     App      │
                     └──────────────┘
 ```
@@ -54,7 +54,7 @@ The OAuth integration uses:
 1. Navigate to **APIs & Services** > **OAuth consent screen**
 2. Choose **External** user type
 3. Fill in required information:
-   - App name: `Forgerank`
+   - App name: `GymRats`
    - User support email: your email
    - Developer contact: your email
 4. Add scopes:
@@ -75,7 +75,7 @@ The OAuth integration uses:
 exp://127.0.0.1:19000/auth
 
 # Development (custom scheme)
-forgerank://auth
+gymrats://auth
 
 # Production (replace with your app scheme)
 yourapp://auth
@@ -107,12 +107,12 @@ yourapp://auth
 3. Enable **Google** provider
 4. Paste your Google Client ID and Client Secret
 5. Add the redirect URL to your site URL:
-   - `forgerank://auth` (or your custom scheme)
+   - `gymrats://auth` (or your custom scheme)
 
 ### Step 6: Verify App Configuration
 
 The app configuration in `app.config.js` already includes:
-- `scheme: 'forgerank'` - Used for deep linking
+- `scheme: 'gymrats'` - Used for deep linking
 - `googleClientId` in `extra` - Loaded from environment variable
 
 Verify these settings match your Google Cloud Console configuration.
@@ -133,7 +133,7 @@ Verify these settings match your Google Cloud Console configuration.
 3. Configure return URLs:
 
 ```
-com.yourcompany.forgerank://auth
+com.yourcompany.gymrats://auth
 ```
 
 ### Step 3: Enable Apple Provider in Supabase
@@ -151,7 +151,7 @@ For iOS development, ensure your `app.json` has the correct bundle identifier:
 {
   "expo": {
     "ios": {
-      "bundleIdentifier": "com.yourcompany.forgerank"
+      "bundleIdentifier": "com.yourcompany.gymrats"
     }
   }
 }
@@ -354,4 +354,4 @@ console.log('OAuth request:', { provider, clientId, redirectUri });
 ---
 
 Last Updated: 2026-01-25
-Forgerank Version: 1.0.0
+GymRats Version: 1.0.0

@@ -10,7 +10,7 @@ import { useUser } from "../../src/lib/stores/authStore";
 import { useFriendEdges } from "../../src/lib/stores/friendsStore";
 import { supabase } from "../../src/lib/supabase/client";
 import { EXERCISES_V1 } from "../../src/data/exercises";
-import { FR } from "../../src/ui/forgerankStyle";
+import { FR } from "../../src/ui/GrStyle";
 import {
   filterByFriends,
   recomputeRanks,
@@ -451,7 +451,7 @@ export default function LeaderboardTab() {
                 ) : (
                   <View style={{ ...FR.card({ card: c.card, border: c.border }) }}>
                     <View style={{ padding: FR.space.x3, borderBottomWidth: 1, borderColor: c.border }}>
-                      <Text style={{ color: c.text, ...FR.type.h3 }}>Average Forgerank Score</Text>
+                      <Text style={{ color: c.text, ...FR.type.h3 }}>Average GymRank Score</Text>
                       <Text style={{ color: c.muted, ...FR.type.sub }}>
                         Based on your best e1RM across all exercises
                       </Text>

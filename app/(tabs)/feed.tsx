@@ -7,7 +7,7 @@ import { useFriendEdges, setupFriendsRealtime } from "../../src/lib/stores/frien
 import type { EmoteId, WorkoutPost } from "../../src/lib/socialModel";
 import { toggleReaction, useFeedAll, useMyReaction, setupPostsRealtime, useSocialStore } from "../../src/lib/stores/socialStore";
 import { displayName, ME_ID } from "../../src/lib/userDirectory";
-import { FR } from "../../src/ui/forgerankStyle";
+import { FR } from "../../src/ui/GrStyle";
 import { useThemeColors } from "../../src/ui/theme";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
 import { timeAgo } from "../../src/lib/units";

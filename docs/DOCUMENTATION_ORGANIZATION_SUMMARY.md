@@ -4,7 +4,7 @@
 
 ## Overview
 
-This document summarizes the reorganization of the Forgerank documentation structure to improve navigation and maintainability. The documentation has been restructured into clearly defined directories with README files to explain contents.
+This document summarizes the reorganization of the GymRats documentation structure to improve navigation and maintainability. The documentation has been restructured into clearly defined directories with README files to explain contents.
 
 ## New Directory Structure
 
@@ -43,7 +43,7 @@ Contains documentation related to authentication systems:
 - `SUPABASE_SETUP.md` - Supabase authentication setup
 
 ### Codebase Analysis
-Comprehensive analysis and documentation of the Forgerank codebase:
+Comprehensive analysis and documentation of the GymRats codebase:
 - `analysis-summary.md` - High-level codebase analysis summary
 - `architecture.md` - Detailed architecture documentation
 - `codebase-analysis.md` - Comprehensive codebase analysis

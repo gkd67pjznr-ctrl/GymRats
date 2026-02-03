@@ -1,8 +1,8 @@
-# Forgerank Theme System
+# GymRats Theme System
 
 ## Overview
 
-The Forgerank theme system provides a comprehensive theming solution that goes beyond simple color changes. Each theme includes:
+The GymRats theme system provides a comprehensive theming solution that goes beyond simple color changes. Each theme includes:
 
 - Unique color palettes with emotional meaning
 - Themed typography with personality treatments

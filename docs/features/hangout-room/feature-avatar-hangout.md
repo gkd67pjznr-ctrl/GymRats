@@ -85,8 +85,8 @@ src/
 │   │   ├── growthCalculator.ts    # Avatar growth algorithms (legacy)
 │   │   └── avatarUtils.ts         # Utility functions
 │   ├── userStats/                 # NEW: Unified statistics module
-│   │   ├── types.ts               # ExerciseStats, LifetimeStats, ForgeRank, etc.
-│   │   ├── forgeRankCalculator.ts # Forge Rank (40/30/20/10 formula)
+│   │   ├── types.ts               # ExerciseStats, LifetimeStats, GymRank, etc.
+│   │   ├── gymRankCalculator.ts # GymRank (40/30/20/10 formula)
 │   │   ├── deriveAvatarGrowth.ts  # Avatar growth derived from stats
 │   │   ├── statsCalculators.ts    # PR detection, volume tracking
 │   │   └── index.ts               # Module exports

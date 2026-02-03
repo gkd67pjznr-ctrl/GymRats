@@ -56,7 +56,7 @@ export function generateShareText(summary: ExerciseRankSummary): string {
     `Best: ${formatWeight(summary.bestWeightKg, settings.unitSystem)} x ${summary.bestReps}`,
     `e1RM: ${formatWeight(summary.bestE1rm, settings.unitSystem)}`,
     ``,
-    `#Forgerank #FitnessGoals`,
+    `#GymRats #FitnessGoals`,
   ];
 
   return lines.join('\n');

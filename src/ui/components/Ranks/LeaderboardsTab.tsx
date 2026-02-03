@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '../../theme';
-import { FR } from '../../forgerankStyle';
+import { FR } from '../../GrStyle';
 import { useUser } from '../../../lib/stores/authStore';
 import { useFriendEdges } from '../../../lib/stores/friendsStore';
 import { useSettings } from '../../../lib/stores/settingsStore';

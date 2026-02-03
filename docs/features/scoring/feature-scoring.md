@@ -1,7 +1,7 @@
-# Feature: Scoring & Ranks (Forgerank System)
+# Feature: Scoring & Ranks (GymRats System)
 
 ## Overview
-The core differentiator of Forgerank - a scoring system that rates your strength against verified, real-world standards. No user-submitted data inflation. Static, honest, meaningful ranks.
+The core differentiator of GymRats - a scoring system that rates your strength against verified, real-world standards. No user-submitted data inflation. Static, honest, meaningful ranks.
 
 ---
 
@@ -15,7 +15,7 @@ The core differentiator of Forgerank - a scoring system that rates your strength
 - [x] Volume bonus
 - [x] Consistency bonus
 
-**Implementation:** `src/lib/forgerankScoring.ts`
+**Implementation:** `src/lib/gymratsScoring.ts`
 
 ### Done - Tier System
 - [x] 7 tiers defined
@@ -23,7 +23,7 @@ The core differentiator of Forgerank - a scoring system that rates your strength
 - [x] Gold (470), Platinum (620), Diamond (770), Mythic (900)
 - [x] Tier colors for UI
 
-**Implementation:** `src/lib/forgerankScoring.ts`
+**Implementation:** `src/lib/gymratsScoring.ts`
 
 ### Done - Rank Ladder
 - [x] 20 ranks per exercise
@@ -46,7 +46,7 @@ The core differentiator of Forgerank - a scoring system that rates your strength
 - [x] Too-light weight detection (<10kg e1RM)
 - [x] Flag output (doesn't block, just warns)
 
-**Implementation:** `src/lib/forgerankScoring.ts`
+**Implementation:** `src/lib/gymratsScoring.ts`
 
 ---
 
@@ -70,7 +70,7 @@ The core differentiator of Forgerank - a scoring system that rates your strength
 ## Technical Notes
 
 **Key Files:**
-- `src/lib/forgerankScoring.ts` - Main scoring algorithm
+- `src/lib/gymratsScoring.ts` - Main scoring algorithm
 - `src/lib/ranks.ts` - Rank ladder utilities
 - `src/lib/e1rm.ts` - e1RM calculation (Epley formula)
 - `src/data/rankTops.ts` - Verified top standards

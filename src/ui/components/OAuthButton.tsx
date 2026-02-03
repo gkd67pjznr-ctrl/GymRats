@@ -13,7 +13,7 @@ import {
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 import { useThemeColors } from '../theme';
-import { FR } from '../forgerankStyle';
+import { FR } from '../GrStyle';
 import { isAppleAuthAvailable } from '../../lib/auth/apple';
 
 // ============================================================================

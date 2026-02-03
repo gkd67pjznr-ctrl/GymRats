@@ -1,7 +1,7 @@
 # Feature: Workout Core
 
 ## Overview
-The core workout logging experience - the heart of Forgerank. Users start workouts, log sets with weight and reps, and track their progress over time.
+The core workout logging experience - the heart of GymRats. Users start workouts, log sets with weight and reps, and track their progress over time.
 
 ---
 

@@ -1,6 +1,6 @@
 # Master Documentation
 
-This directory contains the master documentation files that serve as the central source of truth for the Forgerank project.
+This directory contains the master documentation files that serve as the central source of truth for the GymRats project.
 
 ## Contents
 

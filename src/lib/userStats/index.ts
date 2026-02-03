@@ -7,7 +7,7 @@ export type {
   LifetimeStats,
   ConsistencyMetrics,
   VarietyMetrics,
-  ForgeRank,
+  GymRank,
   RankTier,
   DerivedAvatarGrowth,
   ProcessWorkoutResult,
@@ -24,13 +24,13 @@ export {
 
 // Forge Rank Calculator
 export {
-  calculateForgeRank,
+  calculateGymRank,
   scoreToTierAndRank,
   getTierFromRank,
   getTierColor,
   getTierDisplayName,
-  type ForgeRankInput,
-} from "./forgeRankCalculator";
+  type GymRankInput,
+} from "./gymRankCalculator";
 
 // Avatar Growth
 export {

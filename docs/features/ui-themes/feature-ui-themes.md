@@ -1,7 +1,7 @@
 # Feature: UI Themes & Visual Style
 
 ## Overview
-Implementation of the Forgerank visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency. This system creates a unique aesthetic that maintains workout tracking performance while adding distinctive personality elements.
+Implementation of the GymRats visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency. This system creates a unique aesthetic that maintains workout tracking performance while adding distinctive personality elements.
 
 **Status:** In Progress | **Progress:** 6/8 sub-features complete (75%)
 **Last Updated:** 2026-02-03

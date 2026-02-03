@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Forgerank Feature Documentation Synchronization Script
+ * GymRats Feature Documentation Synchronization Script
  *
  * This script automates the Maestro duties by:
- * 1. Scanning all Forgerank repositories for feature documentation
+ * 1. Scanning all GymRats repositories for feature documentation
  * 2. Comparing files across repositories
  * 3. Accumulating positive feature progress (never going backwards)
  * 4. Updating the current repository with combined information
@@ -333,7 +333,7 @@ function mergeTestingFiles(repos: RepositoryData[]): string {
 }
 
 async function synchronizeRepositories() {
-  console.log('Starting Forgerank Feature Documentation Synchronization...\n');
+  console.log('Starting GymRats Feature Documentation Synchronization...\n');
 
   try {
     // 1. Read all repository files
@@ -406,7 +406,7 @@ async function synchronizeRepositories() {
     const summaryContent = `# Feature Documentation Synchronization - Script Summary
 
 ## Overview
-This document summarizes the automated updates made by the synchronization script to consolidate feature documentation across all Forgerank repositories.
+This document summarizes the automated updates made by the synchronization script to consolidate feature documentation across all GymRats repositories.
 
 ## Updates Made
 - FEATURE-MASTER.md: Updated with latest feature statuses from all repositories

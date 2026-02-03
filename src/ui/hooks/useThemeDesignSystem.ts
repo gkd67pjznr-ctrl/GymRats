@@ -1,6 +1,6 @@
 // src/ui/hooks/useThemeDesignSystem.ts
 /**
- * Forgerank Theme Design System Hook
+ * GymRats Theme Design System Hook
  *
  * Combines theme store data with the design system to create a complete theme.
  * Implements the layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.

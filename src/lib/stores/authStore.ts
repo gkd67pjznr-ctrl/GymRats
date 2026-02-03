@@ -79,7 +79,7 @@ function toUserProfile(user: DatabaseUser): UserProfile {
     createdAt: user.created_at,
     updatedAt: user.updated_at,
     // Subscription tier (default to basic for now, dev user gets legendary)
-    subscriptionTier: user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
+    subscriptionTier: user.email === "dev@gymrats.app" ? 'legendary' : 'basic',
     // Avatar properties
     avatarArtStyle: user.avatar_art_style,
     avatarGrowthStage: user.avatar_growth_stage,
@@ -157,7 +157,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               avatarUrl: data.user.user_metadata?.avatar_url ?? null,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-              subscriptionTier: data.user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
+              subscriptionTier: data.user.email === "dev@gymrats.app" ? 'legendary' : 'basic',
               // Optional fields with defaults
               avatarArtStyle: null,
               avatarGrowthStage: null,
@@ -225,7 +225,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               avatarUrl: data.user.user_metadata?.avatar_url ?? null,
               createdAt: data.user.created_at ?? new Date().toISOString(),
               updatedAt: data.user.updated_at ?? new Date().toISOString(),
-              subscriptionTier: data.user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
+              subscriptionTier: data.user.email === "dev@gymrats.app" ? 'legendary' : 'basic',
               // Optional fields with defaults
               avatarArtStyle: null,
               avatarGrowthStage: null,
@@ -281,7 +281,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: __DEV__
           ? "exp://127.0.0.1:19000/--/auth/reset-password"
-          : "https://forgerank.app/auth/reset-password",
+          : "https://gymrats.app/auth/reset-password",
       });
 
       if (error) {
@@ -633,7 +633,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (isSupabasePlaceholder) {
       const mockUser = {
         id: "dev-user-id-123456",
-        email: "dev@forgerank.app",
+        email: "dev@gymrats.app",
         displayName: "Dev User",
         avatarUrl: null,
         createdAt: new Date().toISOString(),
@@ -664,7 +664,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
 
     try {
-      const devEmail = "dev@forgerank.app";
+      const devEmail = "dev@gymrats.app";
       const devPassword = "dev123456";
 
       // Try to sign in first
@@ -903,7 +903,7 @@ export function setupAuthListener(
             avatarUrl: session.user.user_metadata?.avatar_url ?? null,
             createdAt: session.user.created_at ?? new Date().toISOString(),
             updatedAt: session.user.updated_at ?? new Date().toISOString(),
-            subscriptionTier: session.user.email === "dev@forgerank.app" ? 'legendary' : 'basic',
+            subscriptionTier: session.user.email === "dev@gymrats.app" ? 'legendary' : 'basic',
             // Optional fields with defaults
             avatarArtStyle: null,
             avatarGrowthStage: null,

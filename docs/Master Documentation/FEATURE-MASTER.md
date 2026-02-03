@@ -1,4 +1,4 @@
-# FORGERANK FEATURE MASTER
+# GYMRATS FEATURE MASTER
 
 **Last Updated:** 2026-02-02
 **Version:** v0.4 (Post-merge)
@@ -54,9 +54,9 @@
 
 ## Core Differentiators
 
-What sets Forgerank apart — the combination is the killer feature:
+What sets GymRats apart — the combination is the killer feature:
 
-1. **Forgerank Scoring** — Static, verified standards (not user-inflated). Your rank means something.
+1. **GymRats Scoring** — Static, verified standards (not user-inflated). Your rank means something.
 2. **AI Gym Buddy** — 8-12 personality archetypes with reactive commentary. The app has a character.
 3. **Avatar & Hangout Room** — Finch-inspired growing avatar + social room. Emotional investment.
 4. **Aesthetic** — Pure-inspired dark, mysterious UI. Looks so good people show it off.
@@ -260,7 +260,7 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 ## Gamification
 **Status:** Done | **Progress:** 12/12 features
 
-XP, levels, streaks, currency, and cosmetics. Separate from Forgerank scoring.
+XP, levels, streaks, currency, and cosmetics. Separate from GymRats scoring.
 
 **Completed:**
 - XP system with level thresholds
@@ -328,7 +328,7 @@ Pure-inspired dark aesthetic — looks so good people want to show it off.
 ## UI Themes & Visual Style
 **Status:** In Progress | **Progress:** 6/12 features
 
-Implementation of the Forgerank visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency.
+Implementation of the GymRats visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency.
 
 **Completed:**
 - UI Aesthetic Implementation Plan with layered approach (documentation)
@@ -430,7 +430,7 @@ Cinematic post-workout summary — THE share moment.
 - PR highlights with buddy commentary
 - Rank changes display
 - Buddy personality sign-off
-- Share to in-app feed (focus on Forgerank social, not external platforms)
+- Share to in-app feed (focus on GymRats social, not external platforms)
 
 ---
 
@@ -490,8 +490,8 @@ Non-repeatable lifetime achievements with tiered rarity — prestige markers.
 **Post-launch**
 
 **Leaderboards:**
-- Per-exercise Forgerank leaderboard (friends + global)
-- Overall Forgerank leaderboard
+- Per-exercise GymRats leaderboard (friends + global)
+- Overall GymRats leaderboard
 - Volume leaderboard
 - User level leaderboard
 - Gym-level leaderboards (tied to Gym Finder)
@@ -695,7 +695,7 @@ Seasonal content drops to keep things fresh.
 ## Business Model
 
 ### Free Tier
-- Full workout logging + Forgerank scoring
+- Full workout logging + GymRats scoring
 - Basic social feed + friends + reactions
 - 2-3 starter gym buddy personalities (text-only)
 - Basic history/calendar + weight graph

@@ -9,7 +9,7 @@ export type XPSource =
   | 'set_logged'          // Logging a set
   | 'pr_achieved'         // Achieving a PR
   | 'streak_milestone'    // Streak milestones (3, 7, 14, 30 days)
-  | 'rank_up'            // Forgerank rank increase
+  | 'rank_up'            // GymRank rank increase
   | 'first_workout'      // First workout ever
   | 'returning_user'     // Returning after break
   | 'workout_plan'       // Following a plan/routine

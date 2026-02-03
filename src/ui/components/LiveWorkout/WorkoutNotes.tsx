@@ -4,7 +4,7 @@
 import { View, TextInput, StyleSheet } from "react-native";
 
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 
 export interface WorkoutNotesProps {
   value: string;

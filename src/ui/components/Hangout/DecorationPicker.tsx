@@ -41,7 +41,7 @@ const DECORATIONS: Record<
     { id: "motivation1", name: "No Pain", description: '"No Pain, No Gain"', icon: "💪" },
     { id: "motivation2", name: "Stronger", description: '"Get Stronger Every Day"', icon: "🔥" },
     { id: "motivation3", name: "Focus", description: '"Stay Focused"', icon: "🎯" },
-    { id: "brand", name: "Forgerank Logo", description: "Show your pride", icon: "⚡" },
+    { id: "brand", name: "GymRats Logo", description: "Show your pride", icon: "⚡" },
   ],
   equipment: [
     { id: "dumbbells", name: "Dumbbell Rack", description: "Free weights station", icon: "🏋️" },

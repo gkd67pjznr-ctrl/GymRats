@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { View, Text, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useThemeColors } from "../src/ui/theme";
-import { FR } from "../src/ui/forgerankStyle";
+import { FR } from "../src/ui/GrStyle";
 import { EXERCISES_V1 } from "../src/data/exercises";
 import { useWorkoutStore, useIsHydrated, useJournalEntryForSession, useUser , updateJournalEntry, addJournalEntry } from "../src/lib/stores";
 import { timeAgo } from "../src/lib/units";

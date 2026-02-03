@@ -1,7 +1,7 @@
 # Avatar & Hangout Room Implementation Plan
 
 ## Overview
-This plan outlines the implementation of the Avatar & Hangout Room feature for the Forgerank app, which includes:
+This plan outlines the implementation of the Avatar & Hangout Room feature for the GymRats app, which includes:
 1. Virtual gym avatar that grows as users work out
 2. Shared hangout room where friends' avatars appear
 3. Avatar customization and growth system

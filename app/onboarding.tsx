@@ -8,7 +8,7 @@ import { useOnboardingStore, useCurrentOnboardingStep, PERSONALITIES } from "../
 import { useAvatarStore } from "../src/lib/avatar/avatarStore";
 import type { AvatarArtStyle } from "../src/lib/avatar/avatarTypes";
 import { useThemeColors } from "../src/ui/theme";
-import { FR } from "../src/ui/forgerankStyle";
+import { FR } from "../src/ui/GrStyle";
 
 export default function OnboardingScreen() {
   const c = useThemeColors();
@@ -70,7 +70,7 @@ function WelcomeStep() {
       <View style={{ gap: FR.space.x4, alignItems: "center" }}>
         <Text style={{ fontSize: 64 }}>💪</Text>
         <Text style={{ color: c.text, ...FR.type.h1, textAlign: "center" }}>
-          Welcome to Forgerank
+          Welcome to GymRats
         </Text>
         <Text style={{ color: c.muted, ...FR.type.body, textAlign: "center" }}>
           The ranking system for lifters. Track your strength, compete with friends, and earn your rank.
@@ -686,7 +686,7 @@ function HighlightsStep() {
     <View style={{ flex: 1, padding: FR.space.x6, gap: FR.space.x6 }}>
       <View style={{ gap: FR.space.x2 }}>
         <Text style={{ color: c.text, ...FR.type.h1 }}>Key Features</Text>
-        <Text style={{ color: c.muted, ...FR.type.sub }}>A quick tour of what makes Forgerank special</Text>
+        <Text style={{ color: c.muted, ...FR.type.sub }}>A quick tour of what makes GymRats special</Text>
       </View>
 
       <ScrollView

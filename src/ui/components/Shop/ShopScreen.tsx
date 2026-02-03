@@ -15,7 +15,7 @@ import * as Haptics from "expo-haptics";
 import { useShopItems, useForgeTokens, purchaseShopItem, equipShopItem } from "@/src/lib/stores/gamificationStore";
 import { getRarityColor, type ShopCategory, type ShopItem } from "@/src/lib/gamification/shop";
 import { useThemeColors } from "@/src/ui/theme";
-import { FR } from "@/src/ui/forgerankStyle";
+import { FR } from "@/src/ui/GrStyle";
 import { ThemedButton } from "../ThemedButton";
 
 // Category display names

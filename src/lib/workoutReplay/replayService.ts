@@ -5,7 +5,7 @@ import type { WorkoutSession, WorkoutSet } from '../workoutModel';
 import type { WorkoutReplay, ReplayExercise, ReplayPR, ReplayRankChange } from './replayTypes';
 import { EXERCISES_V1 } from '../../data/exercises';
 import { detectCueForWorkingSet } from '../perSetCue';
-import { scoreForgerank, scoreFromE1rm } from '../forgerankScoring';
+import { scoreGymRank, scoreFromE1rm } from '../GrScoring';
 import { estimate1RM_Epley } from '../e1rm';
 import { getCurrentBuddy , formatCueMessage } from '../buddyEngine';
 import type { CueMessage } from '../buddyTypes';

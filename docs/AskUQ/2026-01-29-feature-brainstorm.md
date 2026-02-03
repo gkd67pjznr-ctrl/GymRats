@@ -8,7 +8,7 @@
 
 ## 1. Core Identity & Vision
 
-**Q: What's the core identity? What makes someone choose Forgerank over Strong, Hevy, Fitbod, or Liftoff?**
+**Q: What's the core identity? What makes someone choose GymRats over Strong, Hevy, Fitbod, or Liftoff?**
 - **A:** All three pillars equally — the 20-rank ladder, social/community, and AI gym buddy personality system. The combination is the differentiator.
 
 **Q: Who is the primary target user?**
@@ -145,7 +145,7 @@
 
 **Concept:** After finishing a workout, get a cinematic summary with animated stat cards, PR highlights, rank changes, buddy commentary.
 
-- **A:** Absolute must have. But focus on in-app social sharing (Forgerank feed), not pushing to IG/TikTok. Want users using the social feeds inside the app.
+- **A:** Absolute must have. But focus on in-app social sharing (GymRats feed), not pushing to IG/TikTok. Want users using the social feeds inside the app.
 
 ---
 
@@ -234,7 +234,7 @@ What keeps users coming back on non-workout days:
 - **A:** Full ecosystem:
   - Discovery (find gyms nearby via Google/Apple Maps data)
   - Community-powered (users tag their gym, rate it, list equipment, upload photos)
-  - Social layer (see which friends go where, Forgerank users per gym, gym-level leaderboards)
+  - Social layer (see which friends go where, GymRats users per gym, gym-level leaderboards)
   - Gym partnerships (discounts, featured gyms — potential B2B revenue)
 
 ---

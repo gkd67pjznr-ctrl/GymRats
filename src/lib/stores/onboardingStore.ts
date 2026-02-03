@@ -6,7 +6,7 @@ import { persist } from "zustand/middleware";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import { updateSettings } from "./settingsStore";
 
-const STORAGE_KEY = "forgerank.onboarding.v1";
+const STORAGE_KEY = "gymrats.onboarding.v1";
 
 /**
  * Experience level for tailoring app experience

@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { useThemeColors } from '../../theme';
-import { FR } from '../../forgerankStyle';
+import { FR } from '../../GrStyle';
 import { BodyModel } from '../BodyModel';
 import { useWorkoutSessions } from '../../../lib/stores/workoutStore';
 import { calculateMuscleVolumes } from '../../../lib/volumeCalculator';

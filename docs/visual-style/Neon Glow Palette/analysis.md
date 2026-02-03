@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-03
 
-High-fidelity UI mockups showcasing a cosmic/neon aesthetic for Forgerank.
+High-fidelity UI mockups showcasing a cosmic/neon aesthetic for GymRats.
 
 ---
 
@@ -102,7 +102,7 @@ High-fidelity UI mockups showcasing a cosmic/neon aesthetic for Forgerank.
 
 ## Implementation Notes
 
-This palette represents a **premium visual direction** - very polished, game-like aesthetic that would differentiate Forgerank from typical fitness apps.
+This palette represents a **premium visual direction** - very polished, game-like aesthetic that would differentiate GymRats from typical fitness apps.
 
 **Best suited for:**
 - Premium/paid theme tier

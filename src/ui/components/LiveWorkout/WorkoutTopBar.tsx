@@ -8,7 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 
 export interface WorkoutTopBarProps {
   /** Formatted elapsed time (e.g., "1:14:32") */

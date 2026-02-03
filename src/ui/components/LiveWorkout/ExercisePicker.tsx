@@ -12,7 +12,7 @@ import {
   getAllExercises,
   getPopularExercises,
   searchExercises,
-  type ForgerankExercise,
+  type GrExercise,
 } from "../../../data/exerciseDatabase";
 
 type Props = {
@@ -25,7 +25,7 @@ type Props = {
 
 type Section = {
   title: string;
-  data: ForgerankExercise[];
+  data: GrExercise[];
 };
 
 const MUSCLE_GROUP_ORDER = [
@@ -48,8 +48,8 @@ const MUSCLE_GROUP_ORDER = [
   "neck",
 ] as const;
 
-function groupByMuscle(exercises: ForgerankExercise[]): Section[] {
-  const groups = new Map<string, ForgerankExercise[]>();
+function groupByMuscle(exercises: GrExercise[]): Section[] {
+  const groups = new Map<string, GrExercise[]>();
 
   for (const ex of exercises) {
     const muscle = ex.primaryMuscles[0] ?? "other";
@@ -89,7 +89,7 @@ export function ExercisePicker(props: Props) {
   const popularExercises = useMemo(() => getPopularExercises(), []);
 
   const filteredExercises = useMemo(() => {
-    let exercises: ForgerankExercise[];
+    let exercises: GrExercise[];
 
     if (query.trim().length > 0) {
       exercises = searchExercises(query.trim());
@@ -135,7 +135,7 @@ export function ExercisePicker(props: Props) {
 
   if (!props.visible) return null;
 
-  const renderItem = ({ item }: { item: ForgerankExercise }) => {
+  const renderItem = ({ item }: { item: GrExercise }) => {
     const isSelected = item.id === props.selectedExerciseId;
     return (
       <Pressable

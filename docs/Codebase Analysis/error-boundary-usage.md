@@ -1,10 +1,10 @@
 # Error Boundary Usage Guide
 
-This guide explains how to use the Error Boundary components in the Forgerank app.
+This guide explains how to use the Error Boundary components in the GymRats app.
 
 ## Overview
 
-Forgerank uses two error boundary components:
+GymRats uses two error boundary components:
 
 1. **ErrorBoundary** (`src/ui/error-boundary.tsx`) - General-purpose error boundary
 2. **TabErrorBoundary** (`src/ui/tab-error-boundary.tsx`) - Specialized for tab screens
@@ -197,7 +197,7 @@ test('catches errors and shows error screen', () => {
 
 ## Design System Integration
 
-Both error boundary components use the Forgerank design system:
+Both error boundary components use the GymRats design system:
 
 - **Background**: `#0a0a0a` (dark bg)
 - **Card**: `#1a1a1a` (card)

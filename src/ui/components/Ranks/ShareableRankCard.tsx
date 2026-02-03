@@ -71,7 +71,7 @@ export const ShareableRankCard = forwardRef<View, Props>(
 
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.appName}>FORGERANK</Text>
+          <Text style={styles.appName}>GYMRATS</Text>
           <Text style={styles.userName}>{name}</Text>
         </View>
 
@@ -132,7 +132,7 @@ export const ShareableRankCard = forwardRef<View, Props>(
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.hashtag}>#Forgerank</Text>
+          <Text style={styles.hashtag}>#GymRats</Text>
           <Text style={styles.date}>
             {new Date().toLocaleDateString('en-US', {
               month: 'short',

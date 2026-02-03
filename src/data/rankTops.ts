@@ -1,8 +1,8 @@
 /**
- * Verified Top Standards for Forgerank Scoring
+ * Verified Top Standards for GymRats Scoring
  *
  * These are the world-class, verified e1RM standards used to calculate
- * Forgerank scores. They are STATIC and based on verified, video'd lifts.
+ * GymRank scores. They are STATIC and based on verified, video'd lifts.
  *
  * This is a core differentiator: users compare against REAL standards,
  * not inflated user-submitted data.

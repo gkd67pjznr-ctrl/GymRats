@@ -1,6 +1,6 @@
-// src/lib/forgerankScoring.ts
+// src/lib/GrScoring.ts
 /**
- * Forgerank scoring (v1 foundation)
+ * GymRank scoring (v1 foundation)
  *
  * Goals:
  * - Deterministic (same input -> same output)
@@ -98,7 +98,7 @@ export const DEFAULT_TIERS: TierThreshold[] = [
 
 /** ---------- Public API ---------- */
 
-export function scoreForgerank(input: ScoringInput): ScoreBreakdown {
+export function scoreGymRank(input: ScoringInput): ScoreBreakdown {
   const flags: ScoreFlag[] = [];
   const parts: ScoreBreakdown["parts"] = [];
 
@@ -211,7 +211,7 @@ export function scoreForgerank(input: ScoringInput): ScoreBreakdown {
  * Useful for leaderboards or imported PRs.
  */
 export function scoreFromE1rm(exerciseId: string, e1rmKg: number, bodyweightKg?: number, sex: Sex = "unspecified"): ScoreBreakdown {
-  return scoreForgerank({
+  return scoreGymRank({
     exerciseId,
     weight: 0,
     reps: 1,

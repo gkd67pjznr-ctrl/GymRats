@@ -1,6 +1,6 @@
 # Codebase Analysis Documentation
 
-This directory contains comprehensive analysis and documentation of the Forgerank codebase.
+This directory contains comprehensive analysis and documentation of the GymRats codebase.
 
 ## Contents
 

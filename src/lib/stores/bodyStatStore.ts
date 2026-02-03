@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createQueuedJSONStorage } from './storage/createQueuedAsyncStorage';
 
-const STORAGE_KEY = 'forgerank.bodyStats.v1';
+const STORAGE_KEY = 'gymrats.bodyStats.v1';
 
 interface BodyStatState {
   muscleVolumes: Record<string, number>;

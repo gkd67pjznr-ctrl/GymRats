@@ -43,7 +43,7 @@ Quick reference for generating palettes, icons, illustrations, effects, notifica
 
 ---
 
-## Forgerank Asset Mapping
+## GymRats Asset Mapping
 
 | Asset Type | Best Tool |
 |------------|-----------|
@@ -56,9 +56,9 @@ Quick reference for generating palettes, icons, illustrations, effects, notifica
 
 ---
 
-## Quick Workflow for Forgerank
+## Quick Workflow for GymRats
 
-For consistent UI assets in Forgerank's "Pure" dark aesthetic:
+For consistent UI assets in GymRats's "Pure" dark aesthetic:
 
 1. **Recraft AI** for vector icons and UI elements (exports SVG)
 2. **Leonardo AI** for character/avatar artwork with style locking

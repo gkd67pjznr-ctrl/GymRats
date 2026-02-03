@@ -5,7 +5,7 @@ import { EXERCISES_V1 } from '@/src/data/exercises';
 import { estimate1RM_Epley as calculateE1RM } from '@/src/lib/e1rm';
 import { MuscleGroup, ExerciseStat, MuscleGroupVolumeData } from './types';
 import { WorkoutSession, WorkoutSet } from '@/src/lib/workoutModel';
-import { scoreFromE1rm } from '@/src/lib/forgerankScoring';
+import { scoreFromE1rm } from '@/src/lib/GrScoring';
 
 /**
  * Calculate e1RM history for an exercise

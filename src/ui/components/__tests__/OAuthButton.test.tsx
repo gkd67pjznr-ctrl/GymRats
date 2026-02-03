@@ -21,7 +21,7 @@ jest.mock('@/src/ui/theme', () => ({
   })),
 }));
 
-jest.mock('@/src/ui/forgerankStyle', () => ({
+jest.mock('@/src/ui/GrStyle', () => ({
   FR: {
     space: {
       x1: 6,

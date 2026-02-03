@@ -17,7 +17,7 @@ EXPO_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 # Sentry (crash reporting)
 EXPO_PUBLIC_SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
 SENTRY_ORG=your-org
-SENTRY_PROJECT=forgerank-mobile
+SENTRY_PROJECT=gymrats-mobile
 
 # RevenueCat (in-app purchases)
 EXPO_PUBLIC_REVENUECAT_APPLE_KEY=appl_xxx

@@ -2,7 +2,7 @@ import { View, Text, Pressable, ScrollView, ActivityIndicator } from "react-nati
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useState, useEffect } from "react";
 import { useThemeColors } from "../../../src/ui/theme";
-import { FR } from "../../../src/ui/forgerankStyle";
+import { FR } from "../../../src/ui/GrStyle";
 import type { PlanCategory } from "../../../src/lib/premadePlans/types";
 import { usePlansByCategory, hydratePremadePlansStore } from "../../../src/lib/premadePlans/store";
 import { getCategoryInfo } from "../../../src/lib/premadePlans/categories";

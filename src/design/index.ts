@@ -1,7 +1,7 @@
 /**
  * Design System - Main Entry Point
  *
- * Modern, layered design system for Forgerank.
+ * Modern, layered design system for GymRats.
  * Import from here for all design-related utilities.
  *
  * Architecture:

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Push notifications with a MINIMAL philosophy. Forgerank respects the user's attention -- no nagging, no guilt trips, no "you haven't worked out in X days" reminders. Notifications exist only when they deliver immediate, essential value.
+Push notifications with a MINIMAL philosophy. GymRats respects the user's attention -- no nagging, no guilt trips, no "you haven't worked out in X days" reminders. Notifications exist only when they deliver immediate, essential value.
 
 **Total sub-features:** 4
 

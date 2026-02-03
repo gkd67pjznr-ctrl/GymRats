@@ -24,7 +24,7 @@ import { useThemeColors } from "../src/ui/theme";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { SyncStatusIndicator } from "../src/ui/components/SyncStatusIndicator";
-import { FR } from "../src/ui/forgerankStyle";
+import { FR } from "../src/ui/GrStyle";
 
 type DisplayUser = {
   id: string;

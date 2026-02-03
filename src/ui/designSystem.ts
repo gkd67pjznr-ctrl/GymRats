@@ -1,6 +1,6 @@
 // src/ui/designSystem.ts
 /**
- * FORGERANK — Design System (v1) - DEPRECATED
+ * GYMRATS — Design System (v1) - DEPRECATED
  *
  * @deprecated This file is maintained for backwards compatibility only.
  * Use the new design system instead:

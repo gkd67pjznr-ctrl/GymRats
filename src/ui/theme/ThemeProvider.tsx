@@ -1,6 +1,6 @@
 // src/ui/theme/ThemeProvider.tsx
 /**
- * Forgerank Theme Provider
+ * GymRats Theme Provider
  *
  * React context provider for theme management.
  * Implements the layered approach: PURE's emotional personality over LIFTOFF's functional efficiency.

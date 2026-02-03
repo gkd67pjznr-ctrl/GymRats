@@ -8,7 +8,7 @@
  */
 
 import { Text, View } from "react-native";
-import { FR } from "@/src/ui/forgerankStyle";
+import { FR } from "@/src/ui/GrStyle";
 import { useThemeColors } from "@/src/ui/theme";
 import type { Cue } from "@/src/lib/perSetCue";
 

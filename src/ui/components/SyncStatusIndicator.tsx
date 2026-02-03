@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { useSyncState } from '../../lib/hooks/useSyncStatus';
 import { networkMonitor } from '../../lib/sync/NetworkMonitor';
-import { FR } from '../forgerankStyle';
+import { FR } from '../GrStyle';
 import { useThemeColors } from '../theme';
 
 type DisplayMode = 'compact' | 'detailed' | 'minimal';

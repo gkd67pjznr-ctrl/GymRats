@@ -38,7 +38,7 @@ export function UserComparison({ userDNA, averageDNA, differences, insights }: U
     <View style={styles.container}>
       <Text style={[styles.title, { color: c.text }]}>User Comparison</Text>
       <Text style={[styles.subtitle, { color: c.muted }]}>
-        How you compare to the average Forgerank user
+        How you compare to the average GymRats user
       </Text>
 
       {/* Training Style Comparison */}

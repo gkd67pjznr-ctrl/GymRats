@@ -1,8 +1,8 @@
-# Forgerank Cue System Implementation
+# GymRats Cue System Implementation
 
 ## Overview
 
-This document details the implementation of Forgerank's enhanced visual cue system, which coordinates themed visual, audio, and haptic feedback across user interactions.
+This document details the implementation of GymRats's enhanced visual cue system, which coordinates themed visual, audio, and haptic feedback across user interactions.
 
 ## Cue System Architecture
 
@@ -727,4 +727,4 @@ interface CueContext {
 }
 ```
 
-This comprehensive cue system implementation provides a solid foundation for delivering engaging, themed feedback throughout the Forgerank experience while maintaining performance and scalability.
+This comprehensive cue system implementation provides a solid foundation for delivering engaging, themed feedback throughout the GymRats experience while maintaining performance and scalability.

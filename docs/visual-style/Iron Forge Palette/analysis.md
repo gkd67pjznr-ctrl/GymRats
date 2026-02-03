@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-02-03
 
-High-fidelity UI mockups showcasing a medieval/fantasy blacksmith forge aesthetic for Forgerank.
+High-fidelity UI mockups showcasing a medieval/fantasy blacksmith forge aesthetic for GymRats.
 
 ---
 
@@ -123,6 +123,6 @@ This palette represents a **thematic premium direction** - RPG/fantasy aesthetic
 - Consider light theme variant with parchment/stone textures
 
 **Brand alignment:**
-- Directly supports "Forgerank" naming
+- Directly supports "GymRats" naming
 - Blacksmith metaphor: forging your body like metal
 - Rank tiers feel like crafting progression (Iron → Steel → Emerald → etc.)

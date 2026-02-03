@@ -1,5 +1,5 @@
 /**
- * Rank Progression Card - Displays Forgerank progression over time
+ * Rank Progression Card - Displays GymRank progression over time
  */
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
@@ -54,7 +54,7 @@ const RankProgressionCard: React.FC<RankProgressionCardProps> = ({ exercises, is
       <View style={styles.header}>
         <Text style={[styles.title, { color: ds.tone.text }]}>Rank Progression</Text>
         <Text style={[styles.subtitle, { color: ds.tone.textSecondary }]}>
-          Track your Forgerank progression over time
+          Track your GymRank progression over time
         </Text>
       </View>
 

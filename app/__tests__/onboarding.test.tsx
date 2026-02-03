@@ -37,8 +37,8 @@ jest.mock('../../src/ui/theme', () => ({
   }),
 }));
 
-// Mock forgerankStyle
-jest.mock('../../src/ui/forgerankStyle', () => ({
+// Mock GrStyle
+jest.mock('../../src/ui/GrStyle', () => ({
   FR: {
     type: {
       h1: { fontSize: 32, fontWeight: '900' },
@@ -149,7 +149,7 @@ describe('OnboardingScreen', () => {
     });
 
     render(<OnboardingScreen />);
-    expect(screen.getByText('Welcome to Forgerank')).toBeTruthy();
+    expect(screen.getByText('Welcome to GymRats')).toBeTruthy();
     expect(screen.getByText('Let\'s Get Started')).toBeTruthy();
   });
 

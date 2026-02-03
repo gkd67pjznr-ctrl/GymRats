@@ -1,7 +1,7 @@
 # Expo Package Migration Plan
 
 ## Overview
-This document tracks necessary package updates and migrations for Forgerank to maintain compatibility with Expo SDK updates and address deprecation warnings.
+This document tracks necessary package updates and migrations for GymRats to maintain compatibility with Expo SDK updates and address deprecation warnings.
 
 ## Current Expo SDK: 54.0.33
 

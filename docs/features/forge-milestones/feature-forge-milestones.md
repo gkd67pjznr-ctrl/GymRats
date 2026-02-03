@@ -186,7 +186,7 @@ CREATE TABLE user_milestones (
 
 - Workout history (for checking conditions)
 - Streak system (gamificationStore)
-- Rank system (forgerankScoring)
+- Rank system (gymratsScoring)
 - XP/level system (gamificationStore)
 - Backend sync (persistence)
 

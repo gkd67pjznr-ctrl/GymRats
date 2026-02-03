@@ -232,7 +232,7 @@ export interface LiveSetDisplayItem {
   timestampMs: number;
   e1rmKg?: number;
   isPR?: boolean;
-  intensityScore?: number; // 0-1000 forgerank score
+  intensityScore?: number; // 0-1000 gymrank score
 }
 
 /**

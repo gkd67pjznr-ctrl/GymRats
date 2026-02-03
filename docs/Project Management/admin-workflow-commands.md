@@ -85,17 +85,17 @@ These commands are shortcuts that trigger specific automated workflows in Claude
 **Triggers:** Feature Documentation Synchronization
 
 **What it does:**
-- Scans all Forgerank worktrees for feature updates
+- Scans all GymRats worktrees for feature updates
 - Reads feature documentation from each repository
 - Accumulates and synchronizes changes to current repository
 - Updates FEATURE-MASTER.md, progress.md, and feature files
 - Preserves all existing information (additive only)
 
 **Repositories scanned:**
-- /projects/forgerank (main)
-- /projects/forgerank-devs
-- /projects/forgerank-qwen
-- /projects/forgerank-glm
+- /projects/gymrats (main)
+- /projects/gymrats-devs
+- /projects/gymrats-qwen
+- /projects/gymrats-glm
 
 **Use when:** You want to sync feature documentation across all worktrees
 

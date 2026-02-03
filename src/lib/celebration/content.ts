@@ -33,7 +33,7 @@ export function contentKey(
  * // Future AI content:
  * 'weight_tier_1_a': {
  *   type: 'image',
- *   uri: 'https://cdn.forgerank.app/celebrations/weight_tier_1_a.png',
+ *   uri: 'https://cdn.gymrats.app/celebrations/weight_tier_1_a.png',
  *   aspectRatio: 1,
  * }
  */

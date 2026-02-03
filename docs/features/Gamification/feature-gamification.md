@@ -1,7 +1,7 @@
 # Feature: Gamification
 
 ## Overview
-XP, levels, streaks, currency, and cosmetics. Keeps users engaged beyond just logging workouts. Separate from the Forgerank scoring system (which measures actual strength progress).
+XP, levels, streaks, currency, and cosmetics. Keeps users engaged beyond just logging workouts. Separate from the GymRats scoring system (which measures actual strength progress).
 
 **Philosophy:** No pay-to-win. All cosmetics, all optional.
 
@@ -22,7 +22,7 @@ XP, levels, streaks, currency, and cosmetics. Keeps users engaged beyond just lo
 
 **Implementation:** `src/lib/stores/gamificationStore.ts`
 
-**Key Point:** XP measures activity/engagement. Forgerank measures strength. Different systems, different purposes.
+**Key Point:** XP measures activity/engagement. GymRats measures strength. Different systems, different purposes.
 
 ---
 

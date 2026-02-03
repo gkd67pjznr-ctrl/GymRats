@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains comprehensive documentation for the Live Workout Together feature in Forgerank.
+This directory contains comprehensive documentation for the Live Workout Together feature in GymRats.
 
 ## Documentation Files
 
@@ -94,4 +94,4 @@ When contributing to this feature:
 
 ## License
 
-This documentation is part of the Forgerank project and is licensed under the same terms as the main project.
+This documentation is part of the GymRats project and is licensed under the same terms as the main project.

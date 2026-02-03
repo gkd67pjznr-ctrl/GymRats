@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Pressable, Text, TextInput, View, Platform } from "react-native";
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 import { EXERCISES_V1 } from "../../../data/exercises";
 import type { LoggedSet } from "../../../lib/loggerTypes";
 import * as Haptics from "expo-haptics";

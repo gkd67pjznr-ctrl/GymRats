@@ -57,7 +57,7 @@ export default function SignupScreen() {
     onSuccess: () => {
       setIsGoogleLoading(false);
       Alert.alert(
-        "Welcome to Forgerank!",
+        "Welcome to GymRats!",
         "Your account has been created successfully.",
         [{ text: "Continue", onPress: () => router.replace("/(tabs)") }]
       );
@@ -72,7 +72,7 @@ export default function SignupScreen() {
     onSuccess: () => {
       setIsAppleLoading(false);
       Alert.alert(
-        "Welcome to Forgerank!",
+        "Welcome to GymRats!",
         "Your account has been created successfully.",
         [{ text: "Continue", onPress: () => router.replace("/(tabs)") }]
       );
@@ -138,7 +138,7 @@ export default function SignupScreen() {
     if (result.success) {
       // Show success message and navigate to home
       Alert.alert(
-        "Welcome to Forgerank!",
+        "Welcome to GymRats!",
         "Your account has been created successfully.",
         [
           {

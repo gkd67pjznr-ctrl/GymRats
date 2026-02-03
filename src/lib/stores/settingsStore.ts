@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import type { ExperienceLevel, TrainingGoal } from "./onboardingStore";
 import type { Accent } from "@/src/ui/designSystem";
 
-const STORAGE_KEY = "forgerank.settings.v2"; // New key for Zustand version
+const STORAGE_KEY = "gymrats.settings.v2"; // New key for Zustand version
 
 // Audio cue preferences for different types of sounds
 export interface AudioCuePreferences {

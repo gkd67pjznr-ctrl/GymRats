@@ -1,11 +1,11 @@
 module.exports = {
   expo: {
-    name: 'forgerank',
-    slug: 'forgerank',
+    name: 'GymRats',
+    slug: 'gymrats',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
-    scheme: 'forgerank',
+    scheme: 'gymrats',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     ios: {
@@ -34,8 +34,8 @@ module.exports = {
       [
         '@sentry/react-native',
         {
-          organization: process.env.SENTRY_ORG || 'forgerank',
-          project: process.env.SENTRY_PROJECT || 'forgerank-mobile',
+          organization: process.env.SENTRY_ORG || 'gymrats',
+          project: process.env.SENTRY_PROJECT || 'gymrats-mobile',
         },
       ],
       [

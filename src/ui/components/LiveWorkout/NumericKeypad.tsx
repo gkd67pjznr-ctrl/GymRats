@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View , Platform } from 'react-native';
 import { useThemeColors } from '../../theme';
-import { FR } from '../../forgerankStyle';
+import { FR } from '../../GrStyle';
 import * as Haptics from 'expo-haptics';
 
 export type NumericKeypadProps = {
@@ -26,7 +26,7 @@ export type NumericKeypadProps = {
  * - Decimal point (optional)
  * - Done/Enter button (optional)
  * - Haptic feedback on press
- * - Matches Forgerank aesthetic
+ * - Matches GymRats aesthetic
  */
 export function NumericKeypad({
   value,

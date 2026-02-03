@@ -12,7 +12,7 @@ import {
   getExerciseById,
   getPopularExercises,
   resolveExerciseId,
-  type ForgerankExercise,
+  type GrExercise,
 } from './exerciseDatabase';
 
 // === Legacy Type (for backwards compatibility) ===
@@ -36,4 +36,4 @@ export {
   resolveExerciseId,
 };
 
-export type { ForgerankExercise };
+export type { GrExercise };

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Pressable, Text, TextInput, View, Platform } from "react-native";
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 import * as Haptics from "expo-haptics";
 import { NumericKeypad } from "./NumericKeypad";
 
@@ -42,7 +42,7 @@ type Props = {
  * - Configurable step amounts
  * - Optional quick preset buttons
  * - Haptic feedback on interactions
- * - Dark mode styling matching Forgerank aesthetic
+ * - Dark mode styling matching GymRats aesthetic
  */
 export function NumberInput({
   value,

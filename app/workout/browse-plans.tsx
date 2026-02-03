@@ -3,7 +3,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { getAllCategories } from "../../src/lib/premadePlans/categories";
 import { getPlanCountByCategory } from "../../src/lib/premadePlans/store";
 import { makeDesignSystem } from "../../src/ui/designSystem";
-import { FR } from "../../src/ui/forgerankStyle";
+import { FR } from "../../src/ui/GrStyle";
 import { useThemeColors, useThemeRadius } from "../../src/ui/theme";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 

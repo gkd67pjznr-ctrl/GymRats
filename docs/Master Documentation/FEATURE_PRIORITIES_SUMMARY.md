@@ -1,4 +1,4 @@
-# Forgerank Feature Priorities Summary
+# GymRats Feature Priorities Summary
 
 **Last Updated:** 2026-02-02
 **Source:** FEATURE-MASTER.md, MASTER_PLAN.md, 2026-01-29 brainstorm
@@ -9,7 +9,7 @@
 
 ### Top 5 Core Differentiators (Must-Have for Launch)
 
-1. **Forgerank Scoring System** ✅ (Done - 5/5 features)
+1. **GymRats Scoring System** ✅ (Done - 5/5 features)
    - 0-1000 score with 20 ranks per exercise
    - Static verified standards (not user-inflated)
    - Anti-cheat heuristics
@@ -99,7 +99,7 @@
 ## Business Model Implementation
 
 ### Free Tier (Launch Day)
-- Full workout logging + Forgerank scoring
+- Full workout logging + GymRats scoring
 - Basic social feed + friends + reactions
 - 2-3 starter gym buddy personalities (text-only)
 - Basic history/calendar + weight graph

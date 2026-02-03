@@ -1,6 +1,6 @@
 # Themes Documentation
 
-This directory contains documentation related to theming in the Forgerank application.
+This directory contains documentation related to theming in the GymRats application.
 
 ## Contents
 

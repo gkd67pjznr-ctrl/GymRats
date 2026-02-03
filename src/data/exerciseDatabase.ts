@@ -11,10 +11,10 @@
  * - Verified top standards for scoring
  */
 
-import type { ForgerankExercise, MuscleGroup, VerifiedTop } from './exerciseTypes';
+import type { GrExercise, MuscleGroup, VerifiedTop } from './exerciseTypes';
 
 // Re-export the type for consumers
-export type { ForgerankExercise };
+export type { GrExercise };
 
 // Import raw exercise data
 const RAW_EXERCISES: RawExercise[] = require('./exercises-raw.json');
@@ -49,7 +49,7 @@ const POPULAR_EXERCISE_IDS = new Set<string>([
 ]);
 
 // === Legacy ID Mappings ===
-// Maps old Forgerank IDs to new exercise database IDs
+// Maps old GymRats IDs to new exercise database IDs
 const LEGACY_ID_MAP: Record<string, string> = {
   // Core lifts
   'bench': 'Barbell_Bench_Press_-_Medium_Grip',
@@ -112,8 +112,8 @@ export const VERIFIED_TOPS: VerifiedTop[] = [
 ];
 
 // === Process Exercises ===
-// Convert raw exercises to Forgerank exercises with metadata
-const EXERCISE_MAP = new Map<string, ForgerankExercise>();
+// Convert raw exercises to GymRats exercises with metadata
+const EXERCISE_MAP = new Map<string, GrExercise>();
 const VERIFIED_TOP_MAP = new Map<string, VerifiedTop>();
 
 // Build verified top map
@@ -136,7 +136,7 @@ RAW_EXERCISES.forEach(raw => {
   const legacyIds = NEW_TO_LEGACY[raw.id];
   const verifiedTop = VERIFIED_TOP_MAP.get(raw.id);
 
-  const exercise: ForgerankExercise = {
+  const exercise: GrExercise = {
     id: raw.id,
     name: raw.name,
     force: raw.force,
@@ -161,21 +161,21 @@ RAW_EXERCISES.forEach(raw => {
 /**
  * Get all exercises in the database
  */
-export function getAllExercises(): ForgerankExercise[] {
+export function getAllExercises(): GrExercise[] {
   return Array.from(EXERCISE_MAP.values());
 }
 
 /**
  * Get exercise by ID
  */
-export function getExerciseById(id: string): ForgerankExercise | undefined {
+export function getExerciseById(id: string): GrExercise | undefined {
   return EXERCISE_MAP.get(id);
 }
 
 /**
  * Get popular exercises (shown in quick picker)
  */
-export function getPopularExercises(): ForgerankExercise[] {
+export function getPopularExercises(): GrExercise[] {
   return Array.from(EXERCISE_MAP.values()).filter(ex => ex.isPopular);
 }
 
@@ -218,7 +218,7 @@ export function getVerifiedExerciseIds(): string[] {
 /**
  * Search exercises by name or muscle group
  */
-export function searchExercises(query: string): ForgerankExercise[] {
+export function searchExercises(query: string): GrExercise[] {
   const q = query.toLowerCase();
   return Array.from(EXERCISE_MAP.values()).filter(ex =>
     ex.name.toLowerCase().includes(q) ||
@@ -230,7 +230,7 @@ export function searchExercises(query: string): ForgerankExercise[] {
 /**
  * Get exercises by muscle group
  */
-export function getExercisesByMuscleGroup(muscle: MuscleGroup): ForgerankExercise[] {
+export function getExercisesByMuscleGroup(muscle: MuscleGroup): GrExercise[] {
   return Array.from(EXERCISE_MAP.values()).filter(ex =>
     ex.primaryMuscles.includes(muscle) || ex.secondaryMuscles.includes(muscle)
   );
@@ -239,7 +239,7 @@ export function getExercisesByMuscleGroup(muscle: MuscleGroup): ForgerankExercis
 /**
  * Get exercises by equipment
  */
-export function getExercisesByEquipment(equipment: string): ForgerankExercise[] {
+export function getExercisesByEquipment(equipment: string): GrExercise[] {
   return Array.from(EXERCISE_MAP.values()).filter(ex =>
     ex.equipment.toLowerCase() === equipment.toLowerCase()
   );

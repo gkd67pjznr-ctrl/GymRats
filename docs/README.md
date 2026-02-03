@@ -1,4 +1,4 @@
-# Forgerank Documentation Hub
+# GymRats Documentation Hub
 
 **Last Updated:** 2026-02-02
 
@@ -142,7 +142,7 @@ docs/
 
 ## For Contributors
 
-**New to Forgerank? Start here:**
+**New to GymRats? Start here:**
 1. Read [CLAUDE.md](../CLAUDE.md) for project overview
 2. Read [3-CODEBASE-GUIDE.md](3-CODEBASE-GUIDE.md) for architecture
 3. Read [Project Management/CLAUDE_WORKFLOW.md](Project%20Management/CLAUDE_WORKFLOW.md) for workflow

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Forgerank theme system implements a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency. This system provides:
+The GymRats theme system implements a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency. This system provides:
 
 1. **Multiple color palette options** with emotional meaning rather than semantic state
 2. **Typography system** balancing functional clarity with personality-driven treatments

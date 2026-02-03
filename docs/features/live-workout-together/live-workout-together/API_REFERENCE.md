@@ -13,7 +13,7 @@
 
 ## Overview
 
-This document provides comprehensive API reference for the Live Workout Together feature in Forgerank. All functions are available from the service layer:
+This document provides comprehensive API reference for the Live Workout Together feature in GymRats. All functions are available from the service layer:
 
 ```typescript
 import {
@@ -1111,6 +1111,6 @@ if (!result.success) {
 
 ## Conclusion
 
-This API reference provides comprehensive documentation for all functions available in the Live Workout Together service layer. The API follows consistent patterns for parameters, returns, and error handling, making it easy to integrate with React components and other parts of the Forgerank application.
+This API reference provides comprehensive documentation for all functions available in the Live Workout Together service layer. The API follows consistent patterns for parameters, returns, and error handling, making it easy to integrate with React components and other parts of the GymRats application.
 
 For implementation details and usage examples, refer to the main documentation file: `LIVE_WORKOUT_TOGETHER_COMPREHENSIVE.md`.

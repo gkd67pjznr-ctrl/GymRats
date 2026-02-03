@@ -1,10 +1,10 @@
-// src/ui/forgerankStyle.ts
+// src/ui/GrStyle.ts
 import type { TextStyle, ViewStyle } from "react-native";
 
 /**
- * Forgerank Visual Style System
+ * GymRats Visual Style System
  *
- * Single source of truth for the Forgerank aesthetic.
+ * Single source of truth for the GymRats aesthetic.
  * Based on docs/visual-style/visual-style-guide.md
  *
  * Design Philosophy:

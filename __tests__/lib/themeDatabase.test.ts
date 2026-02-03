@@ -1,6 +1,6 @@
 // __tests__/lib/themeDatabase.test.ts
 /**
- * Tests for the Forgerank Theme Database
+ * Tests for the GymRats Theme Database
  *
  * Tests the theme database functionality including palette, typography,
  * and illustration management.

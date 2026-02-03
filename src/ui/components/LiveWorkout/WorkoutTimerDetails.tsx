@@ -1,6 +1,6 @@
 import { Modal, View, Text, Pressable, ScrollView } from "react-native";
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 import type { WorkoutTimerResult } from "../../../lib/hooks/useWorkoutTimer";
 
 interface WorkoutTimerDetailsProps {

@@ -1,4 +1,4 @@
-# Forgerank Comprehensive Codebase Summary
+# GymRats Comprehensive Codebase Summary
 
 **Date:** 2026-01-30
 **Author:** Claude Code Analysis
@@ -8,11 +8,11 @@
 
 ## Executive Summary
 
-Forgerank is a sophisticated React Native workout tracking application with a rich feature set that combines fitness tracking with social engagement, gamification, and personalized AI companions. The application is built with modern development practices using Expo, TypeScript, Zustand for state management, and Supabase for backend services.
+GymRats is a sophisticated React Native workout tracking application with a rich feature set that combines fitness tracking with social engagement, gamification, and personalized AI companions. The application is built with modern development practices using Expo, TypeScript, Zustand for state management, and Supabase for backend services.
 
 The codebase demonstrates a mature architecture with over 167 planned features, 117 of which are currently implemented (70% completion), positioning the project well for a v1 launch. Key strengths include:
 
-- **Comprehensive workout tracking** with real-time PR detection and Forgerank scoring system
+- **Comprehensive workout tracking** with real-time PR detection and GymRats scoring system
 - **AI Gym Buddy system** with 9 distinct personality archetypes
 - **Social features** including feed, friends, and collaborative workouts
 - **Gamification elements** with XP, levels, streaks, and achievements
@@ -107,10 +107,10 @@ type WorkoutSession = {
 **Strengths:**
 - Comprehensive PR detection with multiple tiers
 - Resume functionality that survives app termination
-- Integration with Forgerank scoring system
+- Integration with GymRats scoring system
 - Intuitive UI with both legacy and modern interfaces
 
-### 2. Forgerank Scoring System
+### 2. GymRats Scoring System
 **Status:** 100% complete
 
 **Features:**
@@ -293,7 +293,7 @@ Inspired by Finch, the avatar's growth represents the user's commitment to self-
 The codebase aligns well with the intended freemium business model:
 
 ### Free Tier Features (Implemented)
-- Full workout logging and Forgerank scoring
+- Full workout logging and GymRats scoring
 - Basic social features (feed, friends, reactions)
 - 5 free buddy personalities (text-only)
 - Basic history and calendar
@@ -310,7 +310,7 @@ The codebase aligns well with the intended freemium business model:
 
 ## Conclusion
 
-Forgerank represents a mature, feature-rich workout tracking application with exceptional attention to user experience and engagement. The codebase demonstrates professional-grade architecture with clear patterns, comprehensive testing, and extensive documentation.
+GymRats represents a mature, feature-rich workout tracking application with exceptional attention to user experience and engagement. The codebase demonstrates professional-grade architecture with clear patterns, comprehensive testing, and extensive documentation.
 
 Key strengths that position the project well for v1 launch:
 1. **Complete core functionality** with robust workout tracking
@@ -324,4 +324,4 @@ Critical areas requiring attention before launch:
 2. **Backend integration** - Complete authentication and sync setup
 3. **Technical debt** - Refactor large files and optimize code quality
 
-With focused effort on these areas, Forgerank is well-positioned to deliver a polished, engaging workout tracking experience that differentiates itself through personality, social features, and gamification.
+With focused effort on these areas, GymRats is well-positioned to deliver a polished, engaging workout tracking experience that differentiates itself through personality, social features, and gamification.

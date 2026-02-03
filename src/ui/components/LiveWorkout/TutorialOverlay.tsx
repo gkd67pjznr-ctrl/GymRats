@@ -7,7 +7,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useOnboardingStore } from '@/src/lib/stores/onboardingStore';
 import { makeDesignSystem } from '@/src/ui/designSystem';
-import { FR } from '@/src/ui/forgerankStyle';
+import { FR } from '@/src/ui/GrStyle';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 

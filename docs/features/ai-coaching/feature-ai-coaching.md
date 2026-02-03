@@ -7,7 +7,7 @@ Template-based programming with AI suggestions layered on top. Enhances the user
 **Priority:** Post-launch
 **Source:** 2026-01-29 brainstorm interview
 
-**Philosophy:** Too many AI workout apps are being churned out that are garbage or samey. Forgerank's AI coaching should be subtle, helpful, and trust the user. Start with curated templates, add smart suggestions after usage.
+**Philosophy:** Too many AI workout apps are being churned out that are garbage or samey. GymRats's AI coaching should be subtle, helpful, and trust the user. Start with curated templates, add smart suggestions after usage.
 
 ---
 

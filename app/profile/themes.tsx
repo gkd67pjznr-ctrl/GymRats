@@ -1,5 +1,5 @@
 // app/profile/themes.tsx
-// Theme selection screen for Forgerank
+// Theme selection screen for GymRats
 
 import { useState, useEffect } from "react";
 import { View, Text, Pressable, Alert, ScrollView, Image } from "react-native";
@@ -256,7 +256,7 @@ export default function ThemeSelectionScreen() {
         >
           <Text style={{ color: c.primary, fontSize: 16, fontWeight: "900" }}>Theme System</Text>
           <Text style={{ color: c.primary, lineHeight: 20 }}>
-            Forgerank's theme system goes beyond simple color changes. Each theme includes:
+            GymRats' theme system goes beyond simple color changes. Each theme includes:
           </Text>
           <View style={{ gap: 8 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

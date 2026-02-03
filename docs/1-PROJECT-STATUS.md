@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-Forgerank has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. The app is at **80% feature completion** for v1 launch.
+GymRats has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. The app is at **80% feature completion** for v1 launch.
 
 **Test Status:** 1,443 tests passing (80/83 suites passing)
 **Backend Sync:** Fully tested with production Supabase ✅
@@ -36,14 +36,14 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 | UI & Design | 🔄 In Progress | 14/15 | Design system + screen migrations |
 | UI Themes & Visual Style | 🔄 In Progress | 6/12 | Documentation complete |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
-| Onboarding | 🔄 In Progress | 3/7 | Welcome/profile complete |
+| Onboarding | ✅ Done | 7/7 | Full flow implemented, debug reset available |
 | Avatar & Hangout Room | ✅ Done | 8/8 | Phase 2 complete - unified UserStatsStore for growth metrics |
 | Workout Replay | ✅ Done | 5/5 | Cinematic summaries complete |
 | Forge DNA | ✅ Done | 4/4 | Visualization complete |
 | Forge Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
 | Forge Milestones | ✅ Done | 5/5 | 30 achievements implemented |
 
-**Launch Total:** 145/177 features (82%)
+**Launch Total:** 149/177 features (84%)
 
 ---
 
@@ -106,7 +106,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ### Unified User Statistics (NEW)
 - Single source of truth for all user stats (`userStatsStore`)
-- Forge Rank composite score (40% strength, 30% consistency, 20% progress, 10% variety)
+- GymRank composite score (40% strength, 30% consistency, 20% progress, 10% variety)
 - Per-exercise stats with PR detection (weight, rep, e1RM)
 - Lifetime stats (volume, sets, workouts, PRs)
 - Avatar growth derived from unified stats
@@ -239,6 +239,9 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
   - Added `ScreenHeader` component usage for proper safe area handling
   - Fixed rest timer pill positioning (now accounts for safe area + tab bar)
   - Created comprehensive design system documentation (`docs/features/design-system/feature-design-system.md`)
+- **Onboarding Debug Tool** - Added "Reset Onboarding" button to debug Sync Status screen
+  - Shows onboarding completion status in data counts
+  - Reset triggers full onboarding flow on next navigation
 - **Bug Fixes**
   - Fixed `useAvatarGrowth` infinite re-render loop (changed to `useMemo` with raw data)
   - Added 24-hour session expiration to `currentSessionStore` (clears stale workouts on hydration)
@@ -321,7 +324,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 1. **Regional Leaderboards** - Implement zip code → region mapping and regional leaderboard filtering
 2. **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations
-3. **Onboarding Flow Completion** - Buddy selection, goal setting, initial workout guidance
+3. **Push Notifications** - Social activity alerts, milestone notifications, workout reminders
 
 ---
 
@@ -359,7 +362,7 @@ Forgerank has a **solid, usable core** for workout logging, social sharing, and 
 
 ## Core Differentiators
 
-1. **Forgerank Scoring** — Static, verified standards. Your rank means something.
+1. **GymRats Scoring** — Static, verified standards. Your rank means something.
 2. **AI Gym Buddy** — 9 personality archetypes with reactive commentary
 3. **Avatar & Hangout Room** — Finch-inspired growing avatar + social room
 4. **Pure-Inspired Aesthetic** — Dark, mysterious UI that looks amazing

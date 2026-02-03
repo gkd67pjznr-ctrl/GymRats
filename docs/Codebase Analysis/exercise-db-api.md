@@ -7,7 +7,7 @@
 
 ## Overview
 
-Integration with ExerciseDB API to expand Forgerank's exercise database from ~870 to 3,000+ exercises. The API provides exercises with GIF demos, muscle mappings, equipment types, and form instructions.
+Integration with ExerciseDB API to expand GymRats's exercise database from ~870 to 3,000+ exercises. The API provides exercises with GIF demos, muscle mappings, equipment types, and form instructions.
 
 **Key Features:**
 - ~3,200 exercises available
@@ -167,7 +167,7 @@ const result = await initialSync((current, total, bodyPart) => {
 });
 console.log(`Total: ${result.total}, New: ${result.new}`);
 
-// Get all synced exercises as Forgerank format
+// Get all synced exercises as GymRats format
 const exercises = await getSyncedExercises();
 
 // Check if sync is complete

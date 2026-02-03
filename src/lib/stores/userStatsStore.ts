@@ -14,7 +14,7 @@ import type {
   LifetimeStats,
   ConsistencyMetrics,
   VarietyMetrics,
-  ForgeRank,
+  GymRank,
   ProcessWorkoutResult,
   DerivedAvatarGrowth,
   RankTier,
@@ -32,7 +32,7 @@ import {
   groupSetsByExercise,
   calculateConsistencyFromSessions,
 } from "../userStats/statsCalculators";
-import { calculateForgeRank } from "../userStats/forgeRankCalculator";
+import { calculateGymRank } from "../userStats/gymRankCalculator";
 import { deriveAvatarGrowth } from "../userStats/deriveAvatarGrowth";
 import { EXERCISES_V1 } from "../../data/exercises";
 
@@ -72,7 +72,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
       volumeByMuscle: {},
       consistency: { ...DEFAULT_CONSISTENCY_METRICS },
       variety: { ...DEFAULT_VARIETY_METRICS },
-      forgeRank: { ...DEFAULT_FORGE_RANK },
+      gymRank: { ...DEFAULT_FORGE_RANK },
       version: 1,
       lastSyncedMs: null,
       hydrated: false,
@@ -183,7 +183,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
         };
 
         // Calculate new Forge Rank
-        const newForgeRank = calculateForgeRank({
+        const newGymRank = calculateGymRank({
           exerciseStats: newExerciseStats,
           consistency: state.consistency,
           variety: newVariety,
@@ -208,13 +208,13 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
           exerciseStats: newExerciseStats,
           volumeByMuscle: newVolumeByMuscle,
           variety: newVariety,
-          forgeRank: newForgeRank,
+          gymRank: newGymRank,
         });
 
         return {
           prs,
           rankUps,
-          forgeRank: newForgeRank,
+          gymRank: newGymRank,
           avatarGrowth,
           volumeAddedKg: workoutVolumeKg,
           setsAdded: workoutSets,
@@ -237,7 +237,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
         });
 
         // Recalculate Forge Rank with updated consistency
-        const newForgeRank = calculateForgeRank({
+        const newGymRank = calculateGymRank({
           exerciseStats: state.exerciseStats,
           consistency: {
             ...state.consistency,
@@ -248,7 +248,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
           totalVolumeKg: state.lifetimeStats.totalVolumeKg,
         });
 
-        set({ forgeRank: newForgeRank });
+        set({ gymRank: newGymRank });
       },
 
       /**
@@ -317,7 +317,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
         };
 
         // Calculate Forge Rank
-        const forgeRank = calculateForgeRank({
+        const gymRank = calculateGymRank({
           exerciseStats,
           consistency,
           variety,
@@ -331,7 +331,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
           volumeByMuscle,
           variety,
           consistency,
-          forgeRank,
+          gymRank,
           version: 1,
         });
       },
@@ -378,7 +378,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
         volumeByMuscle: state.volumeByMuscle,
         consistency: state.consistency,
         variety: state.variety,
-        forgeRank: state.forgeRank,
+        gymRank: state.gymRank,
         version: state.version,
         lastSyncedMs: state.lastSyncedMs,
       }),
@@ -448,7 +448,7 @@ function getTierFromRank(rank: number): RankTier {
 
 export const selectLifetimeStats = (state: UserStatsStoreState) => state.lifetimeStats;
 export const selectExerciseStats = (state: UserStatsStoreState) => state.exerciseStats;
-export const selectForgeRank = (state: UserStatsStoreState) => state.forgeRank;
+export const selectGymRank = (state: UserStatsStoreState) => state.gymRank;
 export const selectConsistency = (state: UserStatsStoreState) => state.consistency;
 export const selectVariety = (state: UserStatsStoreState) => state.variety;
 export const selectIsHydrated = (state: UserStatsStoreState) => state.hydrated;
@@ -463,8 +463,8 @@ export function useExerciseStats(): Record<string, ExerciseStats> {
   return useUserStatsStore(selectExerciseStats);
 }
 
-export function useForgeRank(): ForgeRank {
-  return useUserStatsStore(selectForgeRank);
+export function useGymRank(): GymRank {
+  return useUserStatsStore(selectGymRank);
 }
 
 export function useConsistencyMetrics(): ConsistencyMetrics {
@@ -491,8 +491,8 @@ export function useAvatarGrowth(): DerivedAvatarGrowth {
 
 // ========== Imperative Getters ==========
 
-export function getForgeRank(): ForgeRank {
-  return useUserStatsStore.getState().forgeRank;
+export function getGymRank(): GymRank {
+  return useUserStatsStore.getState().gymRank;
 }
 
 export function getLifetimeStats(): LifetimeStats {
@@ -529,7 +529,7 @@ export type {
   LifetimeStats,
   ConsistencyMetrics,
   VarietyMetrics,
-  ForgeRank,
+  GymRank,
   ProcessWorkoutResult,
   DerivedAvatarGrowth,
   RankTier,

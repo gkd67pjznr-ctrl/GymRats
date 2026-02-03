@@ -5,7 +5,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '../../theme';
-import { FR } from '../../forgerankStyle';
+import { FR } from '../../GrStyle';
 import { ExerciseRankCard } from './ExerciseRankCard';
 import { useExerciseRanks } from '../../../lib/hooks/useExerciseRanks';
 import type { ExerciseRankSortOption, ExerciseRankSummary } from '../../../lib/types/rankTypes';

@@ -6,7 +6,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useThemeColors } from '../../src/ui/theme';
 import { TabErrorBoundary } from '../../src/ui/tab-error-boundary';
 import { ProtectedRoute } from '../../src/ui/components/ProtectedRoute';
-import { FR } from '../../src/ui/forgerankStyle';
+import { FR } from '../../src/ui/GrStyle';
 import { ExerciseRankList, LeaderboardsTab, FriendCompareModal } from '../../src/ui/components/Ranks';
 import { useExerciseRank } from '../../src/lib/hooks/useExerciseRanks';
 import { shareRank } from '../../src/lib/sharing/rankCardGenerator';

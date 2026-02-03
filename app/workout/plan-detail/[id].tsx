@@ -3,7 +3,7 @@ import { useRouter, useLocalSearchParams, type Href } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { useThemeColors } from "../../../src/ui/theme";
-import { FR } from "../../../src/ui/forgerankStyle";
+import { FR } from "../../../src/ui/GrStyle";
 import { usePlan, hydratePremadePlansStore } from "../../../src/lib/premadePlans/store";
 import { startPremadePlan, formatProgress } from "../../../src/lib/premadePlans/planToRoutine";
 import { setCurrentPlan } from "../../../src/lib/workoutPlanStore";

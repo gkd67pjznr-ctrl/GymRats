@@ -2,10 +2,10 @@
 // Tests for the unified UserStatsStore
 
 import {
-  calculateForgeRank,
+  calculateGymRank,
   scoreToTierAndRank,
   getTierFromRank,
-} from "../../../src/lib/userStats/forgeRankCalculator";
+} from "../../../src/lib/userStats/gymRankCalculator";
 import {
   deriveAvatarGrowth,
   isGrowthMilestone,
@@ -29,10 +29,10 @@ import {
   DEFAULT_VARIETY_METRICS,
 } from "../../../src/lib/userStats/types";
 
-describe("ForgeRankCalculator", () => {
-  describe("calculateForgeRank", () => {
+describe("GymRankCalculator", () => {
+  describe("calculateGymRank", () => {
     it("should return rank 1 iron for empty stats", () => {
-      const result = calculateForgeRank({
+      const result = calculateGymRank({
         exerciseStats: {},
         consistency: DEFAULT_CONSISTENCY_METRICS,
         variety: DEFAULT_VARIETY_METRICS,
@@ -59,7 +59,7 @@ describe("ForgeRankCalculator", () => {
         },
       };
 
-      const result = calculateForgeRank({
+      const result = calculateGymRank({
         exerciseStats,
         consistency: DEFAULT_CONSISTENCY_METRICS,
         variety: DEFAULT_VARIETY_METRICS,
@@ -81,7 +81,7 @@ describe("ForgeRankCalculator", () => {
         workoutsLast30Days: 16,
       };
 
-      const result = calculateForgeRank({
+      const result = calculateGymRank({
         exerciseStats: {},
         consistency,
         variety: DEFAULT_VARIETY_METRICS,
@@ -93,7 +93,7 @@ describe("ForgeRankCalculator", () => {
     });
 
     it("should calculate progress component from volume", () => {
-      const result = calculateForgeRank({
+      const result = calculateGymRank({
         exerciseStats: {},
         consistency: DEFAULT_CONSISTENCY_METRICS,
         variety: DEFAULT_VARIETY_METRICS,
@@ -124,7 +124,7 @@ describe("ForgeRankCalculator", () => {
         volumeByMuscle: {} as any,
       };
 
-      const result = calculateForgeRank({
+      const result = calculateGymRank({
         exerciseStats: {},
         consistency: DEFAULT_CONSISTENCY_METRICS,
         variety,

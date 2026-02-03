@@ -59,7 +59,7 @@ See `docs/OAUTH_SETUP.md` for complete setup instructions.
 ### Done - Dev Login
 - [x] Quick dev login for testing (DEV mode only)
 - [x] Creates or signs in dev user automatically
-- [x] Credentials: dev@forgerank.app / dev123456
+- [x] Credentials: dev@gymrats.app / dev123456
 - [x] Red button on login screen (DEV only)
 
 **Implementation:** `src/lib/stores/authStore.ts::devLogin()`
@@ -172,7 +172,7 @@ interface UserProfile {
 // 1. Open Google auth in browser
 await supabase.auth.signInWithOAuth({
   provider: 'google',
-  options: { redirectTo: 'forgerank://auth' }
+  options: { redirectTo: 'gymrats://auth' }
 });
 
 // 2. Deep link callback in app/_layout.tsx

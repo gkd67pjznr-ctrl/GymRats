@@ -1,6 +1,6 @@
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 import { EXERCISES_V1 } from "../../../data/exercises";
 import type { RoutineExercise } from "../../../lib/routinesModel";
 

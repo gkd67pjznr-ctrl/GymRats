@@ -97,7 +97,7 @@ Every task follows this cycle. No exceptions.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     THE FORGERANK LOOP                      │
+│                     THE GYMRATS LOOP                      │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │   1. UNDERSTAND                                             │
@@ -464,18 +464,18 @@ Update `docs/progress.md` when:
 
 ## MAESTRO DUTIES
 
-**Purpose:** Synchronize feature documentation across all Forgerank worktrees to maintain a single source of truth for feature implementation status.
+**Purpose:** Synchronize feature documentation across all GymRats worktrees to maintain a single source of truth for feature implementation status.
 
 ### Routine Scanning Protocol
 
-Maestro will periodically scan all Forgerank repositories to accumulate feature implementation information:
+Maestro will periodically scan all GymRats repositories to accumulate feature implementation information:
 
 ```
 Repositories to scan:
-- /projects/forgerank (main)
-- /projects/forgerank-devs
-- /projects/forgerank-qwen (current)
-- /projects/forgerank-glm
+- /projects/gymrats (main)
+- /projects/gymrats-devs
+- /projects/gymrats-qwen (current)
+- /projects/gymrats-glm
 ```
 
 ### Documentation Synchronization Process
@@ -494,7 +494,7 @@ Repositories to scan:
    - Only add information that advances feature status (never go backwards)
    - Maintain consistency in documentation style
 
-3. **Update Current Repository** (`/projects/forgerank-qwen`):
+3. **Update Current Repository** (`/projects/gymrats-qwen`):
    - Update `docs/FEATURE-MASTER.md` with accumulated feature status
    - Update individual feature files in `docs/features/`
    - Update `docs/progress.md` with new implementation entries
@@ -509,7 +509,7 @@ Repositories to scan:
 
 ### Key Principles
 
-- **Only Update Current Repository**: Make changes only to files in the current repository (Forgerank-qwen)
+- **Only Update Current Repository**: Make changes only to files in the current repository (GymRats-qwen)
 - **No Deletions**: Preserve all existing content without removing any information
 - **Accumulate Forward**: Only add information that advances feature status, never go backwards
 - **Consistency**: Maintain consistent documentation style and structure

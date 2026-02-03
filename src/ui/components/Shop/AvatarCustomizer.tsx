@@ -15,7 +15,7 @@ import * as Haptics from "expo-haptics";
 import { useShopItems, useInventory, equipShopItem } from "@/src/lib/stores/gamificationStore";
 import { getRarityColor, type ShopItem } from "@/src/lib/gamification/shop";
 import { useThemeColors } from "@/src/ui/theme";
-import { FR } from "@/src/ui/forgerankStyle";
+import { FR } from "@/src/ui/GrStyle";
 
 // Cosmetic categories
 type CosmeticCategory = "hairstyles" | "outfits" | "accessories";

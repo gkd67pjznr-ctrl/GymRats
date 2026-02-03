@@ -1,8 +1,8 @@
-# Forgerank Visual System Architecture
+# GymRats Visual System Architecture
 
 ## Overview
 
-This document outlines the enhanced architecture for Forgerank's visual system, building upon the existing layered approach of PURE's emotional personality over LIFTOFF's functional efficiency.
+This document outlines the enhanced architecture for GymRats's visual system, building upon the existing layered approach of PURE's emotional personality over LIFTOFF's functional efficiency.
 
 ## Enhanced Theme Database Structure
 
@@ -230,4 +230,4 @@ Content gating for different user tiers:
 4. Screen reader compatibility
 5. Keyboard navigation support
 
-This architecture provides a scalable foundation for Forgerank's evolving visual system while maintaining the core principles of the PURE aesthetic.
+This architecture provides a scalable foundation for GymRats's evolving visual system while maintaining the core principles of the PURE aesthetic.

@@ -22,7 +22,7 @@ import {
   simplifyExerciseName,
   areSameExercise,
 } from './nameSimplifier';
-import type { ForgerankExercise, MuscleGroup } from '../../data/exerciseTypes';
+import type { GrExercise, MuscleGroup } from '../../data/exerciseTypes';
 
 const SYNC_STATE_KEY = 'exerciseDB_sync_state';
 const EXERCISE_CACHE_KEY = 'exerciseDB_cached_exercises';
@@ -108,12 +108,12 @@ async function setCachedExercises(exercises: ExerciseDBExercise[]): Promise<void
 }
 
 /**
- * Convert ExerciseDB exercise to Forgerank exercise format
+ * Convert ExerciseDB exercise to GymRats exercise format
  */
-function convertToForgerankExercise(
+function convertToGrExercise(
   apiExercise: ExerciseDBExercise,
   isPopular: boolean = false
-): ForgerankExercise {
+): GrExercise {
   const { simplified } = simplifyExerciseName(apiExercise.name);
 
   return {
@@ -361,11 +361,11 @@ export async function initialSync(
 }
 
 /**
- * Get all synced exercises as Forgerank format
+ * Get all synced exercises as GymRats format
  */
-export async function getSyncedExercises(): Promise<ForgerankExercise[]> {
+export async function getSyncedExercises(): Promise<GrExercise[]> {
   const cached = await getCachedExercises();
-  return cached.map(convertToForgerankExercise);
+  return cached.map(convertToGrExercise);
 }
 
 /**

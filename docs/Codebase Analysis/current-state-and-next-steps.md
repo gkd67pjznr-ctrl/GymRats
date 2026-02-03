@@ -1,4 +1,4 @@
-# Forgerank: Current State and Next Steps
+# GymRats: Current State and Next Steps
 
 **Date:** 2026-01-30
 **Version:** 1.0
@@ -8,13 +8,13 @@
 
 ## Current State Overview
 
-Forgerank has reached a significant milestone with 117 of 167 planned features implemented (70% completion). The application has evolved from a basic workout tracker to a comprehensive fitness platform with rich social, gamification, and AI features.
+GymRats has reached a significant milestone with 117 of 167 planned features implemented (70% completion). The application has evolved from a basic workout tracker to a comprehensive fitness platform with rich social, gamification, and AI features.
 
 ### Key Accomplishments
 
 #### Core Features (100% Complete)
 - **Workout Tracking**: Live logging with real-time PR detection
-- **Forgerank Scoring**: Verified 0-1000 point system with 20 ranks per exercise
+- **GymRats Scoring**: Verified 0-1000 point system with 20 ranks per exercise
 - **Exercise Database**: 100+ movements with muscle group mapping
 - **Workout History**: Full session tracking with calendar visualization
 
@@ -228,7 +228,7 @@ Forgerank has reached a significant milestone with 117 of 167 planned features i
 
 ## Conclusion
 
-Forgerank is at a critical juncture where the foundation is solid but requires focused effort to address stability issues and complete core functionality. With proper prioritization and resource allocation, the project is well-positioned to deliver a polished v1 that differentiates itself through personality, social features, and gamification.
+GymRats is at a critical juncture where the foundation is solid but requires focused effort to address stability issues and complete core functionality. With proper prioritization and resource allocation, the project is well-positioned to deliver a polished v1 that differentiates itself through personality, social features, and gamification.
 
 The immediate priorities should be:
 1. **Fix the test suite** to restore development velocity

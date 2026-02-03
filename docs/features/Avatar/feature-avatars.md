@@ -158,7 +158,7 @@ Added columns to existing `users` table:
 The avatar grows based on three key metrics:
 1. **Volume Logged** - Total weight lifted (kg)
 2. **Sets Completed** - Number of workout sets
-3. **Average Rank** - Average Forgerank across exercises
+3. **Average Rank** - Average GymRats across exercises
 
 Growth stage is calculated using a weighted combination:
 - 40% volume progress

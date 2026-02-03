@@ -9,7 +9,7 @@
 
 import { Pressable, Text, View } from "react-native";
 import { makeDesignSystem } from "@/src/ui/designSystem";
-import { FR } from "@/src/ui/forgerankStyle";
+import { FR } from "@/src/ui/GrStyle";
 import { useThemeColors } from "@/src/ui/theme";
 import { EXERCISES_V1 } from "@/src/data/exercises";
 

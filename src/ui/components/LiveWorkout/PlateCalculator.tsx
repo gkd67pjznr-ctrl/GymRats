@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Pressable, ScrollView, Text, View , Platform } from "react-native";
 import { useThemeColors } from "../../theme";
-import { FR } from "../../forgerankStyle";
+import { FR } from "../../GrStyle";
 import * as Haptics from "expo-haptics";
 
 type Unit = "lb" | "kg";

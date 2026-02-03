@@ -229,7 +229,7 @@ Think:
 Pure = personality layer
 Liftoff = mechanical layer
 
-1. Where Pure SHOULD influence Forgerank
+1. Where Pure SHOULD influence GymRats
 A. Transitional moments (not core logging)
 
 Use Pure’s vibe in:

@@ -6,7 +6,7 @@ import {
   getAllExercises,
   getPopularExercises,
   searchExercises,
-  type ForgerankExercise,
+  type GrExercise,
 } from "../../../src/data/exerciseDatabase";
 import { uid, type RoutineExercise } from "../../../src/lib/routinesModel";
 // [MIGRATED 2026-01-23] Using Zustand stores
@@ -23,9 +23,9 @@ function titleCase(s: string): string {
 
 /** Group exercises by primary muscle group */
 function groupByMuscle(
-  exercises: ForgerankExercise[]
-): { title: string; data: ForgerankExercise[] }[] {
-  const groups = new Map<string, ForgerankExercise[]>();
+  exercises: GrExercise[]
+): { title: string; data: GrExercise[] }[] {
+  const groups = new Map<string, GrExercise[]>();
 
   for (const ex of exercises) {
     const muscle = ex.primaryMuscles[0] ?? "other";

@@ -1,5 +1,5 @@
 /**
- * Forgerank Theme System - Compatibility Layer
+ * GymRats Theme System - Compatibility Layer
  *
  * @deprecated Use the new design system directly: import { useThemeColors, colors, surface } from '@/src/design';
  *

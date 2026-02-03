@@ -1,15 +1,15 @@
 # Supabase Setup Guide
 
-This guide covers the complete setup and configuration of Supabase for the Forgerank application.
+This guide covers the complete setup and configuration of Supabase for the GymRats application.
 
 ## Overview
 
-Forgerank uses Supabase as the backend database and authentication provider. The integration follows Expo's best practices for environment variable management in React Native applications.
+GymRats uses Supabase as the backend database and authentication provider. The integration follows Expo's best practices for environment variable management in React Native applications.
 
 ## Architecture
 
 ### Client Location
-The Supabase client is initialized in `/home/thomas/Forgerank/src/lib/supabase/client.ts`
+The Supabase client is initialized in `/home/thomas/GymRats/src/lib/supabase/client.ts`
 
 ### Environment Variable Access Pattern
 This project uses Expo's `Constants.expoConfig.extra` pattern for accessing environment variables:
@@ -45,7 +45,7 @@ Follow these steps to create and configure your Supabase project:
 1. After logging in, click "New Project"
 2. Choose your organization (or create one)
 3. Configure project settings:
-   - **Name**: `forgerank` (or your preferred name)
+   - **Name**: `gymrats` (or your preferred name)
    - **Database Password**: Generate a strong password and save it securely
    - **Region**: Choose the region closest to your users
    - **Pricing Plan**: Free tier is sufficient for development
@@ -62,7 +62,7 @@ Follow these steps to create and configure your Supabase project:
 
 ### Step 4: Configure Environment Variables
 
-Update `/home/thomas/Forgerank/.env` with your actual Supabase credentials:
+Update `/home/thomas/GymRats/.env` with your actual Supabase credentials:
 
 ```bash
 # Replace with your actual Supabase project URL
@@ -165,7 +165,7 @@ After creating your Supabase project, you'll need to set up your database schema
 
 ### Recommended Schema
 
-Forgerank will need tables for:
+GymRats will need tables for:
 
 - `profiles`: User profiles and settings
 - `workouts`: Workout sessions
@@ -220,7 +220,7 @@ npm run test:coverage
 ```
 
 The Supabase client tests are located in:
-`/home/thomas/Forgerank/src/lib/supabase/__tests__/client.test.ts`
+`/home/thomas/GymRats/src/lib/supabase/__tests__/client.test.ts`
 
 Tests cover:
 - Environment variable loading and validation
@@ -254,7 +254,7 @@ import { createClient } from '@supabase/supabase-js';
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   db: { schema: 'public' },
   global: {
-    headers: { 'X-Client-Info': 'forgerank' },
+    headers: { 'X-Client-Info': 'gymrats' },
   },
   auth: {
     debug: true, // Enable auth debug logging
@@ -281,4 +281,4 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 ---
 
 Last Updated: 2026-01-24
-Forgerank Version: 1.0.0
+GymRats Version: 1.0.0

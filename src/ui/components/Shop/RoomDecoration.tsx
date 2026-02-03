@@ -22,7 +22,7 @@ import {
 import { getRarityColor, type ShopItem } from "@/src/lib/gamification/shop";
 import { ROOM_SLOTS, getSlotById, getItemsForSlot, getDefaultRoomDecorations } from "@/src/lib/hangout/roomSlots";
 import { useThemeColors } from "@/src/ui/theme";
-import { FR } from "@/src/ui/forgerankStyle";
+import { FR } from "@/src/ui/GrStyle";
 
 interface RoomDecorationProps {
   /** Optional: limit to specific slots */

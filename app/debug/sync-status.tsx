@@ -7,10 +7,11 @@ import { ScrollView, Text, View, Pressable, ActivityIndicator, Alert } from "rea
 import { useSyncState } from "../../src/lib/hooks/useSyncStatus";
 import { networkMonitor } from "../../src/lib/sync/NetworkMonitor";
 import { useThemeColors } from "../../src/ui/theme";
-import { FR } from "../../src/ui/forgerankStyle";
+import { FR } from "../../src/ui/GrStyle";
 import { useWorkoutStore } from "../../src/lib/stores/workoutStore";
 import { useRoutinesStore } from "../../src/lib/stores/routinesStore";
 import { clearCurrentSession } from "../../src/lib/stores";
+import { useOnboardingStore, resetOnboarding } from "../../src/lib/stores/onboardingStore";
 
 type SyncStatusDisplay = {
   status: 'idle' | 'syncing' | 'success' | 'error';
@@ -62,6 +63,7 @@ export default function SyncStatusScreen() {
   const routines = useRoutinesStore((s) => s.routines);
   const clearWorkoutSessions = useWorkoutStore((s) => s.clearSessions);
   const clearRoutines = useRoutinesStore((s) => s.clearRoutines);
+  const onboardingCompleted = useOnboardingStore((s) => s.completed);
 
   const handleClearWorkouts = () => {
     Alert.alert(
@@ -111,6 +113,24 @@ export default function SyncStatusScreen() {
           onPress: () => {
             clearCurrentSession();
             Alert.alert("Done", "Active workout cleared.");
+          },
+        },
+      ]
+    );
+  };
+
+  const handleResetOnboarding = () => {
+    Alert.alert(
+      "Reset Onboarding",
+      "This will reset onboarding to show the welcome flow again on next app navigation.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: () => {
+            resetOnboarding();
+            Alert.alert("Done", "Onboarding reset. Navigate away from this screen to see onboarding flow.");
           },
         },
       ]
@@ -340,6 +360,11 @@ export default function SyncStatusScreen() {
             <Text style={{ color: c.muted, ...FR.type.sub }}>
               Routines: <Text style={{ color: c.text, fontWeight: "700" }}>{routines.length}</Text>
             </Text>
+            <Text style={{ color: c.muted, ...FR.type.sub }}>
+              Onboarding: <Text style={{ color: onboardingCompleted ? '#10b981' : '#f97316', fontWeight: "700" }}>
+                {onboardingCompleted ? 'Completed' : 'Not Completed'}
+              </Text>
+            </Text>
           </View>
 
           {/* Clear Active Workout */}
@@ -401,6 +426,26 @@ export default function SyncStatusScreen() {
           >
             <Text style={{ color: '#fff', ...FR.type.body, fontWeight: "900" }}>
               Clear All Routines ({routines.length})
+            </Text>
+          </Pressable>
+
+          {/* Reset Onboarding */}
+          <Pressable
+            onPress={handleResetOnboarding}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 8,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: FR.radius.button,
+              backgroundColor: '#8b5cf6',
+              opacity: pressed ? 0.8 : 1,
+            })}
+          >
+            <Text style={{ color: '#fff', ...FR.type.body, fontWeight: "900" }}>
+              Reset Onboarding
             </Text>
           </Pressable>
         </View>

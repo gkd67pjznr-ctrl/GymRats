@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, Pressable, ScrollView, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useThemeColors } from "../../src/ui/theme";
-import { FR } from "../../src/ui/forgerankStyle";
+import { FR } from "../../src/ui/GrStyle";
 import { KeyboardAwareScrollView } from "../../src/ui/components/KeyboardAwareScrollView";
 import type { PlanCategory, PlanDifficulty, PremadePlan, PlanExercise } from "../../src/lib/premadePlans/types";
 import { addPlan } from "../../src/lib/premadePlans/store";
@@ -93,7 +93,7 @@ export default function PlanCreator() {
       exercises,
       tags: tags.split(",").map(t => t.trim()).filter(Boolean),
       source: "curated",
-      authorName: "Forgerank Team",
+      authorName: "GymRats Team",
       createdAtMs: Date.now(),
     };
 

@@ -263,7 +263,7 @@ export function getRankHistory(userId: string, exerciseId: string): {
         }
       }
 
-      // Calculate rank/score (simplified - would need actual Forgerank scoring)
+      // Calculate rank/score (simplified - would need actual GymRank scoring)
       const score = Math.min(1000, Math.round(bestE1RM * 10)); // Placeholder calculation
       const rank = Math.min(7, Math.floor(score / 150) + 1); // Placeholder rank calculation
 

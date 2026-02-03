@@ -7,7 +7,7 @@
 
 ## Quick Start for Contributors
 
-**What is Forgerank?**
+**What is GymRats?**
 - React Native workout tracking app with AI gym buddy, social features, and gamification
 - Built with Expo 54, React Native 0.81, TypeScript 5.9
 - Uses Zustand for state management, Supabase for backend
@@ -53,7 +53,7 @@
 ### Directory Structure
 
 ```
-forgerank-glm/
+gymrats-glm/
 ├── app/                          # Expo Router screens (file-based routing)
 │   ├── (tabs)/                   # Bottom tab navigator
 │   │   ├── index.tsx            # Home/dashboard
@@ -80,7 +80,7 @@ forgerank-glm/
 │   │   ├── hangout/            # Hangout room
 │   │   ├── gamification/       # XP, levels, milestones
 │   │   ├── workoutModel.ts     # Core workout types
-│   │   ├── forgerankScoring.ts # Scoring algorithm
+│   │   ├── gymratsScoring.ts # Scoring algorithm
 │   │   ├── ranks.ts            # Rank ladder utilities
 │   │   ├── perSetCue.ts        # PR detection per set
 │   │   └── e1rm.ts             # 1-rep max (Epley formula)
@@ -447,7 +447,7 @@ const c = useThemeColors();
 e1RM = weight × (1 + reps/30)
 ```
 
-### Forgerank Scoring
+### GymRats Scoring
 - Base strength: e1RM/bodyweight ratio (nonlinear curve)
 - Rep quality: Bonus for quality reps at high load
 - Volume bonus: Reward for actual work volume

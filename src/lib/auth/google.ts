@@ -459,7 +459,7 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
           }
 
           // Supabase returns tokens in the URL hash fragment:
-          // forgerank://auth#access_token=xxx&refresh_token=yyy&...
+          // gymrats://auth#access_token=xxx&refresh_token=yyy&...
           const hashIndex = result.url.indexOf('#');
           if (hashIndex !== -1) {
             const hashParams = new URLSearchParams(result.url.substring(hashIndex + 1));
@@ -493,7 +493,7 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
           }
 
           // Also handle PKCE flow where code is in query params:
-          // forgerank://auth?code=xxx
+          // gymrats://auth?code=xxx
           const urlObj = new URL(result.url);
           const code = urlObj.searchParams.get('code');
           if (code) {

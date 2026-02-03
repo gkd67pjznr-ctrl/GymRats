@@ -1,6 +1,6 @@
 # Project Management Documentation
 
-This directory contains documentation related to project management aspects of the Forgerank application.
+This directory contains documentation related to project management aspects of the GymRats application.
 
 ## Contents
 

@@ -308,7 +308,7 @@ jest.mock('../../src/lib/avatar/avatarStore', () => ({
 const mockProcessUserStatsWorkoutResult = {
   prs: [],
   rankUps: [],
-  forgeRank: { score: 100, rank: 1, tier: 'iron', progressToNext: 0, components: { strength: 0, consistency: 0, progress: 0, variety: 0 }, lastCalculatedMs: Date.now() },
+  gymRank: { score: 100, rank: 1, tier: 'iron', progressToNext: 0, components: { strength: 0, consistency: 0, progress: 0, variety: 0 }, lastCalculatedMs: Date.now() },
   avatarGrowth: { stage: 1, heightScale: 0.3, volumeTotal: 500, setsTotal: 2, avgRank: 3, milestoneReached: false },
   volumeAddedKg: 500,
   setsAdded: 2,
@@ -953,7 +953,7 @@ describe('useWorkoutOrchestrator', () => {
       processUserStatsWorkout.mockReturnValueOnce({
         prs: [],
         rankUps: [],
-        forgeRank: { score: 200, rank: 5, tier: 'bronze', progressToNext: 0.5, components: { strength: 100, consistency: 50, progress: 30, variety: 20 }, lastCalculatedMs: Date.now() },
+        gymRank: { score: 200, rank: 5, tier: 'bronze', progressToNext: 0.5, components: { strength: 100, consistency: 50, progress: 30, variety: 20 }, lastCalculatedMs: Date.now() },
         avatarGrowth: { stage: 5, heightScale: 0.4, volumeTotal: 600, setsTotal: 2, avgRank: 3, milestoneReached: true, previousStage: 4 },
         volumeAddedKg: 600,
         setsAdded: 2,

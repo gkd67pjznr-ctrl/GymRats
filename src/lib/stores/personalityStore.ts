@@ -16,7 +16,7 @@ import {
 } from "../celebration/personalities";
 import type { PRType } from "../perSetCueTypes";
 
-const STORAGE_KEY = "forgerank.personality.v1";
+const STORAGE_KEY = "gymrats.personality.v1";
 
 interface PersonalityState {
   /** Selected personality ID */

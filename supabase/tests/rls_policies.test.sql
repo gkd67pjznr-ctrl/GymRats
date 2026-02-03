@@ -9,29 +9,29 @@
 
 -- Clean up any existing test data
 DELETE FROM public.notifications WHERE user_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 );
 DELETE FROM public.comments WHERE user_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 );
 DELETE FROM public.reactions WHERE user_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 );
 DELETE FROM public.posts WHERE author_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 );
 DELETE FROM public.friendships WHERE user_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 ) OR friend_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 );
 DELETE FROM public.workouts WHERE user_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 );
 DELETE FROM public.routines WHERE user_id IN (
-  SELECT id FROM public.users WHERE email LIKE 'test_%@forgerank.test'
+  SELECT id FROM public.users WHERE email LIKE 'test_%@gymrats.test'
 );
-DELETE FROM public.users WHERE email LIKE 'test_%@forgerank.test';
+DELETE FROM public.users WHERE email LIKE 'test_%@gymrats.test';
 
 -- Note: In actual pgTAP or Supabase CLI tests, user_ids would be created
 -- via auth.users. For this test file, we'll use placeholder UUIDs that

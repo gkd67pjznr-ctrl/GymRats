@@ -3,7 +3,7 @@ import type { LoggedSet } from "./loggerTypes";
 import type { WorkoutSession } from "./workoutModel";
 import type { Buddy, BuddyTier, CueMessage, TriggerType, RankProgressInfo } from "./buddyTypes";
 import { buddies } from "./buddyData";
-import { scoreFromE1rm } from "./forgerankScoring";
+import { scoreFromE1rm } from "./GrScoring";
 import { EXERCISES_V1 } from "../data/exercises";
 
 /**
@@ -271,7 +271,7 @@ export function detectRankProgressFull(
 
     // Only check for rank changes if we have a better result
     if (currentBestE1RM > previousBest.e1rmKg) {
-      // Calculate scores for both previous and current bests using actual Forgerank scoring
+      // Calculate scores for both previous and current bests using actual GymRank scoring
       const previousScoreResult = scoreFromE1rm(exerciseId, previousBest.e1rmKg, bodyweightKg);
       const currentScoreResult = scoreFromE1rm(exerciseId, currentBestE1RM, bodyweightKg);
 
@@ -280,7 +280,7 @@ export function detectRankProgressFull(
       const previousRank = getRankTierFromScore(previousScore);
       const currentRank = getRankTierFromScore(currentScore);
 
-      // Check if rank changed using actual Forgerank tiers
+      // Check if rank changed using actual GymRank tiers
       const rankUp = currentRank !== previousRank && isHigherRank(currentRank, previousRank);
 
       rankChanges.push({

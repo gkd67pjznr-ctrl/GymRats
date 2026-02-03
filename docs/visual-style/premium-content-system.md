@@ -1,8 +1,8 @@
-# Forgerank Premium Content System
+# GymRats Premium Content System
 
 ## Overview
 
-This document outlines the implementation of Forgerank's premium content system, which enables monetization of visual themes, audio packs, and other premium aesthetic elements while maintaining a great free user experience.
+This document outlines the implementation of GymRats's premium content system, which enables monetization of visual themes, audio packs, and other premium aesthetic elements while maintaining a great free user experience.
 
 ## Premium Content Tiers
 
@@ -548,7 +548,7 @@ class RemoteContentManager {
   async fetchContentMetadata(): Promise<ContentMetadata[]> {
     try {
       // Fetch from remote server or CDN
-      const response = await fetch('https://api.forgerank.app/content/metadata');
+      const response = await fetch('https://api.gymrats.app/content/metadata');
       const metadata = await response.json();
       return metadata;
     } catch (error) {
@@ -560,7 +560,7 @@ class RemoteContentManager {
   async downloadContent(contentId: string): Promise<boolean> {
     try {
       // Download content from CDN
-      const response = await fetch(`https://cdn.forgerank.app/content/${contentId}`);
+      const response = await fetch(`https://cdn.gymrats.app/content/${contentId}`);
       const content = await response.blob();
 
       // Save to local storage
@@ -673,4 +673,4 @@ class PremiumAnalytics {
 4. **Exclusive Content**: Seasonal and limited-time offerings
 5. **Customer Support**: Priority support channels
 
-This premium content system provides a comprehensive framework for monetizing Forgerank's visual enhancements while maintaining a positive user experience and clear value proposition for paid tiers.
+This premium content system provides a comprehensive framework for monetizing GymRats's visual enhancements while maintaining a positive user experience and clear value proposition for paid tiers.

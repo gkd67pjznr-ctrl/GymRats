@@ -10,7 +10,7 @@ import {
   Modal,
 } from 'react-native';
 import { useThemeColors } from '@/src/ui/theme';
-import { FR } from '@/src/ui/forgerankStyle';
+import { FR } from '@/src/ui/GrStyle';
 import { makeDesignSystem } from '@/src/ui/designSystem';
 
 interface PhotoCardProps {

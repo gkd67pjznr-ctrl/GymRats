@@ -89,7 +89,7 @@ describe('authStore', () => {
   // Full user profile with all optional fields (matches toUserProfile output)
   const fullMockUserProfile = {
     ...mockUserProfile,
-    subscriptionTier: 'basic', // email is not dev@forgerank.app
+    subscriptionTier: 'basic', // email is not dev@gymrats.app
     avatarArtStyle: null,
     avatarGrowthStage: null,
     avatarHeightScale: null,

@@ -10,7 +10,7 @@ import { View, Text, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FR } from "@/src/ui/forgerankStyle";
+import { FR } from "@/src/ui/GrStyle";
 import { useThemeColors } from "@/src/ui/theme";
 import type { WorkoutPlan } from "@/src/lib/workoutPlanModel";
 import type { LoggedSet } from "@/src/lib/loggerTypes";

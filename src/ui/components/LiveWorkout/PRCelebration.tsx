@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from '@/src/ui/theme';
-import { FR } from '@/src/ui/forgerankStyle';
+import { FR } from '@/src/ui/GrStyle';
 import { makeDesignSystem } from '@/src/ui/designSystem';
 import type { SelectedCelebration } from '@/src/lib/celebration';
 import { getAssetForKey, getPRTypeLabel, getTierLabel } from '@/src/lib/celebration';

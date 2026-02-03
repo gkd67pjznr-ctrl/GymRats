@@ -3,7 +3,7 @@
 **File Creation Timestamp:** 2026-01-30 05:30:00
 
 ## Overview
-Created comprehensive TypeScript type definitions for the Live Workout Together feature in `/Users/tmac/Documents/Projects/Forgerank-devs/src/lib/liveWorkoutTogether/types.ts`.
+Created comprehensive TypeScript type definitions for the Live Workout Together feature in `/Users/tmac/Documents/Projects/GymRats-devs/src/lib/liveWorkoutTogether/types.ts`.
 
 ## Files Created/Updated
 

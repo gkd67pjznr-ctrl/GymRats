@@ -1,6 +1,6 @@
-# Forgerank User Instructions
+# GymRats User Instructions
 
-**This file is the central repository for all instructions on using features and systems built for Forgerank.**
+**This file is the central repository for all instructions on using features and systems built for GymRats.**
 
 Whenever a new feature is built that requires special usage instructions, those instructions will be added here.
 
@@ -207,7 +207,7 @@ The Supabase PostgreSQL database has **23 tables** with RLS enabled, covering au
 - `workout_sets` - Individual sets (weight, reps, exercise)
 - `exercise_prs` - Personal records tracking (weight, rep, e1RM PRs)
 - `routines` / `routine_exercises` - User-created workout routines
-- `forgerank_snapshots` - Scoring history snapshots
+- `gymrats_snapshots` - Scoring history snapshots
 
 **Social:**
 - `posts` - Social feed posts

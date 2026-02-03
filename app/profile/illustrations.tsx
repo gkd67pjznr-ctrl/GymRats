@@ -240,7 +240,7 @@ export default function IllustrationsGalleryScreen() {
         >
           <Text style={{ color: c.primary, fontSize: 16, fontWeight: "900" }}>Illustration System</Text>
           <Text style={{ color: c.primary, lineHeight: 20 }}>
-            Forgerank's illustration system enhances the app with themed visuals:
+            GymRats' illustration system enhances the app with themed visuals:
           </Text>
           <View style={{ gap: 8 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

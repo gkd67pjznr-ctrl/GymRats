@@ -1,8 +1,8 @@
-# Forgerank Theme Pack Development Guide
+# GymRats Theme Pack Development Guide
 
 ## Overview
 
-This guide outlines the process for creating and integrating new theme packs into Forgerank's visual system.
+This guide outlines the process for creating and integrating new theme packs into GymRats's visual system.
 
 ## Theme Pack Structure
 
@@ -258,4 +258,4 @@ export const DEFAULT_CONFIGURATIONS: ThemeConfiguration[] = [
 - Special effects and animations
 - Voice lines and full audio experiences
 
-This guide provides a standardized approach to creating and integrating theme packs, ensuring consistency and quality across all visual content in Forgerank.
+This guide provides a standardized approach to creating and integrating theme packs, ensuring consistency and quality across all visual content in GymRats.

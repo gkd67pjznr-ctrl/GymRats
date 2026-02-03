@@ -2,7 +2,7 @@
 
 ## Overview
 
-Competition among friends and the broader community through various ranking systems and opt-in challenges. Encourages engagement and friendly competition without affecting core Forgerank scoring integrity. All competitive features are designed to be **supportive, not toxic** -- we steer away from body comparison and toward celebrating effort, strength progress, and consistency.
+Competition among friends and the broader community through various ranking systems and opt-in challenges. Encourages engagement and friendly competition without affecting core GymRats scoring integrity. All competitive features are designed to be **supportive, not toxic** -- we steer away from body comparison and toward celebrating effort, strength progress, and consistency.
 
 **Launch status:** Phase 1 implemented (scope toggle, overall tab, user visibility).
 
@@ -11,7 +11,7 @@ Competition among friends and the broader community through various ranking syst
 ## Sub-Features
 
 ### 1. Per-Exercise Leaderboard
-- [x] Rank friends by Forgerank score per exercise
+- [x] Rank friends by GymRats score per exercise
 - [x] Show top 5 per exercise (with user visible if outside top 5)
 - [ ] Display score and rank tier
 - [ ] Filter by exercise category
@@ -20,8 +20,8 @@ Competition among friends and the broader community through various ranking syst
 
 ---
 
-### 2. Overall Forgerank Leaderboard
-- [x] Average Forgerank across all exercises
+### 2. Overall GymRats Leaderboard
+- [x] Average GymRats across all exercises
 - [ ] Or total combined score option
 - [x] Friends-only view
 - [x] Global view
@@ -106,7 +106,7 @@ Competitive features must stay **supportive and effort-focused**:
 - **Celebrate effort, not genetics.** Volume, consistency, and PRs are things everyone can improve.
 - **Opt-in everything.** No one is placed on a leaderboard without choosing to be there.
 - **Progress over position.** Show users their own trajectory alongside rankings.
-- **Anomaly detection still applies.** Forgerank's anti-cheat heuristics prevent inflated scores from dominating boards.
+- **Anomaly detection still applies.** GymRats's anti-cheat heuristics prevent inflated scores from dominating boards.
 - **No rewards for top positions** beyond bragging rights, badges, and XP -- no pay-to-win, no gatekeeping.
 - **Rotating challenges** keep the same people from dominating indefinitely.
 
@@ -116,7 +116,7 @@ Competitive features must stay **supportive and effort-focused**:
 
 **Data Requirements:**
 - Friends list
-- Forgerank scores per exercise per user
+- GymRats scores per exercise per user
 - Workout history (for volume)
 - XP totals
 - Gym membership/location (for gym-level boards)
@@ -143,20 +143,20 @@ type EnhancedLeaderboardEntry = LeaderboardEntry & {
 **API Endpoints (Supabase):**
 ```sql
 -- Per-exercise leaderboard (friends)
-SELECT user_id, forgerank_score, rank_tier
+SELECT user_id, gymrats_score, rank_tier
 FROM user_exercise_stats
 WHERE exercise_id = $1
 AND user_id IN (SELECT friend_id FROM friendships WHERE user_id = $2)
-ORDER BY forgerank_score DESC
+ORDER BY gymrats_score DESC
 LIMIT 10;
 
 -- Per-exercise leaderboard (gym)
-SELECT ues.user_id, ues.forgerank_score, ues.rank_tier
+SELECT ues.user_id, ues.gymrats_score, ues.rank_tier
 FROM user_exercise_stats ues
 JOIN user_gyms ug ON ug.user_id = ues.user_id
 WHERE ues.exercise_id = $1
 AND ug.gym_id = $2
-ORDER BY ues.forgerank_score DESC
+ORDER BY ues.gymrats_score DESC
 LIMIT 20;
 ```
 
@@ -189,7 +189,7 @@ LIMIT 20;
 ## Dependencies
 
 - Friends system
-- Forgerank scoring
+- GymRats scoring
 - Supabase backend
 - User profiles
 - Gym Finder / Map feature (for gym-level boards)
@@ -203,7 +203,7 @@ LIMIT 20;
 
 **P1 (first post-launch wave):**
 - Per-exercise leaderboard (friends + global)
-- Overall Forgerank leaderboard (friends + global)
+- Overall GymRats leaderboard (friends + global)
 - Volume Challenges (weekly rotating)
 
 **P2 (second wave):**
@@ -232,7 +232,7 @@ LIMIT 20;
 - `app/(tabs)/leaderboard.tsx` - Enhanced with scope toggle, overall tab, pull-to-refresh
 
 **Features Implemented:**
-1. **Overall Tab** - New first tab showing average Forgerank score across all exercises
+1. **Overall Tab** - New first tab showing average GymRats score across all exercises
 2. **Scope Toggle** (Friends/Global) - Client-side filtering using `useFriendEdges` hook
 3. **Pull-to-Refresh** - RefreshControl on ScrollView
 4. **User Position Visibility** - Current user always visible with accent highlighting; separator ("...") shown when user is outside top N

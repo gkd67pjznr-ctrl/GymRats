@@ -97,7 +97,7 @@ export type RankTier =
 /**
  * Forge Rank - composite score combining all aspects
  */
-export interface ForgeRank {
+export interface GymRank {
   /** Total score (0-1000) */
   score: number;
   /** Rank number (1-20) */
@@ -162,7 +162,7 @@ export interface ProcessWorkoutResult {
     tier: RankTier;
   }[];
   /** Updated Forge Rank */
-  forgeRank: ForgeRank;
+  gymRank: GymRank;
   /** Avatar growth information */
   avatarGrowth: DerivedAvatarGrowth;
   /** Volume added in this workout */
@@ -186,7 +186,7 @@ export interface UserStatsState {
   /** Variety metrics */
   variety: VarietyMetrics;
   /** Composite Forge Rank */
-  forgeRank: ForgeRank;
+  gymRank: GymRank;
   /** Store version for migrations */
   version: number;
   /** Last synced to backend timestamp */
@@ -226,7 +226,7 @@ export const DEFAULT_VARIETY_METRICS: VarietyMetrics = {
   volumeByMuscle: {} as Record<MuscleGroup, number>,
 };
 
-export const DEFAULT_FORGE_RANK: ForgeRank = {
+export const DEFAULT_FORGE_RANK: GymRank = {
   score: 0,
   rank: 1,
   tier: "iron",
@@ -246,7 +246,7 @@ export const DEFAULT_USER_STATS_STATE: UserStatsState = {
   volumeByMuscle: {},
   consistency: DEFAULT_CONSISTENCY_METRICS,
   variety: DEFAULT_VARIETY_METRICS,
-  forgeRank: DEFAULT_FORGE_RANK,
+  gymRank: DEFAULT_FORGE_RANK,
   version: 1,
   lastSyncedMs: null,
   hydrated: false,

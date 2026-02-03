@@ -208,7 +208,7 @@ A new layered design system has been implemented. See `docs/features/design-syst
 **Key Files:**
 - `src/ui/designSystem.ts` - Design tokens factory
 - `src/ui/theme.ts` - Theme colors hook
-- `src/ui/forgerankStyle.ts` - Brand-specific styles
+- `src/ui/gymratsStyle.ts` - Brand-specific styles
 - `src/ui/error-boundary.tsx` - Error boundary component
 - `src/ui/tab-error-boundary.tsx` - Tab-specific error boundary
 - `src/ui/components/` - Reusable UI components
@@ -250,9 +250,9 @@ const c = useThemeColors();
 // c.primary, c.secondary, c.success, c.warning, c.danger
 ```
 
-**Forgerank Style:**
+**GymRats Style:**
 ```typescript
-import { FR } from '../../src/ui/forgerankStyle';
+import { FR } from '../../src/ui/gymratsStyle';
 
 // Spacing
 FR.space.x3    // 12px
@@ -279,7 +279,7 @@ FR.card({ card: c.card, border: c.border })
 - Accent color pops
 - Premium feel
 
-**Enhanced with Forgerank-Specific Aesthetic:**
+**Enhanced with GymRats-Specific Aesthetic:**
 - Layered approach: PURE's emotional personality over LIFTOFF's functional efficiency
 - Multiple color palette options with emotional meaning
 - Hand-drawn illustration style with surreal/psychedelic elements

@@ -1,10 +1,10 @@
 // src/ui/components/Social/RankBadge.tsx
-// Rank badge component for displaying Forgerank tier on workout posts
+// Rank badge component for displaying GymRank tier on workout posts
 
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
-import type { Tier } from '@/src/lib/forgerankScoring';
+import type { Tier } from '@/src/lib/GrScoring';
 import type { WorkoutPost } from '@/src/lib/socialModel';
 
 interface RankBadgeProps {

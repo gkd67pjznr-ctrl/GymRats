@@ -35,9 +35,9 @@ BEGIN
   -- Insert test users (bypassing RLS with SECURITY DEFINER or by temporarily disabling)
   -- Note: In production tests, use actual auth.users
   INSERT INTO public.users (id, email, display_name) VALUES
-    (user_a, 'test_a@forgerank.test', 'Test User A'),
-    (user_b, 'test_b@forgerank.test', 'Test User B'),
-    (user_c, 'test_c@forgerank.test', 'Test User C')
+    (user_a, 'test_a@gymrats.test', 'Test User A'),
+    (user_b, 'test_b@gymrats.test', 'Test User B'),
+    (user_c, 'test_c@gymrats.test', 'Test User C')
   ON CONFLICT (email) DO NOTHING;
 
   -- Create friendships: A <-> B are friends, C is not friends with anyone
@@ -103,9 +103,9 @@ $$ LANGUAGE sql STABLE;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
-  user_c UUID := get_test_user('test_c@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
+  user_c UUID := get_test_user('test_c@gymrats.test');
 
 BEGIN
   -- Test 1: User can view their own content regardless of privacy
@@ -142,9 +142,9 @@ END;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
-  user_c UUID := get_test_user('test_c@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
+  user_c UUID := get_test_user('test_c@gymrats.test');
   friendship_count INTEGER;
 
 BEGIN
@@ -179,9 +179,9 @@ END;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
-  user_c UUID := get_test_user('test_c@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
+  user_c UUID := get_test_user('test_c@gymrats.test');
   post_count INTEGER;
 
 BEGIN
@@ -230,9 +230,9 @@ END;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
-  user_c UUID := get_test_user('test_c@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
+  user_c UUID := get_test_user('test_c@gymrats.test');
 
 BEGIN
   -- Create a reaction on user A's public post
@@ -264,9 +264,9 @@ END;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
-  user_c UUID := get_test_user('test_c@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
+  user_c UUID := get_test_user('test_c@gymrats.test');
 
 BEGIN
   -- Create a comment on user A's public post
@@ -289,8 +289,8 @@ END;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
   notif_count INTEGER;
 
 BEGIN
@@ -325,8 +325,8 @@ END;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
 
 BEGIN
   -- Create a routine for user A
@@ -354,8 +354,8 @@ END;
 -- ============================================================================
 
 DECLARE
-  user_a UUID := get_test_user('test_a@forgerank.test');
-  user_b UUID := get_test_user('test_b@forgerank.test');
+  user_a UUID := get_test_user('test_a@gymrats.test');
+  user_b UUID := get_test_user('test_b@gymrats.test');
 
 BEGIN
   -- Create a workout for user A
@@ -412,7 +412,7 @@ DROP FUNCTION IF EXISTS count_visible_for(UUID, TEXT, TEXT);
 DROP FUNCTION IF EXISTS get_test_user(TEXT);
 
 -- Clean up test data (optional - keep for inspection)
--- DELETE FROM public.users WHERE email LIKE 'test_%@forgerank.test';
+-- DELETE FROM public.users WHERE email LIKE 'test_%@gymrats.test';
 
 ROLLBACK;
 

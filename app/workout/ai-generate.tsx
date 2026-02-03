@@ -5,7 +5,7 @@ import { getCategoryInfo } from "../../src/lib/premadePlans/categories";
 import type { PlanCategory, PlanDifficulty } from "../../src/lib/premadePlans/types";
 import { useAIGeneratePlan } from "../../src/lib/premadePlans/useAIGeneratePlan";
 import { makeDesignSystem } from "../../src/ui/designSystem";
-import { FR } from "../../src/ui/forgerankStyle";
+import { FR } from "../../src/ui/GrStyle";
 import { useThemeColors, useThemeRadius } from "../../src/ui/theme";
 import { KeyboardAwareScrollView } from "../../src/ui/components/KeyboardAwareScrollView";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
@@ -70,7 +70,7 @@ if (isNativeApp) {
             ℹ️ Note
           </Text>
           <Text style={{ color: c.text, ...FR.type.body }}>
-            AI plan generation is currently only available in the web version of Forgerank.
+            AI plan generation is currently only available in the web version of GymRats.
           </Text>
           <Text style={{ color: c.muted, ...FR.type.sub, marginTop: FR.space.x2 }}>
             For now, you can browse our 10 curated plans or use the dev tools to create custom plans.

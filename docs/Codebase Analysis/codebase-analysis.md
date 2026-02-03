@@ -1,16 +1,16 @@
-# Forgerank Codebase Analysis
+# GymRats Codebase Analysis
 
 **Date:** 2026-01-30
 **Version:** 1.0
 **Author:** Claude Code Analysis
 
-This document provides a comprehensive analysis of the Forgerank codebase, covering architecture, features, technology stack, and current implementation status.
+This document provides a comprehensive analysis of the GymRats codebase, covering architecture, features, technology stack, and current implementation status.
 
 ---
 
 ## 1. Executive Summary
 
-Forgerank is a sophisticated React Native workout tracking application built with Expo. The codebase features:
+GymRats is a sophisticated React Native workout tracking application built with Expo. The codebase features:
 
 - **Core Workout Tracking**: Live workout logging with real-time PR detection and 20-rank scoring system
 - **Social Features**: Feed, friends, reactions, and collaborative workouts
@@ -64,7 +64,7 @@ src/
 │   ├── auth/               # OAuth (Google, Apple)
 │   ├── premadePlans/       # Pre-built workout plans
 │   ├── workoutModel.ts     # Core workout types
-│   ├── forgerankScoring.ts # Scoring algorithm
+│   ├── gymratsScoring.ts # Scoring algorithm
 │   ├── ranks.ts            # Rank ladder utilities
 │   ├── perSetCue.ts        # PR detection per set
 │   ├── e1rm.ts             # Estimated 1-rep max (Epley formula)
@@ -148,7 +148,7 @@ export const useMyStore = create<MyState>()(
 - **Rest timer**: Auto-start with haptic notifications
 
 ### 4.2 Scoring System
-- **Forgerank scoring**: 0-1000 point system per exercise
+- **GymRats scoring**: 0-1000 point system per exercise
 - **20 ranks**: Iron → Mythic progression per exercise
 - **Verified standards**: Based on real-world world-class lifts
 - **Anti-cheat**: Heuristics for plausible inputs
@@ -216,7 +216,7 @@ type CurrentSession = {
 ```
 
 ### Scoring System
-- **Forgerank scoring**: 0-1000 points
+- **GymRats scoring**: 0-1000 points
 - **7 tiers**: Iron, Bronze, Silver, Gold, Platinum, Diamond, Mythic
 - **Components**: base strength, rep quality, volume bonus, consistency bonus, PR bonus
 - **Anti-cheat heuristics**: For implausible jumps/sets
@@ -328,7 +328,7 @@ type CurrentSession = {
 ### Features Complete
 - ✅ Core workout logging
 - ✅ PR detection system
-- ✅ Forgerank scoring algorithm
+- ✅ GymRats scoring algorithm
 - ✅ Social feed and friends
 - ✅ Gamification system (XP, levels, streaks)
 - ✅ AI Gym Buddy with multiple personalities
@@ -446,7 +446,7 @@ type CurrentSession = {
 
 ## 13. Conclusion
 
-The Forgerank codebase represents a mature, feature-rich workout tracking application with a strong foundation in modern React Native development practices. Key strengths include:
+The GymRats codebase represents a mature, feature-rich workout tracking application with a strong foundation in modern React Native development practices. Key strengths include:
 
 - **Robust architecture**: Well-structured Zustand stores with proper persistence
 - **Comprehensive feature set**: Workout tracking, social features, and gamification
