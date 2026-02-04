@@ -51,6 +51,12 @@ export interface DetectedPRs {
   previousBestWeight?: number;
   previousBestReps?: number;
   previousBestE1RM?: number;
+  /** True if user matched/exceeded their historical peak after a decline */
+  isRecoveryPR?: boolean;
+  /** The peak e1RM they're recovering to */
+  peakE1RM?: number;
+  /** How long ago (ms) the peak was achieved */
+  peakAgeMs?: number;
 }
 
 /**
@@ -72,6 +78,8 @@ export function updateExerciseStats(
   const stats: ExerciseStats = existing ? { ...existing } : {
     exerciseId,
     bestE1RMKg: 0,
+    peakE1RMKg: 0,
+    peakAchievedAtMs: 0,
     bestWeightKg: 0,
     bestRepsAtWeight: {},
     rank: 1,
@@ -125,7 +133,26 @@ export function updateExerciseStats(
       prs.e1rmPR = true;
       prs.previousBestE1RM = stats.bestE1RMKg;
       prs.newBestE1RM = e1rm;
+
+      // Check for recovery PR: matching/exceeding historical peak after a decline
+      // Recovery = current best was below peak, but new e1RM reaches/exceeds peak
+      const hadPreviousPeak = (stats.peakE1RMKg ?? 0) > 0;
+      const wasBelow = stats.bestE1RMKg < (stats.peakE1RMKg ?? 0);
+      const nowReachesPeak = e1rm >= (stats.peakE1RMKg ?? 0);
+
+      if (hadPreviousPeak && wasBelow && nowReachesPeak) {
+        prs.isRecoveryPR = true;
+        prs.peakE1RM = stats.peakE1RMKg;
+        prs.peakAgeMs = now - (stats.peakAchievedAtMs ?? now);
+      }
+
       stats.bestE1RMKg = e1rm;
+
+      // Update peak if this is a new all-time high
+      if (e1rm > (stats.peakE1RMKg ?? 0)) {
+        stats.peakE1RMKg = e1rm;
+        stats.peakAchievedAtMs = now;
+      }
     }
 
     // Update totals

@@ -85,8 +85,9 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
         const state = get();
         const now = Date.now();
 
-        // Track PRs and rank-ups for the result
+        // Track PRs, recovery PRs, and rank-ups for the result
         const prs: ProcessWorkoutResult["prs"] = [];
+        const recoveryPRs: ProcessWorkoutResult["recoveryPRs"] = [];
         const rankUps: ProcessWorkoutResult["rankUps"] = [];
 
         // Calculate workout volume
@@ -143,6 +144,16 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
                 previousValue: pr.previousBestE1RM,
               });
             }
+            // Record recovery PRs (comeback after decline)
+            if (pr.isRecoveryPR && pr.newBestE1RM !== undefined && pr.peakE1RM !== undefined) {
+              recoveryPRs.push({
+                exerciseId,
+                exerciseName: getExerciseName(exerciseId),
+                currentE1RM: pr.newBestE1RM,
+                peakE1RM: pr.peakE1RM,
+                peakAgeMs: pr.peakAgeMs ?? 0,
+              });
+            }
           }
 
           // Check for rank up
@@ -168,6 +179,28 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
         // Update variety metrics
         const newVariety = calculateVariety(newExerciseStats, newVolumeByMuscle);
 
+        // Update PR streak (consecutive sessions with at least one PR)
+        const hadPRsThisSession = prs.length > 0;
+        const newPRStreak = hadPRsThisSession
+          ? (state.lifetimeStats.prStreak ?? 0) + 1
+          : 0;
+        const newLongestPRStreak = Math.max(
+          state.lifetimeStats.longestPRStreak ?? 0,
+          newPRStreak
+        );
+
+        // Track max PRs in a single workout
+        const newMaxPRsInWorkout = Math.max(
+          state.lifetimeStats.maxPRsInWorkout ?? 0,
+          prs.length
+        );
+
+        // Check if user has achieved all 3 PR types
+        const weightPRCount = state.lifetimeStats.weightPRs + prs.filter((p) => p.type === "weight").length;
+        const repPRCount = state.lifetimeStats.repPRs + prs.filter((p) => p.type === "rep").length;
+        const e1rmPRCount = state.lifetimeStats.e1rmPRs + prs.filter((p) => p.type === "e1rm").length;
+        const hasAllPRTypes = weightPRCount > 0 && repPRCount > 0 && e1rmPRCount > 0;
+
         // Update lifetime stats
         const newLifetimeStats: LifetimeStats = {
           ...state.lifetimeStats,
@@ -175,9 +208,13 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
           totalSets: state.lifetimeStats.totalSets + workoutSets,
           totalWorkouts: state.lifetimeStats.totalWorkouts + 1,
           totalPRs: state.lifetimeStats.totalPRs + prs.length,
-          weightPRs: state.lifetimeStats.weightPRs + prs.filter((p) => p.type === "weight").length,
-          repPRs: state.lifetimeStats.repPRs + prs.filter((p) => p.type === "rep").length,
-          e1rmPRs: state.lifetimeStats.e1rmPRs + prs.filter((p) => p.type === "e1rm").length,
+          weightPRs: weightPRCount,
+          repPRs: repPRCount,
+          e1rmPRs: e1rmPRCount,
+          prStreak: newPRStreak,
+          longestPRStreak: newLongestPRStreak,
+          maxPRsInWorkout: newMaxPRsInWorkout,
+          hasAllPRTypes,
           firstWorkoutMs: state.lifetimeStats.firstWorkoutMs ?? session.startedAtMs,
           lastWorkoutMs: session.endedAtMs,
         };
@@ -213,6 +250,7 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
 
         return {
           prs,
+          recoveryPRs,
           rankUps,
           gymRank: newGymRank,
           avatarGrowth,
@@ -266,6 +304,11 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
         let exerciseStats: Record<string, ExerciseStats> = {};
         let volumeByMuscle: Partial<Record<string, number>> = {};
 
+        // Track PR streak as we process sessions
+        let currentPRStreak = 0;
+        let longestPRStreak = 0;
+        let maxPRsInWorkout = 0;
+
         // Process each session
         for (const session of sortedSessions) {
           const workoutVolumeKg = session.sets.reduce(
@@ -290,12 +333,36 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
           // Update volume by muscle
           volumeByMuscle = updateVolumeByMuscle(volumeByMuscle, session.sets);
 
+          // Update PR streak based on session's prCount (if available)
+          const sessionPRCount = session.prCount ?? 0;
+          if (sessionPRCount > 0) {
+            currentPRStreak += 1;
+            longestPRStreak = Math.max(longestPRStreak, currentPRStreak);
+            maxPRsInWorkout = Math.max(maxPRsInWorkout, sessionPRCount);
+          } else {
+            currentPRStreak = 0;
+          }
+
+          // Track PR types
+          const newWeightPRs = lifetimeStats.weightPRs + (session.weightPRs ?? 0);
+          const newRepPRs = lifetimeStats.repPRs + (session.repPRs ?? 0);
+          const newE1rmPRs = lifetimeStats.e1rmPRs + (session.e1rmPRs ?? 0);
+          const hasAllPRTypes = newWeightPRs > 0 && newRepPRs > 0 && newE1rmPRs > 0;
+
           // Update lifetime stats
           lifetimeStats = {
             ...lifetimeStats,
             totalVolumeKg: lifetimeStats.totalVolumeKg + workoutVolumeKg,
             totalSets: lifetimeStats.totalSets + workoutSets,
             totalWorkouts: lifetimeStats.totalWorkouts + 1,
+            totalPRs: lifetimeStats.totalPRs + sessionPRCount,
+            weightPRs: newWeightPRs,
+            repPRs: newRepPRs,
+            e1rmPRs: newE1rmPRs,
+            prStreak: currentPRStreak,
+            longestPRStreak: longestPRStreak,
+            maxPRsInWorkout: maxPRsInWorkout,
+            hasAllPRTypes: hasAllPRTypes,
             firstWorkoutMs: lifetimeStats.firstWorkoutMs ?? session.startedAtMs,
             lastWorkoutMs: session.endedAtMs,
           };

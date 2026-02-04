@@ -18,6 +18,8 @@ import * as Haptics from "expo-haptics";
 import { useThemeColors } from "../../theme";
 import { FR } from "../../GrStyle";
 import type { LoggedSet } from "../../../lib/loggerTypes";
+import type { PRPrediction } from "@/src/lib/prPrediction";
+import { getPredictionIntensity } from "@/src/lib/prPrediction";
 
 export interface SetRowProps {
   set: LoggedSet;
@@ -29,6 +31,8 @@ export interface SetRowProps {
   onRepsChange: (text: string) => void;
   onDelete: () => void;
   kgToLb: (kg: number) => number;
+  /** PR prediction for this set (optional) */
+  prPrediction?: PRPrediction | null;
 }
 
 export function SetRow({
@@ -41,6 +45,7 @@ export function SetRow({
   onRepsChange,
   onDelete,
   kgToLb,
+  prPrediction,
 }: SetRowProps) {
   const c = useThemeColors();
   const swipeableRef = useRef<Swipeable>(null);
@@ -48,6 +53,19 @@ export function SetRow({
   const weightLb = kgToLb(set.weightKg);
   const prevWeightLb = previousSet ? kgToLb(previousSet.weightKg) : null;
   const prevReps = previousSet?.reps ?? null;
+
+  // PR prediction styling
+  const predictionIntensity = prPrediction ? getPredictionIntensity(prPrediction) : "none";
+  const getPRBorderColor = () => {
+    if (isDone) return "transparent";
+    switch (predictionIntensity) {
+      case "pr": return "#FFD700";
+      case "very-close": return "#FFA500";
+      case "close": return c.primary;
+      default: return "transparent";
+    }
+  };
+  const prBorderColor = getPRBorderColor();
 
   const triggerHaptic = () => {
     if (Platform.OS === "ios") {
@@ -114,9 +132,18 @@ export function SetRow({
           styles.row,
           {
             backgroundColor: isDone ? c.bg + "80" : "transparent",
+            borderLeftWidth: prBorderColor !== "transparent" ? 3 : 0,
+            borderLeftColor: prBorderColor,
           },
         ]}
       >
+        {/* PR Indicator badge (when will be PR) */}
+        {predictionIntensity === "pr" && !isDone && (
+          <View style={styles.prBadge}>
+            <Text style={styles.prBadgeText}>PR!</Text>
+          </View>
+        )}
+
         {/* SET number */}
         <View style={styles.setCol}>
           <View
@@ -225,6 +252,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     minHeight: 44,
+    position: "relative",
+  },
+  prBadge: {
+    position: "absolute",
+    top: 2,
+    right: 8,
+    backgroundColor: "#FFD700",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    zIndex: 10,
+  },
+  prBadgeText: {
+    color: "#000",
+    fontSize: 9,
+    fontWeight: "800",
   },
   setCol: {
     width: 36,

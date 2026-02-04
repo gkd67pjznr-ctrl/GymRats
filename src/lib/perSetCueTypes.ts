@@ -61,7 +61,7 @@ export interface DetectCueMeta {
 /**
  * Types of personal records
  */
-export type PRType = 'none' | 'weight' | 'rep' | 'e1rm' | 'cardio';
+export type PRType = 'none' | 'weight' | 'rep' | 'e1rm' | 'cardio' | 'recovery';
 
 /**
  * Exercise session state for PR tracking

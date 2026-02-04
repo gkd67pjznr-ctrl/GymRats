@@ -75,6 +75,15 @@ const COMMON_MILESTONES: ForgeMilestone[] = [
     condition: { type: 'workout_shared', threshold: 1 },
     tokens: 10,
   },
+  {
+    id: 'pr_types_all',
+    name: 'Triple Threat',
+    description: 'Achieve all 3 PR types (weight, rep, e1RM)',
+    rarity: 'common',
+    icon: '🎯',
+    condition: { type: 'pr_types', threshold: 3 },
+    tokens: 15,
+  },
 ];
 
 // === RARE TIER (1) ===
@@ -114,6 +123,24 @@ const RARE_MILESTONES: ForgeMilestone[] = [
     rarity: 'rare',
     icon: '⭐',
     condition: { type: 'prs', threshold: 50 },
+    tokens: 50,
+  },
+  {
+    id: 'hat_trick',
+    name: 'Hat Trick',
+    description: 'Achieve 3+ PRs in a single workout',
+    rarity: 'rare',
+    icon: '🎩',
+    condition: { type: 'prs_in_workout', threshold: 3 },
+    tokens: 40,
+  },
+  {
+    id: 'pr_streak_5',
+    name: 'Streak Master',
+    description: '5 consecutive workouts with PRs',
+    rarity: 'rare',
+    icon: '🔥',
+    condition: { type: 'pr_streak', threshold: 5 },
     tokens: 50,
   },
   {
@@ -192,6 +219,24 @@ const EPIC_MILESTONES: ForgeMilestone[] = [
     icon: '⭐',
     condition: { type: 'prs', threshold: 100 },
     tokens: 150,
+  },
+  {
+    id: 'prs_in_workout_5',
+    name: 'PR Machine',
+    description: 'Achieve 5+ PRs in a single workout',
+    rarity: 'epic',
+    icon: '🏆',
+    condition: { type: 'prs_in_workout', threshold: 5 },
+    tokens: 100,
+  },
+  {
+    id: 'pr_streak_10',
+    name: 'Unstoppable',
+    description: '10 consecutive workouts with PRs',
+    rarity: 'epic',
+    icon: '🔥',
+    condition: { type: 'pr_streak', threshold: 10 },
+    tokens: 125,
   },
   {
     id: 'three_gold',

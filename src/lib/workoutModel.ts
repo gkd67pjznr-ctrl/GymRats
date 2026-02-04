@@ -33,6 +33,12 @@ export type WorkoutSession = {
   mood?: number;          // 1-5
   energy?: number;        // 1-5
   soreness?: string[];    // muscle group IDs
+
+  // PR tracking
+  prCount?: number;       // Total PRs achieved during this workout
+  weightPRs?: number;     // Weight PRs achieved
+  repPRs?: number;        // Rep PRs achieved
+  e1rmPRs?: number;       // e1RM PRs achieved
 };
 
 // [CHANGED 2026-01-23] Re-export from centralized uid

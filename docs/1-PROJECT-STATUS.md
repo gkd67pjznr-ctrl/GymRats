@@ -23,7 +23,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 |---------------|--------|----------|---------|
 | Workout Core | 🔄 In Progress | 14/20 | Live logging, history, routines |
 | Workout Logging UX | ✅ Done | 10/10 | Hevy-style redesign complete |
-| Workout Drawer | 🔄 In Progress | 7/8 | Phase 2 in progress: rest timer + PR cue integration |
+| Workout Drawer | ✅ Done | 8/8 | Phase 2 complete: rest timer + PR integration done |
 | Exercise Library | ✅ Done | 3/3 | 100+ exercises with muscle groups |
 | Scoring & Ranks | ✅ Done | 5/5 | 0-1000 scoring, 20 ranks/exercise |
 | AI Gym Buddy | ✅ Done | 11/11 | 9 personalities, voice lines, IAP integrated |
@@ -54,7 +54,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - Log sets with weight and reps
 - Exercise selection with search
 - Rest timer with haptic notifications
-- PR detection (weight, rep, e1RM) with toast notifications
+- PR detection (weight, rep, e1RM) with toasts, sound effects, celebrations, sharing, streak tracking, prediction indicators, and recovery detection
 - Exercise blocks from routines
 - **Input Polish:** Custom numeric keypad, +/- steppers with configurable increments (2.5/5/10/45 lb), weight presets (135-405 lb), rep presets (5-15), auto-fill from previous sets, plate calculator
 

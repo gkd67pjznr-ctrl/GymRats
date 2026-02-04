@@ -28,6 +28,12 @@ export type CurrentSession = {
   // PR detection state per exercise
   exerciseStates: Record<string, ExerciseSessionState>;
 
+  // PR tracking during this session
+  prCount: number;
+  weightPRs: number;
+  repPRs: number;
+  e1rmPRs: number;
+
   // Optional: link to plan/routine
   planId?: string;
   routineId?: string;
@@ -126,6 +132,10 @@ export const useCurrentSessionStore = create<CurrentSessionState>()(
           sets: [],
           doneBySetId: {},
           exerciseStates: {},
+          prCount: 0,
+          weightPRs: 0,
+          repPRs: 0,
+          e1rmPRs: 0,
         };
 
         set({ session: newSession });
