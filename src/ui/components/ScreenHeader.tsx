@@ -1,9 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "../theme";
-import { TOP_BAR_HEIGHT } from "./GlobalTopBar";
 
 interface ScreenHeaderProps {
   title: string;
@@ -21,16 +19,15 @@ export function ScreenHeader({
   leftAction,
 }: ScreenHeaderProps) {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const c = useThemeColors();
 
   const handleBack = onBack ?? (() => router.back());
 
-  // Account for both safe area and GlobalTopBar height
-  const topPadding = insets.top + TOP_BAR_HEIGHT;
+  // Note: Top padding is now handled by the root layout's AuthenticatedLayout
+  // which applies marginTop for the GlobalTopBar
 
   return (
-    <View style={[styles.container, { paddingTop: topPadding, backgroundColor: c.bg }]}>
+    <View style={[styles.container, { backgroundColor: c.bg }]}>
       <View style={styles.row}>
         {/* Left: back button or custom */}
         <View style={styles.side}>

@@ -5,7 +5,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
-import { ScreenHeader } from '@/src/ui/components/ScreenHeader';
 import ForgeLabScreen from '@/src/ui/components/ForgeLab/ForgeLabScreen';
 
 const GymLabRoute: React.FC = () => {
@@ -13,8 +12,6 @@ const GymLabRoute: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: ds.tone.bg }]}>
-      {/* Tab page - no back button, pass empty leftAction */}
-      <ScreenHeader title="Gym Lab" leftAction={<View />} />
       <ForgeLabScreen />
     </View>
   );
