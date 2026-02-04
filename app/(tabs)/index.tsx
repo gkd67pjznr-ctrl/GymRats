@@ -265,7 +265,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingTop: 16,
     paddingBottom: spacing["2xl"],
     gap: spacing.lg,
   },
