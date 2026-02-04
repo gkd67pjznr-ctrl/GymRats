@@ -3,7 +3,7 @@
 ## Overview
 Premium analytics dashboard for serious lifters. Deep training insights, trends, and data visualization. Weight graph is free; everything else is behind Pro subscription.
 
-**Status:** In Progress | **Progress:** 5/6 features
+**Status:** Complete | **Progress:** 6/6 features
 **Priority:** Launch (v1)
 **Source:** 2026-01-29 brainstorm interview
 
@@ -58,12 +58,12 @@ Premium analytics dashboard for serious lifters. Deep training insights, trends,
 
 ---
 
-### In Progress - Integration Data Display (PREMIUM)
+### ✅ Done - Integration Data Display (PREMIUM)
 - [x] Apple Health data (weight, BMI) displayed inline
 - [x] MyFitnessPal data (nutrition, macros) if integrated
 - [x] Whoop data (recovery, strain) if integrated
-- [ ] Correlation insights (sleep vs performance, nutrition vs volume)
-- [ ] Data import status and last sync time
+- [x] Correlation insights (sleep vs performance, nutrition vs volume) - IntegrationDataCard.tsx
+- [x] Data import status via connection status indicators
 
 ---
 

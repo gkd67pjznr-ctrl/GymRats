@@ -1,9 +1,16 @@
 // src/ui/components/Social/WorkoutPostCard.tsx
 // An attractive card for displaying workout posts in the social feed
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withSpring,
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import type { WorkoutPost, EmoteId } from '../../../lib/socialModel';
 import type { Tier } from '../../../lib/GrScoring';
 import { useThemeColors } from '../../theme';
@@ -61,21 +68,46 @@ export function WorkoutPostCard({
   const setCount = post.setCount ?? 0;
   const durationMin = post.durationSec ? Math.round(post.durationSec / 60) : 0;
 
-  const EmoteButton = ({ emote, active }: { emote: EmoteId; active?: boolean }) => (
-    <Pressable
-      onPress={() => onReact(post.id, emote)}
-      style={({ pressed }) => [
-        styles.emoteButton,
-        {
-          backgroundColor: active ? `${tierColor}20` : c.bg,
-          borderColor: active ? tierColor : c.border,
-          opacity: pressed ? 0.7 : 1,
-        },
-      ]}
-    >
-      <Text style={styles.emoteText}>{emoteLabel(emote)}</Text>
-    </Pressable>
-  );
+  // Animated emote button with pop effect
+  const AnimatedEmoteButton = ({ emote, active }: { emote: EmoteId; active?: boolean }) => {
+    const scale = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }],
+    }));
+
+    const handlePress = useCallback(() => {
+      // Trigger pop animation
+      scale.value = withSequence(
+        withSpring(1.3, { damping: 8, stiffness: 400 }),
+        withSpring(1, { damping: 10, stiffness: 200 })
+      );
+
+      // Haptic feedback
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+      // Call reaction handler
+      onReact(post.id, emote);
+    }, [emote, scale]);
+
+    return (
+      <Animated.View style={animatedStyle}>
+        <Pressable
+          onPress={handlePress}
+          style={({ pressed }) => [
+            styles.emoteButton,
+            {
+              backgroundColor: active ? `${tierColor}20` : c.bg,
+              borderColor: active ? tierColor : c.border,
+              opacity: pressed ? 0.85 : 1,
+            },
+          ]}
+        >
+          <Text style={[styles.emoteText, active && styles.emoteTextActive]}>{emoteLabel(emote)}</Text>
+        </Pressable>
+      </Animated.View>
+    );
+  };
 
   return (
     <Link href={{ pathname: '/post/[id]', params: { id: post.id } } as any} asChild>
@@ -168,9 +200,9 @@ export function WorkoutPostCard({
         {/* Footer */}
         <View style={styles.footer}>
           <View style={styles.reactions}>
-            <EmoteButton emote="like" active={myReaction === 'like'} />
-            <EmoteButton emote="fire" active={myReaction === 'fire'} />
-            <EmoteButton emote="crown" active={myReaction === 'crown'} />
+            <AnimatedEmoteButton emote="like" active={myReaction === 'like'} />
+            <AnimatedEmoteButton emote="fire" active={myReaction === 'fire'} />
+            <AnimatedEmoteButton emote="crown" active={myReaction === 'crown'} />
           </View>
           <Text style={[styles.engagementText, { color: c.muted }]}>
             {compactNum(post.likeCount)} likes • {compactNum(post.commentCount)} comments
@@ -334,6 +366,9 @@ const styles = StyleSheet.create({
   },
   emoteText: {
     fontSize: 16,
+  },
+  emoteTextActive: {
+    transform: [{ scale: 1.1 }],
   },
   engagementText: {
     fontSize: 12,

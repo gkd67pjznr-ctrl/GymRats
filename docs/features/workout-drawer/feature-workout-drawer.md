@@ -1,7 +1,7 @@
 # Feature: Collapsible Workout Drawer
 
-**Status:** Phase 2 In Progress
-**Phase:** 2 of 4 (In Progress)
+**Status:** Phase 2 Complete
+**Phase:** 2 of 4 (Complete)
 **Priority:** P0 - Core UX Redesign
 **Created:** 2026-02-02
 
@@ -137,7 +137,7 @@ RootLayout
 
 ---
 
-### Phase 2: Rest Timer & PR Celebration Integration 🔄
+### Phase 2: Rest Timer & PR Celebration Integration ✅
 - [x] Lift rest timer state to `workoutDrawerStore`
   - [x] Add `restTimer` state: `{ isActive, totalSeconds, startedAtMs }`
   - [x] Add `startRestTimer()`, `stopRestTimer()`, `clearRestTimer()` actions
@@ -156,8 +156,8 @@ RootLayout
   - [x] PR toast only shows when drawer expanded
   - [x] Glowing star indicator on edge when PR pending
 - [x] Update tests (26 tests passing)
-- [ ] Timer completion notification/haptic when collapsed (needs testing)
-- [ ] Integrate actual PR detection with `setPendingCue()`
+- [x] Timer completion notification/haptic when collapsed (implemented in RestTimerOverlay)
+- [x] Integrate actual PR detection with `setPendingCue()` (DrawerContent.tsx lines 216-312)
 
 ---
 

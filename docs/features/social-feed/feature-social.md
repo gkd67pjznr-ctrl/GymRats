@@ -121,11 +121,13 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
-### Planned - Feed Tabs
-- [ ] Global feed tab (all public posts)
-- [ ] Friends feed tab (friends only)
-- [ ] Easy tab switching
-- [ ] Remember last viewed tab
+### Done - Feed Tabs
+- [x] Global feed tab (all public posts)
+- [x] Friends feed tab (friends only)
+- [x] Easy tab switching via ToggleChip components
+- [ ] Remember last viewed tab (persisting preference - deferred)
+
+**Implementation:** `app/(tabs)/feed.tsx` - FeedMode toggle with Public/Friends filtering
 
 ---
 
@@ -139,12 +141,14 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
-### Planned - Reactions
-- [ ] Quick emote buttons (fire, skull, crown, bolt, clap)
-- [ ] Reaction counts
-- [ ] Reaction animations
-- [ ] Real-time reaction updates
-- [ ] See who reacted
+### Done - Reactions
+- [x] Quick emote buttons (like, fire, crown)
+- [x] Reaction counts displayed
+- [x] Reaction animations (pop scale effect with haptic feedback)
+- [x] Real-time reaction updates via socialStore sync
+- [ ] See who reacted (future enhancement)
+
+**Implementation:** `src/ui/components/Social/WorkoutPostCard.tsx` - AnimatedEmoteButton component
 
 ---
 

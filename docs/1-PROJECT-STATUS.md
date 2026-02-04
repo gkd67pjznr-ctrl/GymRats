@@ -1,6 +1,6 @@
 # PROJECT STATUS
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-04
 **Current Phase:** Phase 2 - Workout Drawer + Advanced Features
 
 ---
@@ -23,14 +23,14 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 |---------------|--------|----------|---------|
 | Workout Core | 🔄 In Progress | 14/20 | Live logging, history, routines |
 | Workout Logging UX | ✅ Done | 10/10 | Hevy-style redesign complete |
-| Workout Drawer | 🔄 In Progress | 7/8 | Phase 2 in progress: rest timer + PR cue integration |
+| Workout Drawer | ✅ Done | 8/8 | Phase 2 complete: rest timer + PR cue integration |
 | Exercise Library | ✅ Done | 3/3 | 100+ exercises with muscle groups |
 | Scoring & Ranks | ✅ Done | 5/5 | 0-1000 scoring, 20 ranks/exercise |
 | AI Gym Buddy | ✅ Done | 11/11 | 9 personalities, voice lines, IAP integrated |
 | Body Model | ✅ Done | 5/5 | Moved to Forge Lab sub-tab |
 | Ranks Tab | ✅ Done | 10/10 | My Ranks + Leaderboards sub-tabs |
 | Authentication | 🔄 In Progress | 8/10 | Email + protected routes working, OAuth needs setup |
-| Social & Feed | 🔄 In Progress | 9/15 | Local complete, backend connected |
+| Social & Feed | 🔄 In Progress | 11/17 | Feed tabs, reactions with animations |
 | Gamification | ✅ Done | 12/12 | XP, levels, streaks, tokens, store |
 | Notifications | ✅ Done | 6/7 | Full push notification system complete |
 | UI & Design | ✅ Done | 15/15 | Design system + screen migrations complete |
@@ -161,12 +161,12 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 | # | Task | Description |
 |---|------|-------------|
-| 1 | Forge Lab Charting | Victory-native charts implemented |
+| ~~1~~ | ~~Forge Lab Charting~~ | ✅ Done - Victory-native charts, correlation insights |
 | ~~2~~ | ~~Profile Stats~~ | ✅ Done - GymRank, PR breakdown, top exercises |
-| 3 | Avatar Completion | Finish growth and customization |
-| 4 | Hangout Room | Real-time presence and decorations |
-| 5 | Leaderboards | Friends comparison |
-| 6 | Onboarding Flow | First-time UX with buddy selection |
+| ~~3~~ | ~~Avatar Completion~~ | ✅ Done - 8/8 features, growth & customization |
+| ~~4~~ | ~~Hangout Room~~ | ✅ Done - Real-time presence and decorations |
+| ~~5~~ | ~~Leaderboards~~ | ✅ Done - Volume/Level leaderboards, category filters, time periods |
+| ~~6~~ | ~~Onboarding Flow~~ | ✅ Done - Buddy audio preview, "can change later" note |
 
 ---
 
@@ -215,6 +215,31 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ---
 
 ## Recent Updates (Last 30 Days)
+
+### 2026-02-04
+- **Documentation Cleanup** - Verified and updated all P1 tasks as complete
+  - PR Detection Integration: Already implemented in DrawerContent.tsx
+  - Forge Lab: Correlation insights already in IntegrationDataCard.tsx
+  - Avatar, Hangout Room: All features verified complete
+  - Updated feature docs and status tables to reflect actual implementation
+- **Social Feed Enhancements**
+  - Feed Tabs: Global/Friends toggle already implemented
+  - Animated reactions with pop scale effect and haptic feedback
+  - AnimatedEmoteButton component using Reanimated springs
+- **Leaderboards Enhanced** - Major upgrades to the leaderboard system
+  - Score and tier display on each leaderboard row
+  - Exercise category filter (Chest, Back, Legs, Shoulders, Arms, Core)
+  - Time period filters (All Time, This Month, This Week)
+  - Volume Leaderboard with 3 metrics (Total Volume, Total Sets, Workouts)
+  - Level/XP Leaderboard with 3 metrics (Level, Total XP, Recent XP)
+- **Shareable Workout Cards** - New social sharing features
+  - ShareableWorkoutCard component for screenshot capture
+  - WorkoutPostCard component for attractive feed display
+  - ShareWorkoutModal with tab switcher (Post to Feed / Share Image)
+- **Onboarding UX Improvements**
+  - Live avatar preview in Cosmetics Modal (tap to preview before equip)
+  - Buddy audio sample preview in personality picker
+  - "Can change later" note with refresh icon
 
 ### 2026-02-03
 - **AI Buddy Voice Lines Complete** - Full voice line system for premium/legendary buddies
@@ -388,9 +413,9 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 ## Top 3 Priorities
 
-1. **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations
+1. ✅ **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations (COMPLETE 2026-02-04)
 2. ✅ **Real-time Presence** - Supabase Presence API for hangout room (COMPLETE 2026-02-03)
-3. **Push Notifications** - Social activity alerts, milestone notifications, workout reminders
+3. ✅ **Push Notifications** - Social activity alerts, milestone notifications, workout reminders (COMPLETE 2026-02-03)
 
 ---
 
