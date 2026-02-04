@@ -8,6 +8,7 @@ import {
   Pressable,
   StyleSheet,
   Modal,
+  Alert,
 } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
 import { useThemeColors } from '@/src/ui/theme';
@@ -31,9 +32,19 @@ export function PostOptions({ visible, onClose, post }: PostOptionsProps) {
 
   const [showReportPost, setShowReportPost] = useState(false);
   const [showReportUser, setShowReportUser] = useState(false);
+  const [showPrivacyOptions, setShowPrivacyOptions] = useState(false);
 
   const isOwnPost = user?.id === post.authorUserId;
+  const updatePost = socialStore.updatePost;
   const authorName = displayName(post.authorUserId);
+
+  const handleChangePrivacy = (privacy: 'public' | 'friends') => {
+    if (updatePost) {
+      updatePost(post.id, { privacy });
+      setShowPrivacyOptions(false);
+      onClose();
+    }
+  };
 
   const handleReportPost = () => {
     onClose();
@@ -45,15 +56,36 @@ export function PostOptions({ visible, onClose, post }: PostOptionsProps) {
     setShowReportUser(true);
   };
 
-  const handleBlockUser = async () => {
+  const handleBlockUser = () => {
     onClose();
 
-    // Confirm block action - proceed with the block
-    try {
-      await socialStore.blockUser(post.authorUserId);
-    } catch (error) {
-      console.error('[PostOptions] Failed to block user:', error);
-    }
+    // Show confirmation alert before blocking
+    Alert.alert(
+      `Block ${authorName}?`,
+      `You won't see posts from ${authorName} anymore. They won't be notified that you blocked them.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Block",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await socialStore.blockUser(post.authorUserId);
+              Alert.alert(
+                "User blocked",
+                `${authorName} has been blocked. You won't see their content anymore.`
+              );
+            } catch (error) {
+              console.error('[PostOptions] Failed to block user:', error);
+              Alert.alert("Error", "Failed to block user. Please try again.");
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -79,6 +111,69 @@ export function PostOptions({ visible, onClose, post }: PostOptionsProps) {
 
               {/* Options */}
               <View style={styles.options}>
+                {/* Change Privacy (own posts only) */}
+                {isOwnPost && !showPrivacyOptions && (
+                  <Pressable
+                    onPress={() => setShowPrivacyOptions(true)}
+                    style={({ pressed }) => [
+                      styles.option,
+                      { opacity: pressed ? 0.7 : 1 },
+                    ]}
+                  >
+                    <Text style={[styles.optionIcon, { color: c.text }]}>
+                      {post.privacy === 'public' ? '🌐' : '👥'}
+                    </Text>
+                    <View style={styles.optionTextContainer}>
+                      <Text style={[styles.optionLabel, { color: c.text }]}>
+                        Change privacy
+                      </Text>
+                      <Text style={[styles.optionDescription, { color: c.muted }]}>
+                        Currently: {post.privacy === 'public' ? 'Public' : 'Friends only'}
+                      </Text>
+                    </View>
+                  </Pressable>
+                )}
+
+                {/* Privacy options */}
+                {isOwnPost && showPrivacyOptions && (
+                  <>
+                    <Pressable
+                      onPress={() => handleChangePrivacy('public')}
+                      style={({ pressed }) => [
+                        styles.option,
+                        { opacity: pressed ? 0.7 : 1 },
+                      ]}
+                    >
+                      <Text style={[styles.optionIcon, { color: post.privacy === 'public' ? ds.tone.accent : c.text }]}>🌐</Text>
+                      <View style={styles.optionTextContainer}>
+                        <Text style={[styles.optionLabel, { color: post.privacy === 'public' ? ds.tone.accent : c.text }]}>
+                          Public {post.privacy === 'public' && '✓'}
+                        </Text>
+                        <Text style={[styles.optionDescription, { color: c.muted }]}>
+                          Visible to everyone
+                        </Text>
+                      </View>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => handleChangePrivacy('friends')}
+                      style={({ pressed }) => [
+                        styles.option,
+                        { opacity: pressed ? 0.7 : 1 },
+                      ]}
+                    >
+                      <Text style={[styles.optionIcon, { color: post.privacy === 'friends' ? ds.tone.accent : c.text }]}>👥</Text>
+                      <View style={styles.optionTextContainer}>
+                        <Text style={[styles.optionLabel, { color: post.privacy === 'friends' ? ds.tone.accent : c.text }]}>
+                          Friends only {post.privacy === 'friends' && '✓'}
+                        </Text>
+                        <Text style={[styles.optionDescription, { color: c.muted }]}>
+                          Only friends can see this post
+                        </Text>
+                      </View>
+                    </Pressable>
+                  </>
+                )}
+
                 {/* Report Post */}
                 <Pressable
                   onPress={handleReportPost}

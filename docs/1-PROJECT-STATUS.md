@@ -1,6 +1,6 @@
 # PROJECT STATUS
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-04
 **Current Phase:** Phase 2 - Workout Drawer + Advanced Features
 
 ---
@@ -161,7 +161,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 | # | Task | Description |
 |---|------|-------------|
-| 1 | Forge Lab Charting | Victory-native charts implemented |
+| ~~1~~ | ~~Forge Lab Charting~~ | ✅ Done - Full chart enhancements (PR markers, trends, radar, correlations) |
 | ~~2~~ | ~~Profile Stats~~ | ✅ Done - GymRank, PR breakdown, top exercises |
 | 3 | Avatar Completion | Finish growth and customization |
 | 4 | Hangout Room | Real-time presence and decorations |
@@ -215,6 +215,28 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ---
 
 ## Recent Updates (Last 30 Days)
+
+### 2026-02-04
+- **Forge Lab Chart Enhancements Complete** - 7 major charting improvements
+  - **PR Markers**: Gold star symbols on strength curve charts marking personal records
+  - **Trend Lines**: 5-point moving average overlay using `calculateMovingAverage()` function
+  - **Period Comparison**: vs Last 30 days comparison with percentage change display
+  - **Interactive Tooltips**: VictoryVoronoiContainer integration for tap-to-view data points
+  - **Radar Chart**: New `RadarChart.tsx` SVG component for muscle balance visualization
+    - Shows 6 major muscle groups (chest, back, shoulders, legs, arms, core)
+    - Aggregates detailed sub-groups into major categories
+    - Supports period comparison overlay (current vs previous week)
+    - Toggle between radar and bar chart views in MuscleBalanceCard
+  - **Rank Projection**: 30-day score trajectory with confidence indicator
+    - Uses `projectRank()` function for forecasting
+    - Dashed projection line extending into future
+    - Displays projected score, days-to-next-rank, and confidence level
+  - **Statistical Correlations**: Real Pearson correlation analysis in IntegrationDataCard
+    - Sleep ↔ Performance, Sleep ↔ Volume correlations
+    - Recovery ↔ Performance, Strain ↔ Volume (Whoop) correlations
+    - Calories ↔ Performance, Protein ↔ Volume (MFP) correlations
+    - Sleep ↔ Whoop Recovery cross-source correlations
+    - Visual correlation cards with r-values and strength badges
 
 ### 2026-02-03
 - **AI Buddy Voice Lines Complete** - Full voice line system for premium/legendary buddies

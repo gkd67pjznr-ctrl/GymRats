@@ -30,6 +30,37 @@ export type ForgeLabData = {
 export type ChartDataPoint = {
   date: string;
   value: number;
+  isPR?: boolean;
+  prType?: 'weight' | 'rep' | 'e1rm';
+};
+
+export type TrendLineData = {
+  date: string;
+  value: number;
+};
+
+export type PeriodComparison = {
+  currentPeriod: { label: string; value: number; change?: number };
+  previousPeriod: { label: string; value: number };
+  percentChange: number;
+};
+
+export type CorrelationResult = {
+  metric1: string;
+  metric2: string;
+  correlation: number; // -1 to 1
+  strength: 'strong' | 'moderate' | 'weak' | 'none';
+  description: string;
+};
+
+export type RankProjection = {
+  currentRank: number;
+  currentScore: number;
+  projectedRank: number;
+  projectedScore: number;
+  daysToNextRank: number | null;
+  nextRankName: string;
+  confidence: 'high' | 'medium' | 'low';
 };
 
 export type ExerciseStat = {

@@ -8,13 +8,13 @@ import { WorkoutSession, WorkoutSet } from '@/src/lib/workoutModel';
 import { scoreFromE1rm } from '@/src/lib/GrScoring';
 
 /**
- * Calculate e1RM history for an exercise
+ * Calculate e1RM history for an exercise with PR markers
  */
 export function calculateE1RMHistory(
   sessions: WorkoutSession[],
   exerciseId: string
-): { date: string; e1rm: number }[] {
-  const e1rmHistory: { date: string; e1rm: number }[] = [];
+): { date: string; e1rm: number; isPR?: boolean }[] {
+  const e1rmHistory: { date: string; e1rm: number; isPR?: boolean }[] = [];
 
   // Filter sets for this exercise
   const exerciseSets: WorkoutSet[] = [];
@@ -51,7 +51,167 @@ export function calculateE1RMHistory(
   });
 
   // Sort by date
-  return e1rmHistory.sort((a, b) => a.date.localeCompare(b.date));
+  const sorted = e1rmHistory.sort((a, b) => a.date.localeCompare(b.date));
+
+  // Mark PRs (when e1rm exceeds all previous values)
+  let maxSoFar = 0;
+  sorted.forEach(point => {
+    if (point.e1rm > maxSoFar) {
+      point.isPR = true;
+      maxSoFar = point.e1rm;
+    }
+  });
+
+  return sorted;
+}
+
+/**
+ * Calculate moving average for a data series
+ */
+export function calculateMovingAverage(
+  data: { date: string; value: number }[],
+  windowSize: number
+): { date: string; value: number }[] {
+  if (data.length < windowSize) return [];
+
+  const result: { date: string; value: number }[] = [];
+
+  for (let i = windowSize - 1; i < data.length; i++) {
+    let sum = 0;
+    for (let j = 0; j < windowSize; j++) {
+      sum += data[i - j].value;
+    }
+    result.push({
+      date: data[i].date,
+      value: Math.round((sum / windowSize) * 100) / 100,
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Compare two periods and calculate change
+ */
+export function comparePeriods(
+  data: { date: string; value: number }[],
+  periodDays: number
+): { current: number; previous: number; percentChange: number } | null {
+  if (data.length < 2) return null;
+
+  const now = new Date();
+  const periodStart = new Date(now.getTime() - periodDays * 24 * 60 * 60 * 1000);
+  const previousPeriodStart = new Date(periodStart.getTime() - periodDays * 24 * 60 * 60 * 1000);
+
+  const currentPeriodData = data.filter(d => {
+    const date = new Date(d.date);
+    return date >= periodStart && date <= now;
+  });
+
+  const previousPeriodData = data.filter(d => {
+    const date = new Date(d.date);
+    return date >= previousPeriodStart && date < periodStart;
+  });
+
+  if (currentPeriodData.length === 0 || previousPeriodData.length === 0) return null;
+
+  const currentAvg = currentPeriodData.reduce((sum, d) => sum + d.value, 0) / currentPeriodData.length;
+  const previousAvg = previousPeriodData.reduce((sum, d) => sum + d.value, 0) / previousPeriodData.length;
+
+  const percentChange = previousAvg !== 0
+    ? Math.round(((currentAvg - previousAvg) / previousAvg) * 100 * 10) / 10
+    : 0;
+
+  return {
+    current: Math.round(currentAvg * 100) / 100,
+    previous: Math.round(previousAvg * 100) / 100,
+    percentChange,
+  };
+}
+
+/**
+ * Calculate correlation between two data series
+ */
+export function calculateCorrelation(
+  series1: number[],
+  series2: number[]
+): number {
+  if (series1.length !== series2.length || series1.length < 3) return 0;
+
+  const n = series1.length;
+  const mean1 = series1.reduce((a, b) => a + b, 0) / n;
+  const mean2 = series2.reduce((a, b) => a + b, 0) / n;
+
+  let numerator = 0;
+  let denom1 = 0;
+  let denom2 = 0;
+
+  for (let i = 0; i < n; i++) {
+    const diff1 = series1[i] - mean1;
+    const diff2 = series2[i] - mean2;
+    numerator += diff1 * diff2;
+    denom1 += diff1 * diff1;
+    denom2 += diff2 * diff2;
+  }
+
+  const denominator = Math.sqrt(denom1 * denom2);
+  if (denominator === 0) return 0;
+
+  return Math.round((numerator / denominator) * 100) / 100;
+}
+
+/**
+ * Get correlation strength description
+ */
+export function getCorrelationStrength(r: number): 'strong' | 'moderate' | 'weak' | 'none' {
+  const absR = Math.abs(r);
+  if (absR >= 0.7) return 'strong';
+  if (absR >= 0.4) return 'moderate';
+  if (absR >= 0.2) return 'weak';
+  return 'none';
+}
+
+/**
+ * Project rank based on current trend
+ */
+export function projectRank(
+  rankHistory: { date: string; score: number }[],
+  currentRank: number
+): { projectedScore: number; daysToNextRank: number | null; confidence: 'high' | 'medium' | 'low' } {
+  if (rankHistory.length < 3) {
+    return { projectedScore: rankHistory[rankHistory.length - 1]?.score || 0, daysToNextRank: null, confidence: 'low' };
+  }
+
+  // Calculate daily score change rate from last 30 days
+  const recentHistory = rankHistory.slice(-30);
+  if (recentHistory.length < 2) {
+    return { projectedScore: recentHistory[0]?.score || 0, daysToNextRank: null, confidence: 'low' };
+  }
+
+  const firstScore = recentHistory[0].score;
+  const lastScore = recentHistory[recentHistory.length - 1].score;
+  const daysBetween = Math.max(1, (new Date(recentHistory[recentHistory.length - 1].date).getTime() -
+    new Date(recentHistory[0].date).getTime()) / (24 * 60 * 60 * 1000));
+
+  const dailyChange = (lastScore - firstScore) / daysBetween;
+
+  // Project 30 days ahead
+  const projectedScore = Math.round(lastScore + dailyChange * 30);
+
+  // Calculate days to next rank threshold (ranks are every 50 points)
+  const nextRankThreshold = (currentRank + 1) * 50;
+  const pointsNeeded = nextRankThreshold - lastScore;
+  const daysToNextRank = dailyChange > 0 ? Math.ceil(pointsNeeded / dailyChange) : null;
+
+  // Confidence based on data consistency
+  const variance = recentHistory.reduce((sum, h) => {
+    const expected = firstScore + dailyChange * ((new Date(h.date).getTime() - new Date(recentHistory[0].date).getTime()) / (24 * 60 * 60 * 1000));
+    return sum + Math.pow(h.score - expected, 2);
+  }, 0) / recentHistory.length;
+
+  const confidence = variance < 100 ? 'high' : variance < 500 ? 'medium' : 'low';
+
+  return { projectedScore, daysToNextRank, confidence };
 }
 
 /**

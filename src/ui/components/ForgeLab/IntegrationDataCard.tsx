@@ -1,9 +1,11 @@
 /**
  * Integration Data Card - Displays data from health/fitness integrations
+ * Enhanced with real statistical correlation analysis
  */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
+import { calculateCorrelation, getCorrelationStrength } from '@/src/lib/forgeLab/calculator';
 
 type IntegrationData = {
   appleHealth?: { weight: number[]; sleep: number[] };
@@ -18,16 +20,29 @@ type Insight = {
   trend?: 'up' | 'down' | 'neutral';
 };
 
+type CorrelationInsight = {
+  metric1: string;
+  metric2: string;
+  correlation: number;
+  strength: 'strong' | 'moderate' | 'weak' | 'none';
+  description: string;
+  isPositive: boolean;
+};
+
 type IntegrationDataCardProps = {
   data?: IntegrationData;
   isLoading: boolean;
-  workoutVolume?: number[]; // Optional: weekly workout volume for correlation
+  workoutVolume?: number[]; // Weekly workout volume for correlation
+  workoutPerformance?: number[]; // Daily e1RM or score data for correlation
+  workoutFrequency?: number[]; // Weekly workout count for correlation
 };
 
 const IntegrationDataCard: React.FC<IntegrationDataCardProps> = ({
   data,
   isLoading,
-  workoutVolume = []
+  workoutVolume = [],
+  workoutPerformance = [],
+  workoutFrequency = []
 }) => {
   const ds = makeDesignSystem('dark', 'toxic');
 
@@ -37,8 +52,191 @@ const IntegrationDataCard: React.FC<IntegrationDataCardProps> = ({
   const hasMfp = data?.mfp && Object.keys(data.mfp).length > 0;
   const hasMultipleSources = [hasAppleHealth, hasWhoop, hasMfp].filter(Boolean).length >= 2;
 
+  // Calculate real correlations
+  const correlations = useMemo((): CorrelationInsight[] => {
+    const results: CorrelationInsight[] = [];
+
+    // Sleep vs Performance correlation
+    if (data?.appleHealth?.sleep && workoutPerformance.length >= 3) {
+      // Align data lengths
+      const minLen = Math.min(data.appleHealth.sleep.length, workoutPerformance.length);
+      const sleepData = data.appleHealth.sleep.slice(-minLen);
+      const perfData = workoutPerformance.slice(-minLen);
+
+      if (minLen >= 3) {
+        const r = calculateCorrelation(sleepData, perfData);
+        const strength = getCorrelationStrength(r);
+
+        if (strength !== 'none') {
+          results.push({
+            metric1: 'Sleep',
+            metric2: 'Performance',
+            correlation: r,
+            strength,
+            isPositive: r >= 0,
+            description: r >= 0
+              ? `More sleep correlates with better performance (r=${r.toFixed(2)})`
+              : `Unexpectedly, less sleep correlates with better performance (r=${r.toFixed(2)})`
+          });
+        }
+      }
+    }
+
+    // Sleep vs Volume correlation
+    if (data?.appleHealth?.sleep && workoutVolume.length >= 3) {
+      const minLen = Math.min(data.appleHealth.sleep.length, workoutVolume.length);
+      const sleepData = data.appleHealth.sleep.slice(-minLen);
+      const volData = workoutVolume.slice(-minLen);
+
+      if (minLen >= 3) {
+        const r = calculateCorrelation(sleepData, volData);
+        const strength = getCorrelationStrength(r);
+
+        if (strength !== 'none') {
+          results.push({
+            metric1: 'Sleep',
+            metric2: 'Volume',
+            correlation: r,
+            strength,
+            isPositive: r >= 0,
+            description: r >= 0
+              ? `Better sleep supports higher training volume (r=${r.toFixed(2)})`
+              : `You train harder when sleep-deprived - watch for overtraining (r=${r.toFixed(2)})`
+          });
+        }
+      }
+    }
+
+    // Recovery vs Performance correlation (Whoop)
+    if (data?.whoop?.recovery && workoutPerformance.length >= 3) {
+      const minLen = Math.min(data.whoop.recovery.length, workoutPerformance.length);
+      const recoveryData = data.whoop.recovery.slice(-minLen);
+      const perfData = workoutPerformance.slice(-minLen);
+
+      if (minLen >= 3) {
+        const r = calculateCorrelation(recoveryData, perfData);
+        const strength = getCorrelationStrength(r);
+
+        if (strength !== 'none') {
+          results.push({
+            metric1: 'Recovery',
+            metric2: 'Performance',
+            correlation: r,
+            strength,
+            isPositive: r >= 0,
+            description: r >= 0
+              ? `Higher recovery scores lead to better lifts (r=${r.toFixed(2)})`
+              : `Performance doesn't depend strongly on recovery score (r=${r.toFixed(2)})`
+          });
+        }
+      }
+    }
+
+    // Strain vs Volume correlation (Whoop)
+    if (data?.whoop?.strain && workoutVolume.length >= 3) {
+      const minLen = Math.min(data.whoop.strain.length, workoutVolume.length);
+      const strainData = data.whoop.strain.slice(-minLen);
+      const volData = workoutVolume.slice(-minLen);
+
+      if (minLen >= 3) {
+        const r = calculateCorrelation(strainData, volData);
+        const strength = getCorrelationStrength(r);
+
+        if (strength !== 'none') {
+          results.push({
+            metric1: 'Strain',
+            metric2: 'Volume',
+            correlation: r,
+            strength,
+            isPositive: r >= 0,
+            description: r >= 0
+              ? `Whoop strain accurately tracks your training load (r=${r.toFixed(2)})`
+              : `Strain may be influenced by non-lifting activities (r=${r.toFixed(2)})`
+          });
+        }
+      }
+    }
+
+    // Calories vs Performance correlation (MFP)
+    if (data?.mfp?.calories && workoutPerformance.length >= 3) {
+      const minLen = Math.min(data.mfp.calories.length, workoutPerformance.length);
+      const calData = data.mfp.calories.slice(-minLen);
+      const perfData = workoutPerformance.slice(-minLen);
+
+      if (minLen >= 3) {
+        const r = calculateCorrelation(calData, perfData);
+        const strength = getCorrelationStrength(r);
+
+        if (strength !== 'none') {
+          results.push({
+            metric1: 'Calories',
+            metric2: 'Performance',
+            correlation: r,
+            strength,
+            isPositive: r >= 0,
+            description: r >= 0
+              ? `Eating more supports stronger performance (r=${r.toFixed(2)})`
+              : `Your performance is stable across calorie ranges (r=${r.toFixed(2)})`
+          });
+        }
+      }
+    }
+
+    // Protein vs Volume correlation (MFP)
+    if (data?.mfp?.protein && workoutVolume.length >= 3) {
+      const minLen = Math.min(data.mfp.protein.length, workoutVolume.length);
+      const proteinData = data.mfp.protein.slice(-minLen);
+      const volData = workoutVolume.slice(-minLen);
+
+      if (minLen >= 3) {
+        const r = calculateCorrelation(proteinData, volData);
+        const strength = getCorrelationStrength(r);
+
+        if (strength !== 'none') {
+          results.push({
+            metric1: 'Protein',
+            metric2: 'Volume',
+            correlation: r,
+            strength,
+            isPositive: r >= 0,
+            description: r >= 0
+              ? `Higher protein intake supports greater training volume (r=${r.toFixed(2)})`
+              : `Volume doesn't strongly depend on protein intake (r=${r.toFixed(2)})`
+          });
+        }
+      }
+    }
+
+    // Sleep vs Recovery cross-correlation
+    if (data?.appleHealth?.sleep && data?.whoop?.recovery) {
+      const minLen = Math.min(data.appleHealth.sleep.length, data.whoop.recovery.length);
+      const sleepData = data.appleHealth.sleep.slice(-minLen);
+      const recoveryData = data.whoop.recovery.slice(-minLen);
+
+      if (minLen >= 3) {
+        const r = calculateCorrelation(sleepData, recoveryData);
+        const strength = getCorrelationStrength(r);
+
+        if (strength !== 'none') {
+          results.push({
+            metric1: 'Sleep',
+            metric2: 'Whoop Recovery',
+            correlation: r,
+            strength,
+            isPositive: r >= 0,
+            description: r >= 0
+              ? `Sleep duration directly impacts your recovery score (r=${r.toFixed(2)})`
+              : `Recovery is influenced by factors beyond sleep duration (r=${r.toFixed(2)})`
+          });
+        }
+      }
+    }
+
+    return results;
+  }, [data, workoutVolume, workoutPerformance, workoutFrequency]);
+
   // Generate insights based on available data
-  const insights: Insight[] = React.useMemo(() => {
+  const insights: Insight[] = useMemo(() => {
     const generatedInsights: Insight[] = [];
 
     // Sleep vs Volume correlation
@@ -97,16 +295,6 @@ const IntegrationDataCard: React.FC<IntegrationDataCardProps> = ({
         title: 'Fueling Strategy',
         description: `Tracking ${avgCalories.toFixed(0)} kcal/day. Consistent nutrition supports strength gains.`,
         strength: 'medium',
-        trend: 'neutral'
-      });
-    }
-
-    // Multi-source correlation insights
-    if (hasAppleHealth && hasWhoop && data?.appleHealth?.sleep && data?.whoop?.recovery) {
-      generatedInsights.push({
-        title: 'Sleep Quality Impact',
-        description: 'Cross-reference available: Analyzing how sleep quality affects your recovery scores.',
-        strength: 'low',
         trend: 'neutral'
       });
     }
@@ -255,13 +443,89 @@ const IntegrationDataCard: React.FC<IntegrationDataCardProps> = ({
             )}
           </View>
 
+          {/* Correlations Section */}
+          {correlations.length > 0 && (
+            <View style={styles.correlationsSection}>
+              <Text style={[styles.insightsTitle, { color: ds.tone.text }]}>
+                Statistical Correlations
+              </Text>
+              <Text style={[styles.correlationsSubtitle, { color: ds.tone.textSecondary }]}>
+                How your metrics relate to each other
+              </Text>
+
+              <View style={styles.correlationsList}>
+                {correlations.map((corr, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.correlationCard,
+                      {
+                        backgroundColor: ds.tone.bg,
+                        borderColor: corr.strength === 'strong' ? ds.tone.accent :
+                                    corr.strength === 'moderate' ? '#FFC107' : 'rgba(255,255,255,0.1)'
+                      }
+                    ]}
+                  >
+                    <View style={styles.correlationHeader}>
+                      <View style={styles.correlationMetrics}>
+                        <Text style={[styles.correlationMetric, { color: ds.tone.text }]}>
+                          {corr.metric1}
+                        </Text>
+                        <Text style={[styles.correlationArrow, { color: ds.tone.textSecondary }]}>
+                          ↔
+                        </Text>
+                        <Text style={[styles.correlationMetric, { color: ds.tone.text }]}>
+                          {corr.metric2}
+                        </Text>
+                      </View>
+                      <View style={[
+                        styles.correlationBadge,
+                        {
+                          backgroundColor: corr.strength === 'strong' ? 'rgba(76,175,80,0.2)' :
+                                          corr.strength === 'moderate' ? 'rgba(255,193,7,0.2)' :
+                                          'rgba(158,158,158,0.2)'
+                        }
+                      ]}>
+                        <Text style={[
+                          styles.correlationStrength,
+                          {
+                            color: corr.strength === 'strong' ? '#4CAF50' :
+                                   corr.strength === 'moderate' ? '#FFC107' : '#9E9E9E'
+                          }
+                        ]}>
+                          {corr.strength}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.correlationValueRow}>
+                      <Text style={[
+                        styles.correlationValue,
+                        { color: corr.isPositive ? '#4CAF50' : '#F44336' }
+                      ]}>
+                        r = {corr.correlation > 0 ? '+' : ''}{corr.correlation.toFixed(2)}
+                      </Text>
+                      <Text style={[styles.correlationDirection, { color: ds.tone.textSecondary }]}>
+                        {corr.isPositive ? '↑ Positive' : '↓ Negative'}
+                      </Text>
+                    </View>
+
+                    <Text style={[styles.correlationDescription, { color: ds.tone.textSecondary }]}>
+                      {corr.description}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
           {/* Insights Section */}
           <View style={styles.insightsSection}>
             <Text style={[styles.insightsTitle, { color: ds.tone.text }]}>
               Insights
             </Text>
 
-            {!hasMultipleSources && insights.length === 0 ? (
+            {!hasMultipleSources && insights.length === 0 && correlations.length === 0 ? (
               <Text style={[styles.insightsText, { color: ds.tone.textSecondary }]}>
                 Connect multiple data sources to unlock correlation insights.
               </Text>
@@ -376,6 +640,70 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: 14,
     paddingLeft: 10,
+  },
+  correlationsSection: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  correlationsSubtitle: {
+    fontSize: 13,
+    marginBottom: 12,
+    marginTop: -8,
+  },
+  correlationsList: {
+    gap: 12,
+  },
+  correlationCard: {
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+  },
+  correlationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  correlationMetrics: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  correlationMetric: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  correlationArrow: {
+    fontSize: 12,
+  },
+  correlationBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  correlationStrength: {
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'capitalize',
+  },
+  correlationValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 8,
+  },
+  correlationValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  correlationDirection: {
+    fontSize: 12,
+  },
+  correlationDescription: {
+    fontSize: 13,
+    lineHeight: 18,
   },
   insightsSection: {
     marginTop: 20,

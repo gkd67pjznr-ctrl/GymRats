@@ -287,6 +287,12 @@ export const selectFriendStatus = (myUserId: ID, otherUserId: ID) => (state: Fri
 export const selectAreFriends = (myUserId: ID, otherUserId: ID) => (state: FriendsState) =>
   state.edges.find((x) => x.userId === myUserId && x.otherUserId === otherUserId)?.status === "friends";
 
+export const selectPendingFriendRequests = (myUserId: ID) => (state: FriendsState): FriendEdge[] =>
+  state.edges.filter((e) => e.userId === myUserId && e.status === "pending");
+
+export const selectPendingFriendRequestCount = (myUserId: ID) => (state: FriendsState): number =>
+  state.edges.filter((e) => e.userId === myUserId && e.status === "pending").length;
+
 // ============================================================================
 // Hooks (match old API)
 // ============================================================================
@@ -299,6 +305,25 @@ export function useFriendEdges(myUserId: ID): FriendEdge[] {
 export function useFriendStatus(myUserId: ID, otherUserId: ID): FriendStatus {
   const selector = useMemo(() => selectFriendStatus(myUserId, otherUserId), [myUserId, otherUserId]);
   return useFriendsStore(selector, shallow);
+}
+
+export function useFriendEdge(myUserId: ID, otherUserId: ID): FriendEdge | undefined {
+  const selector = useMemo(
+    () => (state: FriendsState) =>
+      state.edges.find((x) => x.userId === myUserId && x.otherUserId === otherUserId),
+    [myUserId, otherUserId]
+  );
+  return useFriendsStore(selector);
+}
+
+export function usePendingFriendRequests(myUserId: ID): FriendEdge[] {
+  const selector = useMemo(() => selectPendingFriendRequests(myUserId), [myUserId]);
+  return useFriendsStore(selector, shallow);
+}
+
+export function usePendingFriendRequestCount(myUserId: ID): number {
+  const selector = useMemo(() => selectPendingFriendRequestCount(myUserId), [myUserId]);
+  return useFriendsStore(selector);
 }
 
 // ============================================================================
