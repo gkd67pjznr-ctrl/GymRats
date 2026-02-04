@@ -1,6 +1,6 @@
 # GymRats Documentation Hub
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-04
 
 ---
 
@@ -10,6 +10,7 @@
 - New to the codebase? Read **[3-CODEBASE-GUIDE.md](3-CODEBASE-GUIDE.md)**
 - Want project status? Read **[1-PROJECT-STATUS.md](1-PROJECT-STATUS.md)**
 - Want the big picture? Read **[Master Documentation/MASTER_PLAN.md](Master%20Documentation/MASTER_PLAN.md)**
+- Want cultural/vision context? Read **[Master Documentation/VISION-AND-CULTURE.md](Master%20Documentation/VISION-AND-CULTURE.md)**
 
 ---
 
@@ -18,14 +19,20 @@
 ### Project Status & Planning
 | Document | Purpose | Last Updated |
 |----------|---------|--------------|
-| [1-PROJECT-STATUS.md](1-PROJECT-STATUS.md) | Feature status, metrics, priorities | 2026-02-03 |
+| [1-PROJECT-STATUS.md](1-PROJECT-STATUS.md) | Feature status, metrics, priorities | 2026-02-04 |
 | [Master Documentation/MASTER_PLAN.md](Master%20Documentation/MASTER_PLAN.md) | Vision, differentiators, roadmap | 2026-02-03 |
 | [Master Documentation/FEATURE-MASTER.md](Master%20Documentation/FEATURE-MASTER.md) | Complete feature index | 2026-02-03 |
+| [Master Documentation/INTERVIEW-SUMMARY-2026-02-04.md](Master%20Documentation/INTERVIEW-SUMMARY-2026-02-04.md) | **NEW** Latest decisions from comprehensive Q&A | 2026-02-04 |
+| [Master Documentation/VISION-AND-CULTURE.md](Master%20Documentation/VISION-AND-CULTURE.md) | **NEW** Cultural positioning & vision | 2026-02-04 |
+| [Master Documentation/NAMING-GUIDE.md](Master%20Documentation/NAMING-GUIDE.md) | **NEW** Canonical naming conventions | 2026-02-04 |
 
 ### Technical Reference
 | Document | Purpose | Last Updated |
 |----------|---------|--------------|
 | [3-CODEBASE-GUIDE.md](3-CODEBASE-GUIDE.md) | Architecture, tech stack, patterns | 2026-02-02 |
+
+### Business (Git-Ignored)
+The `business/` folder contains private business documents (LLC, banking, pricing) and is not committed to git.
 
 ---
 
@@ -46,8 +53,8 @@
 | Exercises | [features/exercises/](features/exercises/) | 3/3 ✅ |
 | DNA | [features/forge-dna/](features/forge-dna/) | 4/4 ✅ |
 | Gym Lab | [features/forge-lab/](features/forge-lab/) | 6/6 ✅ |
-| Forge Milestones | [features/forge-milestones/](features/forge-milestones/) | 5/5 ✅ |
-| Forge Seasons | [features/forge-seasons/](features/forge-seasons/) | Planned |
+| Milestones | [features/forge-milestones/](features/forge-milestones/) | 5/5 ✅ |
+| GymR Seasons | [features/forge-seasons/](features/forge-seasons/) | Planned |
 | Gamification | [features/Gamification/](features/Gamification/) | 12/12 ✅ |
 | Gym Finder | [features/gym-finder/](features/gym-finder/) | Planned |
 | Hangout Room | [features/hangout-room/](features/hangout-room/) | 8/8 ✅ |
@@ -106,7 +113,10 @@ docs/
 │
 ├── Master Documentation/
 │   ├── MASTER_PLAN.md           # Vision and strategy
-│   └── FEATURE-MASTER.md        # Feature index
+│   ├── FEATURE-MASTER.md        # Feature index
+│   ├── VISION-AND-CULTURE.md    # Cultural positioning (NEW)
+│   ├── NAMING-GUIDE.md          # Canonical naming conventions (NEW)
+│   └── INTERVIEW-SUMMARY-*.md   # Interview summaries (NEW)
 │
 ├── features/                    # 31 flat feature folders
 │   ├── ai-buddy/
@@ -114,6 +124,11 @@ docs/
 │   ├── design-system/
 │   ├── workout-drawer/
 │   └── ... (each feature has its own folder)
+│
+├── business/                    # ⚠️ GIT-IGNORED - Private business docs
+│   ├── BUSINESS-SETUP.md        # LLC, banking, dev accounts
+│   ├── MONETIZATION-PLAN.md     # Pricing, IAP, revenue
+│   └── LAUNCH-CHECKLIST.md      # Pre-launch requirements
 │
 ├── visual-style/                # Design system docs + theme palettes
 ├── Project Management/           # Internal processes
@@ -139,6 +154,10 @@ docs/
 
 **"What's the vision for the app?"**
 → Read `Master Documentation/MASTER_PLAN.md` → "Vision Statement"
+→ Read `Master Documentation/VISION-AND-CULTURE.md` → Cultural positioning
+
+**"What are the naming conventions?"**
+→ Read `Master Documentation/NAMING-GUIDE.md` (Juice, Gym Lab, DNA, GymR Seasons)
 
 **"Where do I find docs for [feature]?"**
 → Check `features/` folder - each feature has its own folder
@@ -164,4 +183,4 @@ docs/
 
 ---
 
-*Last updated: 2026-02-03*
+*Last updated: 2026-02-04*

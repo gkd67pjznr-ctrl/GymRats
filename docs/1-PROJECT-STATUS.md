@@ -1,19 +1,25 @@
 # PROJECT STATUS
 
 **Last Updated:** 2026-02-04
-**Current Phase:** Phase 2 - Workout Drawer + Advanced Features
+**Current Phase:** Phase 4 - Launch Polish
+**Target Launch:** Mid-March 2026
 
 ---
 
 ## Executive Summary
 
-GymRats has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. The app is at **80% feature completion** for v1 launch.
+GymRats has a **solid, usable core** for workout logging, social sharing, and friend interactions. The local-first data model is fully implemented with Zustand persistence. The app is at **85% feature completion** (152/178) for v1 launch.
 
-**Test Status:** 1,443 tests passing (80/83 suites passing)
+**Test Status:** 1,373 tests passing (100% pass rate)
 **Backend Sync:** Fully tested with production Supabase ✅
+**Launch Goal:** 100% feature completion by mid-March
 
 **Critical Issues:**
-- OAuth authentication requires external setup
+- OAuth authentication requires external setup (Google Cloud Console, Apple Developer)
+- Art assets needed (avatars, badges, theme illustrations) - AI-generating
+- Business setup pending (LLC, bank account, dev accounts)
+
+**Recent Interview (2026-02-04):** Full Q&A conducted covering features, business, monetization, vision. See `docs/AskUQ/interview-2026-02-04-comprehensive.md` and `docs/Master Documentation/INTERVIEW-SUMMARY-2026-02-04.md`.
 
 ---
 
@@ -105,7 +111,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ### Gamification System
 - XP and leveling system (100 levels)
 - Streak tracking with milestones
-- Forge Tokens currency system
+- **Juice** currency system (formerly Forge Tokens)
 - Cosmetic store for avatar items and room decorations
 
 ### Unified User Statistics (ENHANCED 2026-02-03)
@@ -445,43 +451,58 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 ---
 
-## Top 3 Priorities
+## Top 3 Priorities (Updated 2026-02-04)
 
-1. **PR Detection Integration** - Wire perSetCue to drawer's setPendingCue() for live PR celebrations
-2. ✅ **Real-time Presence** - Supabase Presence API for hangout room (COMPLETE 2026-02-03)
-3. **Push Notifications** - Social activity alerts, milestone notifications, workout reminders
+Based on comprehensive interview - targeting mid-March launch:
+
+1. **Asset Generation** - AI-generate all missing art (avatars, badges, illustrations, app icon, voice lines)
+2. **Feature Verification** - Verify offline mode, units (lb/kg), account deletion, buddy memory
+3. **Business Setup** - LLC formation, bank account, Apple/Google dev accounts, legal docs
+
+See full task list (32 tasks) in task management system.
 
 ---
 
 ## Development Phases
 
-### Phase 0: Stabilization (Complete)
+### Phase 0: Stabilization ✅ Complete
 - ✅ Zustand migration
 - ✅ Error handling
 - ✅ Authentication screens
 - ✅ Backend sync system
 
-### Phase 1: Core Workout Polish
-- Routine-based workout flow
-- Rest timer enhancements
-- Protected routes
+### Phase 1: Core Workout Polish ✅ Complete
+- ✅ Routine-based workout flow
+- ✅ Rest timer enhancements
+- ✅ Protected routes
+- ✅ Workout Drawer system
 
-### Phase 2: Advanced Features (Current)
+### Phase 2: Advanced Features ✅ Complete
 - ✅ AI Gym Buddy System
 - ✅ Workout Replay
 - ✅ Gym Lab Analytics
-- ✅ Forge Milestones
-- 🔄 Avatar & Hangout Room
+- ✅ Milestones (30 achievements)
+- ✅ Avatar & Hangout Room
 
-### Phase 3: Social & Engagement
-- Full feed with auto-generated cards
-- Reactions + comments
-- Leaderboards
+### Phase 3: Social & Engagement ✅ Complete
+- ✅ Feed with Global/Friends tabs
+- ✅ Reactions + comments
+- ✅ Real-time presence
+- ✅ Push notifications
 
-### Phase 4: Launch Polish
-- Onboarding completion
-- Visual polish + animations
-- Performance optimization
+### Phase 4: Launch Polish 🔄 Current
+- ✅ Onboarding flow complete
+- ✅ Design system migration (15/15 screens)
+- 🔄 Asset generation (avatars, badges, illustrations)
+- 🔄 Feature verification (offline, units, account deletion)
+- 🔄 Business setup (LLC, accounts, legal)
+- 🔄 App Store preparation
+
+### Phase 5: Post-Launch (Planned)
+- Competitions (online meets)
+- Live Workout Together
+- Apple Health integration
+- GymR Seasons (quarterly drops)
 
 ---
 
@@ -497,5 +518,22 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 ---
 
+---
+
+## Naming Reference
+
+| Feature | Canonical Name |
+|---------|----------------|
+| Analytics | **Gym Lab** |
+| Training Identity | **DNA** |
+| In-Game Currency | **Juice** |
+| Seasonal Content | **GymR Seasons** |
+
+See `docs/Master Documentation/NAMING-GUIDE.md` for full naming conventions.
+
+---
+
 *See `docs/Master Documentation/FEATURE-MASTER.md` for detailed feature breakdowns*
 *See `docs/Master Documentation/MASTER_PLAN.md` for full vision and strategy*
+*See `docs/Master Documentation/VISION-AND-CULTURE.md` for cultural positioning*
+*See `docs/Master Documentation/INTERVIEW-SUMMARY-2026-02-04.md` for latest decisions*
