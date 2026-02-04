@@ -21,7 +21,8 @@ import { setupNotificationResponseListener } from '@/src/lib/notifications/notif
 import { useBuddyStore } from '@/src/lib/stores/buddyStore';
 import { PersistentTabBar } from '@/src/ui/components/PersistentTabBar';
 import { WorkoutDrawer } from '@/src/ui/components/WorkoutDrawer';
-import { GlobalTopBar } from '@/src/ui/components/GlobalTopBar';
+import { GlobalTopBar, TOP_BAR_HEIGHT } from '@/src/ui/components/GlobalTopBar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useWorkoutDrawerStore } from '@/src/lib/stores/workoutDrawerStore';
 import { ensureCurrentSession } from '@/src/lib/stores/currentSessionStore';
 import { initializeSentry, setSentryUser, clearSentryUser } from '@/src/lib/monitoring/sentry';
@@ -49,6 +50,39 @@ function HeaderBackButton({ tintColor }: { tintColor: string }) {
     >
       <Ionicons name="chevron-back" size={28} color={tintColor} />
     </Pressable>
+  );
+}
+
+/**
+ * Inner layout component that handles safe area padding for the top bar.
+ * This ensures content never goes behind the GlobalTopBar.
+ */
+function AuthenticatedLayout({ showAuthenticatedUI }: { showAuthenticatedUI: boolean }) {
+  const insets = useSafeAreaInsets();
+
+  // Calculate the total top bar height including safe area
+  const topBarTotalHeight = insets.top + TOP_BAR_HEIGHT;
+
+  return (
+    <View style={{ flex: 1, position: 'relative' }}>
+      {/* Only show authenticated UI elements when user is logged in and not on auth/onboarding */}
+      {showAuthenticatedUI && <GlobalTopBar />}
+      <View style={{ flex: 1, marginTop: showAuthenticatedUI ? topBarTotalHeight : 0 }}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen
+            name="onboarding"
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen name="auth/login" options={{ presentation: 'card' }} />
+          <Stack.Screen name="auth/signup" options={{ presentation: 'card' }} />
+          <Stack.Screen name="auth/forgot-password" options={{ presentation: 'card' }} />
+          <Stack.Screen name="auth/reset-password" options={{ presentation: 'card' }} />
+          <Stack.Screen name="auth/verify-email" options={{ presentation: 'card' }} />
+        </Stack>
+      </View>
+      {showAuthenticatedUI && <PersistentTabBar />}
+      {showAuthenticatedUI && <WorkoutDrawer />}
+    </View>
   );
 }
 
@@ -293,23 +327,7 @@ export default function RootLayout() {
     <ErrorBoundary name="root">
       <SafeAreaProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <View style={{ flex: 1, position: 'relative' }}>
-            {/* Only show authenticated UI elements when user is logged in and not on auth/onboarding */}
-            {showAuthenticatedUI && <GlobalTopBar />}
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen
-                name="onboarding"
-                options={{ presentation: 'card' }}
-              />
-              <Stack.Screen name="auth/login" options={{ presentation: 'card' }} />
-              <Stack.Screen name="auth/signup" options={{ presentation: 'card' }} />
-              <Stack.Screen name="auth/forgot-password" options={{ presentation: 'card' }} />
-              <Stack.Screen name="auth/reset-password" options={{ presentation: 'card' }} />
-              <Stack.Screen name="auth/verify-email" options={{ presentation: 'card' }} />
-            </Stack>
-            {showAuthenticatedUI && <PersistentTabBar />}
-            {showAuthenticatedUI && <WorkoutDrawer />}
-          </View>
+          <AuthenticatedLayout showAuthenticatedUI={showAuthenticatedUI} />
           <StatusBar style="auto" />
         </ThemeProvider>
       </SafeAreaProvider>

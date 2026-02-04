@@ -4,7 +4,6 @@ import { Link, type Href } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { useThemeColors } from "../../src/ui/theme";
-import { TOP_BAR_HEIGHT } from "../../src/ui/components/GlobalTopBar";
 import { TAB_BAR_HEIGHT } from "../../src/ui/components/PersistentTabBar";
 import { useDevMode } from "../../src/lib/devMode";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
@@ -214,7 +213,7 @@ export default function ProfileTab() {
         style={{ flex: 1, backgroundColor: c.bg }}
         contentContainerStyle={{
           paddingHorizontal: 16,
-          paddingTop: TOP_BAR_HEIGHT + insets.top,
+          paddingTop: 16,
           paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20,
           gap: 12
         }}
