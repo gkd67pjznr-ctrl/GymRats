@@ -2,20 +2,29 @@
 // Wrapper component that protects routes requiring authentication
 // Redirects to login if user is not authenticated
 
-import { useEffect } from "react";
-import { useRouter, useSegments } from "expo-router";
-import { Text, View , ActivityIndicator } from "react-native";
+import { Text, View, ActivityIndicator } from "react-native";
 import { useThemeColors } from "../theme";
-import { useUser } from "../../lib/stores/authStore";
+import { useRouteProtection } from "../../lib/hooks/useRouteProtection";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  fallback?: React.ReactNode; // Optional fallback to show while checking auth
+  /** Optional fallback to show while checking auth */
+  fallback?: React.ReactNode;
+  /** Custom redirect path (default: /auth/login) */
+  redirectTo?: string;
+  /** Whether to show loading indicator (default: true) */
+  showLoading?: boolean;
 }
 
 /**
  * Higher-order component that protects routes requiring authentication
  * Wraps any screen component that should only be accessible to logged-in users
+ *
+ * Note: With centralized route protection in _layout.tsx, this component is
+ * typically not needed for most screens. Use it for:
+ * - Screens that need custom loading/fallback UI
+ * - Nested components that need auth checks
+ * - Additional protection layer for sensitive screens
  *
  * @example
  * ```tsx
@@ -27,26 +36,45 @@ interface ProtectedRouteProps {
  *     </ProtectedRoute>
  *   );
  * }
+ *
+ * // With custom fallback:
+ * export default function ProtectedScreen() {
+ *   return (
+ *     <ProtectedRoute fallback={<CustomLoadingUI />}>
+ *       <YourScreenContent />
+ *     </ProtectedRoute>
+ *   );
+ * }
  * ```
  */
-export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
+export function ProtectedRoute({
+  children,
+  fallback,
+  showLoading = true,
+}: ProtectedRouteProps) {
   const c = useThemeColors();
-  const user = useUser();
-  const router = useRouter();
-  const segments = useSegments();
-
-  useEffect(() => {
-    // Only redirect if we're not on auth screens
-    const isAuthScreen = segments[0] === "auth";
-
-    if (!user && !isAuthScreen) {
-      // User is not authenticated and not on auth screen
-      router.replace("/auth/login");
-    }
-  }, [user, segments, router]);
+  const { isAuthenticated, isLoading, isHydrated } = useRouteProtection();
 
   // Show loading while checking auth state
-  if (!user) {
+  if (!isHydrated || isLoading) {
+    if (fallback) {
+      return <>{fallback}</>;
+    }
+
+    if (!showLoading) {
+      return null;
+    }
+
+    return (
+      <View style={{ flex: 1, backgroundColor: c.bg, justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <ActivityIndicator size="large" color={c.primary} />
+        <Text style={{ color: c.muted, marginTop: 16 }}>Loading...</Text>
+      </View>
+    );
+  }
+
+  // If not authenticated, show nothing (redirect is handled by useRouteProtection)
+  if (!isAuthenticated) {
     if (fallback) {
       return <>{fallback}</>;
     }
@@ -54,7 +82,7 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
     return (
       <View style={{ flex: 1, backgroundColor: c.bg, justifyContent: "center", alignItems: "center", padding: 20 }}>
         <ActivityIndicator size="large" color={c.primary} />
-        <Text style={{ color: c.muted, marginTop: 16 }}>Checking authentication...</Text>
+        <Text style={{ color: c.muted, marginTop: 16 }}>Redirecting to login...</Text>
       </View>
     );
   }
@@ -66,32 +94,15 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
  * Hook to check if current route is protected
  * Returns true if the route requires authentication
  *
+ * @deprecated Use useRequiresAuth from useRouteProtection instead
+ *
  * @example
  * ```tsx
- * const isProtected = useIsProtectedRoute();
- * if (isProtected && !user) {
- *   // Redirect to login
- * }
+ * import { useRequiresAuth } from '@/src/lib/hooks/useRouteProtection';
+ * const requiresAuth = useRequiresAuth();
  * ```
  */
 export function useIsProtectedRoute(): boolean {
-  const segments = useSegments();
-
-  // List of segments that require authentication
-  const protectedSegments = new Set([
-    "profile",
-    "settings",
-    "calendar",
-    "history",
-    "friends",
-    "notifications",
-    "u",      // Public profile viewing (but we require login to view)
-    "post",   // Post details and comments
-    "new-message",
-    "dm",
-    "routines",
-  ]);
-
-  // Check if any segment in the current route is protected
-  return segments.some(segment => protectedSegments.has(segment));
+  const { isPublicRoute } = useRouteProtection({ autoRedirect: false });
+  return !isPublicRoute;
 }

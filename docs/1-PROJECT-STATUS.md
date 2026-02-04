@@ -26,14 +26,14 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Workout Drawer | 🔄 In Progress | 7/8 | Phase 2 in progress: rest timer + PR cue integration |
 | Exercise Library | ✅ Done | 3/3 | 100+ exercises with muscle groups |
 | Scoring & Ranks | ✅ Done | 5/5 | 0-1000 scoring, 20 ranks/exercise |
-| AI Gym Buddy | 🔄 In Progress | 9/11 | 9 personalities, IAP integrated |
+| AI Gym Buddy | ✅ Done | 11/11 | 9 personalities, voice lines, IAP integrated |
 | Body Model | ✅ Done | 5/5 | Moved to Forge Lab sub-tab |
 | Ranks Tab | ✅ Done | 10/10 | My Ranks + Leaderboards sub-tabs |
-| Authentication | 🔄 In Progress | 7/10 | Email working, OAuth needs setup |
+| Authentication | 🔄 In Progress | 8/10 | Email + protected routes working, OAuth needs setup |
 | Social & Feed | 🔄 In Progress | 9/15 | Local complete, backend connected |
 | Gamification | ✅ Done | 12/12 | XP, levels, streaks, tokens, store |
-| Notifications | 🔄 In Progress | 2/5 | Rest timer + Global Top Bar complete |
-| UI & Design | 🔄 In Progress | 15/15 | Design system + screen migrations complete |
+| Notifications | ✅ Done | 6/7 | Full push notification system complete |
+| UI & Design | ✅ Done | 15/15 | Design system + screen migrations complete |
 | UI Themes & Visual Style | 🔄 In Progress | 6/12 | Documentation complete |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
 | Onboarding | ✅ Done | 7/7 | Full flow implemented, debug reset available |
@@ -43,7 +43,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Forge Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
 | Forge Milestones | ✅ Done | 5/5 | 30 achievements implemented |
 
-**Launch Total:** 150/178 features (84%)
+**Launch Total:** 152/178 features (85%)
 
 ---
 
@@ -84,6 +84,9 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - 9 distinct buddy personalities with unique voices
 - Reactive commentary engine with message selection
 - Tiered buddy system (Basic text, Premium voice, Legendary themes)
+- **Voice line system complete:** 180+ voice line mappings for premium/legendary buddies
+- Voice playback integration with BuddyMessageToast
+- Settings toggle for buddy voice (premium+ only)
 - IAP integration with expo-iap
 - Performance events, behavior patterns, and session flow triggers
 
@@ -171,8 +174,8 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 | # | Task | Description |
 |---|------|-------------|
-| 7 | Push Notifications | Social activity, milestones |
-| 8 | Protected Routes | Authentication guards |
+| 7 | ~~Push Notifications~~ | ✅ Complete - Social activity, milestones |
+| 8 | ~~Protected Routes~~ | ✅ Complete - Centralized authentication guards |
 
 ---
 
@@ -214,6 +217,23 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ## Recent Updates (Last 30 Days)
 
 ### 2026-02-03
+- **AI Buddy Voice Lines Complete** - Full voice line system for premium/legendary buddies
+  - Added comprehensive voice line mappings to all 8 premium/legendary buddies
+  - 11 trigger types per buddy (PRs, session flow, streaks, etc.) with 2 variations each
+  - Expanded `VoiceManager.ts` with 180+ voice line asset mappings
+  - Integrated voice playback in `BuddyMessageToast` component
+  - Settings toggle for buddy voice already in place
+  - VoiceManager checks tier (premium+), global sounds, and buddy voice settings
+- **Push Notifications Complete** - Full push notification system
+  - Reaction/comment notification functions in notificationService
+  - DB trigger migration for server-side push delivery
+  - Enhanced notification tap routing for reactions/comments
+  - 38 tests passing for notification service
+- **Protected Routes Complete** - Centralized authentication guards
+  - Created `useRouteProtection` hook with auto-redirect
+  - Added `useRequiresAuth` and `useShowAuthenticatedUI` helpers
+  - Updated root layout with loading state while auth hydrates
+  - 25 tests for route protection hook
 - **Shop UI Polish** - Complete redesign with new design system
   - Purchase confirmation modal with cost breakdown
   - Category tabs with icons
@@ -233,6 +253,11 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
   - Updated `currentSessionStore` to update presence on workout start/end
   - Updated `HangoutRoom` component with online count and join notifications
   - Created module index for clean exports
+- **Design System Migration Complete** - All auth and routine screens migrated
+  - Migrated auth screens (login, signup, forgot-password) to design system
+  - Migrated routines screens (index, create, detail) to design system
+  - Migrated history screen
+  - Use Surface, Text, Card, Button primitives with semantic tokens
 - **REBRAND: Forgerank → GymRats** - Complete app rename
   - App name: GymRats, slug: gymrats, scheme: gymrats://
   - Scoring feature: ForgeRank → GymRank

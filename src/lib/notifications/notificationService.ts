@@ -1,6 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
-import { NotificationPayload, NotificationPreferences, NOTIFICATION_CHANNELS, REST_TIMER_NOTIFICATION_ID } from './types';
+import { NotificationPayload, NotificationPreferences, NotificationType, NOTIFICATION_CHANNELS, REST_TIMER_NOTIFICATION_ID } from './types';
 import { getSettings } from '../stores/settingsStore';
 import { supabase } from '../supabase/client';
 
@@ -409,6 +409,133 @@ export const sendDirectMessageNotification = async (
   } catch (error) {
     if (__DEV__) {
       console.error('Failed to send direct message notification:', error);
+    }
+  }
+};
+
+/**
+ * Send reaction notification
+ * Called when a user reacts to another user's post
+ * Note: With DB triggers enabled, this is called automatically.
+ * This function is available for manual/client-side use if needed.
+ */
+export const sendReactionNotification = async (
+  reactorId: string,
+  reactorName: string,
+  postAuthorId: string,
+  postId: string,
+  emote: string
+): Promise<void> => {
+  try {
+    // Don't notify if reacting to own post
+    if (reactorId === postAuthorId) {
+      return;
+    }
+
+    const settings = getSettings();
+    const prefs = settings.notificationPrefs;
+
+    if (!prefs.reactions) {
+      if (__DEV__) {
+        console.log('Reaction notifications disabled for user', postAuthorId);
+      }
+      return;
+    }
+
+    // Map emote to friendly label
+    const emoteLabel: Record<string, string> = {
+      like: 'liked',
+      fire: 'loved',
+      skull: 'found hilarious',
+      crown: 'crowned',
+      bolt: 'was energized by',
+      clap: 'applauded',
+    };
+    const label = emoteLabel[emote] || 'reacted to';
+
+    const payload: NotificationPayload = {
+      type: 'reaction',
+      title: 'New Reaction',
+      body: `${reactorName} ${label} your post`,
+      data: {
+        type: 'reaction',
+        screen: 'post',
+        postId,
+        reactorId,
+        reactorName,
+        emote,
+      },
+    };
+
+    // Send via backend
+    await sendPushNotification(postAuthorId, payload);
+
+    // Also create in-app notification
+    await createInAppNotification(postAuthorId, payload);
+  } catch (error) {
+    if (__DEV__) {
+      console.error('Failed to send reaction notification:', error);
+    }
+  }
+};
+
+/**
+ * Send comment notification
+ * Called when a user comments on another user's post
+ * Note: With DB triggers enabled, this is called automatically.
+ * This function is available for manual/client-side use if needed.
+ */
+export const sendCommentNotification = async (
+  commenterId: string,
+  commenterName: string,
+  postAuthorId: string,
+  postId: string,
+  commentId: string,
+  commentText: string
+): Promise<void> => {
+  try {
+    // Don't notify if commenting on own post
+    if (commenterId === postAuthorId) {
+      return;
+    }
+
+    const settings = getSettings();
+    const prefs = settings.notificationPrefs;
+
+    if (!prefs.comments) {
+      if (__DEV__) {
+        console.log('Comment notifications disabled for user', postAuthorId);
+      }
+      return;
+    }
+
+    // Truncate comment preview
+    const commentPreview = commentText.length > 50
+      ? `${commentText.substring(0, 50)}...`
+      : commentText;
+
+    const payload: NotificationPayload = {
+      type: 'comment',
+      title: 'New Comment',
+      body: `${commenterName} commented: ${commentPreview}`,
+      data: {
+        type: 'comment',
+        screen: 'post',
+        postId,
+        commentId,
+        commenterId,
+        commenterName,
+      },
+    };
+
+    // Send via backend
+    await sendPushNotification(postAuthorId, payload);
+
+    // Also create in-app notification
+    await createInAppNotification(postAuthorId, payload);
+  } catch (error) {
+    if (__DEV__) {
+      console.error('Failed to send comment notification:', error);
     }
   }
 };

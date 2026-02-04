@@ -501,8 +501,15 @@ export const buddies: Buddy[] = [
     voiceLines: {
       pr_weight: ['savage-heavy-1', 'savage-heavy-2'],
       pr_rep: ['savage-rep-1', 'savage-rep-2'],
+      pr_e1rm: ['savage-e1rm-1', 'savage-e1rm-2'],
+      rank_up: ['savage-rank-1', 'savage-rank-2'],
+      volume_milestone: ['savage-volume-1', 'savage-volume-2'],
       session_start: ['savage-start-1', 'savage-start-2'],
-      session_end: ['savage-end-1', 'savage-end-2']
+      session_mid: ['savage-mid-1', 'savage-mid-2'],
+      final_set: ['savage-final-1', 'savage-final-2'],
+      session_end: ['savage-end-1', 'savage-end-2'],
+      streak: ['savage-streak-1', 'savage-streak-2'],
+      return_after_absence: ['savage-return-1', 'savage-return-2']
     }
   },
 
@@ -630,8 +637,16 @@ export const buddies: Buddy[] = [
     },
     voiceLines: {
       pr_weight: ['anime-power-1', 'anime-power-2'],
+      pr_rep: ['anime-rep-1', 'anime-rep-2'],
+      pr_e1rm: ['anime-e1rm-1', 'anime-e1rm-2'],
+      rank_up: ['anime-rank-1', 'anime-rank-2'],
+      volume_milestone: ['anime-volume-1', 'anime-volume-2'],
       session_start: ['anime-start-1', 'anime-start-2'],
-      session_end: ['anime-end-1', 'anime-end-2']
+      session_mid: ['anime-mid-1', 'anime-mid-2'],
+      final_set: ['anime-final-1', 'anime-final-2'],
+      session_end: ['anime-end-1', 'anime-end-2'],
+      streak: ['anime-streak-1', 'anime-streak-2'],
+      return_after_absence: ['anime-return-1', 'anime-return-2']
     }
   },
 
@@ -762,11 +777,22 @@ export const buddies: Buddy[] = [
     voiceLines: {
       pr_weight: ['trash-heavy-1', 'trash-heavy-2'],
       pr_rep: ['trash-rep-1', 'trash-rep-2'],
+      pr_e1rm: ['trash-e1rm-1', 'trash-e1rm-2'],
+      rank_up: ['trash-rank-1', 'trash-rank-2'],
+      volume_milestone: ['trash-volume-1', 'trash-volume-2'],
       session_start: ['trash-start-1', 'trash-start-2'],
-      session_end: ['trash-end-1', 'trash-end-2']
+      session_mid: ['trash-mid-1', 'trash-mid-2'],
+      final_set: ['trash-final-1', 'trash-final-2'],
+      session_end: ['trash-end-1', 'trash-end-2'],
+      streak: ['trash-streak-1', 'trash-streak-2'],
+      return_after_absence: ['trash-return-1', 'trash-return-2'],
+      long_rest: ['trash-rest-1', 'trash-rest-2']
     },
     sfxPack: {
       pr_weight: 'trash_heavy_sfx',
+      pr_rep: 'trash_rep_sfx',
+      pr_e1rm: 'trash_e1rm_sfx',
+      rank_up: 'trash_rank_sfx',
       session_start: 'trash_start_sfx',
       session_end: 'trash_end_sfx'
     }
@@ -1139,8 +1165,16 @@ export const buddies: Buddy[] = [
     },
     voiceLines: {
       pr_weight: ['action-heavy-1', 'action-heavy-2'],
+      pr_rep: ['action-rep-1', 'action-rep-2'],
+      pr_e1rm: ['action-e1rm-1', 'action-e1rm-2'],
+      rank_up: ['action-rank-1', 'action-rank-2'],
+      volume_milestone: ['action-volume-1', 'action-volume-2'],
       session_start: ['action-start-1', 'action-start-2'],
-      session_end: ['action-end-1', 'action-end-2']
+      session_mid: ['action-mid-1', 'action-mid-2'],
+      final_set: ['action-final-1', 'action-final-2'],
+      session_end: ['action-end-1', 'action-end-2'],
+      streak: ['action-streak-1', 'action-streak-2'],
+      return_after_absence: ['action-return-1', 'action-return-2']
     }
   },
 
@@ -1267,8 +1301,16 @@ export const buddies: Buddy[] = [
     },
     voiceLines: {
       pr_weight: ['sergeant-heavy-1', 'sergeant-heavy-2'],
+      pr_rep: ['sergeant-rep-1', 'sergeant-rep-2'],
+      pr_e1rm: ['sergeant-e1rm-1', 'sergeant-e1rm-2'],
+      rank_up: ['sergeant-rank-1', 'sergeant-rank-2'],
+      volume_milestone: ['sergeant-volume-1', 'sergeant-volume-2'],
       session_start: ['sergeant-start-1', 'sergeant-start-2'],
-      session_end: ['sergeant-end-1', 'sergeant-end-2']
+      session_mid: ['sergeant-mid-1', 'sergeant-mid-2'],
+      final_set: ['sergeant-final-1', 'sergeant-final-2'],
+      session_end: ['sergeant-end-1', 'sergeant-end-2'],
+      streak: ['sergeant-streak-1', 'sergeant-streak-2'],
+      return_after_absence: ['sergeant-return-1', 'sergeant-return-2']
     }
   },
 
@@ -1395,8 +1437,16 @@ export const buddies: Buddy[] = [
     },
     voiceLines: {
       pr_weight: ['zen-heavy-1', 'zen-heavy-2'],
+      pr_rep: ['zen-rep-1', 'zen-rep-2'],
+      pr_e1rm: ['zen-e1rm-1', 'zen-e1rm-2'],
+      rank_up: ['zen-rank-1', 'zen-rank-2'],
+      volume_milestone: ['zen-volume-1', 'zen-volume-2'],
       session_start: ['zen-start-1', 'zen-start-2'],
-      session_end: ['zen-end-1', 'zen-end-2']
+      session_mid: ['zen-mid-1', 'zen-mid-2'],
+      final_set: ['zen-final-1', 'zen-final-2'],
+      session_end: ['zen-end-1', 'zen-end-2'],
+      streak: ['zen-streak-1', 'zen-streak-2'],
+      return_after_absence: ['zen-return-1', 'zen-return-2']
     }
   },
 
@@ -1527,12 +1577,23 @@ export const buddies: Buddy[] = [
     voiceLines: {
       pr_weight: ['mystery-heavy-1', 'mystery-heavy-2'],
       pr_rep: ['mystery-rep-1', 'mystery-rep-2'],
+      pr_e1rm: ['mystery-e1rm-1', 'mystery-e1rm-2'],
+      rank_up: ['mystery-rank-1', 'mystery-rank-2'],
+      volume_milestone: ['mystery-volume-1', 'mystery-volume-2'],
       session_start: ['mystery-start-1', 'mystery-start-2'],
-      session_end: ['mystery-end-1', 'mystery-end-2']
+      session_mid: ['mystery-mid-1', 'mystery-mid-2'],
+      final_set: ['mystery-final-1', 'mystery-final-2'],
+      session_end: ['mystery-end-1', 'mystery-end-2'],
+      streak: ['mystery-streak-1', 'mystery-streak-2'],
+      return_after_absence: ['mystery-return-1', 'mystery-return-2'],
+      long_rest: ['mystery-rest-1', 'mystery-rest-2']
     },
     sfxPack: {
       pr_weight: 'mystery_heavy_sfx',
       pr_rep: 'mystery_rep_sfx',
+      pr_e1rm: 'mystery_e1rm_sfx',
+      rank_up: 'mystery_rank_sfx',
+      volume_milestone: 'mystery_volume_sfx',
       session_start: 'mystery_start_sfx',
       session_end: 'mystery_end_sfx'
     }
@@ -1661,8 +1722,16 @@ export const buddies: Buddy[] = [
     },
     voiceLines: {
       pr_weight: ['goth-heavy-1', 'goth-heavy-2'],
+      pr_rep: ['goth-rep-1', 'goth-rep-2'],
+      pr_e1rm: ['goth-e1rm-1', 'goth-e1rm-2'],
+      rank_up: ['goth-rank-1', 'goth-rank-2'],
+      volume_milestone: ['goth-volume-1', 'goth-volume-2'],
       session_start: ['goth-start-1', 'goth-start-2'],
-      session_end: ['goth-end-1', 'goth-end-2']
+      session_mid: ['goth-mid-1', 'goth-mid-2'],
+      final_set: ['goth-final-1', 'goth-final-2'],
+      session_end: ['goth-end-1', 'goth-end-2'],
+      streak: ['goth-streak-1', 'goth-streak-2'],
+      return_after_absence: ['goth-return-1', 'goth-return-2']
     }
   }
 ];

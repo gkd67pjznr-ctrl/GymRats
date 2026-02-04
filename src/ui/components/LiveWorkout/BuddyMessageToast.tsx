@@ -3,6 +3,7 @@ import { Animated, Easing, Text, View } from "react-native";
 import { makeDesignSystem } from "../../designSystem";
 import type { CueMessage } from "../../../lib/buddyTypes";
 import { buddies } from "../../../lib/buddyData";
+import { playVoiceLine } from "../../../lib/voice/VoiceManager";
 
 interface BuddyMessageToastProps {
   message: CueMessage | null;
@@ -76,6 +77,13 @@ export function BuddyMessageToast(props: BuddyMessageToastProps) {
         useNativeDriver: true,
       }),
     ]).start();
+
+    // Play voice line if available (premium+ buddies only)
+    if (props.message.voiceLine) {
+      playVoiceLine(props.message.voiceLine).catch(() => {
+        // Silently ignore voice playback errors
+      });
+    }
 
     const isHighlight = props.message.intensity !== "low";
     const holdMs = holdFnRef.current(isHighlight);
