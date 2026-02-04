@@ -3,7 +3,8 @@
 
 import { Stack, useRouter } from "expo-router";
 import { useState, useEffect } from "react";
-import { View, Text, Pressable, ActivityIndicator, TextInput, ScrollView, Dimensions } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, TextInput, ScrollView, Dimensions, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStore, useCurrentOnboardingStep, PERSONALITIES } from "../src/lib/stores/onboardingStore";
 import { useAvatarStore } from "../src/lib/avatar/avatarStore";
 import { KEY_LIFTS, setBaselinePR } from "../src/lib/stores/prStore";
@@ -16,9 +17,10 @@ export default function OnboardingScreen() {
   const c = useThemeColors();
   const router = useRouter();
   const currentStep = useCurrentOnboardingStep();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
+    <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top }}>
       <Stack.Screen
         options={{
           headerShown: false,
@@ -339,6 +341,7 @@ function GoalSettingStep() {
 // Step 4: Profile Setup
 function ProfileSetupStep() {
   const c = useThemeColors();
+  const insets = useSafeAreaInsets();
   const { setCurrentStep, setProfile } = useOnboardingStore();
   const [displayName, setDisplayName] = useState("");
   const [bodyweight, setBodyweight] = useState("");
@@ -409,138 +412,158 @@ function ProfileSetupStep() {
   ];
 
   return (
-    <View style={{ flex: 1, padding: FR.space.x6, gap: FR.space.x6 }}>
-      <View style={{ gap: FR.space.x2 }}>
-        <Text style={{ color: c.text, ...FR.type.h1 }}>Tell us about yourself</Text>
-        <Text style={{ color: c.muted, ...FR.type.sub }}>This helps us tailor your experience</Text>
-      </View>
-
-      <View style={{ gap: FR.space.x4 }}>
-        {/* Name input */}
-        <View style={{ gap: FR.space.x2 }}>
-          <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>Your Name</Text>
-          <TextInput
-            value={displayName}
-            onChangeText={(text) => {
-              setDisplayName(text);
-              if (validationErrors.displayName) {
-                setValidationErrors((prev) => ({ ...prev, displayName: undefined }));
-              }
-            }}
-            placeholder="Enter your name"
-            placeholderTextColor={c.muted}
-            style={{
-              ...FR.card({ card: c.card, border: validationErrors.displayName ? "#FF6B6B" : c.border }),
-              color: c.text,
-              ...FR.type.body,
-              paddingVertical: FR.space.x3,
-              paddingHorizontal: FR.space.x3,
-              minHeight: 48,
-            }}
-            autoCapitalize="words"
-          />
-          {validationErrors.displayName && (
-            <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
-              {validationErrors.displayName}
-            </Text>
-          )}
-        </View>
-
-        {/* Bodyweight input */}
-        <View style={{ gap: FR.space.x2 }}>
-          <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>Bodyweight</Text>
-          <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
-            <TextInput
-              value={bodyweight}
-              onChangeText={(text) => {
-                setBodyweight(text);
-                if (validationErrors.bodyweight) {
-                  setValidationErrors((prev) => ({ ...prev, bodyweight: undefined }));
-                }
-              }}
-              placeholder="150"
-              placeholderTextColor={c.muted}
-              keyboardType="decimal-pad"
-              style={{
-                flex: 1,
-                ...FR.card({ card: c.card, border: validationErrors.bodyweight ? "#FF6B6B" : c.border }),
-                color: c.text,
-                ...FR.type.body,
-                paddingVertical: FR.space.x3,
-                paddingHorizontal: FR.space.x3,
-                minHeight: 48,
-              }}
-            />
-            <UnitToggle value={unit} onChange={setUnit} />
-          </View>
-          {validationErrors.bodyweight && (
-            <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
-              {validationErrors.bodyweight}
-            </Text>
-          )}
-        </View>
-
-        {/* Experience level */}
-        <View style={{ gap: FR.space.x2 }}>
-          <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>Experience Level</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            padding: FR.space.x6,
+            gap: FR.space.x6,
+            paddingBottom: insets.bottom + FR.space.x6,
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <View style={{ gap: FR.space.x2 }}>
-            {experienceOptions.map((option) => (
-              <Pressable
-                key={option.value}
-                onPress={() => {
-                  setExperience(option.value);
-                  if (validationErrors.experience) {
-                    setValidationErrors((prev) => ({ ...prev, experience: undefined }));
+            <Text style={{ color: c.text, ...FR.type.h1 }}>Tell us about yourself</Text>
+            <Text style={{ color: c.muted, ...FR.type.sub }}>This helps us tailor your experience</Text>
+          </View>
+
+          <View style={{ gap: FR.space.x4 }}>
+            {/* Name input */}
+            <View style={{ gap: FR.space.x2 }}>
+              <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>Your Name</Text>
+              <TextInput
+                value={displayName}
+                onChangeText={(text) => {
+                  setDisplayName(text);
+                  if (validationErrors.displayName) {
+                    setValidationErrors((prev) => ({ ...prev, displayName: undefined }));
                   }
                 }}
-                style={({ pressed }) => ({
-                  ...FR.card({ card: c.card, border: c.border }),
+                placeholder="Enter your name"
+                placeholderTextColor={c.muted}
+                style={{
+                  ...FR.card({ card: c.card, border: validationErrors.displayName ? "#FF6B6B" : c.border }),
+                  color: c.text,
+                  ...FR.type.body,
                   paddingVertical: FR.space.x3,
                   paddingHorizontal: FR.space.x3,
-                  backgroundColor: experience === option.value ? c.text : c.card,
-                  opacity: pressed ? 0.8 : 1,
-                })}
-              >
-                <Text
-                  style={{
-                    color: experience === option.value ? c.bg : c.text,
-                    ...FR.type.body,
-                    fontWeight: "700",
-                  }}
-                >
-                  {option.label} <Text style={{ fontWeight: "400" }}>({option.years})</Text>
+                  minHeight: 48,
+                }}
+                autoCapitalize="words"
+                returnKeyType="next"
+              />
+              {validationErrors.displayName && (
+                <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
+                  {validationErrors.displayName}
                 </Text>
-              </Pressable>
-            ))}
-          </View>
-          {validationErrors.experience && (
-            <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
-              {validationErrors.experience}
-            </Text>
-          )}
-        </View>
-      </View>
+              )}
+            </View>
 
-      <View style={{ gap: FR.space.x2, marginTop: "auto" }}>
-        <Pressable
-          onPress={handleNext}
-          style={({ pressed }) => ({
-            ...FR.pillButton({ card: c.card, border: c.border }),
-            backgroundColor: c.text,
-            paddingVertical: FR.space.x4,
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setCurrentStep("goals")}
-          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-        >
-          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
-        </Pressable>
-      </View>
-    </View>
+            {/* Bodyweight input */}
+            <View style={{ gap: FR.space.x2 }}>
+              <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>Bodyweight</Text>
+              <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
+                <TextInput
+                  value={bodyweight}
+                  onChangeText={(text) => {
+                    setBodyweight(text);
+                    if (validationErrors.bodyweight) {
+                      setValidationErrors((prev) => ({ ...prev, bodyweight: undefined }));
+                    }
+                  }}
+                  placeholder="150"
+                  placeholderTextColor={c.muted}
+                  keyboardType="decimal-pad"
+                  style={{
+                    flex: 1,
+                    ...FR.card({ card: c.card, border: validationErrors.bodyweight ? "#FF6B6B" : c.border }),
+                    color: c.text,
+                    ...FR.type.body,
+                    paddingVertical: FR.space.x3,
+                    paddingHorizontal: FR.space.x3,
+                    minHeight: 48,
+                  }}
+                  returnKeyType="done"
+                />
+                <UnitToggle value={unit} onChange={setUnit} />
+              </View>
+              {validationErrors.bodyweight && (
+                <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
+                  {validationErrors.bodyweight}
+                </Text>
+              )}
+            </View>
+
+            {/* Experience level */}
+            <View style={{ gap: FR.space.x2 }}>
+              <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>Experience Level</Text>
+              <View style={{ gap: FR.space.x2 }}>
+                {experienceOptions.map((option) => (
+                  <Pressable
+                    key={option.value}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setExperience(option.value);
+                      if (validationErrors.experience) {
+                        setValidationErrors((prev) => ({ ...prev, experience: undefined }));
+                      }
+                    }}
+                    style={({ pressed }) => ({
+                      ...FR.card({ card: c.card, border: c.border }),
+                      paddingVertical: FR.space.x3,
+                      paddingHorizontal: FR.space.x3,
+                      backgroundColor: experience === option.value ? c.text : c.card,
+                      opacity: pressed ? 0.8 : 1,
+                    })}
+                  >
+                    <Text
+                      style={{
+                        color: experience === option.value ? c.bg : c.text,
+                        ...FR.type.body,
+                        fontWeight: "700",
+                      }}
+                    >
+                      {option.label} <Text style={{ fontWeight: "400" }}>({option.years})</Text>
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+              {validationErrors.experience && (
+                <Text style={{ color: "#FF6B6B", ...FR.type.sub, fontSize: 12 }}>
+                  {validationErrors.experience}
+                </Text>
+              )}
+            </View>
+          </View>
+
+          <View style={{ gap: FR.space.x2, marginTop: FR.space.x4 }}>
+            <Pressable
+              onPress={handleNext}
+              style={({ pressed }) => ({
+                ...FR.pillButton({ card: c.card, border: c.border }),
+                backgroundColor: c.text,
+                paddingVertical: FR.space.x4,
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setCurrentStep("goals")}
+              style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+            >
+              <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -584,6 +607,7 @@ function UnitToggle({ value, onChange }: { value: "lb" | "kg"; onChange: (v: "lb
 // Step 5: Current Lifts (optional baseline PRs)
 function LiftsStep() {
   const c = useThemeColors();
+  const insets = useSafeAreaInsets();
   const { setCurrentStep, profile } = useOnboardingStore();
   const unit = profile?.bodyweightUnit ?? "lb";
 
@@ -624,94 +648,108 @@ function LiftsStep() {
   };
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: c.bg }}
-      contentContainerStyle={{ padding: FR.space.x6, gap: FR.space.x6 }}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={0}
     >
-      <View style={{ gap: FR.space.x2 }}>
-        <Text style={{ color: c.text, ...FR.type.h1 }}>Your current lifts</Text>
-        <Text style={{ color: c.muted, ...FR.type.sub }}>
-          Enter your best lifts so we know when you hit a real PR. This is optional — you can skip and PRs will start tracking after your first workout.
-        </Text>
-      </View>
-
-      <View style={{ gap: FR.space.x4 }}>
-        {KEY_LIFTS.map((lift) => (
-          <View key={lift.id} style={{ gap: FR.space.x2 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
-              <Text style={{ fontSize: 24 }}>{lift.emoji}</Text>
-              <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>{lift.name}</Text>
-            </View>
-            <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
-              <View style={{ flex: 2 }}>
-                <TextInput
-                  value={lifts[lift.id].weight}
-                  onChangeText={(text) => handleLiftChange(lift.id, "weight", text)}
-                  placeholder={`Weight (${unit})`}
-                  placeholderTextColor={c.muted}
-                  keyboardType="decimal-pad"
-                  style={{
-                    ...FR.card({ card: c.card, border: c.border }),
-                    color: c.text,
-                    ...FR.type.body,
-                    paddingVertical: FR.space.x3,
-                    paddingHorizontal: FR.space.x3,
-                    minHeight: 48,
-                  }}
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <TextInput
-                  value={lifts[lift.id].reps}
-                  onChangeText={(text) => handleLiftChange(lift.id, "reps", text)}
-                  placeholder="Reps"
-                  placeholderTextColor={c.muted}
-                  keyboardType="number-pad"
-                  style={{
-                    ...FR.card({ card: c.card, border: c.border }),
-                    color: c.text,
-                    ...FR.type.body,
-                    paddingVertical: FR.space.x3,
-                    paddingHorizontal: FR.space.x3,
-                    minHeight: 48,
-                  }}
-                />
-              </View>
-            </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          style={{ flex: 1, backgroundColor: c.bg }}
+          contentContainerStyle={{
+            padding: FR.space.x6,
+            gap: FR.space.x6,
+            paddingBottom: insets.bottom + FR.space.x6,
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{ gap: FR.space.x2 }}>
+            <Text style={{ color: c.text, ...FR.type.h1 }}>Your current lifts</Text>
+            <Text style={{ color: c.muted, ...FR.type.sub }}>
+              Enter your best lifts so we know when you hit a real PR. This is optional — you can skip and PRs will start tracking after your first workout.
+            </Text>
           </View>
-        ))}
-      </View>
 
-      <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>
-        Example: If you've benched 185 lb for 5 reps, enter "185" and "5"
-      </Text>
+          <View style={{ gap: FR.space.x4 }}>
+            {KEY_LIFTS.map((lift) => (
+              <View key={lift.id} style={{ gap: FR.space.x2 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
+                  <Text style={{ fontSize: 24 }}>{lift.emoji}</Text>
+                  <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>{lift.name}</Text>
+                </View>
+                <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
+                  <View style={{ flex: 2 }}>
+                    <TextInput
+                      value={lifts[lift.id].weight}
+                      onChangeText={(text) => handleLiftChange(lift.id, "weight", text)}
+                      placeholder={`Weight (${unit})`}
+                      placeholderTextColor={c.muted}
+                      keyboardType="decimal-pad"
+                      style={{
+                        ...FR.card({ card: c.card, border: c.border }),
+                        color: c.text,
+                        ...FR.type.body,
+                        paddingVertical: FR.space.x3,
+                        paddingHorizontal: FR.space.x3,
+                        minHeight: 48,
+                      }}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <TextInput
+                      value={lifts[lift.id].reps}
+                      onChangeText={(text) => handleLiftChange(lift.id, "reps", text)}
+                      placeholder="Reps"
+                      placeholderTextColor={c.muted}
+                      keyboardType="number-pad"
+                      style={{
+                        ...FR.card({ card: c.card, border: c.border }),
+                        color: c.text,
+                        ...FR.type.body,
+                        paddingVertical: FR.space.x3,
+                        paddingHorizontal: FR.space.x3,
+                        minHeight: 48,
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
 
-      <View style={{ gap: FR.space.x2, marginTop: FR.space.x4 }}>
-        <Pressable
-          onPress={handleNext}
-          style={({ pressed }) => ({
-            ...FR.pillButton({ card: c.card, border: c.border }),
-            backgroundColor: c.text,
-            paddingVertical: FR.space.x4,
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
-        </Pressable>
-        <Pressable
-          onPress={handleSkip}
-          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-        >
-          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Skip for now</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setCurrentStep("profile")}
-          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-        >
-          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>
+            Example: If you've benched 185 lb for 5 reps, enter "185" and "5"
+          </Text>
+
+          <View style={{ gap: FR.space.x2, marginTop: FR.space.x4 }}>
+            <Pressable
+              onPress={handleNext}
+              style={({ pressed }) => ({
+                ...FR.pillButton({ card: c.card, border: c.border }),
+                backgroundColor: c.text,
+                paddingVertical: FR.space.x4,
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
+            </Pressable>
+            <Pressable
+              onPress={handleSkip}
+              style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+            >
+              <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Skip for now</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setCurrentStep("profile")}
+              style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+            >
+              <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
