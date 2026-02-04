@@ -1,27 +1,151 @@
 // app/(tabs)/feed.tsx
+// Enhanced social feed with infinite scroll and real-time updates
+
 import { Link } from "expo-router";
-import { useEffect, useMemo, useState, useCallback } from "react";
-import { Pressable, FlatList, Text, View, ActivityIndicator, RefreshControl } from "react-native";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import {
+  Pressable,
+  Text,
+  View,
+  RefreshControl,
+  FlatList,
+  StyleSheet,
+  Animated,
+} from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useUser } from "../../src/lib/stores/authStore";
-import { useFriendEdges, setupFriendsRealtime } from "../../src/lib/stores/friendsStore";
-import type { WorkoutPost } from "../../src/lib/socialModel";
-import { toggleReaction, useFeedAll, useMyReaction, usePostReactions, setupPostsRealtime, useSocialStore } from "../../src/lib/stores/socialStore";
-import { displayName, ME_ID } from "../../src/lib/userDirectory";
+import { useFriendEdges } from "../../src/lib/stores/friendsStore";
+import type { EmoteId, WorkoutPost } from "../../src/lib/socialModel";
+import {
+  toggleReaction,
+  useFeedAll,
+  useMyReaction,
+  setupPostsRealtime,
+  useSocialStore,
+} from "../../src/lib/stores/socialStore";
+import { ME_ID } from "../../src/lib/userDirectory";
 import { FR } from "../../src/ui/GrStyle";
 import { useThemeColors } from "../../src/ui/theme";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
-import { timeAgo } from "../../src/lib/units";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
 import { SyncStatusIndicator } from "../../src/ui/components/SyncStatusIndicator";
-import { RankBadge, PhotoCard, PostOptions, AnimatedReactionButton, ReactionsModal } from "../../src/ui/components/Social";
+import { PostOptions, WorkoutPostCard } from "../../src/ui/components/Social";
 
 type FeedMode = "public" | "friends";
 const ME = ME_ID;
+const PAGE_SIZE = 10;
 
-function compactNum(n: number): string {
-  if (n < 1000) return String(n);
-  if (n < 1000000) return `${(n / 1000).toFixed(1).replace(".0", "")}k`;
-  return `${(n / 1000000).toFixed(1).replace(".0", "")}m`;
+// Post card wrapper with reaction handling
+function PostCardWrapper({
+  post,
+  userId,
+  onOptions,
+}: {
+  post: WorkoutPost;
+  userId: string;
+  onOptions: () => void;
+}) {
+  const reaction = useMyReaction(post.id, userId);
+
+  const handleReact = useCallback(
+    (postId: string, emote: EmoteId) => {
+      toggleReaction(postId, userId, emote);
+    },
+    [userId]
+  );
+
+  return (
+    <WorkoutPostCard
+      post={post}
+      myReaction={reaction?.emote}
+      onReact={handleReact}
+      onOptions={onOptions}
+    />
+  );
+}
+
+// New posts banner component
+function NewPostsBanner({
+  count,
+  onPress,
+}: {
+  count: number;
+  onPress: () => void;
+}) {
+  const c = useThemeColors();
+  const translateY = useRef(new Animated.Value(-60)).current;
+
+  useEffect(() => {
+    if (count > 0) {
+      Animated.spring(translateY, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 10,
+      }).start();
+    } else {
+      Animated.timing(translateY, {
+        toValue: -60,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [count, translateY]);
+
+  if (count === 0) return null;
+
+  return (
+    <Animated.View
+      style={[
+        styles.newPostsBanner,
+        {
+          backgroundColor: c.primary,
+          transform: [{ translateY }],
+        },
+      ]}
+    >
+      <Pressable onPress={onPress} style={styles.newPostsContent}>
+        <Ionicons name="arrow-up" size={16} color="#fff" />
+        <Text style={styles.newPostsText}>
+          {count} new {count === 1 ? "post" : "posts"}
+        </Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+// Empty state component
+function EmptyFeed({ mode }: { mode: FeedMode }) {
+  const c = useThemeColors();
+
+  return (
+    <View style={[styles.emptyContainer, { backgroundColor: c.card, borderColor: c.border }]}>
+      <View style={[styles.emptyIcon, { backgroundColor: c.bg }]}>
+        <Ionicons
+          name={mode === "friends" ? "people-outline" : "fitness-outline"}
+          size={40}
+          color={c.muted}
+        />
+      </View>
+      <Text style={[styles.emptyTitle, { color: c.text }]}>
+        {mode === "friends" ? "No friend posts yet" : "No posts yet"}
+      </Text>
+      <Text style={[styles.emptySubtitle, { color: c.muted }]}>
+        {mode === "friends"
+          ? "Add friends to see their workouts here"
+          : "Complete a workout and share it to see it here"}
+      </Text>
+      {mode === "friends" && (
+        <Link href="/friends" asChild>
+          <Pressable style={[styles.emptyButton, { backgroundColor: c.primary }]}>
+            <Ionicons name="person-add" size={16} color="#fff" />
+            <Text style={styles.emptyButtonText}>Find Friends</Text>
+          </Pressable>
+        </Link>
+      )}
+    </View>
+  );
 }
 
 export default function FeedTab() {
@@ -33,9 +157,13 @@ export default function FeedTab() {
   const [refreshing, setRefreshing] = useState(false);
   const { pullFromServer: syncFeed } = useSocialStore();
   const [selectedPostForOptions, setSelectedPostForOptions] = useState<WorkoutPost | null>(null);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const PAGE_SIZE = 20;
+
+  // Pagination state
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
+  const [newPostsCount, setNewPostsCount] = useState(0);
+  const [lastSeenPostId, setLastSeenPostId] = useState<string | null>(null);
+
+  const flatListRef = useRef<FlatList>(null);
 
   const userId = user?.id ?? ME;
 
@@ -50,24 +178,53 @@ export default function FeedTab() {
   // Initial data fetch
   useEffect(() => {
     if (user?.id) {
-      syncFeed().catch(err => {
-        console.error('[Feed] Failed to sync:', err);
+      syncFeed().catch((err) => {
+        console.error("[Feed] Failed to sync:", err);
       });
     }
-  }, [user?.id]);
+  }, [user?.id, syncFeed]);
+
+  // Track new posts
+  useEffect(() => {
+    if (all.length > 0 && lastSeenPostId) {
+      const lastSeenIndex = all.findIndex((p) => p.id === lastSeenPostId);
+      if (lastSeenIndex > 0) {
+        setNewPostsCount(lastSeenIndex);
+      }
+    } else if (all.length > 0 && !lastSeenPostId) {
+      setLastSeenPostId(all[0].id);
+    }
+  }, [all, lastSeenPostId]);
 
   // Pull to refresh
-  async function onRefresh() {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       await syncFeed();
+      // Reset to show new posts at top
+      setNewPostsCount(0);
+      if (all.length > 0) {
+        setLastSeenPostId(all[0].id);
+      }
     } catch (err) {
-      console.error('[Feed] Refresh failed:', err);
+      console.error("[Feed] Refresh failed:", err);
     } finally {
       setRefreshing(false);
     }
-  }
+  }, [syncFeed, all]);
 
+  // Handle "new posts" tap
+  const handleNewPostsTap = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setNewPostsCount(0);
+    if (all.length > 0) {
+      setLastSeenPostId(all[0].id);
+    }
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, [all]);
+
+  // Friend filtering
   const friendIdSet = useMemo(() => {
     const set = new Set<string>();
     for (const e of edges) {
@@ -76,369 +233,327 @@ export default function FeedTab() {
     return set;
   }, [edges]);
 
-  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
-
-  const allPosts = useMemo(() => {
+  // Filter and sort posts
+  const posts = useMemo(() => {
     const sorted = [...all].sort((a, b) => b.createdAtMs - a.createdAtMs);
 
     if (mode === "public") return sorted;
 
-    // friends mode:
-    // - must be friends visibility
-    // - must be authored by a friend (or you)
-    return sorted.filter((p) => p.privacy === "friends" && (p.authorUserId === ME || friendIdSet.has(p.authorUserId)));
+    // Friends mode: only friends' posts with friends visibility
+    return sorted.filter(
+      (p) => p.privacy === "friends" && (p.authorUserId === ME || friendIdSet.has(p.authorUserId))
+    );
   }, [all, mode, friendIdSet]);
 
   // Paginated posts
-  const posts = useMemo(() => {
-    return allPosts.slice(0, displayCount);
-  }, [allPosts, displayCount]);
+  const displayedPosts = useMemo(
+    () => posts.slice(0, displayCount),
+    [posts, displayCount]
+  );
 
-  // Check if there are more posts to load
-  useEffect(() => {
-    setHasMore(displayCount < allPosts.length);
-  }, [displayCount, allPosts.length]);
+  // Load more on scroll
+  const handleLoadMore = useCallback(() => {
+    if (displayCount < posts.length) {
+      setDisplayCount((prev) => Math.min(prev + PAGE_SIZE, posts.length));
+    }
+  }, [displayCount, posts.length]);
 
-  // Reset pagination when mode changes
-  useEffect(() => {
-    setDisplayCount(PAGE_SIZE);
-  }, [mode]);
-
-  const loadMore = useCallback(() => {
-    if (loadingMore || !hasMore) return;
-
-    setLoadingMore(true);
-    // Simulate async loading
-    setTimeout(() => {
-      setDisplayCount((prev) => Math.min(prev + PAGE_SIZE, allPosts.length));
-      setLoadingMore(false);
-    }, 300);
-  }, [loadingMore, hasMore, allPosts.length]);
-
-  const ToggleChip = (p: { label: string; active: boolean; onPress: () => void }) => (
+  // Mode toggle
+  const ToggleChip = ({
+    label,
+    active,
+    onPress,
+    icon,
+  }: {
+    label: string;
+    active: boolean;
+    onPress: () => void;
+    icon: string;
+  }) => (
     <Pressable
-      onPress={p.onPress}
-      style={({ pressed }) => ({
-        borderWidth: 1,
-        borderColor: p.active ? c.text : c.border,
-        backgroundColor: p.active ? c.bg : c.card,
-        borderRadius: FR.radius.pill,
-        paddingVertical: FR.space.x2,
-        paddingHorizontal: FR.space.x3,
-        opacity: pressed ? 0.7 : 1,
-      })}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.toggleChip,
+        {
+          borderColor: active ? c.primary : c.border,
+          backgroundColor: active ? `${c.primary}15` : c.card,
+          opacity: pressed ? 0.8 : 1,
+        },
+      ]}
     >
-      <Text style={{ color: c.text, ...FR.type.body }}>{p.label}</Text>
+      <Ionicons
+        name={icon as any}
+        size={16}
+        color={active ? c.primary : c.muted}
+      />
+      <Text
+        style={[
+          styles.toggleChipText,
+          { color: active ? c.primary : c.text },
+        ]}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 
-
-  const PostCard = (p: { post: WorkoutPost }) => {
-    const my = useMyReaction(p.post.id, userId);
-    const reactions = usePostReactions(p.post.id);
-    const [showReactionsModal, setShowReactionsModal] = useState(false);
-    const top = p.post.workoutSnapshot?.topLines?.slice(0, 2) ?? [];
-
-    // Count reactions by emote type
-    const emoteCounts = useMemo(() => {
-      const counts: Record<string, number> = { like: 0, fire: 0, crown: 0 };
-      for (const r of reactions) {
-        if (r.emote in counts) counts[r.emote]++;
-      }
-      return counts;
-    }, [reactions]);
-
-    return (
-      <>
-        <Link href={({ pathname: "/post/[id]", params: { id: p.post.id } } as any) as any} asChild>
-          <Pressable
-            style={({ pressed }) => ({
-              ...FR.card({ card: c.card, border: c.border }),
-              gap: FR.space.x3,
-              opacity: pressed ? 0.85 : 1,
-            })}
-          >
-            {/* Header */}
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: FR.space.x3 }}>
-              <View style={{ flex: 1, gap: 2 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
-                  <Text style={{ color: c.text, ...FR.type.h3 }}>{displayName(p.post.authorUserId)}</Text>
-                  <RankBadge post={p.post} size="sm" variant="minimal" showLabel={false} />
-                </View>
-                <Text style={{ color: c.muted, ...FR.type.sub }}>
-                  {p.post.title ?? "Workout"} • {timeAgo(p.post.createdAtMs)}
-                </Text>
-              </View>
-
-              <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderColor: c.border,
-                    backgroundColor: c.bg,
-                    borderRadius: FR.radius.pill,
-                    paddingVertical: 4,
-                    paddingHorizontal: FR.space.x2,
-                  }}
-                >
-                  <Text style={{ color: c.text, ...FR.type.mono }}>{p.post.privacy.toUpperCase()}</Text>
-                </View>
-                <Pressable
-                  onPress={() => setSelectedPostForOptions(p.post)}
-                  style={({ pressed }) => ({
-                    padding: 8,
-                    opacity: pressed ? 0.7 : 1,
-                  })}
-                >
-                  <Text style={{ color: c.muted, fontSize: 18 }}>•••</Text>
-                </Pressable>
-              </View>
-            </View>
-
-            {/* Workout Stats Row */}
-            <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
-              {p.post.durationSec ? (
-                <View style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 4,
-                  backgroundColor: c.bg,
-                  paddingVertical: 4,
-                  paddingHorizontal: 8,
-                  borderRadius: FR.radius.sm,
-                  borderWidth: 1,
-                  borderColor: c.border,
-                }}>
-                  <Text style={{ color: c.muted }}>⏱</Text>
-                  <Text style={{ color: c.text, ...FR.type.mono, fontSize: 12 }}>
-                    {Math.round(p.post.durationSec / 60)}m
-                  </Text>
-                </View>
-              ) : null}
-              {p.post.exerciseCount ? (
-                <View style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 4,
-                  backgroundColor: c.bg,
-                  paddingVertical: 4,
-                  paddingHorizontal: 8,
-                  borderRadius: FR.radius.sm,
-                  borderWidth: 1,
-                  borderColor: c.border,
-                }}>
-                  <Text style={{ color: c.muted }}>🏋️</Text>
-                  <Text style={{ color: c.text, ...FR.type.mono, fontSize: 12 }}>
-                    {p.post.exerciseCount}
-                  </Text>
-                </View>
-              ) : null}
-              {p.post.setCount ? (
-                <View style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 4,
-                  backgroundColor: c.bg,
-                  paddingVertical: 4,
-                  paddingHorizontal: 8,
-                  borderRadius: FR.radius.sm,
-                  borderWidth: 1,
-                  borderColor: c.border,
-                }}>
-                  <Text style={{ color: c.muted }}>✅</Text>
-                  <Text style={{ color: c.text, ...FR.type.mono, fontSize: 12 }}>
-                    {p.post.setCount}
-                  </Text>
-                </View>
-              ) : null}
-              {p.post.completionPct !== undefined && p.post.completionPct > 0 && (
-                <View style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 4,
-                  backgroundColor: p.post.completionPct >= 1 ? "rgba(76, 175, 80, 0.2)" : c.bg,
-                  paddingVertical: 4,
-                  paddingHorizontal: 8,
-                  borderRadius: FR.radius.sm,
-                  borderWidth: 1,
-                  borderColor: p.post.completionPct >= 1 ? "#4CAF50" : c.border,
-                }}>
-                  <Text style={{ color: p.post.completionPct >= 1 ? "#4CAF50" : c.muted }}>
-                    {p.post.completionPct >= 1 ? "✓" : "◐"}
-                  </Text>
-                  <Text style={{
-                    color: p.post.completionPct >= 1 ? "#4CAF50" : c.text,
-                    ...FR.type.mono,
-                    fontSize: 12
-                  }}>
-                    {Math.round(p.post.completionPct * 100)}%
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            {/* Snapshot lines - best lifts */}
-            {top.length > 0 && (
-              <View style={{ gap: 4 }}>
-                {top.map((line, i) => (
-                  <Text
-                    key={i}
-                    style={{ color: c.text, ...FR.type.body }}>
-
-                   {typeof line === "string"
-                    ? line
-                    : `${line.exerciseName} — ${line.bestSet ? `${line.bestSet.weightLabel} x${line.bestSet.reps}${line.bestSet.e1rmLabel ? ` (${line.bestSet.e1rmLabel})` : ""}` : "—"}`}
-                  </Text>
-                ))}
-              </View>
-            )}
-
-            {/* Attached Photos */}
-            {p.post.photoUrls && p.post.photoUrls.length > 0 && (
-              <PhotoCard photoUrls={p.post.photoUrls} />
-            )}
-
-            {/* Footer row */}
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: FR.space.x3 }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
-                <AnimatedReactionButton
-                  emote="like"
-                  active={my?.emote === "like"}
-                  count={emoteCounts.like}
-                  onPress={() => toggleReaction(p.post.id, userId, "like")}
-                  onLongPress={() => setShowReactionsModal(true)}
-                  colors={{ text: c.text, border: c.border, bg: c.bg, card: c.card }}
-                />
-                <AnimatedReactionButton
-                  emote="fire"
-                  active={my?.emote === "fire"}
-                  count={emoteCounts.fire}
-                  onPress={() => toggleReaction(p.post.id, userId, "fire")}
-                  onLongPress={() => setShowReactionsModal(true)}
-                  colors={{ text: c.text, border: c.border, bg: c.bg, card: c.card }}
-                />
-                <AnimatedReactionButton
-                  emote="crown"
-                  active={my?.emote === "crown"}
-                  count={emoteCounts.crown}
-                  onPress={() => toggleReaction(p.post.id, userId, "crown")}
-                  onLongPress={() => setShowReactionsModal(true)}
-                  colors={{ text: c.text, border: c.border, bg: c.bg, card: c.card }}
-                />
-              </View>
-
-              <Pressable onPress={() => setShowReactionsModal(true)}>
-                <Text style={{ color: c.muted, ...FR.type.sub }}>
-                  {compactNum(p.post.likeCount)} reactions • {compactNum(p.post.commentCount)} comments
-                </Text>
-              </Pressable>
-            </View>
-          </Pressable>
-        </Link>
-
-        {/* Reactions Modal */}
-        <ReactionsModal
-          visible={showReactionsModal}
-          onClose={() => setShowReactionsModal(false)}
-          reactions={reactions}
-        />
-      </>
-    );
-  };
-
-  const renderPost = useCallback(({ item }: { item: WorkoutPost }) => (
-    <PostCard post={item} />
-  ), []);
-
-  const ListHeader = () => (
-    <>
+  // Render list header
+  const renderHeader = () => (
+    <View style={styles.header}>
       {/* Title */}
-      <View style={{ gap: 6, marginBottom: FR.space.x3 }}>
-        <Text style={{ color: c.text, ...FR.type.h1 }}>Feed</Text>
-        <Text style={{ color: c.muted, ...FR.type.sub }}>
-          Friends workouts, PRs, and streak fuel. Keep it tight, keep it real.
+      <View style={styles.titleSection}>
+        <Text style={[styles.title, { color: c.text }]}>Feed</Text>
+        <Text style={[styles.subtitle, { color: c.muted }]}>
+          Workouts, PRs, and wins from the community
         </Text>
       </View>
 
       {/* Mode toggle */}
-      <View style={{ flexDirection: "row", gap: FR.space.x2, alignItems: "center", marginBottom: FR.space.x3 }}>
-        <ToggleChip label="Public" active={mode === "public"} onPress={() => setMode("public")} />
-        <ToggleChip label="Friends" active={mode === "friends"} onPress={() => setMode("friends")} />
-        <SyncStatusIndicator displayMode="compact" storeName="social" />
-        <Link href={"/friends" as any} asChild>
-          <Pressable
-            style={({ pressed }) => ({
-              marginLeft: "auto",
-              ...FR.pillButton({ card: c.card, border: c.border }),
-              paddingVertical: FR.space.x2,
-              opacity: pressed ? 0.7 : 1,
-            })}
-          >
-            <Text style={{ color: c.text, ...FR.type.body }}>Manage</Text>
-          </Pressable>
-        </Link>
-      </View>
-    </>
-  );
+      <View style={styles.controlsRow}>
+        <View style={styles.toggleGroup}>
+          <ToggleChip
+            label="Public"
+            active={mode === "public"}
+            onPress={() => setMode("public")}
+            icon="globe-outline"
+          />
+          <ToggleChip
+            label="Friends"
+            active={mode === "friends"}
+            onPress={() => setMode("friends")}
+            icon="people-outline"
+          />
+        </View>
 
-  const ListEmpty = () => (
-    <View style={{ ...FR.card({ card: c.card, border: c.border }), gap: 6 }}>
-      <Text style={{ color: c.text, ...FR.type.h3 }}>Nothing here yet</Text>
-      <Text style={{ color: c.muted, ...FR.type.sub }}>
-        Finish a workout and share it — your first post will show up here.
-      </Text>
+        <View style={styles.rightControls}>
+          <SyncStatusIndicator displayMode="compact" storeName="social" />
+          <Link href="/friends" asChild>
+            <Pressable
+              style={({ pressed }) => [
+                styles.manageButton,
+                { backgroundColor: c.card, borderColor: c.border, opacity: pressed ? 0.8 : 1 },
+              ]}
+            >
+              <Ionicons name="settings-outline" size={16} color={c.muted} />
+            </Pressable>
+          </Link>
+        </View>
+      </View>
     </View>
   );
 
-  const ListFooter = () => {
-    if (!hasMore || posts.length === 0) return null;
+  // Render post item
+  const renderItem = useCallback(
+    ({ item }: { item: WorkoutPost }) => (
+      <View style={styles.postItem}>
+        <PostCardWrapper
+          post={item}
+          userId={userId}
+          onOptions={() => setSelectedPostForOptions(item)}
+        />
+      </View>
+    ),
+    [userId]
+  );
+
+  // Render empty state
+  const renderEmpty = () => <EmptyFeed mode={mode} />;
+
+  // Render footer (loading more indicator)
+  const renderFooter = () => {
+    if (displayCount >= posts.length) return null;
+
     return (
-      <View style={{ padding: 20, alignItems: "center" }}>
-        {loadingMore ? (
-          <ActivityIndicator size="small" color={c.primary} />
-        ) : (
-          <Text style={{ color: c.muted, ...FR.type.sub }}>
-            Pull up for more
-          </Text>
-        )}
+      <View style={styles.footer}>
+        <Text style={[styles.footerText, { color: c.muted }]}>
+          Loading more...
+        </Text>
       </View>
     );
   };
 
+  // Key extractor
+  const keyExtractor = useCallback((item: WorkoutPost) => item.id, []);
+
   return (
     <ProtectedRoute>
       <TabErrorBoundary screenName="Feed">
-        <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <FlatList
-          data={posts}
-          renderItem={renderPost}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{
-            padding: FR.space.x4,
-            gap: FR.space.x3,
-            paddingBottom: FR.space.x6,
-          }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ListHeaderComponent={ListHeader}
-          ListEmptyComponent={ListEmpty}
-          ListFooterComponent={ListFooter}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={[styles.container, { backgroundColor: c.bg }]}>
+          {/* New posts banner */}
+          <NewPostsBanner count={newPostsCount} onPress={handleNewPostsTap} />
 
-        {/* Post Options Modal */}
-        {selectedPostForOptions && (
-          <PostOptions
-            visible={selectedPostForOptions !== null}
-            onClose={() => setSelectedPostForOptions(null)}
-            post={selectedPostForOptions}
+          <FlatList
+            ref={flatListRef}
+            data={displayedPosts}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={renderEmpty}
+            ListFooterComponent={renderFooter}
+            contentContainerStyle={styles.listContent}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={c.primary}
+              />
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            showsVerticalScrollIndicator={false}
+            // Performance optimizations
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={5}
+            windowSize={7}
+            initialNumToRender={5}
           />
-        )}
-      </View>
-    </TabErrorBoundary>
+
+          {/* Post Options Modal */}
+          {selectedPostForOptions && (
+            <PostOptions
+              visible={selectedPostForOptions !== null}
+              onClose={() => setSelectedPostForOptions(null)}
+              post={selectedPostForOptions}
+            />
+          )}
+        </View>
+      </TabErrorBoundary>
     </ProtectedRoute>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+  },
+  header: {
+    paddingTop: 16,
+    gap: 16,
+    marginBottom: 16,
+  },
+  titleSection: {
+    gap: 4,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "900",
+  },
+  subtitle: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  controlsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  toggleGroup: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  toggleChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  toggleChipText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  rightControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  manageButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  postItem: {
+    marginBottom: 16,
+  },
+  footer: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  footerText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  // New posts banner
+  newPostsBanner: {
+    position: "absolute",
+    top: 0,
+    left: 16,
+    right: 16,
+    zIndex: 100,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  newPostsContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  newPostsText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  // Empty state
+  emptyContainer: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 32,
+    alignItems: "center",
+    gap: 12,
+    marginTop: 20,
+  },
+  emptyIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
+    maxWidth: 260,
+  },
+  emptyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  emptyButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+});

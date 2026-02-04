@@ -56,6 +56,9 @@ export function AvatarCosmeticsModal({
   const [activeTab, setActiveTab] = useState<AvatarCosmeticTab>("hair");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Preview state - tracks what item the user is previewing (before equipping)
+  const [previewItem, setPreviewItem] = useState<string | null>(null);
+
   // Get shop data
   const items = useShopItems("avatar_cosmetics");
   const inventory = useInventory();
@@ -67,6 +70,20 @@ export function AvatarCosmeticsModal({
   const equippedHair = inventory.equippedHairstyle || "hair_default";
   const equippedOutfit = inventory.equippedOutfit || "outfit_default";
   const equippedAccessories = inventory.equippedAccessories || ["acc_none"];
+
+  // Calculate preview cosmetics (show preview item if set, otherwise equipped)
+  const previewHair = previewItem?.startsWith("hair_") ? previewItem : equippedHair;
+  const previewOutfit = previewItem?.startsWith("outfit_") ? previewItem : equippedOutfit;
+  const previewAccessories = previewItem?.startsWith("acc_")
+    ? [previewItem]
+    : equippedAccessories;
+
+  // Reset preview when tab changes
+  const handleTabChange = (tab: AvatarCosmeticTab) => {
+    setPreviewItem(null);
+    Haptics.selectionAsync();
+    setActiveTab(tab);
+  };
 
   const handleItemPress = async (item: ShopItem & { isOwned: boolean; isEquipped?: boolean }) => {
     if (isProcessing) return;
@@ -84,18 +101,31 @@ export function AvatarCosmeticsModal({
     }
 
     if (isOwned) {
-      // Equip the item
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setIsProcessing(true);
-
-      const result = equipItem(item.id, "avatar_cosmetics");
-      setIsProcessing(false);
-
-      if (result.success) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } else {
-        Alert.alert("Error", result.error || "Failed to equip item");
+      // If already equipped, do nothing
+      if (item.isEquipped) {
+        Haptics.selectionAsync();
+        return;
       }
+
+      // If already previewing this item, equip it
+      if (previewItem === item.id) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        setIsProcessing(true);
+        const result = equipItem(item.id, "avatar_cosmetics");
+        setIsProcessing(false);
+        setPreviewItem(null);
+
+        if (result.success) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } else {
+          Alert.alert("Error", result.error || "Failed to equip item");
+        }
+        return;
+      }
+
+      // Otherwise, set as preview (tap once to preview, tap again to equip)
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setPreviewItem(item.id);
     } else {
       // Show purchase confirmation
       const canAfford = tokenBalance >= item.cost;
@@ -176,12 +206,34 @@ export function AvatarCosmeticsModal({
           />
           <View style={styles.equippedInfo}>
             <Text style={[styles.equippedLabel, { color: c.muted }]}>
-              Currently Equipped:
+              {previewItem ? "Previewing:" : "Currently Equipped:"}
             </Text>
-            <Text style={[styles.equippedItems, { color: c.text }]}>
-              {getItemEmoji(equippedHair, items)} {getItemEmoji(equippedOutfit, items)}{" "}
-              {equippedAccessories.map((acc) => getItemEmoji(acc, items)).join(" ")}
+            <Text style={[styles.equippedItems, { color: previewItem ? ds.tone.accent : c.text }]}>
+              {getItemEmoji(previewHair, items)} {getItemEmoji(previewOutfit, items)}{" "}
+              {previewAccessories.map((acc) => getItemEmoji(acc, items)).join(" ")}
             </Text>
+            {previewItem && (
+              <View style={styles.previewActions}>
+                <Pressable
+                  onPress={() => setPreviewItem(null)}
+                  style={[styles.previewButton, { backgroundColor: c.bg, borderColor: c.border }]}
+                >
+                  <Text style={[styles.previewButtonText, { color: c.muted }]}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => {
+                    // Equip the previewed item
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    equipItem(previewItem, "avatar_cosmetics");
+                    setPreviewItem(null);
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  }}
+                  style={[styles.previewButton, { backgroundColor: ds.tone.accent }]}
+                >
+                  <Text style={[styles.previewButtonText, { color: c.bg }]}>Equip</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
         </View>
 
@@ -192,10 +244,7 @@ export function AvatarCosmeticsModal({
             return (
               <Pressable
                 key={tab.id}
-                onPress={() => {
-                  Haptics.selectionAsync();
-                  setActiveTab(tab.id);
-                }}
+                onPress={() => handleTabChange(tab.id)}
                 style={[
                   styles.tab,
                   {
@@ -317,6 +366,22 @@ const styles = StyleSheet.create({
   equippedItems: {
     fontSize: 24,
     letterSpacing: 4,
+  },
+  previewActions: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 8,
+  },
+  previewButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  previewButtonText: {
+    fontSize: 12,
+    fontWeight: "700",
   },
   tabBar: {
     flexDirection: "row",

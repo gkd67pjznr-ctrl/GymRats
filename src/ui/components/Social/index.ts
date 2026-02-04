@@ -17,6 +17,9 @@ export type { ReportReason } from './ReportModal';
 
 export { PostOptions } from './PostOptions';
 
-export { AnimatedReactionButton } from './AnimatedReactionButton';
-export { ReactionsModal } from './ReactionsModal';
-export { CommentsSection } from './CommentsSection';
+export { ShareableWorkoutCard } from './ShareableWorkoutCard';
+
+export { WorkoutPostCard } from './WorkoutPostCard';
+
+export { CommentInput } from './CommentInput';
+export { CommentItem, CommentList } from './CommentItem';

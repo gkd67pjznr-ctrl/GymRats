@@ -13,8 +13,8 @@ Competition among friends and the broader community through various ranking syst
 ### 1. Per-Exercise Leaderboard
 - [x] Rank friends by GymRats score per exercise
 - [x] Show top 5 per exercise (with user visible if outside top 5)
-- [ ] Display score and rank tier
-- [ ] Filter by exercise category
+- [x] Display score and rank tier
+- [x] Filter by exercise category
 - [x] See your position highlighted (accent background + primary text)
 - [x] Toggle between friends-only and global views
 
@@ -25,25 +25,25 @@ Competition among friends and the broader community through various ranking syst
 - [ ] Or total combined score option
 - [x] Friends-only view
 - [x] Global view
-- [ ] Weekly/monthly/all-time filters
+- [x] Weekly/monthly/all-time filters
 
 ---
 
 ### 3. Volume Leaderboard
-- [ ] Total sets logged
-- [ ] Total volume (weight x reps)
-- [ ] Workout frequency
-- [ ] Weekly/monthly periods
-- [ ] "Who's grinding the most" metric
+- [x] Total sets logged
+- [x] Total volume (weight x reps)
+- [x] Workout frequency
+- [x] Weekly/monthly periods
+- [x] "Who's grinding the most" metric (Volume Champions / Set Grinders / Workout Warriors)
 
 ---
 
 ### 4. User Level Leaderboard
-- [ ] XP-based ranking
-- [ ] Current level display
-- [ ] XP earned this week/month
-- [ ] Friends comparison
-- [ ] Global comparison
+- [x] XP-based ranking
+- [x] Current level display
+- [x] XP earned this week/month
+- [x] Friends comparison
+- [x] Global comparison
 
 ---
 
@@ -250,3 +250,42 @@ computeOverallRankings(exerciseRankings) // Average e1RM across exercises
 - No friends (Friends view shows only current user)
 - User not in top N (shows separator + user's actual rank)
 - Empty leaderboards (contextual empty states)
+
+### Phase 2 (Completed 2026-02-03)
+
+**Files Modified:**
+- `src/lib/leaderboardUtils.ts` - Added volume and level computation utilities
+- `src/ui/components/Ranks/LeaderboardsTab.tsx` - Major enhancements
+
+**Features Implemented:**
+1. **Score & Tier Display** - Each leaderboard row shows the user's score and tier badge (Iron-Mythic)
+2. **Exercise Category Filter** - Filter exercises by muscle group (Chest, Back, Legs, Shoulders, Arms, Core)
+3. **Time Period Filters** - All Time / This Month / This Week for Overall, Volume, and Level leaderboards
+4. **Volume Leaderboard** - Complete new leaderboard type with three metrics:
+   - Total Volume (weight × reps) - "Volume Champions"
+   - Total Sets - "Set Grinders"
+   - Workout Count - "Workout Warriors"
+5. **Level/XP Leaderboard** - Complete new leaderboard type with three metrics:
+   - Level - "Level Leaders" (highest level achieved)
+   - Total XP - "XP Masters" (total experience points)
+   - Recent XP - "Rising Stars" (XP earned this week/month)
+
+**New Utility Functions:**
+```typescript
+// src/lib/leaderboardUtils.ts
+filterSessionsByPeriod(sessions, period) // Filter workouts by time period
+computeVolumeRankings(sessions, metric, userNameMap) // Compute volume leaderboard
+formatVolumeCompact(volume) // Format volume as "12.5k kg" or "1.2m kg"
+computeLevelRankings(profiles, metric, period, userNameMap) // Compute level leaderboard
+formatXPCompact(xp) // Format XP as "12.5k XP" or "1.2m XP"
+getLevelTierName(level) // Get tier name (Novice, Apprentice, etc.)
+calculatePeriodXP(calendar, period) // Calculate XP in time period
+```
+
+**UI Enhancements:**
+- Four-way type toggle: Exercise | Overall | Volume | Level
+- Volume metric selector: Total Volume | Total Sets | Workouts
+- Level metric selector: Level | Total XP | Recent XP
+- Flame icons for top 3 volume leaders
+- Level badge with tier-colored circle for level leaderboard
+- Context-aware empty states for each leaderboard type

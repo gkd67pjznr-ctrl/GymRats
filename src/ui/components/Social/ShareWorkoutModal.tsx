@@ -1,7 +1,7 @@
 // src/ui/components/Social/ShareWorkoutModal.tsx
 // Modal for sharing a completed workout to the social feed
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,9 @@ import { useSocialStore } from '@/src/lib/stores/socialStore';
 import { useUser } from '@/src/lib/stores/authStore';
 import type { PrivacyLevel } from '@/src/lib/socialModel';
 import { PhotoAttachment } from './PhotoAttachment';
+import { ShareableWorkoutCard } from './ShareableWorkoutCard';
+import { shareWorkoutAsImage } from '@/src/lib/sharing/workoutCardGenerator';
+import { calculateBestTierForSession } from '@/src/lib/workoutPostGenerator';
 
 interface ShareWorkoutModalProps {
   visible: boolean;
@@ -26,6 +29,8 @@ interface ShareWorkoutModalProps {
   session: WorkoutSession | null;
   onShared?: (postId: string) => void;
 }
+
+type ShareTab = 'feed' | 'image';
 
 // Privacy options
 const PRIVACY_OPTIONS: Array<{ value: PrivacyLevel; label: string; description: string }> = [
@@ -63,7 +68,9 @@ export function ShareWorkoutModal({
   const ds = makeDesignSystem('dark', 'toxic');
   const user = useUser();
   const createPostFromWorkout = useSocialStore((state) => state.createPostFromWorkout);
+  const cardRef = useRef<View>(null);
 
+  const [activeTab, setActiveTab] = useState<ShareTab>('feed');
   const [caption, setCaption] = useState('');
   const [selectedPrivacy, setSelectedPrivacy] = useState<PrivacyLevel>('public');
   const [photos, setPhotos] = useState<string[]>([]);
@@ -75,8 +82,10 @@ export function ShareWorkoutModal({
   const exerciseCount = new Set(session.sets.map((s) => s.exerciseId)).size;
   const setCount = session.sets.length;
   const durationMin = Math.round((session.endedAtMs - session.startedAtMs) / 60000);
+  const bestTier = calculateBestTierForSession(session);
+  const totalVolume = session.sets.reduce((sum, s) => sum + s.weightKg * s.reps, 0);
 
-  const handleShare = async () => {
+  const handleShareToFeed = async () => {
     if (!user) return;
 
     setSharing(true);
@@ -92,8 +101,6 @@ export function ShareWorkoutModal({
 
       // If photos were attached, update the post with photo URLs
       if (photos.length > 0) {
-        // Note: In a real implementation, you would upload photos to storage first
-        // and then update the post with the URLs. For now, we'll use local URIs.
         useSocialStore.getState().updatePost?.(post.id, {
           photoUrls: photos,
         });
@@ -110,6 +117,49 @@ export function ShareWorkoutModal({
       setSharing(false);
     }
   };
+
+  const handleShareAsImage = async () => {
+    if (!cardRef.current) return;
+
+    setSharing(true);
+    try {
+      await shareWorkoutAsImage(
+        {
+          session,
+          userName: user?.displayName,
+          bestTier: bestTier ?? 'Iron',
+          totalVolume,
+        },
+        cardRef
+      );
+    } catch (error) {
+      console.error('[ShareWorkoutModal] Failed to share as image:', error);
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const TabButton = ({ tab, label }: { tab: ShareTab; label: string }) => (
+    <Pressable
+      onPress={() => setActiveTab(tab)}
+      style={[
+        styles.tabButton,
+        {
+          backgroundColor: activeTab === tab ? ds.tone.accent : c.bg,
+          borderColor: activeTab === tab ? ds.tone.accent : c.border,
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.tabButtonText,
+          { color: activeTab === tab ? c.bg : c.text },
+        ]}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
 
   return (
     <Modal
@@ -137,150 +187,181 @@ export function ShareWorkoutModal({
             </Pressable>
           </View>
 
+          {/* Tab Switcher */}
+          <View style={styles.tabRow}>
+            <TabButton tab="feed" label="Post to Feed" />
+            <TabButton tab="image" label="Share Image" />
+          </View>
+
           <ScrollView
             style={styles.form}
             contentContainerStyle={styles.formContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* Workout Summary */}
-            <View
-              style={[
-                styles.summaryCard,
-                { backgroundColor: c.bg, borderColor: c.border },
-              ]}
-            >
-              <Text style={[styles.summaryTitle, { color: c.text }]}>
-                {session.routineName || `${exerciseCount} Exercise Workout`}
-              </Text>
-              <View style={styles.summaryStats}>
-                <View style={styles.stat}>
-                  <Text style={[styles.statValue, { color: ds.tone.accent }]}>
-                    {exerciseCount}
+            {activeTab === 'feed' ? (
+              <>
+                {/* Workout Summary */}
+                <View
+                  style={[
+                    styles.summaryCard,
+                    { backgroundColor: c.bg, borderColor: c.border },
+                  ]}
+                >
+                  <Text style={[styles.summaryTitle, { color: c.text }]}>
+                    {session.routineName || `${exerciseCount} Exercise Workout`}
                   </Text>
-                  <Text style={[styles.statLabel, { color: c.muted }]}>
-                    Exercises
-                  </Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={[styles.statValue, { color: ds.tone.accent }]}>
-                    {setCount}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: c.muted }]}>
-                    Sets
-                  </Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={[styles.statValue, { color: ds.tone.accent }]}>
-                    {durationMin}m
-                  </Text>
-                  <Text style={[styles.statLabel, { color: c.muted }]}>
-                    Duration
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Privacy Selection */}
-            <View style={styles.field}>
-              <Text style={[styles.label, { color: c.text }]}>Privacy</Text>
-              <View style={styles.privacyGrid}>
-                {PRIVACY_OPTIONS.map((option) => {
-                  const isSelected = selectedPrivacy === option.value;
-                  return (
-                    <Pressable
-                      key={option.value}
-                      onPress={() => setSelectedPrivacy(option.value)}
-                      style={[
-                        styles.privacyCard,
-                        {
-                          backgroundColor: isSelected
-                            ? alpha(ds.tone.accent, 0.15)
-                            : c.bg,
-                          borderColor: isSelected
-                            ? ds.tone.accent
-                            : c.border,
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.privacyLabel,
-                          { color: isSelected ? ds.tone.accent : c.text },
-                        ]}
-                      >
-                        {option.label}
+                  <View style={styles.summaryStats}>
+                    <View style={styles.stat}>
+                      <Text style={[styles.statValue, { color: ds.tone.accent }]}>
+                        {exerciseCount}
                       </Text>
-                      <Text
-                        style={[
-                          styles.privacyDescription,
-                          { color: c.muted },
-                        ]}
-                      >
-                        {option.description}
+                      <Text style={[styles.statLabel, { color: c.muted }]}>
+                        Exercises
                       </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
+                    </View>
+                    <View style={styles.stat}>
+                      <Text style={[styles.statValue, { color: ds.tone.accent }]}>
+                        {setCount}
+                      </Text>
+                      <Text style={[styles.statLabel, { color: c.muted }]}>
+                        Sets
+                      </Text>
+                    </View>
+                    <View style={styles.stat}>
+                      <Text style={[styles.statValue, { color: ds.tone.accent }]}>
+                        {durationMin}m
+                      </Text>
+                      <Text style={[styles.statLabel, { color: c.muted }]}>
+                        Duration
+                      </Text>
+                    </View>
+                  </View>
+                </View>
 
-            {/* Caption Input */}
-            <View style={styles.field}>
-              <Text style={[styles.label, { color: c.text }]}>
-                Caption (optional)
-              </Text>
-              <TextInput
-                value={caption}
-                onChangeText={setCaption}
-                placeholder="Add a caption..."
-                placeholderTextColor={c.muted}
-                multiline
-                numberOfLines={3}
-                maxLength={280}
-                style={[
-                  styles.input,
-                  {
-                    backgroundColor: c.bg,
-                    color: c.text,
-                    borderColor: c.border,
-                  },
-                ]}
-              />
-              <Text style={[styles.helper, { color: c.muted }]}>
-                {caption.length}/280
-              </Text>
-            </View>
+                {/* Privacy Selection */}
+                <View style={styles.field}>
+                  <Text style={[styles.label, { color: c.text }]}>Privacy</Text>
+                  <View style={styles.privacyGrid}>
+                    {PRIVACY_OPTIONS.map((option) => {
+                      const isSelected = selectedPrivacy === option.value;
+                      return (
+                        <Pressable
+                          key={option.value}
+                          onPress={() => setSelectedPrivacy(option.value)}
+                          style={[
+                            styles.privacyCard,
+                            {
+                              backgroundColor: isSelected
+                                ? alpha(ds.tone.accent, 0.15)
+                                : c.bg,
+                              borderColor: isSelected
+                                ? ds.tone.accent
+                                : c.border,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.privacyLabel,
+                              { color: isSelected ? ds.tone.accent : c.text },
+                            ]}
+                          >
+                            {option.label}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.privacyDescription,
+                              { color: c.muted },
+                            ]}
+                          >
+                            {option.description}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
 
-            {/* Photo Attachment */}
-            <PhotoAttachment
-              photos={photos}
-              onAddPhotos={(uris) => setPhotos([...photos, ...uris])}
-              onRemovePhoto={(uri) => setPhotos(photos.filter((p) => p !== uri))}
-              disabled={sharing}
-            />
-
-            {/* Suggested Captions */}
-            <View style={styles.field}>
-              <Text style={[styles.label, { color: c.text }]}>
-                Quick Add
-              </Text>
-              <View style={styles.suggestionsGrid}>
-                {SUGGESTED_CAPTIONS.map((suggested) => (
-                  <TouchableOpacity
-                    key={suggested}
-                    onPress={() => setCaption(suggested)}
+                {/* Caption Input */}
+                <View style={styles.field}>
+                  <Text style={[styles.label, { color: c.text }]}>
+                    Caption (optional)
+                  </Text>
+                  <TextInput
+                    value={caption}
+                    onChangeText={setCaption}
+                    placeholder="Add a caption..."
+                    placeholderTextColor={c.muted}
+                    multiline
+                    numberOfLines={3}
+                    maxLength={280}
                     style={[
-                      styles.suggestionChip,
-                      { backgroundColor: c.bg, borderColor: c.border },
+                      styles.input,
+                      {
+                        backgroundColor: c.bg,
+                        color: c.text,
+                        borderColor: c.border,
+                      },
                     ]}
-                  >
-                    <Text style={[styles.suggestionText, { color: c.text }]}>
-                      {suggested}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
+                  />
+                  <Text style={[styles.helper, { color: c.muted }]}>
+                    {caption.length}/280
+                  </Text>
+                </View>
+
+                {/* Photo Attachment */}
+                <PhotoAttachment
+                  photos={photos}
+                  onAddPhotos={(uris) => setPhotos([...photos, ...uris])}
+                  onRemovePhoto={(uri) => setPhotos(photos.filter((p) => p !== uri))}
+                  disabled={sharing}
+                />
+
+                {/* Suggested Captions */}
+                <View style={styles.field}>
+                  <Text style={[styles.label, { color: c.text }]}>
+                    Quick Add
+                  </Text>
+                  <View style={styles.suggestionsGrid}>
+                    {SUGGESTED_CAPTIONS.map((suggested) => (
+                      <TouchableOpacity
+                        key={suggested}
+                        onPress={() => setCaption(suggested)}
+                        style={[
+                          styles.suggestionChip,
+                          { backgroundColor: c.bg, borderColor: c.border },
+                        ]}
+                      >
+                        <Text style={[styles.suggestionText, { color: c.text }]}>
+                          {suggested}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </>
+            ) : (
+              <>
+                {/* Card Preview */}
+                <View style={styles.cardPreviewSection}>
+                  <Text style={[styles.label, { color: c.text, marginBottom: 12 }]}>
+                    Card Preview
+                  </Text>
+                  <View style={styles.cardPreviewContainer}>
+                    <ShareableWorkoutCard
+                      ref={cardRef}
+                      session={session}
+                      userName={user?.displayName}
+                      bestTier={bestTier ?? 'Iron'}
+                      totalVolume={totalVolume}
+                    />
+                  </View>
+                  <Text style={[styles.previewHint, { color: c.muted }]}>
+                    This card will be shared as an image to other apps
+                  </Text>
+                </View>
+              </>
+            )}
           </ScrollView>
 
           {/* Actions */}
@@ -299,7 +380,7 @@ export function ShareWorkoutModal({
               </Text>
             </Pressable>
             <Pressable
-              onPress={handleShare}
+              onPress={activeTab === 'feed' ? handleShareToFeed : handleShareAsImage}
               style={[
                 styles.button,
                 styles.buttonPrimary,
@@ -311,7 +392,11 @@ export function ShareWorkoutModal({
               disabled={sharing}
             >
               <Text style={[styles.buttonText, { color: c.bg }]}>
-                {sharing ? 'Sharing...' : 'Share Workout'}
+                {sharing
+                  ? 'Sharing...'
+                  : activeTab === 'feed'
+                  ? 'Post to Feed'
+                  : 'Share Image'}
               </Text>
             </Pressable>
           </View>
@@ -344,7 +429,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     borderRadius: 20,
     borderWidth: 1,
-    maxHeight: '80%',
+    maxHeight: '85%',
   },
   header: {
     flexDirection: 'row',
@@ -365,11 +450,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
   },
+  tabRow: {
+    flexDirection: 'row',
+    padding: 12,
+    gap: 8,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  tabButtonText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
   form: {
     flex: 1,
   },
   formContent: {
     padding: 16,
+    paddingTop: 8,
     gap: 20,
   },
   summaryCard: {
@@ -451,6 +553,18 @@ const styles = StyleSheet.create({
   suggestionText: {
     fontSize: 13,
     fontWeight: '600',
+  },
+  cardPreviewSection: {
+    alignItems: 'center',
+  },
+  cardPreviewContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  previewHint: {
+    fontSize: 12,
+    textAlign: 'center',
   },
   actions: {
     flexDirection: 'row',

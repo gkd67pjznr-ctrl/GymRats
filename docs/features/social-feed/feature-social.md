@@ -121,38 +121,50 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
-### Planned - Feed Tabs
-- [ ] Global feed tab (all public posts)
-- [ ] Friends feed tab (friends only)
-- [ ] Easy tab switching
-- [ ] Remember last viewed tab
+### Done - Feed Tabs
+- [x] Global feed tab (all public posts)
+- [x] Friends feed tab (friends only)
+- [x] Easy tab switching via ToggleChip components
+- [ ] Remember last viewed tab (persisting preference - deferred)
+
+**Implementation:** `app/(tabs)/feed.tsx` - FeedMode toggle with Public/Friends filtering
 
 ---
 
-### Planned - Feed Display Features
-- [ ] Infinite scroll pagination
-- [ ] Real-time post updates (new posts appear)
-- [ ] Post cards with consistent styling
-- [ ] Card skins (cosmetic customization)
-- [ ] Workout stats in posts
-- [ ] Rank badges earned display
+### Done - Feed Display Features
+- [x] Infinite scroll pagination (FlatList with onEndReached)
+- [x] Real-time post updates (new posts banner with tap to scroll)
+- [x] Post cards with consistent styling
+- [ ] Card skins (cosmetic customization - deferred)
+- [x] Workout stats in posts (exercises, sets, duration)
+- [x] Rank badges earned display
+
+**Implementation:** `app/(tabs)/feed.tsx` - FlatList with pagination, NewPostsBanner component
 
 ---
 
-### Planned - Reactions
-- [ ] Quick emote buttons (fire, skull, crown, bolt, clap)
-- [ ] Reaction counts
-- [ ] Reaction animations
-- [ ] Real-time reaction updates
-- [ ] See who reacted
+### Done - Reactions
+- [x] Quick emote buttons (like, fire, crown)
+- [x] Reaction counts displayed
+- [x] Reaction animations (pop scale effect with haptic feedback)
+- [x] Real-time reaction updates via socialStore sync
+- [ ] See who reacted (future enhancement)
+
+**Implementation:** `src/ui/components/Social/WorkoutPostCard.tsx` - AnimatedEmoteButton component
 
 ---
 
-### Planned - Comments
-- [ ] Comment input on posts
-- [ ] Comment thread display
-- [ ] Reply to comments
-- [ ] Comment notifications
+### Done - Comments
+- [x] Comment input on posts (CommentInput component with send button)
+- [x] Comment thread display (CommentList with threading)
+- [x] Reply to comments (parentCommentId support)
+- [x] Delete own comments
+- [ ] Comment notifications (planned)
+
+**Implementation:**
+- `src/ui/components/Social/CommentInput.tsx` - Enhanced input with send button
+- `src/ui/components/Social/CommentItem.tsx` - Comment display with reply/delete
+- `app/post/[id].tsx` - Post detail with full comment system
 
 ---
 
@@ -164,15 +176,18 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
-### Planned - User Profiles
-- [ ] Public profile page (`/u/[id]`)
-- [ ] Rank badges display
-- [ ] Level and streak display
-- [ ] Recent workouts summary
-- [ ] Stats summary
-- [ ] Add friend button
-- [ ] Block option
-- [ ] Shared workouts display
+### Done - User Profiles
+- [x] Public profile page (`/u/[id]`)
+- [x] GymRank score display with tier coloring
+- [x] Level and streak display
+- [x] Recent posts display (with WorkoutPostCard)
+- [x] Lifetime stats (workouts, PRs, volume)
+- [x] Top exercises by rank (ProfileStatsCard)
+- [x] Add friend button
+- [x] Message friend button
+- [ ] Block option (UI exists via PostOptions)
+
+**Implementation:** `app/u/[id].tsx` - Enhanced profile with stats cards and posts
 
 ---
 
