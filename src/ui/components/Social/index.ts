@@ -16,3 +16,7 @@ export { ReportModal } from './ReportModal';
 export type { ReportReason } from './ReportModal';
 
 export { PostOptions } from './PostOptions';
+
+export { ShareableWorkoutCard } from './ShareableWorkoutCard';
+
+export { WorkoutPostCard } from './WorkoutPostCard';

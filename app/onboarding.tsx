@@ -2,8 +2,9 @@
 // Main onboarding screen with step routing
 
 import { Stack, useRouter } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { View, Text, Pressable, ActivityIndicator, TextInput, ScrollView, Dimensions } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useOnboardingStore, useCurrentOnboardingStep, PERSONALITIES } from "../src/lib/stores/onboardingStore";
 import { useAvatarStore } from "../src/lib/avatar/avatarStore";
 import { KEY_LIFTS, setBaselinePR } from "../src/lib/stores/prStore";
@@ -11,6 +12,8 @@ import { lbToKg } from "../src/lib/units";
 import type { AvatarArtStyle } from "../src/lib/avatar/avatarTypes";
 import { useThemeColors } from "../src/ui/theme";
 import { FR } from "../src/ui/GrStyle";
+import { buddies } from "../src/lib/buddyData";
+import { VoiceManager } from "../src/lib/voice/VoiceManager";
 
 export default function OnboardingScreen() {
   const c = useThemeColors();
@@ -720,21 +723,94 @@ function PersonalityPickerStep() {
   const c = useThemeColors();
   const { setCurrentStep, setPersonality } = useOnboardingStore();
   const [selected, setSelected] = useState("");
+  const [playingId, setPlayingId] = useState<string | null>(null);
+
+  // Initialize VoiceManager on mount
+  useEffect(() => {
+    VoiceManager.initialize().catch(err => {
+      console.warn('[PersonalityPickerStep] VoiceManager init failed:', err);
+    });
+    return () => {
+      VoiceManager.stopAll();
+    };
+  }, []);
+
+  const handlePlayPreview = useCallback(async (personalityId: string) => {
+    // If already playing this one, stop it
+    if (playingId === personalityId) {
+      VoiceManager.stopAll();
+      setPlayingId(null);
+      return;
+    }
+
+    // Stop any currently playing audio
+    if (playingId) {
+      VoiceManager.stopAll();
+    }
+
+    // Find the buddy data for this personality
+    const buddy = buddies.find(b => b.id === personalityId);
+    if (!buddy) return;
+
+    // Get a preview line
+    const previewLines = buddy.previewLines;
+    if (!previewLines || previewLines.length === 0) return;
+
+    // Play a random preview line
+    const randomLine = previewLines[Math.floor(Math.random() * previewLines.length)];
+    setPlayingId(personalityId);
+
+    try {
+      // Check if buddy has voice lines
+      const voiceLines = buddy.voiceLines;
+      if (voiceLines?.pr_weight && voiceLines.pr_weight.length > 0) {
+        await VoiceManager.play(voiceLines.pr_weight[0]);
+      }
+    } catch (error) {
+      console.warn('[PersonalityPickerStep] Voice preview failed:', error);
+    } finally {
+      setPlayingId(null);
+    }
+  }, [playingId]);
 
   const handleNext = () => {
+    VoiceManager.stopAll();
     setPersonality(selected || "coach");
     setCurrentStep("highlights");
   };
 
   return (
     <View style={{ flex: 1, padding: FR.space.x6, gap: FR.space.x6 }}>
-      <Text style={{ color: c.text, ...FR.type.h1 }}>Pick your gym buddy</Text>
-      <Text style={{ color: c.muted, ...FR.type.sub }}>Choose your personality. You can change this later.</Text>
+      <View style={{ gap: FR.space.x2 }}>
+        <Text style={{ color: c.text, ...FR.type.h1 }}>Pick your gym buddy</Text>
+        <Text style={{ color: c.muted, ...FR.type.sub }}>Choose your AI buddy's personality.</Text>
+
+        {/* Task #13: "Can change later" note */}
+        <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: FR.space.x2,
+          backgroundColor: `${c.text}10`,
+          paddingVertical: FR.space.x2,
+          paddingHorizontal: FR.space.x3,
+          borderRadius: FR.radius.sm,
+          marginTop: FR.space.x2,
+        }}>
+          <Ionicons name="refresh-outline" size={16} color={c.muted} />
+          <Text style={{ color: c.muted, ...FR.type.sub, flex: 1 }}>
+            You can change this anytime in Settings
+          </Text>
+        </View>
+      </View>
 
       {/* Personality cards */}
-      <View style={{ gap: FR.space.x3, flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: FR.space.x3 }} showsVerticalScrollIndicator={false}>
         {PERSONALITIES.map((personality) => {
           const isSelected = selected === personality.id;
+          const isPlaying = playingId === personality.id;
+          const buddy = buddies.find(b => b.id === personality.id);
+          const hasVoice = buddy?.voiceLines && Object.keys(buddy.voiceLines).length > 0;
+
           return (
             <Pressable
               key={personality.id}
@@ -754,12 +830,45 @@ function PersonalityPickerStep() {
                   <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>{personality.name}</Text>
                   <Text style={{ color: c.muted, ...FR.type.sub }}>{personality.tagline}</Text>
                   <Text style={{ color: c.muted, ...FR.type.sub, fontSize: 12 }}>{personality.description}</Text>
+
+                  {/* Preview quote */}
+                  {buddy?.previewLines && buddy.previewLines.length > 0 && (
+                    <Text style={{ color: c.text, ...FR.type.sub, fontSize: 12, fontStyle: "italic", marginTop: 4 }}>
+                      "{buddy.previewLines[0]}"
+                    </Text>
+                  )}
                 </View>
+
+                {/* Audio preview button */}
+                {hasVoice && (
+                  <Pressable
+                    onPress={(e) => {
+                      e.stopPropagation?.();
+                      handlePlayPreview(personality.id);
+                    }}
+                    style={({ pressed }) => ({
+                      width: 36,
+                      height: 36,
+                      borderRadius: 18,
+                      backgroundColor: isPlaying ? c.text : `${c.text}20`,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      opacity: pressed ? 0.7 : 1,
+                    })}
+                    accessibilityLabel={isPlaying ? "Stop preview" : "Play voice preview"}
+                  >
+                    <Ionicons
+                      name={isPlaying ? "stop" : "volume-high-outline"}
+                      size={18}
+                      color={isPlaying ? c.bg : c.text}
+                    />
+                  </Pressable>
+                )}
               </View>
             </Pressable>
           );
         })}
-      </View>
+      </ScrollView>
 
       <View style={{ gap: FR.space.x2 }}>
         <Pressable
@@ -774,7 +883,10 @@ function PersonalityPickerStep() {
           <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
         </Pressable>
         <Pressable
-          onPress={() => setCurrentStep("lifts")}
+          onPress={() => {
+            VoiceManager.stopAll();
+            setCurrentStep("lifts");
+          }}
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
         >
           <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>

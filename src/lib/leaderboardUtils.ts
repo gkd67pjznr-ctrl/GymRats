@@ -184,3 +184,312 @@ export function formatE1rmDisplay(e1rm: number, preferLbs: boolean = false): str
   }
   return `${Math.round(e1rm)} kg`;
 }
+
+// ============================================================================
+// Volume Leaderboard Utilities
+// ============================================================================
+
+export type VolumeMetric = 'sets' | 'volume' | 'workouts';
+
+export type VolumeLeaderboardEntry = EnhancedLeaderboardEntry & {
+  totalSets: number;
+  totalVolume: number;  // kg lifted (weight × reps)
+  workoutCount: number;
+};
+
+export type WorkoutSessionForVolume = {
+  id: string;
+  userId: string;
+  userName?: string;
+  startedAtMs: number;
+  sets: Array<{
+    weightKg: number;
+    reps: number;
+  }>;
+};
+
+/**
+ * Filter workout sessions by time period
+ * @param sessions - Workout sessions to filter
+ * @param period - Time period ('all', 'monthly', 'weekly')
+ * @returns Filtered sessions within the time period
+ */
+export function filterSessionsByPeriod<T extends { startedAtMs: number }>(
+  sessions: T[],
+  period: 'all' | 'monthly' | 'weekly'
+): T[] {
+  if (period === 'all') return sessions;
+
+  const now = Date.now();
+  let cutoffMs: number;
+
+  if (period === 'weekly') {
+    // Start of current week (Sunday)
+    const startOfWeek = new Date();
+    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+    cutoffMs = startOfWeek.getTime();
+  } else {
+    // Start of current month
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+    cutoffMs = startOfMonth.getTime();
+  }
+
+  return sessions.filter((s) => s.startedAtMs >= cutoffMs);
+}
+
+/**
+ * Compute volume leaderboard rankings from workout sessions
+ * @param sessions - All workout sessions
+ * @param metric - Metric to rank by ('sets', 'volume', 'workouts')
+ * @param userNameMap - Map of userId to displayName
+ * @returns Volume leaderboard entries sorted by the specified metric
+ */
+export function computeVolumeRankings(
+  sessions: WorkoutSessionForVolume[],
+  metric: VolumeMetric,
+  userNameMap: Map<string, string> = new Map()
+): VolumeLeaderboardEntry[] {
+  // Aggregate stats per user
+  const userStats = new Map<string, {
+    userName: string;
+    totalSets: number;
+    totalVolume: number;
+    workoutCount: number;
+    workoutIds: Set<string>;
+  }>();
+
+  for (const session of sessions) {
+    const existing = userStats.get(session.userId);
+    const setCount = session.sets.length;
+    const sessionVolume = session.sets.reduce(
+      (sum, set) => sum + set.weightKg * set.reps,
+      0
+    );
+
+    if (existing) {
+      existing.totalSets += setCount;
+      existing.totalVolume += sessionVolume;
+      if (!existing.workoutIds.has(session.id)) {
+        existing.workoutIds.add(session.id);
+        existing.workoutCount += 1;
+      }
+    } else {
+      userStats.set(session.userId, {
+        userName: session.userName || userNameMap.get(session.userId) || 'Unknown',
+        totalSets: setCount,
+        totalVolume: sessionVolume,
+        workoutCount: 1,
+        workoutIds: new Set([session.id]),
+      });
+    }
+  }
+
+  // Convert to entries and sort by the selected metric
+  const entries: VolumeLeaderboardEntry[] = [];
+  for (const [userId, stats] of userStats.entries()) {
+    let value: number;
+    let display: string;
+
+    switch (metric) {
+      case 'sets':
+        value = stats.totalSets;
+        display = `${value} sets`;
+        break;
+      case 'volume':
+        value = Math.round(stats.totalVolume);
+        display = `${formatVolumeCompact(value)}`;
+        break;
+      case 'workouts':
+        value = stats.workoutCount;
+        display = `${value} workouts`;
+        break;
+    }
+
+    entries.push({
+      rank: 0,
+      userId,
+      userName: stats.userName,
+      value,
+      display,
+      totalSets: stats.totalSets,
+      totalVolume: stats.totalVolume,
+      workoutCount: stats.workoutCount,
+    });
+  }
+
+  // Sort by value descending
+  entries.sort((a, b) => {
+    if (b.value !== a.value) return b.value - a.value;
+    return a.userName.localeCompare(b.userName);
+  });
+
+  // Assign ranks
+  return entries.map((entry, index) => ({
+    ...entry,
+    rank: index + 1,
+  }));
+}
+
+/**
+ * Format volume number in a compact way
+ * @param volume - Volume in kg
+ * @returns Formatted string like "12.5k kg" or "1.2m kg"
+ */
+export function formatVolumeCompact(volume: number): string {
+  if (volume < 1000) return `${volume} kg`;
+  if (volume < 1000000) return `${(volume / 1000).toFixed(1).replace('.0', '')}k kg`;
+  return `${(volume / 1000000).toFixed(2).replace('.00', '')}m kg`;
+}
+
+// ============================================================================
+// Level/XP Leaderboard Utilities
+// ============================================================================
+
+export type LevelMetric = 'level' | 'totalXP' | 'weeklyXP';
+
+export type LevelLeaderboardEntry = EnhancedLeaderboardEntry & {
+  currentLevel: number;
+  totalXP: number;
+  levelTier: string;  // Novice, Apprentice, Adept, Expert, Master, Grandmaster
+};
+
+export type GamificationProfileForLeaderboard = {
+  userId: string;
+  userName?: string;
+  currentLevel: number;
+  totalXP: number;
+  workoutCalendar?: Array<{ date: string; xp: number }>;
+};
+
+/**
+ * Get the level tier name based on level
+ */
+export function getLevelTierName(level: number): string {
+  if (level <= 5) return 'Novice';
+  if (level <= 10) return 'Apprentice';
+  if (level <= 15) return 'Adept';
+  if (level <= 20) return 'Expert';
+  if (level <= 30) return 'Master';
+  return 'Grandmaster';
+}
+
+/**
+ * Get the tier color key for a level
+ */
+export function getLevelTierColorKey(level: number): string {
+  if (level <= 5) return 'iron';
+  if (level <= 10) return 'bronze';
+  if (level <= 15) return 'silver';
+  if (level <= 20) return 'gold';
+  if (level <= 30) return 'platinum';
+  return 'mythic';
+}
+
+/**
+ * Calculate XP earned in a specific time period from workout calendar
+ * @param calendar - Workout calendar with daily XP
+ * @param period - Time period to filter
+ * @returns Total XP in the period
+ */
+export function calculatePeriodXP(
+  calendar: Array<{ date: string; xp: number }> | undefined,
+  period: 'all' | 'monthly' | 'weekly'
+): number {
+  if (!calendar || calendar.length === 0) return 0;
+  if (period === 'all') {
+    return calendar.reduce((sum, day) => sum + day.xp, 0);
+  }
+
+  const now = new Date();
+  let cutoffDate: Date;
+
+  if (period === 'weekly') {
+    // Start of current week (Sunday)
+    cutoffDate = new Date(now);
+    cutoffDate.setHours(0, 0, 0, 0);
+    cutoffDate.setDate(cutoffDate.getDate() - cutoffDate.getDay());
+  } else {
+    // Start of current month
+    cutoffDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+
+  const cutoffStr = cutoffDate.toISOString().split('T')[0];
+  return calendar
+    .filter((day) => day.date >= cutoffStr)
+    .reduce((sum, day) => sum + day.xp, 0);
+}
+
+/**
+ * Compute Level/XP leaderboard rankings
+ * @param profiles - Gamification profiles to rank
+ * @param metric - Metric to rank by ('level', 'totalXP', 'weeklyXP')
+ * @param period - Time period for XP metrics
+ * @param userNameMap - Map of userId to displayName
+ * @returns Level leaderboard entries sorted by the specified metric
+ */
+export function computeLevelRankings(
+  profiles: GamificationProfileForLeaderboard[],
+  metric: LevelMetric,
+  period: 'all' | 'monthly' | 'weekly' = 'all',
+  userNameMap: Map<string, string> = new Map()
+): LevelLeaderboardEntry[] {
+  const entries: LevelLeaderboardEntry[] = [];
+
+  for (const profile of profiles) {
+    let value: number;
+    let display: string;
+
+    switch (metric) {
+      case 'level':
+        value = profile.currentLevel;
+        display = `Level ${value}`;
+        break;
+      case 'totalXP':
+        value = profile.totalXP;
+        display = formatXPCompact(value);
+        break;
+      case 'weeklyXP':
+        value = calculatePeriodXP(profile.workoutCalendar, period);
+        display = formatXPCompact(value);
+        break;
+    }
+
+    entries.push({
+      rank: 0,
+      userId: profile.userId,
+      userName: profile.userName || userNameMap.get(profile.userId) || 'Unknown',
+      value,
+      display,
+      currentLevel: profile.currentLevel,
+      totalXP: profile.totalXP,
+      levelTier: getLevelTierName(profile.currentLevel),
+    });
+  }
+
+  // Sort by value descending, then by total XP for ties on level
+  entries.sort((a, b) => {
+    if (b.value !== a.value) return b.value - a.value;
+    if (metric === 'level' && b.totalXP !== a.totalXP) return b.totalXP - a.totalXP;
+    return a.userName.localeCompare(b.userName);
+  });
+
+  // Assign ranks
+  return entries.map((entry, index) => ({
+    ...entry,
+    rank: index + 1,
+  }));
+}
+
+/**
+ * Format XP number in a compact way
+ * @param xp - XP amount
+ * @returns Formatted string like "12.5k XP" or "1.2m XP"
+ */
+export function formatXPCompact(xp: number): string {
+  if (xp < 1000) return `${xp} XP`;
+  if (xp < 1000000) return `${(xp / 1000).toFixed(1).replace('.0', '')}k XP`;
+  return `${(xp / 1000000).toFixed(2).replace('.00', '')}m XP`;
+}
