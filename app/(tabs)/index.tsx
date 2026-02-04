@@ -5,7 +5,9 @@ import { ScrollView, View, StyleSheet, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
+import { TAB_BAR_HEIGHT } from "../../src/ui/components/PersistentTabBar";
 
 // New Design System imports
 import {
@@ -122,6 +124,7 @@ export default function HomeTab() {
   const router = useRouter();
   const posts = useFeedAll();
   const c = useThemeColors();
+  const insets = useSafeAreaInsets();
 
   const handleSelectFriend = (friendId: string) => {
     // Navigate to friend's room or profile
@@ -150,7 +153,10 @@ export default function HomeTab() {
 
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20 }
+          ]}
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}
@@ -254,7 +260,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: spacing.lg,
     paddingTop: 16,
-    paddingBottom: spacing["2xl"],
     gap: spacing.lg,
   },
   header: {
