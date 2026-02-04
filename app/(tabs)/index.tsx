@@ -159,13 +159,6 @@ export default function HomeTab() {
           ]}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text variant="h1" color="primary">
-              Home
-            </Text>
-          </View>
-
           {/* Friends Dropdown */}
           <FriendsDropdown onSelectFriend={handleSelectFriend} />
 
@@ -261,9 +254,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: 16,
     gap: spacing.lg,
-  },
-  header: {
-    marginBottom: spacing.xs,
   },
   roomSection: {
     gap: spacing.sm,
