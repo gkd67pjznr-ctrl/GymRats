@@ -37,7 +37,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | UI Themes & Visual Style | 🔄 In Progress | 7/12 | Theme token system complete (3 palettes) |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
 | Onboarding | ✅ Done | 7/7 | Full flow implemented, debug reset available |
-| Avatar & Hangout Room | ✅ Done | 8/8 | Phase 2 complete - unified UserStatsStore for growth metrics |
+| Avatar & Hangout Room | ✅ Done | 10/10 | Phase 2 complete + Home tab integration with Friends dropdown |
 | Workout Replay | ✅ Done | 5/5 | Cinematic summaries complete |
 | DNA | ✅ Done | 4/4 | Visualization complete |
 | Gym Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
@@ -139,6 +139,16 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - Dropdown notification center with real-time updates
 - Mark as read / Mark all as read functionality
 - Hidden when workout drawer is expanded (full-screen mode)
+
+### Home Tab Redesign (NEW 2026-02-04)
+- Friends dropdown with online count and working out count
+- User's hangout room as main content area (full-width canvas)
+- Room canvas with decoration layers (background, wall art, furniture, plants, avatars)
+- Decoration slot system for customizable room items
+- Real-time presence integration
+- Quick actions section (Start Workout, Calendar)
+- Compact social feed preview (top 3 posts)
+- Create room prompt for new users
 
 ### UI Foundation
 - Dark theme with accent colors
