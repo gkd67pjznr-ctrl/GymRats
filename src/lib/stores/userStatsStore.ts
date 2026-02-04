@@ -387,12 +387,24 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
           state.setHydrated(true);
 
           // Migration: check if we need to rebuild from avatar store or workout history
-          if (state.version < 1 || state.lifetimeStats.totalWorkouts === 0) {
+          // Also rebuild if workout history has more exercises than stats (data mismatch)
+          const needsMigration = state.version < 1 || state.lifetimeStats.totalWorkouts === 0;
+
+          if (needsMigration) {
             try {
               await migrateFromLegacyStores(state);
             } catch (error) {
               if (__DEV__) {
                 console.error("[userStatsStore] Migration failed:", error);
+              }
+            }
+          } else {
+            // Check for mismatch - rebuild if workout history has exercises not in stats
+            try {
+              await checkAndRebuildIfNeeded(state);
+            } catch (error) {
+              if (__DEV__) {
+                console.error("[userStatsStore] Rebuild check failed:", error);
               }
             }
           }
@@ -427,6 +439,53 @@ async function migrateFromLegacyStores(state: UserStatsStoreState) {
   } catch (error) {
     if (__DEV__) {
       console.error("[userStatsStore] Error during migration:", error);
+    }
+  }
+}
+
+/**
+ * Check if workout history has exercises not in stats and rebuild if needed
+ */
+async function checkAndRebuildIfNeeded(state: UserStatsStoreState) {
+  try {
+    const workoutDataStr = await AsyncStorage.getItem(WORKOUT_STORAGE_KEY);
+    if (!workoutDataStr) return;
+
+    const workoutData = JSON.parse(workoutDataStr);
+    const sessions: WorkoutSession[] = workoutData.state?.sessions || [];
+    if (sessions.length === 0) return;
+
+    // Get unique exercise IDs from workout history
+    const historyExerciseIds = new Set<string>();
+    for (const session of sessions) {
+      for (const set of session.sets) {
+        historyExerciseIds.add(set.exerciseId);
+      }
+    }
+
+    // Get exercise IDs from stats
+    const statsExerciseIds = new Set(Object.keys(state.exerciseStats));
+
+    // Check if history has exercises not in stats
+    let needsRebuild = false;
+    for (const exerciseId of historyExerciseIds) {
+      if (!statsExerciseIds.has(exerciseId)) {
+        needsRebuild = true;
+        break;
+      }
+    }
+
+    if (needsRebuild) {
+      if (__DEV__) {
+        console.log(
+          `[userStatsStore] Rebuilding stats - history has ${historyExerciseIds.size} exercises, stats has ${statsExerciseIds.size}`
+        );
+      }
+      state.rebuildFromHistory(sessions);
+    }
+  } catch (error) {
+    if (__DEV__) {
+      console.error("[userStatsStore] Error checking for rebuild:", error);
     }
   }
 }

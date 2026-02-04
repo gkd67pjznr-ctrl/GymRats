@@ -39,7 +39,7 @@ GymRats has reached a significant milestone with 117 of 167 planned features imp
 #### Advanced Features (50-70% Complete)
 - **Avatar System**: Growth mechanics and art style selection
 - **Hangout Room**: Shared social space with friend presence
-- **Forge Lab**: Analytics dashboard (Phase 1 complete)
+- **Gym Lab**: Analytics dashboard (Phase 1 complete)
 - **Workout Replay**: Cinematic post-workout summaries
 
 ---
@@ -99,7 +99,7 @@ GymRats has reached a significant milestone with 117 of 167 planned features imp
    - Add avatar customization features
    - Complete room decoration system
 
-5. **Forge Lab Charting**
+5. **Gym Lab Charting**
    - Integrate charting library (victory-native or react-native-chart-kit)
    - Implement visualization components
    - Add premium blur functionality
@@ -146,7 +146,7 @@ GymRats has reached a significant milestone with 117 of 167 planned features imp
 | Notifications | In Progress | 1/4 | High |
 | Onboarding | In Progress | 3/7 | High |
 | Avatar & Hangout | In Progress | 4/8 | High |
-| Forge Lab | In Progress | 3/6 | High |
+| Gym Lab | In Progress | 3/6 | High |
 
 ### Post-Launch Features (Can be Added Later)
 | Feature Group | Status | Progress | Timeline |

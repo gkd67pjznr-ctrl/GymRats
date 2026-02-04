@@ -113,8 +113,8 @@ For full workflow details, see `docs/Project Management/CLAUDE_WORKFLOW.md`:
 | AI Gym Buddy | `docs/features/ai-buddy/` | `feature-ai-buddy.md` |
 | Authentication | `docs/features/authentication/` | `feature-auth.md` |
 | Backend Sync | `docs/features/backend-sync/` | `feature-backend.md` |
-| Forge Lab | `docs/features/forge-lab/` | `feature-forge-lab.md` |
-| Forge DNA | `docs/features/forge-dna/` | `feature-forge-dna.md` |
+| Gym Lab | `docs/features/forge-lab/` | `feature-forge-lab.md` |
+| DNA | `docs/features/forge-dna/` | `feature-forge-dna.md` |
 | Gamification | `docs/features/gamification/` | `feature-gamification.md` |
 | Notifications | `docs/features/notifications/` | `feature-notifications.md` |
 | Social Feed | `docs/features/social-feed/` | `feature-social.md` |

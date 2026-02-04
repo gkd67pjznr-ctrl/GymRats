@@ -94,11 +94,11 @@ See `docs/visual-style/` for comprehensive documentation including UI Aesthetic 
 
 **Why this wins:** Lifters want to share with other lifters, not their running friends.
 
-## 6. Forge DNA & Analytics
+## 6. DNA & Analytics
 **What makes us different:** Your training identity, visualized.
 
-- **Forge DNA** — visual fingerprint of training style (muscle balance, lift preferences, strength vs volume)
-- **Forge Lab** — premium analytics dashboard (strength curves, volume trends, rank progression)
+- **DNA** — visual fingerprint of training style (muscle balance, lift preferences, strength vs volume)
+- **Gym Lab** — premium analytics dashboard (strength curves, volume trends, rank progression)
 - **Premium blur mechanic** — show partial DNA free, full version behind subscription
 
 **Why this wins:** Serious lifters crave data. Casual lifters love the visual identity.
@@ -132,13 +132,13 @@ See `docs/visual-style/` for comprehensive documentation including UI Aesthetic 
 - Basic history/calendar + weight graph
 - Streak tracking + gamification (XP, levels, Forge Tokens)
 - Avatar (default style) + hangout room
-- Forge DNA (partially blurred)
+- DNA (partially blurred)
 - Forge Milestones + trophy case
 - Workout Replay
 
 ### Pro Subscription
-- **Forge Lab** — full analytics dashboard
-- **Full Forge DNA** — unblurred training identity
+- **Gym Lab** — full analytics dashboard
+- **Full DNA** — unblurred training identity
 - **Advanced AI coaching** suggestions (post-launch)
 - **Integration analytics** — Apple Health, MFP, Whoop data displayed
 
@@ -253,8 +253,8 @@ Earned through gameplay, spent on cosmetics:
 ## Analytics & Identity
 | Feature | Priority | Notes |
 |---------|----------|-------|
-| Forge DNA | P0 | Partially blurred free, full premium |
-| Forge Lab | P1 | Premium analytics dashboard |
+| DNA | P0 | Partially blurred free, full premium |
+| Gym Lab | P1 | Premium analytics dashboard |
 | Weight graph | P0 | Free |
 | Health integrations | P2 | Apple Health, MFP, Whoop (post-launch) |
 
@@ -272,7 +272,7 @@ Earned through gameplay, spent on cosmetics:
 | Feature | Priority | Notes |
 |---------|----------|-------|
 | Apple Health | P1 | Weight, BMI import |
-| MyFitnessPal | P2 | Nutrition data for Forge Lab |
+| MyFitnessPal | P2 | Nutrition data for Gym Lab |
 | Whoop | P2 | Recovery, strain data |
 | Fitbit | P2 | Weight, activity data |
 
@@ -402,7 +402,7 @@ Earned through gameplay, spent on cosmetics:
 - ✅ Feed with Global/Friends tabs
 - ✅ Workout Replay (cinematic summaries)
 - ✅ Reactions + comments
-- ✅ Forge DNA + Forge Lab
+- ✅ DNA + Gym Lab
 - ✅ Forge Milestones (30 achievements)
 - ✅ Push notifications system
 - 🔄 Auto-generated workout cards (in progress)
@@ -436,7 +436,7 @@ What keeps users coming back when they're not lifting:
 - **Planning** — browse/edit routines, plan next workout
 - **Avatar care** — visit avatar, check room, see friends' status
 - **Rank checking** — review progression for serious lifters
-- **Forge DNA** — review training identity
+- **DNA** — review training identity
 
 ---
 
@@ -452,7 +452,7 @@ What keeps users coming back when they're not lifting:
 - Organic sharing of Workout Replays to in-app feed
 - Word-of-mouth from aesthetic/vibe
 - Retention through avatar + streak + hangout room
-- Premium conversion through Forge Lab + Forge DNA blur
+- Premium conversion through Gym Lab + DNA blur
 
 ## Performance Targets
 - App launch: <2s
@@ -489,7 +489,7 @@ What keeps users coming back when they're not lifting:
 | Growing avatar | Yes | No | No | No | Yes |
 | Cosmetic store | Yes | No | No | No | Yes |
 | Workout Replay | Yes | No | No | No | No |
-| Forge DNA | Yes | No | No | No | No |
+| DNA | Yes | No | No | No | No |
 | Online competitions | Yes | No | No | No | No |
 | Free tier | Yes | Yes | Yes | Freemium | Freemium |
 
@@ -551,8 +551,8 @@ Key decisions:
 - **AI Gym Buddy:** 8-12 archetypes, tiered (basic/premium/legendary), reactive commentary, AI-generated voices, original characters only
 - **Avatar & Hangout Room:** Finch-inspired, multiple art styles, visual-only social room, purchasable decorations
 - **Workout Replay:** Cinematic post-workout summary, share to in-app feed (not external)
-- **Forge DNA:** Training identity fingerprint, premium blur mechanic
-- **Forge Lab:** Premium analytics dashboard, weight graph free
+- **DNA:** Training identity fingerprint, premium blur mechanic
+- **Gym Lab:** Premium analytics dashboard, weight graph free
 - **Forge Milestones:** Tiered rarity (common/rare/epic/legendary), trophy case
 - **Forge Seasons:** Lighter version (no battle pass), limited-time cosmetics
 - **Online Competitions:** PL meets + BB shows, tiered judging, seasonal events

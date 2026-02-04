@@ -45,18 +45,23 @@ const GOOGLE_DISCOVERY_URL =
   'https://accounts.google.com/.well-known/openid-configuration';
 
 /**
- * Get the redirect URI for OAuth callback
- * Uses the app scheme configured in app.json
+ * Get the app's deep link URI for OAuth callback
+ * Used by WebBrowser.openAuthSessionAsync to detect when auth is complete
  */
-function getRedirectUri(): string {
+function getAppDeepLinkUri(): string {
   const scheme = Constants.expoConfig?.scheme || 'gymrats';
-  // Use the simple scheme://path format for deep linking
-  // This works better with Supabase OAuth than makeRedirectUri
-  const redirectUri = `${scheme}://auth`;
-  if (__DEV__) {
-    console.log('[Google OAuth] Redirect URI:', redirectUri);
-  }
-  return redirectUri;
+  return `${scheme}://`;
+}
+
+/**
+ * Get the Supabase callback URL
+ * This is where Google redirects to, then Supabase redirects to your app
+ */
+function getSupabaseCallbackUrl(): string {
+  const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ||
+    process.env.EXPO_PUBLIC_SUPABASE_URL ||
+    'https://fvuxkzujqslffkgjxquv.supabase.co';
+  return `${supabaseUrl}/auth/v1/callback`;
 }
 
 /**
@@ -296,13 +301,15 @@ function base64UrlEncode(buffer: ArrayBuffer | Uint8Array): string {
 
 /**
  * Get the Google OAuth URL for direct browser opening
+ * NOTE: For mobile apps, use signInWithSupabaseGoogle() instead
  *
  * @param state - State parameter for CSRF protection
  * @returns Full Google OAuth URL
  */
 export function getGoogleOAuthUrl(state?: string): string {
   const clientId = getGoogleClientId();
-  const redirectUri = getRedirectUri();
+  // Use Supabase callback URL for Google OAuth redirect
+  const redirectUri = getSupabaseCallbackUrl();
 
   const params = new URLSearchParams({
     client_id: clientId,
@@ -399,27 +406,35 @@ export function handleGoogleOAuthCallback(url: string): OAuthResult | null {
 /**
  * Sign in with Google using Supabase's built-in OAuth
  *
- * This opens Supabase's Google OAuth URL in an in-app browser.
- * The OAuth callback is handled via deep linking in the root layout.
+ * Flow:
+ * 1. Open Supabase OAuth URL in browser
+ * 2. User signs in with Google
+ * 3. Google redirects to Supabase callback URL (HTTPS)
+ * 4. Supabase redirects to app deep link (gymrats://)
+ * 5. WebBrowser detects the deep link and returns
+ * 6. We extract tokens and establish session
  *
- * IMPORTANT: The actual session creation happens when the deep link
- * callback is processed by the URL listener. This function only
- * initiates the auth flow.
+ * IMPORTANT: You must configure 'gymrats://' in Supabase Dashboard:
+ * Authentication > URL Configuration > Redirect URLs
  *
  * @returns Promise resolving to OAuth result
  */
 export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
   try {
-    const redirectUri = getRedirectUri();
+    const appDeepLink = getAppDeepLinkUri();
+    const scheme = Constants.expoConfig?.scheme || 'gymrats';
 
     if (__DEV__) {
-      console.log('[Google OAuth] Initiating sign in with redirect URI:', redirectUri);
+      console.log('[Google OAuth] App deep link:', appDeepLink);
     }
 
+    // Configure the redirect in Supabase Dashboard:
+    // Authentication > URL Configuration > Redirect URLs > Add 'gymrats://auth/callback'
+    // Flow: Google -> Supabase callback -> App deep link
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectUri,
+        redirectTo: `${scheme}://auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -439,10 +454,15 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
     }
 
     // Open the auth URL in a browser
+    // WebBrowser will watch for redirects to our app's URL scheme
     if (data.url) {
+      const callbackUrl = `${scheme}://auth/callback`;
+      if (__DEV__) {
+        console.log('[Google OAuth] Opening browser, watching for:', callbackUrl);
+      }
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
-        redirectUri
+        callbackUrl // Watch for redirects to 'gymrats://auth/callback'
       );
 
       if (__DEV__) {
@@ -453,74 +473,146 @@ export async function signInWithSupabaseGoogle(): Promise<OAuthResult> {
         // openAuthSessionAsync intercepts the redirect URL, so the
         // Linking event listener won't fire. We need to extract the
         // tokens from result.url and establish the session ourselves.
+        let sessionEstablished = false;
+
         if (result.url) {
           if (__DEV__) {
-            console.log('[Google OAuth] Processing callback URL');
+            console.log('[Google OAuth] Processing callback URL:', result.url);
+          }
+
+          // Check for error in URL first (Supabase may return error in hash or query)
+          const urlObj = new URL(result.url);
+          const hashIndex = result.url.indexOf('#');
+          const hashParams = hashIndex !== -1
+            ? new URLSearchParams(result.url.substring(hashIndex + 1))
+            : new URLSearchParams();
+
+          const errorParam = urlObj.searchParams.get('error') || hashParams.get('error');
+          const errorDescription = urlObj.searchParams.get('error_description') || hashParams.get('error_description');
+
+          if (errorParam) {
+            if (__DEV__) {
+              console.error('[Google OAuth] Error in callback URL:', errorParam, errorDescription);
+            }
+            return {
+              success: false,
+              error: {
+                type: 'provider_error',
+                message: errorDescription || errorParam || 'Authentication failed',
+              },
+            };
           }
 
           // Supabase returns tokens in the URL hash fragment:
-          // gymrats://auth#access_token=xxx&refresh_token=yyy&...
-          const hashIndex = result.url.indexOf('#');
-          if (hashIndex !== -1) {
-            const hashParams = new URLSearchParams(result.url.substring(hashIndex + 1));
-            const access_token = hashParams.get('access_token');
-            const refresh_token = hashParams.get('refresh_token');
+          // gymrats://auth/callback#access_token=xxx&refresh_token=yyy&...
+          const access_token = hashParams.get('access_token');
+          const refresh_token = hashParams.get('refresh_token');
 
-            if (access_token && refresh_token) {
-              const { error: sessionError } = await supabase.auth.setSession({
-                access_token,
-                refresh_token,
-              });
-
-              if (sessionError) {
-                if (__DEV__) {
-                  console.error('[Google OAuth] Failed to set session:', sessionError);
-                }
-                return {
-                  success: false,
-                  error: {
-                    type: 'supabase_error',
-                    message: sessionError.message,
-                    originalError: sessionError,
-                  },
-                };
-              }
-
-              if (__DEV__) {
-                console.log('[Google OAuth] Session established successfully');
-              }
-            }
+          if (__DEV__) {
+            console.log('[Google OAuth] Hash params found:', {
+              hasAccessToken: !!access_token,
+              hasRefreshToken: !!refresh_token,
+              hashKeys: Array.from(hashParams.keys())
+            });
           }
 
-          // Also handle PKCE flow where code is in query params:
-          // gymrats://auth?code=xxx
-          const urlObj = new URL(result.url);
-          const code = urlObj.searchParams.get('code');
-          if (code) {
-            const { error: codeError } = await supabase.auth.exchangeCodeForSession(code);
-            if (codeError) {
+          if (access_token && refresh_token) {
+            if (__DEV__) {
+              console.log('[Google OAuth] Setting session with tokens...');
+            }
+            const { error: sessionError } = await supabase.auth.setSession({
+              access_token,
+              refresh_token,
+            });
+
+            if (sessionError) {
               if (__DEV__) {
-                console.error('[Google OAuth] Code exchange failed:', codeError);
+                console.error('[Google OAuth] Failed to set session:', sessionError);
               }
               return {
                 success: false,
                 error: {
                   type: 'supabase_error',
-                  message: codeError.message,
-                  originalError: codeError,
+                  message: sessionError.message,
+                  originalError: sessionError,
                 },
               };
             }
 
             if (__DEV__) {
-              console.log('[Google OAuth] PKCE session established successfully');
+              console.log('[Google OAuth] Session established successfully via tokens, sessionEstablished = true');
+            }
+            sessionEstablished = true;
+          } else {
+            if (__DEV__) {
+              console.log('[Google OAuth] No tokens in hash params');
+            }
+          }
+
+          // Also handle PKCE flow where code is in query params:
+          // gymrats://auth/callback?code=xxx
+          if (!sessionEstablished) {
+            const code = urlObj.searchParams.get('code');
+
+            if (__DEV__) {
+              console.log('[Google OAuth] Checking for PKCE code:', { hasCode: !!code });
+            }
+
+            if (code) {
+              const { error: codeError } = await supabase.auth.exchangeCodeForSession(code);
+              if (codeError) {
+                if (__DEV__) {
+                  console.error('[Google OAuth] Code exchange failed:', codeError);
+                }
+                return {
+                  success: false,
+                  error: {
+                    type: 'supabase_error',
+                    message: codeError.message,
+                    originalError: codeError,
+                  },
+                };
+              }
+
+              if (__DEV__) {
+                console.log('[Google OAuth] PKCE session established successfully');
+              }
+              sessionEstablished = true;
             }
           }
         }
 
-        return {
-          success: true,
-        };
+        // Verify that a session was actually established
+        if (!sessionEstablished) {
+          // Check if maybe the session was set by another listener
+          const { data: sessionData } = await supabase.auth.getSession();
+          if (sessionData.session) {
+            if (__DEV__) {
+              console.log('[Google OAuth] Session found via getSession check');
+            }
+            sessionEstablished = true;
+          }
+        }
+
+        if (sessionEstablished) {
+          if (__DEV__) {
+            console.log('[Google OAuth] Returning success: true');
+          }
+          return {
+            success: true,
+          };
+        } else {
+          if (__DEV__) {
+            console.error('[Google OAuth] No session established after browser success');
+          }
+          return {
+            success: false,
+            error: {
+              type: 'unknown',
+              message: 'Authentication completed but no session was established. Please try again.',
+            },
+          };
+        }
       }
 
       if (result.type === 'cancel') {

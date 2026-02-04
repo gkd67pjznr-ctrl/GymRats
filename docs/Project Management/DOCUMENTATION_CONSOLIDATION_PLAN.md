@@ -69,12 +69,12 @@
 
 | File | Location | Purpose | Overlap |
 |------|----------|---------|---------|
-| `forge-lab-summary.md` | features | Forge Lab completion summary | Duplicate of feature-forge-lab.md |
-| `forge-lab-summary-updated.md` | features | Updated Forge Lab summary | Duplicate of above |
-| `forge-lab-implementation-complete.md` | features | Forge Lab implementation complete | Duplicate of above |
+| `forge-lab-summary.md` | features | Gym Lab completion summary | Duplicate of feature-forge-lab.md |
+| `forge-lab-summary-updated.md` | features | Updated Gym Lab summary | Duplicate of above |
+| `forge-lab-implementation-complete.md` | features | Gym Lab implementation complete | Duplicate of above |
 | `forge-milestones-summary.md` | features | Forge Milestones summary | Duplicate of feature-forge-milestones.md |
 | `forge-milestones-implementation-complete.md` | features | Forge Milestones implementation | Duplicate of above |
-| `forge-dna-phase1-enhancements.md` | features | Forge DNA phase 1 updates | Duplicate of feature-forge-dna.md |
+| `forge-dna-phase1-enhancements.md` | features | DNA phase 1 updates | Duplicate of feature-forge-dna.md |
 
 ---
 

@@ -14,7 +14,8 @@ import { upsertRoutine, useRoutine } from "../../../src/lib/stores";
 import { ProtectedRoute } from "../../../src/ui/components/ProtectedRoute";
 
 /** Capitalize first letter of each word */
-function titleCase(s: string): string {
+function titleCase(s: string | null | undefined): string {
+  if (!s) return "";
   return s
     .split(" ")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))

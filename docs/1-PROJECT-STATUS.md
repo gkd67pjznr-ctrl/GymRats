@@ -27,7 +27,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Exercise Library | ✅ Done | 3/3 | 100+ exercises with muscle groups |
 | Scoring & Ranks | ✅ Done | 5/5 | 0-1000 scoring, 20 ranks/exercise |
 | AI Gym Buddy | ✅ Done | 11/11 | 9 personalities, voice lines, IAP integrated |
-| Body Model | ✅ Done | 5/5 | Moved to Forge Lab sub-tab |
+| Body Model | ✅ Done | 5/5 | Moved to Gym Lab sub-tab |
 | Ranks Tab | ✅ Done | 10/10 | My Ranks + Leaderboards sub-tabs |
 | Authentication | 🔄 In Progress | 8/10 | Email + protected routes working, OAuth needs setup |
 | Social & Feed | 🔄 In Progress | 9/15 | Local complete, backend connected |
@@ -39,8 +39,8 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Onboarding | ✅ Done | 7/7 | Full flow implemented, debug reset available |
 | Avatar & Hangout Room | ✅ Done | 8/8 | Phase 2 complete - unified UserStatsStore for growth metrics |
 | Workout Replay | ✅ Done | 5/5 | Cinematic summaries complete |
-| Forge DNA | ✅ Done | 4/4 | Visualization complete |
-| Forge Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
+| DNA | ✅ Done | 4/4 | Visualization complete |
+| Gym Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
 | Forge Milestones | ✅ Done | 5/5 | 30 achievements implemented |
 
 **Launch Total:** 152/178 features (85%)
@@ -161,7 +161,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 | # | Task | Description |
 |---|------|-------------|
-| 1 | Forge Lab Charting | Victory-native charts implemented |
+| 1 | Gym Lab Charting | Victory-native charts implemented |
 | ~~2~~ | ~~Profile Stats~~ | ✅ Done - GymRank, PR breakdown, top exercises |
 | 3 | Avatar Completion | Finish growth and customization |
 | 4 | Hangout Room | Real-time presence and decorations |
@@ -291,7 +291,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
   - Created `rankNotifications.ts` for rank-up and tier-up local notifications
   - Added `rankTypes.ts` with ExerciseRankSummary, SparklineTimeframe, etc.
   - Created `useExerciseRanks.ts` hook for computing ranks from userStatsStore
-- **Body Model Moved** - Relocated to Forge Lab as "Body Map" sub-tab
+- **Body Model Moved** - Relocated to Gym Lab as "Body Map" sub-tab
   - Created `BodyModelCard.tsx` reusable component
   - Updated `ForgeLabScreen.tsx` with Analytics/Body Map sub-tab toggle
   - Deleted `app/(tabs)/body.tsx`
@@ -316,6 +316,33 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - **Documentation**
   - Created full design system architecture documentation with Quick Start, migration guide, token reference
   - Updated screen migration checklist (5/15 → 7/15 screens migrated)
+
+### 2026-02-04
+- **Major UI/UX Improvements:**
+  - Fixed rest timer overlay: +/-15s buttons no longer collapse the timer, only the timer display area does
+  - Fixed rest timer touch pass-through to drawer underneath
+  - Moved collapsed timer pill lower on screen for better visibility
+  - Fixed timer format in drawer edge (shows seconds until 90s, then minutes)
+- **Gym Lab Restructure:**
+  - Renamed "Forge Lab" → "Gym Lab" throughout UI and documentation
+  - Renamed "Forge DNA" → "DNA" throughout UI and documentation (internal code names kept as-is)
+  - Created 3-tab interface: Body Map (default), Analytics, DNA
+  - Moved DNA visualization from Profile tab to Gym Lab
+  - Created `GymDNACard.tsx` component in ForgeLab folder
+  - Swapped button positions (Body Map now first/default)
+  - Fixed date range selector bar height in Analytics tab
+- **GlobalTopBar Adjustments:**
+  - Final values: height 48px, avatar 40px, icons 24px
+- **Ranks Tab Fix:**
+  - Fixed issue where only 3 exercises showed despite many logged workouts
+  - Added `processUserStatsWorkout` call in DrawerContent.tsx on workout completion
+  - Added auto-rebuild mechanism in userStatsStore for detecting workout history/stats mismatches
+- **Profile Tab:**
+  - Reduced excessive padding between topbar and header
+  - Removed ForgeDNACard (moved to Gym Lab)
+- **Documentation:**
+  - Updated 20+ documentation files with new naming (Gym Lab, DNA)
+  - Updated CLAUDE.md, README.md, FEATURE-MASTER.md, MASTER_PLAN.md, and all feature docs
 
 ### 2026-02-02 (Evening)
 - **Workout Drawer Phase 1 Complete** - Collapsible drawer system fully implemented
@@ -367,9 +394,9 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - Updated documentation to reflect current implementation status
 
 ### 2026-02-01
-- Completed Forge Lab Analytics (all 6 sub-features)
+- Completed Gym Lab Analytics (all 6 sub-features)
 - Fixed AsyncStorage persistence in forgeLabStore
-- Fixed all 32 Forge Lab tests
+- Fixed all 32 Gym Lab tests
 - Implemented useIsPremiumUser with authStore integration
 - Added correlation insights to IntegrationDataCard
 
@@ -410,7 +437,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ### Phase 2: Advanced Features (Current)
 - ✅ AI Gym Buddy System
 - ✅ Workout Replay
-- ✅ Forge Lab Analytics
+- ✅ Gym Lab Analytics
 - ✅ Forge Milestones
 - 🔄 Avatar & Hangout Room
 
@@ -434,7 +461,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 4. **Pure-Inspired Aesthetic** — Dark, mysterious UI that looks amazing
 5. **Social Loop** — Feed, friends, live presence built for lifters
 6. **Workout Replay** — Cinematic post-workout summaries
-7. **Forge DNA** — Visual training identity fingerprint
+7. **DNA** — Visual training identity fingerprint
 
 ---
 

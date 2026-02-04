@@ -58,7 +58,11 @@ import {
   useCurrentSession,
   useUser,
 } from "../src/lib/stores";
-import { getSettings as getSettingsV2 } from "../src/lib/stores/settingsStore";
+import { getSettings as getSettingsV2, getRestSecondsForExercise } from "../src/lib/stores/settingsStore";
+import { getLastSetForExercise } from "../src/lib/stores/workoutStore";
+import { uid } from "../src/lib/uid";
+import { lbToKg } from "../src/lib/units";
+import type { LoggedSet } from "../src/lib/loggerTypes";
 import { useBuddyStore } from "../src/lib/stores/buddyStore";
 import { useOnboardingStore } from "../src/lib/stores/onboardingStore";
 import { evaluateBehaviorTriggers } from "../src/lib/buddyEngine";
@@ -188,6 +192,7 @@ export default function LiveWorkout() {
   const [showTimerDetails, setShowTimerDetails] = useState(false);
   const notificationPermissionRequestedRef = useRef(false);
   const [restStartTime, setRestStartTime] = useState<number | null>(null);
+  const [currentRestSeconds, setCurrentRestSeconds] = useState(DEFAULT_REST_SECONDS);
 
 
   const onRestTimerDone = () => {
@@ -317,9 +322,25 @@ export default function LiveWorkout() {
     }
 
     const first = pickerState.currentPlannedExerciseId ?? "bench";
+    const exerciseIds = pickerState.planMode ? pickerState.plannedExerciseIds.slice() : [first];
+
+    // Create prefilled sets for all exercises in the workout
+    const prefilledSets: LoggedSet[] = exerciseIds.map((exerciseId) => {
+      const historicalSet = getLastSetForExercise(exerciseId);
+      return {
+        id: uid(),
+        exerciseId,
+        setType: 'working' as const,
+        weightKg: historicalSet?.weightKg ?? lbToKg(135),
+        reps: historicalSet?.reps ?? 8,
+        timestampMs: Date.now(),
+      };
+    });
+
     ensureCurrentSession({
       selectedExerciseId: first,
-      exerciseBlocks: pickerState.planMode ? pickerState.plannedExerciseIds.slice() : [first],
+      exerciseBlocks: exerciseIds,
+      sets: prefilledSets,
     });
 
     // Start buddy workout session
@@ -503,7 +524,9 @@ export default function LiveWorkout() {
         notificationPermissionRequestedRef.current = true;
       }
 
-      // Record rest start time and show rest timer
+      // Record rest start time and show rest timer with exercise-specific duration
+      const restSeconds = getRestSecondsForExercise(set.exerciseId);
+      setCurrentRestSeconds(restSeconds);
       setRestStartTime(Date.now());
       setRestVisible(true);
     }
@@ -525,13 +548,51 @@ export default function LiveWorkout() {
 
   const allowedExerciseIds = pickerState.planMode ? pickerState.plannedExerciseIds : undefined;
 
+  // Wrapper to handle exercise selection with prefilled set
+  const handleExerciseSelectWithPrefill = (exerciseId: string) => {
+    // Check if this is adding a new exercise (not just changing selected)
+    const isAddingNew = pickerState.pickerMode === "addBlock" &&
+      !pickerState.exerciseBlocks.includes(exerciseId);
+
+    if (isAddingNew) {
+      // Get user's previous lift data from workout history
+      const historicalSet = getLastSetForExercise(exerciseId);
+
+      // Create a prefilled set using historical data or defaults
+      const prefilledSet: LoggedSet = {
+        id: uid(),
+        exerciseId,
+        setType: 'working',
+        weightKg: historicalSet?.weightKg ?? lbToKg(135), // Use history or default 135 lb
+        reps: historicalSet?.reps ?? 8, // Use history or default 8 reps
+        timestampMs: Date.now(),
+      };
+
+      // Update exerciseBlocks AND add prefilled set atomically
+      updateCurrentSession((s) => ({
+        ...s,
+        exerciseBlocks: [...(s.exerciseBlocks || []), exerciseId],
+        selectedExerciseId: exerciseId,
+        sets: [...s.sets, prefilledSet],
+      }));
+
+      // Also update local picker state
+      pickerState.setExerciseBlocks((prev) => [...prev, exerciseId]);
+      pickerState.setSelectedExerciseId(exerciseId);
+      pickerState.closePicker();
+    } else {
+      // Just changing selected exercise, use original handler
+      pickerState.handleExerciseSelect(exerciseId);
+    }
+  };
+
   if (pickerState.pickerMode) {
     return (
       <ExercisePicker
         visible
         allowedExerciseIds={allowedExerciseIds}
         selectedExerciseId={pickerState.selectedExerciseId}
-        onSelect={pickerState.handleExerciseSelect}
+        onSelect={handleExerciseSelectWithPrefill}
         onBack={pickerState.closePicker}
       />
     );
@@ -593,7 +654,7 @@ export default function LiveWorkout() {
 
       <RestTimerOverlay
         visible={restVisible}
-        initialSeconds={DEFAULT_REST_SECONDS}
+        initialSeconds={currentRestSeconds}
         onClose={() => setRestVisible(false)}
         onDone={onRestTimerDone}
         workoutId={persisted?.id}

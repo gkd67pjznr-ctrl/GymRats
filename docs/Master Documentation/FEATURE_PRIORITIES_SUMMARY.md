@@ -51,8 +51,8 @@
 - ✅ Gamification (12/12) - XP, levels, streaks, Forge Tokens
 - ✅ Workout Replay (5/5) - Cinematic post-workout summaries
 - ✅ Forge Milestones (5/5) - Tiered achievements
-- ✅ Forge DNA (4/4) - Training identity visualization
-- ✅ Forge Lab (6/6) - Premium analytics dashboard
+- ✅ DNA (4/4) - Training identity visualization
+- ✅ Gym Lab (6/6) - Premium analytics dashboard
 - ✅ Backend & Sync (10/10) - Full sync system operational
 - ✅ Body Model (3/5) - Muscle subdivisions + volume coloring (core complete)
 - ✅ Integrations (5/5) - Health data import framework
@@ -105,13 +105,13 @@
 - Basic history/calendar + weight graph
 - Streak tracking + gamification
 - Avatar (default style) + hangout room
-- Forge DNA (partially blurred)
+- DNA (partially blurred)
 - Forge Milestones + trophy case
 - Workout Replay
 
 ### Pro Subscription (Launch Day)
-- Forge Lab (full analytics dashboard)
-- Full Forge DNA (unblurred)
+- Gym Lab (full analytics dashboard)
+- Full DNA (unblurred)
 - Advanced AI coaching suggestions
 - Integration analytics (Apple Health, MFP, Whoop)
 
@@ -141,7 +141,7 @@
 ### Phase 3: Social & Engagement (Next - 4 weeks)
 - Full feed with auto-generated workout cards
 - Reactions + comments
-- Forge DNA + Forge Lab
+- DNA + Gym Lab
 
 ### Phase 4: Launch Polish (Final - 3 weeks)
 - Full onboarding
@@ -163,7 +163,7 @@
 - Organic sharing of Workout Replays to in-app feed
 - Word-of-mouth from aesthetic/vibe
 - Retention through avatar + streak + hangout room
-- Premium conversion through Forge Lab + Forge DNA blur
+- Premium conversion through Gym Lab + DNA blur
 
 ### Performance Targets
 - App launch: <2s

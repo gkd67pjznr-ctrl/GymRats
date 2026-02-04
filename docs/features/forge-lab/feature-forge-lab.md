@@ -1,4 +1,4 @@
-# Feature: Forge Lab (Analytics)
+# Feature: Gym Lab (Analytics)
 
 ## Overview
 Premium analytics dashboard for serious lifters. Deep training insights, trends, and data visualization. Weight graph is free; everything else is behind Pro subscription.
@@ -44,7 +44,7 @@ Premium analytics dashboard for serious lifters. Deep training insights, trends,
 - [x] Heatmap or radar chart of volume distribution
 - [x] Identify undertrained muscle groups
 - [x] Recommended adjustments based on imbalances
-- [x] Tied to Forge DNA visualization
+- [x] Tied to DNA visualization
 - [x] Historical balance shifts over time
 
 ---
@@ -107,13 +107,13 @@ type ForgeLabData = {
 - ✅ Weight tracking integrated into settingsStore with addWeightEntry/updateCurrentWeight actions
 - ✅ WeightEntryModal component for user input with validation
 - ✅ Unit conversion handled at display layer (kg stored internally)
-- ✅ Integration with Forge Lab analytics for weight trend visualization
+- ✅ Integration with Gym Lab analytics for weight trend visualization
 
 ---
 
 ## UI Design
 
-**Forge Lab Screen:**
+**Gym Lab Screen:**
 - Dashboard layout with scrollable cards
 - Weight graph at top (always visible)
 - Premium charts below with lock icons for free users

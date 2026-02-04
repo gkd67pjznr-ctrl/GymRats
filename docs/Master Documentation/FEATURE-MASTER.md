@@ -26,8 +26,8 @@
 | [Onboarding](#onboarding) | **Done** | 7/7 | [Details](../features/onboarding/feature-onboarding.md) |
 | [Avatar & Hangout Room](#avatar--hangout-room) | **Done** | 8/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
 | [Workout Replay](#workout-replay) | **Done** | 5/5 | [Details](../features/workout-replay/feature-workout-replay.md) |
-| [Forge DNA](#forge-dna) | **Done** | 4/4 | [Details](../features/forge-dna/feature-forge-dna.md) |
-| [Forge Lab (Analytics)](#forge-lab-analytics) | **Done** | 6/6 | [Details](../features/forge-lab/feature-forge-lab.md) |
+| [DNA](#dna) | **Done** | 4/4 | [Details](../features/forge-dna/feature-forge-dna.md) |
+| [Gym Lab (Analytics)](#gym-lab-analytics) | **Done** | 6/6 | [Details](../features/forge-lab/feature-forge-lab.md) |
 | [Forge Milestones](#forge-milestones) | **Done** | 5/5 | [Details](../features/forge-milestones/feature-forge-milestones.md) |
 
 **Launch Total:** 152/178 features (85%)
@@ -62,7 +62,7 @@ What sets GymRats apart — the combination is the killer feature:
 4. **Aesthetic** — Pure-inspired dark, mysterious UI. Looks so good people show it off.
 5. **Social Loop** — Feed, friends, live presence, competitions. Built for lifters.
 6. **Workout Replay** — Cinematic post-workout summaries. The share moment.
-7. **Forge DNA** — Visual training identity fingerprint. Unique to each person.
+7. **DNA** — Visual training identity fingerprint. Unique to each person.
 
 ---
 
@@ -200,7 +200,7 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 ✅ **Implemented (Complete):**
 - Detailed muscle subdivisions with actual SVG paths (21 muscle groups)
 - Volume-based coloring with weekly/monthly/all time filtering
-- Relocated to Forge Lab as "Body Map" sub-tab
+- Relocated to Gym Lab as "Body Map" sub-tab
 - Reusable `BodyModelCard.tsx` component
 - Front/back view switching
 - Primary/secondary/tertiary muscle mapping for 300+ exercises
@@ -461,7 +461,7 @@ Cinematic post-workout summary — THE share moment.
 
 ---
 
-## Forge DNA
+## DNA
 **Status:** Done | **Progress:** 4/4 features
 **NEW — from 2026-01-29 brainstorm
 
@@ -475,7 +475,7 @@ Visual fingerprint of your training identity — profile centerpiece.
 
 ---
 
-## Forge Lab (Analytics)
+## Gym Lab (Analytics)
 **Status:** Done | **Progress:** 6/6 features
 **NEW — from 2026-01-29 brainstorm
 
@@ -488,7 +488,7 @@ Premium analytics dashboard for serious lifters.
 - Volume trends (weekly/monthly)
 - Muscle group balance analytics
 - Correlation insights with integration data
-- Forge Lab store with AsyncStorage persistence
+- Gym Lab store with AsyncStorage persistence
 - useIsPremiumUser integration with authStore
 - All 32 tests passing
 
@@ -565,7 +565,7 @@ Health data integrations only — no music player, no nutrition tracking.
 - MyFitnessPal (nutrition data for analytics)
 - Whoop (recovery, strain data)
 - Fitbit (weight, activity data)
-- Health data display in Forge Lab (premium)
+- Health data display in Gym Lab (premium)
 
 ---
 
@@ -694,7 +694,7 @@ Seasonal content drops to keep things fresh.
 - Full feed with auto-generated workout cards
 - Workout Replay (cinematic summaries)
 - Reactions + comments
-- Forge DNA + Forge Lab
+- DNA + Gym Lab
 - Forge Milestones
 
 ### Phase 4: Launch Polish
@@ -728,12 +728,12 @@ Seasonal content drops to keep things fresh.
 - Basic history/calendar + weight graph
 - Streak tracking + gamification
 - Avatar (default style) + hangout room
-- Forge DNA (partially blurred)
+- DNA (partially blurred)
 - Forge Milestones
 
 ### Pro Subscription
-- Forge Lab (full analytics dashboard)
-- Full Forge DNA (unblurred)
+- Gym Lab (full analytics dashboard)
+- Full DNA (unblurred)
 - Advanced AI coaching suggestions
 - Integration data analytics (Apple Health, MFP, Whoop)
 

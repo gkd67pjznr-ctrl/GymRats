@@ -73,15 +73,17 @@ function CompactCircularProgress({
 }
 
 /**
- * Format seconds as M:SS
+ * Format seconds compactly:
+ * - 0-90 seconds: show as "45s", "90s"
+ * - 91+ seconds: show as minute increments "2m", "3m" (rounded up)
  */
 function formatCompactTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  if (mins > 0) {
-    return `${mins}:${String(secs).padStart(2, '0')}`;
+  if (seconds <= 90) {
+    return `${seconds}s`;
   }
-  return `${secs}`;
+  // Round up to nearest minute for display
+  const mins = Math.ceil(seconds / 60);
+  return `${mins}m`;
 }
 
 /**

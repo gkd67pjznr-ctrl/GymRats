@@ -54,7 +54,7 @@ Comprehensive analysis and documentation of the GymRats codebase:
 ### Features
 Feature implementation documentation:
 - `avatar-hangout-final-summary.md` - Avatar hangout feature final summary
-- `forge-dna-phase1-completion.md` - Forge DNA phase 1 completion
+- `forge-dna-phase1-completion.md` - DNA phase 1 completion
 - Various forge-related implementation summaries
 
 ### Feature Work Documents
@@ -138,7 +138,7 @@ Detailed feature documentation organized by category:
 #### Analytics
 - `feature-forge-lab.md` - Forge lab
 - `feature-forge-lab-implementation.md` - Forge lab implementation
-- `feature-forge-dna.md` - Forge DNA
+- `feature-forge-dna.md` - DNA
 
 #### Misc
 - `feature-onboarding.md` - Onboarding

@@ -31,7 +31,7 @@ Free-form workout notes for serious lifters. Track how you felt, what went well,
 - [ ] Quick mood selector before/after workout (1-5 or emoji scale)
 - [ ] Energy level indicator
 - [ ] Soreness tracking (which muscle groups)
-- [ ] Over time: patterns visible in Forge Lab (premium)
+- [ ] Over time: patterns visible in Gym Lab (premium)
 
 ---
 
@@ -65,7 +65,7 @@ type JournalEntry = {
 
 - Workout history (linking notes to sessions)
 - Backend sync (persistence)
-- Forge Lab (mood/energy patterns — premium)
+- Gym Lab (mood/energy patterns — premium)
 
 ---
 

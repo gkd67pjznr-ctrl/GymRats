@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, AppState, AppStateStatus, Pressable, Text, View } from "react-native";
+import { Animated, AppState, AppStateStatus, Pressable, Text, View, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from "../theme";
 import { scheduleRestTimerNotification, cancelRestTimerNotification } from "@/src/lib/notifications/notificationService";
-import Svg, { Circle } from "react-native-svg";
 import { playSound } from "@/src/lib/sound";
 import { isAudioCueEnabled, isRestTimerAudioEnabled, isRestTimerHapticEnabled } from "@/src/lib/sound/soundUtils";
+import { workoutDrawerActions } from "@/src/lib/stores/workoutDrawerStore";
 
 type Props = {
   visible: boolean; // if false, render nothing
@@ -21,36 +21,38 @@ function clampInt(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.floor(n)));
 }
 
-function CircularProgress({
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+function LinearProgress({
   progress,
-  size = 100,
-  strokeWidth = 8,
-  color
+  color,
+  backgroundColor,
 }: {
   progress: number;
-  size?: number;
-  strokeWidth?: number;
   color: string;
+  backgroundColor: string;
 }) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference * (1 - progress);
+  const width = SCREEN_WIDTH - 48; // Full width minus padding
 
   return (
-    <Svg width={size} height={size}>
-      <Circle
-        stroke={color}
-        fill="transparent"
-        strokeWidth={strokeWidth}
-        strokeDasharray={circumference}
-        strokeDashoffset={strokeDashoffset}
-        strokeLinecap="round"
-        transform={`rotate(-90 ${size/2} ${size/2})`}
-        cx={size/2}
-        cy={size/2}
-        r={radius}
+    <View
+      style={{
+        width,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor,
+        overflow: 'hidden',
+      }}
+    >
+      <View
+        style={{
+          width: width * Math.max(0, Math.min(1, progress)),
+          height: '100%',
+          borderRadius: 4,
+          backgroundColor: color,
+        }}
       />
-    </Svg>
+    </View>
   );
 }
 
@@ -59,6 +61,17 @@ function formatMMSS(totalSeconds: number) {
   const mm = Math.floor(s / 60);
   const ss = s % 60;
   return `${mm}:${String(ss).padStart(2, "0")}`;
+}
+
+// Compact format for collapsed pill: seconds until 90s, then minute increments
+function formatCompact(totalSeconds: number) {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  if (s <= 90) {
+    return `${s}s`;
+  }
+  // Round up to nearest minute for display
+  const minutes = Math.ceil(s / 60);
+  return `${minutes}m`;
 }
 
 
@@ -71,65 +84,61 @@ export function RestTimerOverlay(props: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const [secondsLeft, setSecondsLeft] = useState(props.initialSeconds);
-  const [initialSeconds, setInitialSeconds] = useState(props.initialSeconds);
+  const [totalSeconds, setTotalSeconds] = useState(props.initialSeconds); // Track total for progress
   const [isRunning, setIsRunning] = useState(true);
   const [scheduledNotificationId, setScheduledNotificationId] = useState<string | null>(null);
   const hasPlayedStartSoundRef = useRef(false);
 
+  // Track paused time offset for accurate pause/resume
+  const pausedAtRef = useRef<number | null>(null);
+  const timeOffsetRef = useRef(0);
+
   // slide animation: panel only (overlay)
   const panelY = useRef(new Animated.Value(220)).current; // off-screen-ish
 
-  // Calculate remaining time from startedAtMs if provided
-  const calculateRemainingSeconds = useCallback(() => {
-    if (props.startedAtMs) {
-      const elapsed = Math.floor((Date.now() - props.startedAtMs) / 1000);
-      return Math.max(0, props.initialSeconds - elapsed);
-    }
-    return props.initialSeconds;
-  }, [props.startedAtMs, props.initialSeconds]);
-
+  // Reset timer when visibility changes
+  // Calculate remaining time from startedAtMs to maintain continuity across drawer collapse/expand
   useEffect(() => {
     if (!props.visible) return;
 
-    // When shown, calculate remaining time
-    const remaining = calculateRemainingSeconds();
+    // Calculate remaining time based on startedAtMs if available
+    let remaining = props.initialSeconds;
+    if (props.startedAtMs) {
+      const elapsedSec = Math.floor((Date.now() - props.startedAtMs) / 1000);
+      remaining = Math.max(0, props.initialSeconds - elapsedSec);
+    }
+
     setExpanded(false);
     setSecondsLeft(remaining);
-    setInitialSeconds(props.initialSeconds);
+    setTotalSeconds(props.initialSeconds);
     setIsRunning(remaining > 0);
+    pausedAtRef.current = null;
+    timeOffsetRef.current = 0;
 
-    // Only play start sound if this is a fresh timer (not resuming)
-    if (!props.startedAtMs) {
+    // Only reset sound flag if this is a truly fresh timer (not a resume)
+    if (!props.startedAtMs || remaining === props.initialSeconds) {
       hasPlayedStartSoundRef.current = false;
     }
 
     // Clean up any existing notification when timer starts
     cancelRestTimerNotification().catch(console.error);
-  }, [props.visible, props.initialSeconds, props.startedAtMs, calculateRemainingSeconds]);
+  }, [props.visible, props.initialSeconds, props.startedAtMs]);
 
+  // Countdown timer - only runs when isRunning is true
   useEffect(() => {
     if (!props.visible) return;
     if (!isRunning) return;
+    if (secondsLeft <= 0) return;
 
     const t = setInterval(() => {
-      if (props.startedAtMs) {
-        // Sync with startedAtMs for accuracy
-        const remaining = calculateRemainingSeconds();
-        setSecondsLeft(remaining);
-        if (remaining <= 0) {
-          setIsRunning(false);
-        }
-      } else {
-        // Countdown mode
-        setSecondsLeft((s) => {
-          if (s <= 1) return 0;
-          return s - 1;
-        });
-      }
+      setSecondsLeft((s) => {
+        if (s <= 1) return 0;
+        return s - 1;
+      });
     }, 1000);
 
     return () => clearInterval(t);
-  }, [props.visible, isRunning, props.startedAtMs, calculateRemainingSeconds]);
+  }, [props.visible, isRunning, secondsLeft]);
 
   // Handle app state changes for background notifications
   useEffect(() => {
@@ -163,6 +172,7 @@ export function RestTimerOverlay(props: Props) {
     hasPlayedStartSoundRef.current = true;
   }, [props.visible, isRunning, secondsLeft]);
 
+  // Timer completion
   useEffect(() => {
     if (!props.visible) return;
     if (secondsLeft !== 0) return;
@@ -183,6 +193,7 @@ export function RestTimerOverlay(props: Props) {
     }
   }, [secondsLeft, props, scheduledNotificationId]);
 
+  // Panel animation
   useEffect(() => {
     if (!props.visible) return;
 
@@ -196,6 +207,22 @@ export function RestTimerOverlay(props: Props) {
   }, [expanded, props.visible, panelY]);
 
   const timeLabel = useMemo(() => formatMMSS(secondsLeft), [secondsLeft]);
+  const compactTimeLabel = useMemo(() => formatCompact(secondsLeft), [secondsLeft]);
+  const progress = totalSeconds > 0 ? 1 - (secondsLeft / totalSeconds) : 0;
+
+  // Handle +/- time adjustments
+  const adjustTime = (delta: number) => {
+    setSecondsLeft((s) => {
+      const newSeconds = clampInt(s + delta, 0, 3600);
+      return newSeconds;
+    });
+    // Also adjust total so progress bar stays sensible
+    if (delta > 0) {
+      setTotalSeconds((t) => t + delta);
+    }
+    // Sync adjustment to store so it persists across drawer collapse/expand
+    workoutDrawerActions.adjustRestTimer(delta);
+  };
 
   if (!props.visible) return null;
 
@@ -220,50 +247,64 @@ export function RestTimerOverlay(props: Props) {
 
   return (
     <>
-      {/* PILL TAB (always overlay, never pushes layout) */}
+      {/* Full-screen touch blocker - always present when timer visible to prevent touches passing through */}
       <View
         pointerEvents="box-none"
         style={{
           position: "absolute",
+          top: 0,
           left: 0,
           right: 0,
-          bottom: Math.max(insets.bottom, 14) + 70, // Account for tab bar + safe area
-          zIndex: 999,
-          alignItems: "center",
+          bottom: 0,
+          zIndex: 997,
         }}
       >
-        <Pressable
-          onPress={() => setExpanded((v) => !v)}
+        {/* Invisible blocker area around the timer UI */}
+        <View
           style={{
-            borderWidth: 1,
-            borderColor: c.border,
-            backgroundColor: c.card,
-            borderRadius: 999,
-            paddingVertical: 10,
-            paddingHorizontal: 14,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-
-            // subtle but visible
-            shadowOpacity: 0.16,
-            shadowRadius: 10,
-            shadowOffset: { width: 0, height: 6 },
-            elevation: 8,
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: Math.max(insets.bottom, 14) + 250,
           }}
-        >
-          <Text style={{ color: c.muted, fontWeight: "900", fontSize: 12 }}>Rest</Text>
-          <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>{timeLabel}</Text>
-
-          <View style={{ width: 1, height: 18, backgroundColor: c.border, opacity: 0.8 }} />
-
-          <Text style={{ color: c.muted, fontWeight: "900", fontSize: 12 }}>
-            {expanded ? "Hide" : "Show"}
-          </Text>
-        </Pressable>
+          pointerEvents="box-only"
+          onStartShouldSetResponder={() => true}
+        />
       </View>
 
-      {/* Backdrop to block touches when expanded */}
+      {/* COMPACT PILL - positioned lower */}
+      <Pressable
+        onPress={() => setExpanded((v) => !v)}
+        style={{
+          position: "absolute",
+          bottom: Math.max(insets.bottom, 14) + 140,
+          alignSelf: "center",
+          left: "50%",
+          transform: [{ translateX: -55 }], // Half of approximate pill width
+          zIndex: 999,
+          borderWidth: 1,
+          borderColor: c.border,
+          backgroundColor: c.card,
+          borderRadius: 999,
+          paddingVertical: 6,
+          paddingHorizontal: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 6,
+          shadowOpacity: 0.16,
+          shadowRadius: 10,
+          shadowOffset: { width: 0, height: 6 },
+          elevation: 8,
+        }}
+      >
+        <Text style={{ color: c.text, fontWeight: "900", fontSize: 13, minWidth: 32, textAlign: "center" }}>{compactTimeLabel}</Text>
+        <Text style={{ color: c.muted, fontWeight: "900", fontSize: 9 }}>
+          {expanded ? "▼" : "▲"}
+        </Text>
+      </Pressable>
+
+      {/* Full-screen backdrop to block ALL touches when expanded */}
       {expanded && (
         <Pressable
           onPress={() => setExpanded(false)}
@@ -274,7 +315,7 @@ export function RestTimerOverlay(props: Props) {
             right: 0,
             bottom: 0,
             zIndex: 998,
-            backgroundColor: "rgba(0,0,0,0.3)",
+            backgroundColor: "rgba(0,0,0,0.5)",
           }}
         />
       )}
@@ -286,19 +327,19 @@ export function RestTimerOverlay(props: Props) {
           position: "absolute",
           left: 12,
           right: 12,
-          bottom: Math.max(insets.bottom, 14) + 130, // Account for tab bar + pill + safe area
+          bottom: Math.max(insets.bottom, 14) + 190,
           zIndex: 1000,
           transform: [{ translateY: panelY }],
         }}
       >
+        {/* Panel container */}
         <View
           style={{
             borderWidth: 1,
             borderColor: c.border,
             backgroundColor: c.card,
             borderRadius: 16,
-            padding: 12,
-            gap: 10,
+            overflow: "hidden",
 
             shadowOpacity: 0.2,
             shadowRadius: 12,
@@ -306,42 +347,35 @@ export function RestTimerOverlay(props: Props) {
             elevation: 10,
           }}
         >
-          {/* Tappable header to collapse */}
+          {/* Top area (including padding) - tap anywhere here to collapse */}
           <Pressable
             onPress={() => setExpanded(false)}
-            style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 4 }}
+            style={{ paddingTop: 16, paddingHorizontal: 16, paddingBottom: 16, alignItems: "center", gap: 12 }}
           >
-            <Text style={{ color: c.text, fontWeight: "900" }}>Rest Timer</Text>
-            <Text style={{ color: c.muted, fontSize: 12, fontWeight: "600" }}>Tap to collapse</Text>
+            <Text style={{ color: c.text, fontWeight: "900", fontSize: 48 }}>
+              {timeLabel}
+            </Text>
+            <LinearProgress
+              progress={progress}
+              color={c.primary}
+              backgroundColor={`${c.primary}30`}
+            />
           </Pressable>
 
-          <View style={{ alignItems: "center", justifyContent: "center", marginVertical: 10 }}>
-            <View style={{ position: "relative", width: 120, height: 120, alignItems: "center", justifyContent: "center" }}>
-              <CircularProgress
-                progress={initialSeconds > 0 ? 1 - (secondsLeft / initialSeconds) : 0}
-                size={120}
-                strokeWidth={6}
-                color={c.primary}
-              />
-              <Text style={{ position: "absolute", color: c.text, fontWeight: "900", fontSize: 32 }}>
-                {timeLabel}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+          {/* Controls - each button handles its own press */}
+          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "center", paddingHorizontal: 16, paddingBottom: 16 }}>
             <SmallBtn
-              title={isRunning ? "Pause" : "Start"}
+              title={isRunning ? "Pause" : "Resume"}
               onPress={() => setIsRunning((v) => !v)}
               minW={74}
             />
-            <SmallBtn title="+15s" onPress={() => setSecondsLeft((s) => clampInt(s + 15, 0, 3600))} subtle />
-            <SmallBtn title="-15s" onPress={() => setSecondsLeft((s) => clampInt(s - 15, 0, 3600))} subtle />
+            <SmallBtn title="-15s" onPress={() => adjustTime(-15)} subtle />
+            <SmallBtn title="+15s" onPress={() => adjustTime(15)} subtle />
             <SmallBtn
               title="Reset"
               onPress={() => {
                 setSecondsLeft(props.initialSeconds);
-                setInitialSeconds(props.initialSeconds);
+                setTotalSeconds(props.initialSeconds);
                 setIsRunning(true);
                 hasPlayedStartSoundRef.current = false;
               }}
@@ -357,7 +391,6 @@ export function RestTimerOverlay(props: Props) {
               minW={80}
             />
           </View>
-
         </View>
       </Animated.View>
     </>

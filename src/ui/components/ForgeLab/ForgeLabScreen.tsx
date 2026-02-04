@@ -1,5 +1,6 @@
 /**
- * Forge Lab Screen - Main analytics dashboard
+ * Gym Lab Screen - Main analytics dashboard
+ * Contains: Body Map, Analytics, and Gym DNA tabs
  */
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable } from 'react-native';
@@ -14,8 +15,9 @@ import RankProgressionCard from './RankProgressionCard';
 import IntegrationDataCard from './IntegrationDataCard';
 import PremiumLockOverlay from './PremiumLockOverlay';
 import { BodyModelCard } from './BodyModelCard';
+import { GymDNACard } from './GymDNACard';
 
-type SubTab = 'analytics' | 'body';
+type SubTab = 'body' | 'analytics' | 'dna';
 
 const ForgeLabScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -24,7 +26,7 @@ const ForgeLabScreen: React.FC = () => {
   const isPremium = useIsPremiumUser();
 
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
-  const [activeSubTab, setActiveSubTab] = useState<SubTab>('analytics');
+  const [activeSubTab, setActiveSubTab] = useState<SubTab>('body');
 
   // Date range options
   const dateRanges = ['1W', '1M', '3M', '6M', '1Y', 'ALL'];
@@ -79,21 +81,20 @@ const ForgeLabScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: ds.tone.bg }]}>
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: ds.tone.card }]}>
-        <Text style={[styles.title, { color: ds.tone.text }]}>Forge Lab</Text>
-        <Text style={[styles.subtitle, { color: ds.tone.textSecondary }]}>
-          Premium analytics for serious lifters
-        </Text>
-      </View>
-
       {/* Sub-tab toggle */}
       <View style={[styles.subTabRow, { borderBottomColor: ds.tone.border }]}>
-        <SubTabToggle label="Analytics" tab="analytics" />
         <SubTabToggle label="Body Map" tab="body" />
+        <SubTabToggle label="Analytics" tab="analytics" />
+        <SubTabToggle label="DNA" tab="dna" />
       </View>
 
-      {activeSubTab === 'body' ? (
+      {activeSubTab === 'dna' ? (
+        // Gym DNA sub-tab
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <GymDNACard />
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      ) : activeSubTab === 'body' ? (
         // Body Model sub-tab
         <BodyModelCard fullScreen />
       ) : (
@@ -197,18 +198,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    padding: 20,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-  },
   subTabRow: {
     flexDirection: 'row',
     paddingHorizontal: 20,
@@ -227,8 +216,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   dateRangeContainer: {
+    flexGrow: 0,
+    flexShrink: 0,
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 4,
   },
   dateRangeContent: {
     flexDirection: 'row',

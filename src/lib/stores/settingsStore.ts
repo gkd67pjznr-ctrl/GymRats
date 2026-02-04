@@ -51,6 +51,7 @@ export interface Settings {
   buddyVoiceEnabled: boolean;
   unitSystem: "lb" | "kg";
   defaultRestSeconds: number;
+  exerciseRestSeconds: Record<string, number>; // Custom rest times per exercise (exerciseId -> seconds)
   // User profile from onboarding
   displayName: string;
   bodyweight: number; // Always stored in kg internally
@@ -87,6 +88,7 @@ const DEFAULTS: Settings = {
   buddyVoiceEnabled: true,
   unitSystem: "lb",
   defaultRestSeconds: 90,
+  exerciseRestSeconds: {}, // Empty by default - uses defaultRestSeconds
   displayName: "Lifter",
   bodyweight: 70, // default kg (~154 lb)
   experienceLevel: "intermediate",
@@ -222,6 +224,7 @@ export const useSettingsStore = create<SettingsState>()(
         buddyVoiceEnabled: state.buddyVoiceEnabled,
         unitSystem: state.unitSystem,
         defaultRestSeconds: state.defaultRestSeconds,
+        exerciseRestSeconds: state.exerciseRestSeconds,
         displayName: state.displayName,
         bodyweight: state.bodyweight,
         experienceLevel: state.experienceLevel,
@@ -251,6 +254,7 @@ export const selectSettings = (state: SettingsState): Settings => ({
   buddyVoiceEnabled: state.buddyVoiceEnabled,
   unitSystem: state.unitSystem,
   defaultRestSeconds: state.defaultRestSeconds,
+  exerciseRestSeconds: state.exerciseRestSeconds,
   displayName: state.displayName,
   bodyweight: state.bodyweight,
   experienceLevel: state.experienceLevel,
@@ -275,6 +279,7 @@ export function useSettings(): Settings {
   const buddyVoiceEnabled = useSettingsStore((state) => state.buddyVoiceEnabled);
   const unitSystem = useSettingsStore((state) => state.unitSystem);
   const defaultRestSeconds = useSettingsStore((state) => state.defaultRestSeconds);
+  const exerciseRestSeconds = useSettingsStore((state) => state.exerciseRestSeconds);
   const displayName = useSettingsStore((state) => state.displayName);
   const bodyweight = useSettingsStore((state) => state.bodyweight);
   const experienceLevel = useSettingsStore((state) => state.experienceLevel);
@@ -298,6 +303,7 @@ export function useSettings(): Settings {
       buddyVoiceEnabled,
       unitSystem,
       defaultRestSeconds,
+      exerciseRestSeconds,
       displayName,
       bodyweight,
       experienceLevel,
@@ -313,7 +319,7 @@ export function useSettings(): Settings {
       rankSettings,
       location,
     }),
-    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location]
+    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, exerciseRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location]
   );
 }
 
@@ -326,6 +332,7 @@ export function getSettings(): Settings {
     buddyVoiceEnabled: state.buddyVoiceEnabled,
     unitSystem: state.unitSystem,
     defaultRestSeconds: state.defaultRestSeconds,
+    exerciseRestSeconds: state.exerciseRestSeconds,
     displayName: state.displayName,
     bodyweight: state.bodyweight,
     experienceLevel: state.experienceLevel,
@@ -362,4 +369,37 @@ export function getUserWeightHistory(): { date: string; weightKg: number }[] {
   const history = useSettingsStore.getState().weightHistory;
   // Return sorted by date (newest first)
   return [...history].sort((a, b) => b.date.localeCompare(a.date));
+}
+
+/**
+ * Get rest timer duration for a specific exercise
+ * Returns the custom exercise rest time if set, otherwise falls back to default
+ */
+export function getRestSecondsForExercise(exerciseId: string): number {
+  const state = useSettingsStore.getState();
+  return state.exerciseRestSeconds[exerciseId] ?? state.defaultRestSeconds;
+}
+
+/**
+ * Set custom rest timer duration for a specific exercise
+ */
+export function setExerciseRestSeconds(exerciseId: string, seconds: number): void {
+  const state = useSettingsStore.getState();
+  state.updateSettings({
+    exerciseRestSeconds: {
+      ...state.exerciseRestSeconds,
+      [exerciseId]: seconds,
+    },
+  });
+}
+
+/**
+ * Clear custom rest timer duration for an exercise (use default)
+ */
+export function clearExerciseRestSeconds(exerciseId: string): void {
+  const state = useSettingsStore.getState();
+  const { [exerciseId]: _, ...rest } = state.exerciseRestSeconds;
+  state.updateSettings({
+    exerciseRestSeconds: rest,
+  });
 }

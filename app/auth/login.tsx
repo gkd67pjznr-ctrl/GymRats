@@ -199,13 +199,43 @@ export default function LoginScreen() {
    */
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true);
+    console.log('[Login] Starting Google sign in...');
     try {
-      // Race the OAuth flow against a timeout - in Expo Go, the WebBrowser
-      // may not resolve if the deep link is handled externally
-      const timeoutPromise = new Promise<void>((resolve) => setTimeout(resolve, 30000));
-      await Promise.race([signInWithGoogle(), timeoutPromise]);
+      const result = await signInWithGoogle();
+      console.log('[Login] Google sign in result:', result);
+
+      if (result.success) {
+        console.log('[Login] OAuth reported success, checking session...');
+        // OAuth succeeded - check for session and navigate
+        const { data, error } = await supabase.auth.getSession();
+        console.log('[Login] Session check:', { hasSession: !!data.session, error });
+
+        if (data.session) {
+          console.log('[Login] Session found, navigating...');
+          hasNavigatedRef.current = true;
+          setIsGoogleLoading(false);
+          router.replace("/(tabs)");
+          return;
+        } else {
+          console.log('[Login] No session found after OAuth success');
+          Alert.alert(
+            'Sign In Issue',
+            'Authentication completed but session could not be established. Please try again.'
+          );
+        }
+      } else {
+        console.log('[Login] OAuth did not report success:', result.error);
+        if (result.error?.type !== 'cancelled') {
+          Alert.alert(
+            'Sign In Failed',
+            result.error?.message || 'An unexpected error occurred during sign in.'
+          );
+        }
+      }
+    } catch (err) {
+      console.error('[Login] Google sign in error:', err);
     } finally {
-      // Always reset loading - navigation handled by auth state useEffect
+      console.log('[Login] Google sign in flow complete');
       setIsGoogleLoading(false);
     }
   }

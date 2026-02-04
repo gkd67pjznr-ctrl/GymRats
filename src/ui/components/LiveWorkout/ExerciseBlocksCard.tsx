@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from "react";
-import { Pressable, Text, TextInput, View, Platform } from "react-native";
+import { Pressable, Text, TextInput, View, Platform, Alert } from "react-native";
 import { useThemeColors } from "../../theme";
 import { FR } from "../../GrStyle";
 import { EXERCISES_V1 } from "../../../data/exercises";
 import type { LoggedSet } from "../../../lib/loggerTypes";
 import * as Haptics from "expo-haptics";
+import { getRestSecondsForExercise, setExerciseRestSeconds, clearExerciseRestSeconds, useSettingsStore } from "../../../lib/stores/settingsStore";
 import { NumberInput } from "./NumberInput";
 
 function exerciseName(exerciseId: string) {
@@ -48,9 +49,38 @@ export type ExerciseBlocksCardProps = {
 
 export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
   const c = useThemeColors();
+  const defaultRestSeconds = useSettingsStore((s) => s.defaultRestSeconds);
+  const exerciseRestSeconds = useSettingsStore((s) => s.exerciseRestSeconds);
 
   // local collapse map (per block)
   const [collapsedByExerciseId, setCollapsedByExerciseId] = useState<Record<string, boolean>>({});
+
+  // Handle long-press to set custom rest time for exercise
+  const handleExerciseLongPress = (exerciseId: string) => {
+    if (Platform.OS === "ios") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+
+    const currentRest = getRestSecondsForExercise(exerciseId);
+    const isCustom = exerciseRestSeconds[exerciseId] !== undefined;
+    const name = exerciseName(exerciseId);
+
+    Alert.alert(
+      `Rest Timer: ${name}`,
+      isCustom
+        ? `Current: ${currentRest}s (custom)\nDefault: ${defaultRestSeconds}s`
+        : `Current: ${currentRest}s (using default)`,
+      [
+        { text: "60s", onPress: () => setExerciseRestSeconds(exerciseId, 60) },
+        { text: "90s", onPress: () => setExerciseRestSeconds(exerciseId, 90) },
+        { text: "120s", onPress: () => setExerciseRestSeconds(exerciseId, 120) },
+        { text: "180s", onPress: () => setExerciseRestSeconds(exerciseId, 180) },
+        { text: "300s (5m)", onPress: () => setExerciseRestSeconds(exerciseId, 300) },
+        ...(isCustom ? [{ text: "Use Default", onPress: () => clearExerciseRestSeconds(exerciseId), style: "destructive" as const }] : []),
+        { text: "Cancel", style: "cancel" as const },
+      ]
+    );
+  };
 
   // Calculate overall progress when in plan mode
   const overallProgress = useMemo(() => {
@@ -229,14 +259,23 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <Pressable
                 onPress={() => props.onJumpToExercise?.(exerciseId)}
+                onLongPress={() => handleExerciseLongPress(exerciseId)}
+                delayLongPress={400}
                 style={{ paddingVertical: FR.space.x1, paddingRight: FR.space.x2, flex: 1 }}
               >
                 <Text style={[FR.type.h3, { color: c.text }]}>
                   {exerciseName(exerciseId)}
                 </Text>
-                <Text style={[FR.type.sub, { color: c.muted }]}>
-                  {showProgress ? `${completedSets}/${targetSets} sets` : `${exSets.length} sets`}
-                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
+                  <Text style={[FR.type.sub, { color: c.muted }]}>
+                    {showProgress ? `${completedSets}/${targetSets} sets` : `${exSets.length} sets`}
+                  </Text>
+                  {exerciseRestSeconds[exerciseId] !== undefined && (
+                    <Text style={[FR.type.mono, { color: c.primary, fontSize: 10 }]}>
+                      ⏱ {exerciseRestSeconds[exerciseId]}s
+                    </Text>
+                  )}
+                </View>
               </Pressable>
 
               <View style={{ flexDirection: "row", gap: FR.space.x1 }}>

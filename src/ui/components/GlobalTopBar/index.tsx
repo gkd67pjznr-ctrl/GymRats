@@ -19,7 +19,7 @@ import { NotificationDropdown } from './NotificationDropdown';
 import type { AppNotification } from '@/src/lib/socialModel';
 
 // Height of the top bar (excluding safe area)
-export const TOP_BAR_HEIGHT = 28;
+export const TOP_BAR_HEIGHT = 48;
 
 // Routes where the top bar should be hidden
 const HIDDEN_ROUTES = ['/auth', '/onboarding'];
@@ -115,7 +115,7 @@ export function GlobalTopBar() {
         <View style={styles.content}>
           {/* Left section: Avatar + Level + XP */}
           <View style={styles.leftSection}>
-            <TopBarAvatar size={22} />
+            <TopBarAvatar size={40} />
             <View style={styles.levelSection}>
               <XPProgressMini width={60} height={4} />
             </View>
@@ -134,7 +134,7 @@ export function GlobalTopBar() {
             >
               <Ionicons
                 name="settings-outline"
-                size={18}
+                size={24}
                 color={c.muted}
               />
             </Pressable>
@@ -150,13 +150,13 @@ export function GlobalTopBar() {
             >
               <Ionicons
                 name="search-outline"
-                size={18}
+                size={24}
                 color={c.muted}
               />
             </Pressable>
 
             {/* Notification bell */}
-            <NotificationBell size={18} />
+            <NotificationBell size={24} />
           </View>
         </View>
       </View>

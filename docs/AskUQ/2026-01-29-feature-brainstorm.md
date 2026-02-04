@@ -116,7 +116,7 @@
 
 ---
 
-## 6. Forge Lab (Analytics Dashboard)
+## 6. Gym Lab (Analytics Dashboard)
 
 - **A:** Premium feature. Deep analytics behind subscription:
   - Strength curves, volume trends, muscle group balance, recovery patterns, rank progression graphs
@@ -125,7 +125,7 @@
 
 ---
 
-## 7. Forge DNA (NEW FEATURE)
+## 7. DNA (NEW FEATURE)
 
 **Concept:** A visual fingerprint of your training identity — muscle group balance, lift preferences, training style (strength vs volume vs endurance), personality. Single beautiful graphic unique to each person.
 
@@ -213,7 +213,7 @@ What keeps users coming back on non-workout days:
 
 - **A:** Freemium + IAP:
   - **Free:** Full workout logging, ranks, basic social, 2-3 default buddies, weight graph
-  - **Pro subscription:** Forge Lab analytics, advanced AI coaching, full Forge DNA
+  - **Pro subscription:** Gym Lab analytics, advanced AI coaching, full DNA
   - **IAP:** Individual buddy packs, avatar cosmetics, room decorations, theme packs, seasonal items
 
 ---
@@ -264,9 +264,9 @@ What keeps users coming back on non-workout days:
 | AI Gym Buddy System | Launch (core) | IAP (buddy packs) + subscription |
 | Avatar & Hangout Room | Launch (core) | IAP (cosmetics, room decor) |
 | Workout Replay | Launch (must have) | Free (drives social engagement) |
-| Forge DNA | Launch (must have) | Premium (blurred free preview) |
+| DNA | Launch (must have) | Premium (blurred free preview) |
 | Forge Milestones | Launch (core) | Free (prestige/retention) |
-| Forge Lab (Analytics) | Launch | Premium subscription |
+| Gym Lab (Analytics) | Launch | Premium subscription |
 | Online Powerlifting Meets | Post-launch v2 | Premium entry fees / free to judge |
 | Online Bodybuilding Shows | Post-launch v2 | Premium entry fees |
 | Forge Seasons | Post-launch | IAP (seasonal cosmetics) |

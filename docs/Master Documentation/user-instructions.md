@@ -17,7 +17,7 @@ Whenever a new feature is built that requires special usage instructions, those 
 7. [Adding Images to PR Celebrations](#adding-images-to-pr-celebrations)
 8. [Customizing AI Gym Buddy Personalities](#customizing-ai-gym-buddy-personalities)
 9. [Adding Custom Avatar Art Styles](#adding-custom-avatar-art-styles)
-10. [Configuring Forge Lab Analytics](#configuring-forge-lab-analytics)
+10. [Configuring Gym Lab Analytics](#configuring-forge-lab-analytics)
 
 ---
 
@@ -347,7 +347,7 @@ Exercise names from this file appear everywhere in the app:
 - Routine builder add-exercise list
 - Workout history details
 - Social feed workout posts
-- Forge Lab analytics charts
+- Gym Lab analytics charts
 
 ### Important Notes
 
@@ -662,9 +662,9 @@ For each art style, you'll need:
 
 ---
 
-## Configuring Forge Lab Analytics
+## Configuring Gym Lab Analytics
 
-The Forge Lab analytics dashboard provides premium users with detailed workout analytics. You can customize the data visualization and add new chart types.
+The Gym Lab analytics dashboard provides premium users with detailed workout analytics. You can customize the data visualization and add new chart types.
 
 ### Files to Edit
 
@@ -675,7 +675,7 @@ The Forge Lab analytics dashboard provides premium users with detailed workout a
 
 ### How It Works
 
-Forge Lab analytics include:
+Gym Lab analytics include:
 1. **Data Processing** - Workout data is processed into meaningful metrics
 2. **Chart Generation** - Metrics are converted to visual charts
 3. **Premium Filtering** - Some features are behind the subscription paywall
@@ -727,7 +727,7 @@ export function YourNewChartCard({ data }: YourNewChartCardProps) {
 }
 ```
 
-4. **Add the chart to the main Forge Lab screen in `src/app/forge-lab.tsx`.**
+4. **Add the chart to the main Gym Lab screen in `src/app/forge-lab.tsx`.**
 
 ### Premium Feature Implementation
 
@@ -738,7 +738,7 @@ To make features premium-only:
 
 ### Testing
 
-1. View the Forge Lab dashboard as a free user
+1. View the Gym Lab dashboard as a free user
 2. Verify premium features are properly gated
 3. Upgrade to premium and verify all features are accessible
 4. Test all chart types with sample data

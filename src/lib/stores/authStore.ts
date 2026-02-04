@@ -891,36 +891,61 @@ export function setupAuthListener(
         // Check email verification status
         updates.isEmailVerified = !!session.user.email_confirmed_at;
 
-        // Fetch user profile from public users table
-        const { data: profileData } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
+        // Set user immediately from auth metadata (don't block on database)
+        console.log('[authStore] Setting user from auth metadata:', session.user.email);
+        updates.user = {
+          id: session.user.id,
+          email: session.user.email ?? "",
+          displayName: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? null,
+          avatarUrl: session.user.user_metadata?.avatar_url ?? session.user.user_metadata?.picture ?? null,
+          createdAt: session.user.created_at ?? new Date().toISOString(),
+          updatedAt: session.user.updated_at ?? new Date().toISOString(),
+          subscriptionTier: session.user.email === "dev@gymrats.app" ? 'legendary' : 'basic',
+          avatarArtStyle: null,
+          avatarGrowthStage: null,
+          avatarHeightScale: null,
+          avatarCosmetics: null,
+          totalVolumeKg: null,
+          totalSets: null,
+          hangoutRoomId: null,
+          hangoutRoomRole: null,
+        };
 
-        if (profileData) {
-          updates.user = toUserProfile(profileData);
-        } else {
-          // Fallback to auth metadata
-          updates.user = {
-            id: session.user.id,
-            email: session.user.email ?? "",
-            displayName: session.user.user_metadata?.display_name ?? null,
-            avatarUrl: session.user.user_metadata?.avatar_url ?? null,
-            createdAt: session.user.created_at ?? new Date().toISOString(),
-            updatedAt: session.user.updated_at ?? new Date().toISOString(),
-            subscriptionTier: session.user.email === "dev@gymrats.app" ? 'legendary' : 'basic',
-            // Optional fields with defaults
-            avatarArtStyle: null,
-            avatarGrowthStage: null,
-            avatarHeightScale: null,
-            avatarCosmetics: null,
-            totalVolumeKg: null,
-            totalSets: null,
-            hangoutRoomId: null,
-            hangoutRoomRole: null,
-          };
-        }
+        // Fetch/create profile in background (don't await)
+        (async () => {
+          try {
+            const { data: profileData } = await supabase
+              .from("users")
+              .select("*")
+              .eq("id", session.user.id)
+              .maybeSingle();
+
+            if (profileData) {
+              console.log('[authStore] Profile found in background, updating:', profileData.email);
+              useAuthStore.setState({ user: toUserProfile(profileData) });
+            } else {
+              // Create new user profile
+              console.log('[authStore] Creating new user profile for:', session.user.email);
+              const { data: newUser } = await supabase
+                .from("users")
+                .insert({
+                  id: session.user.id,
+                  email: session.user.email ?? "",
+                  display_name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? null,
+                  avatar_url: session.user.user_metadata?.avatar_url ?? session.user.user_metadata?.picture ?? null,
+                })
+                .select()
+                .single();
+
+              if (newUser) {
+                console.log('[authStore] Created user profile:', newUser.email);
+                useAuthStore.setState({ user: toUserProfile(newUser) });
+              }
+            }
+          } catch (err) {
+            console.log('[authStore] Background profile fetch/create error:', err);
+          }
+        })();
       } else {
         updates.user = null;
       }

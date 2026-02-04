@@ -80,7 +80,7 @@ export default function WorkoutHub() {
     <TabErrorBoundary screenName="Workout">
       <ScrollView
         style={[styles.container, { backgroundColor: c.bg }]}
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + TOP_BAR_HEIGHT + 16, paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + TOP_BAR_HEIGHT, paddingBottom: insets.bottom + 100 }]}
       >
         {/* Header */}
         <View style={styles.header}>

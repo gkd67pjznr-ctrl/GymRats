@@ -17,7 +17,7 @@ The codebase demonstrates a mature architecture with over 167 planned features, 
 - **Social features** including feed, friends, and collaborative workouts
 - **Gamification elements** with XP, levels, streaks, and achievements
 - **Avatar system** with growth mechanics and hangout rooms
-- **Analytics dashboard** with Forge Lab
+- **Analytics dashboard** with Gym Lab
 - **Professional architecture** with clear separation of concerns
 
 ---
@@ -191,7 +191,7 @@ Inspired by Finch, the avatar's growth represents the user's commitment to self-
 - Offline mutation queuing with conflict resolution
 - RLS policies for data security
 
-### 7. Analytics (Forge Lab)
+### 7. Analytics (Gym Lab)
 **Status:** 50% complete (Phase 1)
 
 **Phase 1 Features:**
@@ -278,7 +278,7 @@ Inspired by Finch, the avatar's growth represents the user's commitment to self-
 ### Short-term Goals
 1. **Refactor Large Files** (P1) - Break down `app/live-workout.tsx` and similar large files
 2. **Complete Avatar System** (P1) - Finish real-time features and cosmetics
-3. **Implement Forge Lab Charts** (P1) - Add charting library for analytics visualization
+3. **Implement Gym Lab Charts** (P1) - Add charting library for analytics visualization
 
 ### Long-term Vision
 1. **Leaderboards & Competitions** (P2) - Social comparison features
@@ -301,7 +301,7 @@ The codebase aligns well with the intended freemium business model:
 - Gamification (XP, levels, streaks, milestones)
 
 ### Premium Features (Partially Implemented)
-- **Forge Lab Analytics** - Full dashboard with premium blur
+- **Gym Lab Analytics** - Full dashboard with premium blur
 - **Advanced Buddy Features** - Voice lines and theme transformations
 - **Avatar Cosmetics** - Custom art styles and room decorations
 - **Advanced Features** - Leaderboards, competitions, training journal

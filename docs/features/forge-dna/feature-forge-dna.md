@@ -1,4 +1,4 @@
-# Feature: Forge DNA - Implementation Complete (P0)
+# Feature: DNA - Implementation Complete (P0)
 
 ## Overview
 A visual fingerprint of your training identity — a single beautiful graphic that shows your muscle group balance, lift preferences, training style, and personality. Profile centerpiece and conversion driver for premium subscription.
@@ -10,7 +10,7 @@ A visual fingerprint of your training identity — a single beautiful graphic th
 ## What Was Done
 
 ### Core Implementation
-- Created `forgeDNA/types.ts` - TypeScript types for Forge DNA system
+- Created `forgeDNA/types.ts` - TypeScript types for DNA system
 - Created `forgeDNA/calculator.ts` - Core DNA calculation algorithms
 - Created `forgeDNA/store.ts` - Zustand store for DNA state management
 - Created `ForgeDNAVisualization.tsx` - UI component for DNA visualization
@@ -49,7 +49,7 @@ A visual fingerprint of your training identity — a single beautiful graphic th
 
 ---
 ## Files Created
-- `src/lib/forgeDNA/types.ts` - Forge DNA types and interfaces
+- `src/lib/forgeDNA/types.ts` - DNA types and interfaces
 - `src/lib/forgeDNA/calculator.ts` - Core DNA calculation algorithms
 - `src/lib/forgeDNA/store.ts` - Zustand store for DNA management
 - `src/lib/forgeDNA/repository.ts` - Database operations for DNA history

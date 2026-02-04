@@ -44,8 +44,8 @@
 | Competitions | [features/competitions/](features/competitions/) | Planned |
 | Design System | [features/design-system/](features/design-system/) | 15/15 ✅ |
 | Exercises | [features/exercises/](features/exercises/) | 3/3 ✅ |
-| Forge DNA | [features/forge-dna/](features/forge-dna/) | 4/4 ✅ |
-| Forge Lab | [features/forge-lab/](features/forge-lab/) | 6/6 ✅ |
+| DNA | [features/forge-dna/](features/forge-dna/) | 4/4 ✅ |
+| Gym Lab | [features/forge-lab/](features/forge-lab/) | 6/6 ✅ |
 | Forge Milestones | [features/forge-milestones/](features/forge-milestones/) | 5/5 ✅ |
 | Forge Seasons | [features/forge-seasons/](features/forge-seasons/) | Planned |
 | Gamification | [features/Gamification/](features/Gamification/) | 12/12 ✅ |

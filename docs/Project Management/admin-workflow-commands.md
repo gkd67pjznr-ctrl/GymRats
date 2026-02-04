@@ -47,7 +47,7 @@ These commands are shortcuts that trigger specific automated workflows in Claude
 - Immediately begins work on the specified task
 
 **Examples:**
-- "Start Forge Lab analytics"
+- "Start Gym Lab analytics"
 - "Start fixing tests"
 - "Start OAuth implementation"
 
@@ -182,7 +182,7 @@ To add a new workflow command:
 
 - Commands are case-insensitive but use the exact phrases shown
 - Commands can be combined with additional context
-- Example: "Start Forge Lab analytics but focus on charts first"
+- Example: "Start Gym Lab analytics but focus on charts first"
 - Claude will acknowledge the command and follow the defined workflow
 
 ---

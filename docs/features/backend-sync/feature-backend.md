@@ -178,7 +178,7 @@ Supabase backend integration for data persistence, cloud sync, and real-time fea
 - `010_fix_live_sessions_policy.sql` - Fix policy recursion
 - `011_fix_live_sessions_policies.sql` - Fix policy duplicates
 - `20260129_add_avatar_hangout_tables.sql` - Avatar and hangout tables
-- `20260130_add_forge_dna_history_table.sql` - Forge DNA history
+- `20260130_add_forge_dna_history_table.sql` - DNA history
 
 ### Done - Backend Testing
 - [x] Database connectivity verified ✅ (2026-02-02)

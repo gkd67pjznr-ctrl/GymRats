@@ -10,6 +10,10 @@ import { RoutinePreviewModal } from "../../src/ui/components/LiveWorkout/Routine
 import { useWorkoutDrawerStore } from "../../src/lib/stores/workoutDrawerStore";
 import { EXERCISES_V1 } from "../../src/data/exercises";
 import type { RoutineExercise } from "../../src/lib/routinesModel";
+import { getLastSetForExercise } from "../../src/lib/stores/workoutStore";
+import { uid } from "../../src/lib/uid";
+import { lbToKg } from "../../src/lib/units";
+import type { LoggedSet } from "../../src/lib/loggerTypes";
 
 export default function StartWorkout() {
   const c = useThemeColors();
@@ -33,6 +37,8 @@ export default function StartWorkout() {
       exerciseBlocks: firstExerciseId ? [firstExerciseId] : [],
     });
 
+    // Navigate to feed tab (in background) and open workout drawer
+    router.replace("/(tabs)/feed");
     const { startWorkout } = useWorkoutDrawerStore.getState();
     startWorkout();
   }
@@ -68,13 +74,36 @@ export default function StartWorkout() {
 
     setPreviewRoutine(null);
 
-    // Set up session with routine exercises and open drawer
+    // Set up session with routine exercises and prefilled sets
     const exerciseIds = previewRoutine.exercises.map(e => e.exerciseId);
+
+    // Create prefilled sets based on routine's targetSets per exercise
+    const prefilledSets: LoggedSet[] = [];
+    for (const ex of previewRoutine.exercises) {
+      const historicalSet = getLastSetForExercise(ex.exerciseId);
+      const targetSets = ex.targetSets ?? 3;
+
+      // Create targetSets number of prefilled sets for this exercise
+      for (let i = 0; i < targetSets; i++) {
+        prefilledSets.push({
+          id: uid(),
+          exerciseId: ex.exerciseId,
+          setType: 'working' as const,
+          weightKg: historicalSet?.weightKg ?? lbToKg(135),
+          reps: historicalSet?.reps ?? ex.targetRepsMin ?? 8,
+          timestampMs: Date.now() + i, // Offset to ensure unique timestamps
+        });
+      }
+    }
+
     ensureCurrentSession({
       selectedExerciseId: exerciseIds[0] ?? null,
       exerciseBlocks: exerciseIds,
+      sets: prefilledSets,
     });
 
+    // Navigate to feed tab (in background) and open workout drawer
+    router.replace("/(tabs)/feed");
     const { startWorkout } = useWorkoutDrawerStore.getState();
     startWorkout();
   }

@@ -54,6 +54,7 @@ interface WorkoutDrawerState {
   startRestTimer: (seconds: number) => void;
   stopRestTimer: () => void;
   clearRestTimer: () => void;
+  adjustRestTimer: (deltaSec: number) => void;
 
   // PR cue actions
   setPendingCue: (cue: RichCue | QuickCue | null, context?: {
@@ -187,6 +188,27 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
   },
 
   /**
+   * Adjust rest timer by delta seconds (positive to add, negative to subtract)
+   * Updates startedAtMs to compensate for the adjustment
+   */
+  adjustRestTimer: (deltaSec: number) => {
+    const { restTimer } = get();
+    if (!restTimer.isActive || !restTimer.startedAtMs) return;
+
+    // Calculate new total and adjust startedAtMs to reflect the change
+    const newTotal = Math.max(0, Math.min(3600, restTimer.totalSeconds + deltaSec));
+
+    set({
+      restTimer: {
+        ...restTimer,
+        totalSeconds: newTotal,
+        // Adjust startedAtMs backward by delta to effectively add time
+        startedAtMs: restTimer.startedAtMs - (deltaSec * 1000),
+      },
+    });
+  },
+
+  /**
    * Set a pending PR cue (shown when drawer expands or on edge)
    * Accepts both RichCue and QuickCue formats - normalizes to RichCue
    */
@@ -299,6 +321,7 @@ export const workoutDrawerActions = {
   startRestTimer: (seconds: number) => useWorkoutDrawerStore.getState().startRestTimer(seconds),
   stopRestTimer: () => useWorkoutDrawerStore.getState().stopRestTimer(),
   clearRestTimer: () => useWorkoutDrawerStore.getState().clearRestTimer(),
+  adjustRestTimer: (deltaSec: number) => useWorkoutDrawerStore.getState().adjustRestTimer(deltaSec),
   getRestTimer: () => useWorkoutDrawerStore.getState().restTimer,
   // PR cues
   setPendingCue: (cue: RichCue | QuickCue | null, context?: {

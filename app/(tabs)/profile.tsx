@@ -25,7 +25,7 @@ import {
   usePendingMilestoneCelebration,
 } from "../../src/lib/stores/milestonesStore";
 import { useRouter } from "expo-router";
-import { ForgeDNACard, ProfileStatsCard } from "../../src/ui/components/Profile";
+import { ProfileStatsCard } from "../../src/ui/components/Profile";
 import { NavigationCard } from "../../src/ui/components/NavigationCard";
 
 export default function ProfileTab() {
@@ -214,7 +214,7 @@ export default function ProfileTab() {
         style={{ flex: 1, backgroundColor: c.bg }}
         contentContainerStyle={{
           padding: 16,
-          paddingTop: insets.top + TOP_BAR_HEIGHT + 16,
+          paddingTop: insets.top + TOP_BAR_HEIGHT + 4,
           paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20,
           gap: 12
         }}
@@ -326,9 +326,6 @@ export default function ProfileTab() {
           totalCount={30} // Total milestones defined
           onShowFull={() => router.push('/milestones')}
         />
-
-        {/* Forge DNA Card */}
-        <ForgeDNACard />
 
         {/* Level Up Modal */}
         <LevelUpModal

@@ -39,7 +39,7 @@ interface CurrentSessionState {
   hydrated: boolean;
 
   // Actions
-  ensureSession: (seed?: Partial<Pick<CurrentSession, "selectedExerciseId" | "exerciseBlocks">>) => CurrentSession;
+  ensureSession: (seed?: Partial<Pick<CurrentSession, "selectedExerciseId" | "exerciseBlocks" | "sets">>) => CurrentSession;
   updateSession: (updater: (s: CurrentSession) => CurrentSession) => void;
   setSession: (session: CurrentSession | null) => void;
   clearSession: () => void;
@@ -123,7 +123,7 @@ export const useCurrentSessionStore = create<CurrentSessionState>()(
           startedAtMs: now,
           selectedExerciseId: seed?.selectedExerciseId ?? null,
           exerciseBlocks: seed?.exerciseBlocks ?? [],
-          sets: [],
+          sets: seed?.sets ?? [],
           doneBySetId: {},
           exerciseStates: {},
         };
@@ -265,7 +265,7 @@ export function hasCurrentSession(): boolean {
 
 // Imperative actions for non-React code
 export function ensureCurrentSession(
-  seed?: Partial<Pick<CurrentSession, "selectedExerciseId" | "exerciseBlocks">>
+  seed?: Partial<Pick<CurrentSession, "selectedExerciseId" | "exerciseBlocks" | "sets">>
 ): CurrentSession {
   return useCurrentSessionStore.getState().ensureSession(seed);
 }

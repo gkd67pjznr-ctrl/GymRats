@@ -31,7 +31,7 @@ import {
 import { EXERCISES_V1 } from '@/src/data/exercises';
 import { kgToLb, lbToKg } from '@/src/lib/units';
 import { uid } from '@/src/lib/uid';
-import { getSettings } from '@/src/lib/stores/settingsStore';
+import { getSettings, getRestSecondsForExercise } from '@/src/lib/stores/settingsStore';
 import {
   detectCueForWorkingSet,
   makeEmptyExerciseState,
@@ -43,7 +43,8 @@ import {
   getBaselineStateForExercise,
   rebuildPRsFromHistory,
 } from '@/src/lib/stores/prStore';
-import { useWorkoutStore } from '@/src/lib/stores/workoutStore';
+import { useWorkoutStore, getLastSetForExercise } from '@/src/lib/stores/workoutStore';
+import { processUserStatsWorkout } from '@/src/lib/stores/userStatsStore';
 import type { WorkoutSession, WorkoutSet } from '@/src/lib/workoutModel';
 
 // Components
@@ -209,7 +210,8 @@ export function DrawerContent() {
         }
 
         // Start rest timer via store (persists across drawer collapse)
-        const restSeconds = settings.defaultRestSeconds ?? DEFAULT_REST_SECONDS;
+        // Use custom rest time for exercise if set, otherwise use default
+        const restSeconds = getRestSecondsForExercise(set.exerciseId);
         startRestTimer(restSeconds);
 
         // PR detection - only for exercises with prior history or user-entered baseline
@@ -343,17 +345,31 @@ export function DrawerContent() {
     [doneBySetId]
   );
 
-  // Add exercise to workout
+  // Add exercise to workout with prefilled set
   const handleSelectExercise = useCallback(
     (exerciseId: string) => {
       if (!session) return;
 
       // Add to exercise blocks if not already there
       if (!session.exerciseBlocks.includes(exerciseId)) {
+        // Get user's previous lift data from workout history
+        const historicalSet = getLastSetForExercise(exerciseId);
+
+        // Create a prefilled set using historical data or defaults
+        const prefilledSet: LoggedSet = {
+          id: uid(),
+          exerciseId,
+          setType: 'working',
+          weightKg: historicalSet?.weightKg ?? lbToKg(135), // Use history or default 135 lb
+          reps: historicalSet?.reps ?? 8, // Use history or default 8 reps
+          timestampMs: Date.now(),
+        };
+
         updateCurrentSession((s) => ({
           ...s,
           exerciseBlocks: [...s.exerciseBlocks, exerciseId],
           selectedExerciseId: exerciseId,
+          sets: [...s.sets, prefilledSet], // Add the prefilled set
         }));
       }
 
@@ -442,6 +458,9 @@ export function DrawerContent() {
 
               // Save to workout store
               addSession(workoutSession);
+
+              // Update user stats (for Ranks tab, Forge Lab, etc.)
+              processUserStatsWorkout(workoutSession);
 
               // Rebuild PR history so future PRs are detected correctly
               rebuildPRsFromHistory();

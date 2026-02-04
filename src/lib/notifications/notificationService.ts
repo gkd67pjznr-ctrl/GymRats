@@ -156,7 +156,9 @@ export const scheduleLocalNotification = async (
         data: payload.data || {},
       },
       trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
         seconds: triggerSeconds,
+        repeats: false,
       },
     });
 
