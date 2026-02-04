@@ -30,7 +30,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Body Model | ✅ Done | 5/5 | Moved to Forge Lab sub-tab |
 | Ranks Tab | ✅ Done | 10/10 | My Ranks + Leaderboards sub-tabs |
 | Authentication | 🔄 In Progress | 8/10 | Email + protected routes working, OAuth needs setup |
-| Social & Feed | 🔄 In Progress | 11/17 | Feed tabs, reactions with animations |
+| Social & Feed | 🔄 In Progress | 15/17 | Comments, user profiles, feed enhancements |
 | Gamification | ✅ Done | 12/12 | XP, levels, streaks, tokens, store |
 | Notifications | ✅ Done | 6/7 | Full push notification system complete |
 | UI & Design | ✅ Done | 15/15 | Design system + screen migrations complete |
@@ -217,6 +217,27 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ## Recent Updates (Last 30 Days)
 
 ### 2026-02-04
+- **Body Model Analytics System** - Complete analytics infrastructure
+  - Balance calculations (push/pull, front/back, upper/lower)
+  - Muscle detail service with volume trends and top exercises
+  - Undertrained muscle detection with severity levels
+  - React hooks for easy access (useBodyModelAnalytics, useMuscleVolumes, etc.)
+  - UI components: MuscleDetailModal, CompactBodyModel, BalanceIndicatorsCard
+- **Comments System Enhanced** - Full comment functionality
+  - CommentInput component with send button and character count
+  - CommentList with threading support (replies with indentation)
+  - Delete own comments with confirmation
+  - Post detail screen redesigned with full comment section
+- **User Profiles Enhanced** - Rich profile pages
+  - GymRank score display with tier-colored accent bar
+  - Quick stats row (GymRank, Workouts, Streak, PRs)
+  - ProfileStatsCard with top exercises and lifetime stats
+  - Recent posts display with WorkoutPostCard
+- **Feed Enhancements** - Performance and UX improvements
+  - FlatList with infinite scroll pagination
+  - New posts banner (animated slide-in when new posts arrive)
+  - Improved empty states with context-aware messages
+  - Performance optimizations (removeClippedSubviews, batch rendering)
 - **Documentation Cleanup** - Verified and updated all P1 tasks as complete
   - PR Detection Integration: Already implemented in DrawerContent.tsx
   - Forge Lab: Correlation insights already in IntegrationDataCard.tsx

@@ -53,7 +53,8 @@ interface SocialState {
     currentStreak?: number;
   }) => WorkoutMilestone[];
   toggleReaction: (postId: string, myUserId: string, emote: EmoteId) => void;
-  addComment: (postId: string, myUserId: string, myDisplayName: string, text: string) => Comment | null;
+  addComment: (postId: string, myUserId: string, myDisplayName: string, text: string, parentCommentId?: string) => Comment | null;
+  deleteComment: (commentId: string, userId: string) => boolean;
   reportPost: (args: { postId: string; reason: ReportReason; additionalInfo?: string }) => Promise<void>;
   reportUser: (args: { reportedUserId: string; reason: ReportReason; additionalInfo?: string }) => Promise<void>;
   blockUser: (userId: string) => Promise<void>;
@@ -227,7 +228,7 @@ export const useSocialStore = create<SocialState>()(
         }
       },
 
-      addComment: (postId, myUserId, myDisplayName, text) => {
+      addComment: (postId, myUserId, myDisplayName, text, parentCommentId) => {
         const post = get().posts.find((p) => p.id === postId);
         if (!post) return null;
 
@@ -241,6 +242,7 @@ export const useSocialStore = create<SocialState>()(
           userDisplayName: myDisplayName,
           text: trimmed,
           createdAtMs: Date.now(),
+          parentCommentId,
         };
 
         set((state) => ({
@@ -256,6 +258,32 @@ export const useSocialStore = create<SocialState>()(
         }
 
         return c;
+      },
+
+      deleteComment: (commentId, userId) => {
+        const comment = get().comments.find((c) => c.id === commentId);
+        if (!comment) return false;
+
+        // Only allow deleting own comments
+        if (comment.userId !== userId) return false;
+
+        const postId = comment.postId;
+
+        set((state) => ({
+          comments: state.comments.filter((c) => c.id !== commentId),
+          posts: state.posts.map((p) =>
+            p.id === postId ? { ...p, commentCount: Math.max(0, p.commentCount - 1) } : p
+          ),
+        }));
+
+        // Sync to server if online
+        if (networkMonitor.isOnline()) {
+          commentRepository.delete(commentId).catch(err => {
+            console.error('[socialStore] Failed to delete comment:', err);
+          });
+        }
+
+        return true;
       },
 
       setHydrated: (value) => set({ hydrated: value }),
@@ -588,6 +616,7 @@ export type AddCommentInput = {
   myUserId: string;
   myDisplayName: string;
   text: string;
+  parentCommentId?: string;
 };
 
 export function addComment(input: AddCommentInput): Comment | null {
@@ -595,8 +624,13 @@ export function addComment(input: AddCommentInput): Comment | null {
     input.postId,
     input.myUserId,
     input.myDisplayName,
-    input.text
+    input.text,
+    input.parentCommentId
   );
+}
+
+export function deleteComment(commentId: string, userId: string): boolean {
+  return useSocialStore.getState().deleteComment(commentId, userId);
 }
 
 // ============================================================================

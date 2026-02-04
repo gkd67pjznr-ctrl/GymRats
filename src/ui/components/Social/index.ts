@@ -20,3 +20,6 @@ export { PostOptions } from './PostOptions';
 export { ShareableWorkoutCard } from './ShareableWorkoutCard';
 
 export { WorkoutPostCard } from './WorkoutPostCard';
+
+export { CommentInput } from './CommentInput';
+export { CommentItem, CommentList } from './CommentItem';
