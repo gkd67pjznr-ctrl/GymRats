@@ -331,8 +331,8 @@ export const useSocialStore = create<SocialState>()(
           // Import friendsStore actions
           const { blockUser: blockUserAction } = await import('./friendsStore');
 
-          // Use the friendsStore blockUser action
-          await blockUserAction(userId);
+          // Use the friendsStore blockUser action (pass current user and target user)
+          blockUserAction(user.id, userId);
 
           // Filter out posts from blocked user
           set((state) => ({

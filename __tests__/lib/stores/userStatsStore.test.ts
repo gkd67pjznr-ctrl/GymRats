@@ -49,6 +49,8 @@ describe("GymRankCalculator", () => {
         bench: {
           exerciseId: "bench",
           bestE1RMKg: 100,
+          peakE1RMKg: 100,
+          peakAchievedAtMs: Date.now(),
           bestWeightKg: 90,
           bestRepsAtWeight: {},
           rank: 10, // Middle rank
@@ -224,6 +226,8 @@ describe("deriveAvatarGrowth", () => {
         bench: {
           exerciseId: "bench",
           bestE1RMKg: 100,
+          peakE1RMKg: 100,
+          peakAchievedAtMs: Date.now(),
           bestWeightKg: 90,
           bestRepsAtWeight: {},
           rank: 10,
@@ -263,6 +267,8 @@ describe("deriveAvatarGrowth", () => {
         bench: {
           exerciseId: "bench",
           bestE1RMKg: 100,
+          peakE1RMKg: 100,
+          peakAchievedAtMs: Date.now(),
           bestWeightKg: 90,
           bestRepsAtWeight: {},
           rank: 15,
@@ -346,6 +352,8 @@ describe("statsCalculators", () => {
       const existingStats: ExerciseStats = {
         exerciseId: "bench",
         bestE1RMKg: 100,
+        peakE1RMKg: 100,
+        peakAchievedAtMs: Date.now() - 1000,
         bestWeightKg: 90,
         bestRepsAtWeight: {},
         rank: 5,
@@ -370,6 +378,8 @@ describe("statsCalculators", () => {
       const existingStats: ExerciseStats = {
         exerciseId: "bench",
         bestE1RMKg: 100,
+        peakE1RMKg: 100,
+        peakAchievedAtMs: Date.now() - 1000,
         bestWeightKg: 90,
         bestRepsAtWeight: {},
         rank: 5,
@@ -394,6 +404,8 @@ describe("statsCalculators", () => {
       const existingStats: ExerciseStats = {
         exerciseId: "bench",
         bestE1RMKg: 100,
+        peakE1RMKg: 100,
+        peakAchievedAtMs: Date.now() - 1000,
         bestWeightKg: 90,
         bestRepsAtWeight: {},
         rank: 5,
@@ -442,6 +454,8 @@ describe("statsCalculators", () => {
         bench: {
           exerciseId: "bench",
           bestE1RMKg: 100,
+          peakE1RMKg: 100,
+          peakAchievedAtMs: Date.now(),
           bestWeightKg: 90,
           bestRepsAtWeight: {},
           rank: 5,
@@ -453,6 +467,8 @@ describe("statsCalculators", () => {
         squat: {
           exerciseId: "squat",
           bestE1RMKg: 150,
+          peakE1RMKg: 150,
+          peakAchievedAtMs: Date.now(),
           bestWeightKg: 130,
           bestRepsAtWeight: {},
           rank: 6,

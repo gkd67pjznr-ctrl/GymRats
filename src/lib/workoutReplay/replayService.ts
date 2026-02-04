@@ -5,10 +5,11 @@ import type { WorkoutSession, WorkoutSet } from '../workoutModel';
 import type { WorkoutReplay, ReplayExercise, ReplayPR, ReplayRankChange } from './replayTypes';
 import { EXERCISES_V1 } from '../../data/exercises';
 import { detectCueForWorkingSet } from '../perSetCue';
-import { scoreGymRank, scoreFromE1rm } from '../GrScoring';
+import { scoreGymRank, scoreFromE1rm, type Tier } from '../GrScoring';
 import { estimate1RM_Epley } from '../e1rm';
 import { getCurrentBuddy , formatCueMessage } from '../buddyEngine';
 import type { CueMessage } from '../buddyTypes';
+import { getExerciseStats } from '../stores/userStatsStore';
 
 // Helper to get exercise name
 function getExerciseName(exerciseId: string): string {
@@ -76,12 +77,54 @@ function detectPRsInWorkout(sets: WorkoutSet[]): ReplayPR[] {
   return prs;
 }
 
-// Helper to detect rank changes (simplified for now)
+// Helper to detect rank changes by comparing old vs new e1RM scores
 function detectRankChanges(sets: WorkoutSet[]): ReplayRankChange[] {
-  // In a real implementation, this would compare previous ranks with new ranks
-  // For now, we'll return an empty array as rank change detection is complex
-  // and would require access to user's historical data
-  return [];
+  const rankChanges: ReplayRankChange[] = [];
+  const groupedSets = groupSetsByExercise(sets);
+
+  // Get previous exercise stats (from before this workout was processed)
+  const previousStats = getExerciseStats();
+
+  // For each exercise in the workout, check if tier changed
+  Object.entries(groupedSets).forEach(([exerciseId, exerciseSets]) => {
+    const exerciseName = getExerciseName(exerciseId);
+
+    // Get previous best e1RM for this exercise
+    const prevStats = previousStats[exerciseId];
+    const prevBestE1RMKg = prevStats?.bestE1RMKg ?? 0;
+
+    // Calculate the best e1RM from this workout's sets
+    let workoutBestE1RMKg = 0;
+    exerciseSets.forEach(set => {
+      const e1rm = estimate1RM_Epley(set.weightKg, set.reps);
+      if (e1rm > workoutBestE1RMKg) {
+        workoutBestE1RMKg = e1rm;
+      }
+    });
+
+    // If workout didn't beat previous best, no rank change possible
+    if (workoutBestE1RMKg <= prevBestE1RMKg) return;
+
+    // Score old and new e1RMs to get tiers
+    const oldScore = prevBestE1RMKg > 0
+      ? scoreFromE1rm(exerciseId, prevBestE1RMKg)
+      : { total: 0, tier: 'Iron' as Tier };
+    const newScore = scoreFromE1rm(exerciseId, workoutBestE1RMKg);
+
+    // Check if tier changed
+    if (oldScore.tier !== newScore.tier) {
+      rankChanges.push({
+        exerciseId,
+        exerciseName,
+        oldRank: oldScore.total,
+        newRank: newScore.total,
+        oldTier: oldScore.tier,
+        newTier: newScore.tier,
+      });
+    }
+  });
+
+  return rankChanges;
 }
 
 // Helper to create exercise summary

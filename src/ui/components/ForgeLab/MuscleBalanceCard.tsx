@@ -1,10 +1,12 @@
 /**
  * Muscle Balance Card - Displays muscle group balance analytics
+ * Enhanced with radar chart view for visual muscle balance
  */
-import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Pressable } from 'react-native';
 import { makeDesignSystem } from '@/src/ui/designSystem';
 import VictoryBarChart from './VictoryBarChart';
+import RadarChart from './RadarChart';
 
 type MuscleGroup =
   | 'chest' | 'back' | 'shoulders' | 'legs' | 'arms' | 'core'
@@ -24,9 +26,11 @@ type MuscleBalanceCardProps = {
 
 const MuscleBalanceCard: React.FC<MuscleBalanceCardProps> = ({ data, isLoading }) => {
   const ds = makeDesignSystem('dark', 'toxic');
+  const [chartType, setChartType] = useState<'radar' | 'bar'>('radar');
 
   // Get the most recent period data
   const latestData = data && data.length > 0 ? data[data.length - 1] : null;
+  const previousData = data && data.length > 1 ? data[data.length - 2] : null;
 
   // Calculate total volume for percentage calculations
   let totalVolume = 0;
@@ -64,6 +68,47 @@ const MuscleBalanceCard: React.FC<MuscleBalanceCardProps> = ({ data, isLoading }
         .sort((a, b) => b.y - a.y) // Sort descending
     : [];
 
+  // Prepare radar chart data - use major muscle groups for cleaner display
+  const majorMuscleGroups = ['chest', 'back', 'shoulders', 'legs', 'arms', 'core'] as const;
+
+  const radarData = useMemo(() => {
+    if (!latestData) return [];
+
+    // Aggregate detailed groups into major groups
+    const aggregated: Record<string, number> = {
+      chest: (latestData.groups.chest || 0) + (latestData.groups.upper_chest || 0) + (latestData.groups.lower_chest || 0),
+      back: (latestData.groups.back || 0) + (latestData.groups.lats || 0) + (latestData.groups.mid_back || 0) + (latestData.groups.traps || 0),
+      shoulders: (latestData.groups.shoulders || 0) + (latestData.groups.front_delt || 0) + (latestData.groups.side_delt || 0) + (latestData.groups.rear_delt || 0),
+      legs: (latestData.groups.legs || 0) + (latestData.groups.quads || 0) + (latestData.groups.hamstrings || 0) + (latestData.groups.glutes || 0) + (latestData.groups.calves || 0),
+      arms: (latestData.groups.arms || 0) + (latestData.groups.biceps || 0) + (latestData.groups.triceps || 0) + (latestData.groups.forearms || 0),
+      core: (latestData.groups.core || 0) + (latestData.groups.abs || 0) + (latestData.groups.obliques || 0),
+    };
+
+    return majorMuscleGroups.map(group => ({
+      label: group,
+      value: aggregated[group] || 0,
+    }));
+  }, [latestData]);
+
+  // Prepare comparison data from previous period
+  const comparisonRadarData = useMemo(() => {
+    if (!previousData) return undefined;
+
+    const aggregated: Record<string, number> = {
+      chest: (previousData.groups.chest || 0) + (previousData.groups.upper_chest || 0) + (previousData.groups.lower_chest || 0),
+      back: (previousData.groups.back || 0) + (previousData.groups.lats || 0) + (previousData.groups.mid_back || 0) + (previousData.groups.traps || 0),
+      shoulders: (previousData.groups.shoulders || 0) + (previousData.groups.front_delt || 0) + (previousData.groups.side_delt || 0) + (previousData.groups.rear_delt || 0),
+      legs: (previousData.groups.legs || 0) + (previousData.groups.quads || 0) + (previousData.groups.hamstrings || 0) + (previousData.groups.glutes || 0) + (previousData.groups.calves || 0),
+      arms: (previousData.groups.arms || 0) + (previousData.groups.biceps || 0) + (previousData.groups.triceps || 0) + (previousData.groups.forearms || 0),
+      core: (previousData.groups.core || 0) + (previousData.groups.abs || 0) + (previousData.groups.obliques || 0),
+    };
+
+    return majorMuscleGroups.map(group => ({
+      label: group,
+      value: aggregated[group] || 0,
+    }));
+  }, [previousData]);
+
   return (
     <View style={[styles.card, { backgroundColor: ds.tone.card }]}>
       <View style={styles.header}>
@@ -79,8 +124,82 @@ const MuscleBalanceCard: React.FC<MuscleBalanceCardProps> = ({ data, isLoading }
         </View>
       ) : latestData ? (
         <View style={styles.content}>
+          {/* Chart Type Toggle */}
+          <View style={styles.toggleRow}>
+            <Pressable
+              onPress={() => setChartType('radar')}
+              style={[
+                styles.toggleButton,
+                {
+                  backgroundColor: chartType === 'radar' ? ds.tone.accent : ds.tone.bg,
+                  borderColor: ds.tone.accent,
+                }
+              ]}
+            >
+              <Text style={[
+                styles.toggleText,
+                { color: chartType === 'radar' ? ds.tone.bg : ds.tone.text }
+              ]}>
+                Radar
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setChartType('bar')}
+              style={[
+                styles.toggleButton,
+                {
+                  backgroundColor: chartType === 'bar' ? ds.tone.accent : ds.tone.bg,
+                  borderColor: ds.tone.accent,
+                }
+              ]}
+            >
+              <Text style={[
+                styles.toggleText,
+                { color: chartType === 'bar' ? ds.tone.bg : ds.tone.text }
+              ]}>
+                Bar
+              </Text>
+            </Pressable>
+          </View>
+
           <View style={styles.chartContainer}>
-            {chartData.length > 0 ? (
+            {chartType === 'radar' ? (
+              radarData.length >= 3 ? (
+                <View style={styles.radarContainer}>
+                  <RadarChart
+                    data={radarData}
+                    size={220}
+                    accentColor={ds.tone.accent}
+                    showLabels={true}
+                    showValues={true}
+                    comparisonData={comparisonRadarData}
+                    comparisonColor="rgba(255,255,255,0.3)"
+                  />
+                  {comparisonRadarData && (
+                    <View style={styles.legendRow}>
+                      <View style={styles.legendItem}>
+                        <View style={[styles.legendDot, { backgroundColor: ds.tone.accent }]} />
+                        <Text style={[styles.legendText, { color: ds.tone.textSecondary }]}>
+                          Current
+                        </Text>
+                      </View>
+                      <View style={styles.legendItem}>
+                        <View style={[styles.legendDot, { backgroundColor: 'rgba(255,255,255,0.3)', borderStyle: 'dashed', borderWidth: 1, borderColor: 'rgba(255,255,255,0.5)' }]} />
+                        <Text style={[styles.legendText, { color: ds.tone.textSecondary }]}>
+                          Previous
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <View style={styles.chartPlaceholder}>
+                  <Text style={[styles.chartText, { color: ds.tone.textSecondary }]}>
+                    Need more data for radar chart
+                  </Text>
+                </View>
+              )
+            ) : chartData.length > 0 ? (
               <VictoryBarChart
                 data={chartData}
                 xLabel="Muscle Group"
@@ -163,9 +282,46 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  toggleRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 16,
+  },
+  toggleButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  toggleText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
   chartContainer: {
-    height: 150,
+    minHeight: 150,
     marginBottom: 20,
+  },
+  radarContainer: {
+    alignItems: 'center',
+  },
+  legendRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
+    marginTop: 8,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  legendDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  legendText: {
+    fontSize: 12,
   },
   chartPlaceholder: {
     flex: 1,

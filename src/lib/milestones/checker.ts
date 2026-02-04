@@ -20,6 +20,15 @@ function checkCondition(condition: ForgeMilestone['condition'], stats: Milestone
     case 'prs':
       return stats.totalPRs >= condition.threshold;
 
+    case 'pr_streak':
+      return (stats.longestPRStreak ?? 0) >= condition.threshold;
+
+    case 'prs_in_workout':
+      return (stats.maxPRsInWorkout ?? 0) >= condition.threshold;
+
+    case 'pr_types':
+      return stats.hasAllPRTypes === true;
+
     case 'level':
       return stats.currentLevel >= condition.threshold;
 
@@ -84,6 +93,16 @@ function calculateProgress(condition: ForgeMilestone['condition'], stats: Milest
       break;
     case 'prs':
       current = stats.totalPRs;
+      break;
+    case 'pr_streak':
+      current = stats.longestPRStreak ?? 0;
+      break;
+    case 'prs_in_workout':
+      current = stats.maxPRsInWorkout ?? 0;
+      break;
+    case 'pr_types':
+      current = stats.hasAllPRTypes ? 3 : 0;
+      max = 3;
       break;
     case 'level':
       current = stats.currentLevel;

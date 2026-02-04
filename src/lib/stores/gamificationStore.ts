@@ -38,6 +38,7 @@ import {
   syncGamificationProfile,
 } from '../gamification/repositories/gamificationRepository';
 import { getUser } from './authStore';
+import { getLifetimeStats } from './userStatsStore';
 import { networkMonitor } from '../sync/NetworkMonitor';
 import type { SyncMetadata } from '../sync/syncTypes';
 import { getTodayISO } from '../gamification/streak/tracker';
@@ -254,6 +255,8 @@ export const useGamificationStore = create<GamificationState>()(
 
         // Check for other milestones
         const totalWorkouts = updatedCalendar.reduce((sum, day) => sum + day.count, 0);
+        // Get totalPRs from userStatsStore (single source of truth for user statistics)
+        const userLifetimeStats = getLifetimeStats();
         const newMilestones = getNewMilestones(
           state.profile.milestonesCompleted,
           {
@@ -261,7 +264,7 @@ export const useGamificationStore = create<GamificationState>()(
             totalXP: state.profile.totalXP + xpEarned,
             currentLevel: levelUpResult.newLevel ?? state.profile.currentLevel,
             currentStreak: streakResult.streak,
-            totalPRs: 0, // TODO: Track PRs
+            totalPRs: userLifetimeStats.totalPRs,
           }
         );
 

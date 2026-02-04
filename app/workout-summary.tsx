@@ -19,6 +19,9 @@ type WorkoutSummaryData = {
   durationMs: number;
   setCount: number;
   prCount: number;
+  weightPRs: number;
+  repPRs: number;
+  e1rmPRs: number;
   completionPct?: number;
   routineName?: string;
   exerciseIds: string[];
@@ -81,8 +84,11 @@ export default function WorkoutSummary() {
       return;
     }
 
-    // Calculate PR count (simplified - in real app would compare with history)
-    const prCount = 0; // TODO: Calculate actual PRs
+    // Use stored PR counts from the workout session
+    const prCount = foundSession.prCount ?? 0;
+    const weightPRs = foundSession.weightPRs ?? 0;
+    const repPRs = foundSession.repPRs ?? 0;
+    const e1rmPRs = foundSession.e1rmPRs ?? 0;
 
     // Calculate completion % if following a routine
     let completionPct: number | undefined;
@@ -105,6 +111,9 @@ export default function WorkoutSummary() {
       durationMs: foundSession.endedAtMs - foundSession.startedAtMs,
       setCount: foundSession.sets.length,
       prCount,
+      weightPRs,
+      repPRs,
+      e1rmPRs,
       completionPct,
       routineName: foundSession.routineName,
       exerciseIds,
@@ -213,6 +222,58 @@ export default function WorkoutSummary() {
           <StatCard label="Sets" value={summary.setCount} />
           <StatCard label="PRs" value={summary.prCount} subtext={"new records"} />
         </View>
+
+        {/* PR Breakdown (only show if PRs achieved) */}
+        {summary.prCount > 0 && (
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: c.border,
+              borderRadius: FR.radius.card,
+              padding: FR.space.x3,
+              backgroundColor: c.card,
+              gap: FR.space.x2,
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
+              <Text style={{ fontSize: 24 }}>🏆</Text>
+              <Text style={[FR.type.h3, { color: c.text }]}>Personal Records</Text>
+            </View>
+
+            <View style={{ flexDirection: "row", gap: FR.space.x3 }}>
+              {summary.weightPRs > 0 && (
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                  <Text style={{ fontSize: 16 }}>🏋️</Text>
+                  <Text style={[FR.type.body, { color: c.text }]}>
+                    {summary.weightPRs} Weight
+                  </Text>
+                </View>
+              )}
+              {summary.repPRs > 0 && (
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                  <Text style={{ fontSize: 16 }}>💪</Text>
+                  <Text style={[FR.type.body, { color: c.text }]}>
+                    {summary.repPRs} Rep
+                  </Text>
+                </View>
+              )}
+              {summary.e1rmPRs > 0 && (
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                  <Text style={{ fontSize: 16 }}>🔥</Text>
+                  <Text style={[FR.type.body, { color: c.text }]}>
+                    {summary.e1rmPRs} e1RM
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {summary.prCount >= 3 && (
+              <Text style={[FR.type.sub, { color: c.primary, fontWeight: "700" }]}>
+                🎉 Hat Trick! {summary.prCount} PRs in one workout!
+              </Text>
+            )}
+          </View>
+        )}
 
         {/* Routine Completion */}
         {summary.completionPct !== undefined && (

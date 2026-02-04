@@ -9,6 +9,7 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  Share,
   KeyboardAvoidingView,
   Platform,
   Keyboard,
@@ -52,8 +53,13 @@ import { ExercisePicker } from '@/src/ui/components/LiveWorkout/ExercisePicker';
 import { ExerciseCard } from '@/src/ui/components/LiveWorkout/ExerciseCard';
 import { RestTimerOverlay } from '@/src/ui/components/RestTimerOverlay';
 import { CuePresenter } from '@/src/ui/components/CuePresenter';
+import { PRCelebration } from '@/src/ui/components/LiveWorkout/PRCelebration';
 import type { RichCue, PRType } from '@/src/lib/cues/cueTypes';
 import { computeIntensity } from '@/src/lib/cues/cueTypes';
+import { selectCelebration } from '@/src/lib/celebration/selector';
+import type { SelectedCelebration } from '@/src/lib/celebration/types';
+import { getUser } from '@/src/lib/stores/authStore';
+import { createPost } from '@/src/lib/stores/socialStore';
 
 // Helper to get exercise name
 function getExerciseName(exerciseId: string): string {
@@ -99,6 +105,9 @@ export function DrawerContent() {
 
   // PR cue from store
   const pendingCue = usePendingCue();
+
+  // PR celebration modal state (for legendary PRs)
+  const [prCelebration, setPrCelebration] = useState<SelectedCelebration | null>(null);
 
   // Track done state locally (synced with session)
   const doneBySetId = session?.doneBySetId ?? {};
@@ -293,6 +302,29 @@ export function DrawerContent() {
 
             setPendingCue(richCue);
 
+            // For legendary PRs, show the full celebration modal
+            if (richCue.intensity === 'legendary') {
+              const celebration = selectCelebration({
+                prType: prType as 'weight' | 'rep' | 'e1rm',
+                deltaLb: delta ?? 0,
+                exerciseName,
+                weightLabel: result.meta.weightLabel,
+                reps: set.reps,
+              });
+              if (celebration) {
+                setPrCelebration(celebration);
+              }
+            }
+
+            // Increment PR counts for this session (total and by type)
+            updateCurrentSession((s) => ({
+              ...s,
+              prCount: (s.prCount ?? 0) + 1,
+              weightPRs: (s.weightPRs ?? 0) + (prType === 'weight' ? 1 : 0),
+              repPRs: (s.repPRs ?? 0) + (prType === 'rep' ? 1 : 0),
+              e1rmPRs: (s.e1rmPRs ?? 0) + (prType === 'e1rm' ? 1 : 0),
+            }));
+
             // Extra haptic for PRs (stronger for bigger PRs)
             if (settings.hapticsEnabled && Platform.OS === 'ios') {
               const hapticType = richCue.intensity === 'legendary'
@@ -449,11 +481,16 @@ export function DrawerContent() {
               // Create WorkoutSession
               const workoutSession: WorkoutSession = {
                 id: session.id,
+                userId: '', // Will be populated by addSession if user is logged in
                 startedAtMs: session.startedAtMs,
                 endedAtMs: Date.now(),
                 sets: completedSets,
                 routineId: session.routineId,
                 planId: session.planId,
+                prCount: session.prCount ?? 0,
+                weightPRs: session.weightPRs ?? 0,
+                repPRs: session.repPRs ?? 0,
+                e1rmPRs: session.e1rmPRs ?? 0,
               };
 
               // Save to workout store
@@ -512,6 +549,57 @@ export function DrawerContent() {
   const handleClearCue = useCallback(() => {
     clearPendingCue();
   }, [clearPendingCue]);
+
+  // Handle PR share - posts to social feed or opens native share
+  const handlePRShare = useCallback(async () => {
+    if (!prCelebration) return;
+
+    const user = getUser();
+    const { headline, subheadline, detail } = prCelebration;
+
+    // Build share message
+    const shareText = [
+      headline,
+      subheadline,
+      detail,
+    ].filter(Boolean).join('\n');
+
+    // Try native share first
+    try {
+      await Share.share({
+        message: `${shareText}\n\n🏋️ Logged with GymRats`,
+        title: 'Personal Record!',
+      });
+    } catch (err) {
+      // If native share fails/cancelled, offer to post to feed
+      if (user) {
+        Alert.alert(
+          'Share to Feed?',
+          'Would you like to share this PR to your GymRats feed?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Share',
+              onPress: () => {
+                createPost({
+                  authorUserId: user.id,
+                  authorDisplayName: user.displayName || 'Gym Rat',
+                  authorAvatarUrl: user.avatarUrl,
+                  privacy: 'public',
+                  createdAtMs: Date.now(),
+                  title: headline,
+                  caption: [subheadline, detail].filter(Boolean).join(' • '),
+                });
+              },
+            },
+          ]
+        );
+      }
+    }
+
+    // Clear the celebration after sharing
+    setPrCelebration(null);
+  }, [prCelebration]);
 
   // Dismiss keyboard on scroll
   const handleScrollBeginDrag = useCallback(() => {
@@ -664,6 +752,13 @@ export function DrawerContent() {
         onClose={handleRestTimerClose}
         onDone={handleRestTimerDone}
         workoutId={session?.id}
+      />
+
+      {/* PR Celebration Modal - for legendary PRs */}
+      <PRCelebration
+        celebration={prCelebration}
+        onDismiss={() => setPrCelebration(null)}
+        onShare={handlePRShare}
       />
     </KeyboardAvoidingView>
   );

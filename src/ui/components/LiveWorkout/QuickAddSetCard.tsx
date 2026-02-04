@@ -4,6 +4,8 @@ import { useThemeColors } from "../../theme";
 import { FR } from "../../GrStyle";
 import { NumberInput } from "./NumberInput";
 import { PlateCalculator } from "./PlateCalculator";
+import { PRPredictionIndicator } from "./PRPredictionIndicator";
+import type { PRPrediction } from "@/src/lib/prPrediction";
 import * as Haptics from "expo-haptics";
 
 type Props = {
@@ -24,6 +26,9 @@ type Props = {
 
   onAddSet: () => void;
   onWeightStepChange?: (step: number) => void;
+
+  /** PR prediction for current weight/reps */
+  prPrediction?: PRPrediction | null;
 };
 
 // Weight presets for quick selection (in lb)
@@ -152,6 +157,11 @@ export function QuickAddSetCard(props: Props) {
           </Text>
         </Text>
       </View>
+
+      {/* PR Prediction Indicator */}
+      {props.prPrediction && (
+        <PRPredictionIndicator prediction={props.prPrediction} />
+      )}
 
       {/* Plate Calculator (collapsible) */}
       {showPlateCalc && (

@@ -157,7 +157,11 @@ RootLayout
   - [x] Glowing star indicator on edge when PR pending
 - [x] Update tests (26 tests passing)
 - [ ] Timer completion notification/haptic when collapsed (needs testing)
-- [ ] Integrate actual PR detection with `setPendingCue()`
+- [x] Integrate actual PR detection with `setPendingCue()`
+- [x] PR counts tracked in session (prCount, weightPRs, repPRs, e1rmPRs)
+- [x] PRCelebration modal for legendary PRs
+- [x] PR sharing to social feed + native share
+- [x] PR streak tracking in userStatsStore
 
 ---
 

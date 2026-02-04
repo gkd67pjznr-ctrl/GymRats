@@ -10,6 +10,10 @@ export interface ExerciseStats {
   exerciseId: string;
   /** Best estimated 1-rep max in kg */
   bestE1RMKg: number;
+  /** All-time peak e1RM in kg (for recovery detection) */
+  peakE1RMKg: number;
+  /** Timestamp when peak was achieved */
+  peakAchievedAtMs: number;
   /** Best weight lifted in kg */
   bestWeightKg: number;
   /** Best reps at each weight bucket (kg string key) */
@@ -44,6 +48,14 @@ export interface LifetimeStats {
   repPRs: number;
   /** e1RM PRs achieved */
   e1rmPRs: number;
+  /** Current PR streak (consecutive sessions with at least one PR) */
+  prStreak: number;
+  /** Longest PR streak ever achieved */
+  longestPRStreak: number;
+  /** Max PRs achieved in a single workout */
+  maxPRsInWorkout: number;
+  /** Whether user has achieved all 3 PR types (weight, rep, e1rm) */
+  hasAllPRTypes: boolean;
   /** First workout timestamp */
   firstWorkoutMs: number | null;
   /** Last workout timestamp */
@@ -153,6 +165,14 @@ export interface ProcessWorkoutResult {
     value: number;
     previousValue?: number;
   }[];
+  /** Recovery PRs - matching/exceeding historical peak after decline */
+  recoveryPRs: {
+    exerciseId: string;
+    exerciseName: string;
+    currentE1RM: number;
+    peakE1RM: number;
+    peakAgeMs: number;
+  }[];
   /** Rank ups achieved */
   rankUps: {
     exerciseId: string;
@@ -206,6 +226,10 @@ export const DEFAULT_LIFETIME_STATS: LifetimeStats = {
   weightPRs: 0,
   repPRs: 0,
   e1rmPRs: 0,
+  prStreak: 0,
+  longestPRStreak: 0,
+  maxPRsInWorkout: 0,
+  hasAllPRTypes: false,
   firstWorkoutMs: null,
   lastWorkoutMs: null,
 };

@@ -1,7 +1,7 @@
 // src/ui/components/PersistentTabBar.tsx
 // Persistent bottom tab bar that stays visible across all screens
 
-import { View, Pressable } from "react-native";
+import { View, Pressable, Text, StyleSheet } from "react-native";
 
 // Height of tab bar content (excluding safe area)
 export const TAB_BAR_HEIGHT = 60;
@@ -9,18 +9,21 @@ import { useRouter, usePathname } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "../theme";
-import { useIsAuthenticated } from "../../lib/stores";
+import { useIsAuthenticated, useUser } from "../../lib/stores";
+import { usePendingFriendRequestCount } from "../../lib/stores/friendsStore";
+import { ME_ID } from "../../lib/userDirectory";
 
 type TabConfig = {
   name: string;
   href: string;
   icon: keyof typeof Ionicons.glyphMap;
   iconFocused: keyof typeof Ionicons.glyphMap;
+  badgeKey?: string;
 };
 
 const TABS: TabConfig[] = [
   { name: "Home", href: "/(tabs)", icon: "home-outline", iconFocused: "home" },
-  { name: "Ranks", href: "/(tabs)/ranks", icon: "trophy-outline", iconFocused: "trophy" },
+  { name: "Feed", href: "/(tabs)/feed", icon: "people-outline", iconFocused: "people", badgeKey: "friends" },
   { name: "Workout", href: "/(tabs)/workout", icon: "barbell-outline", iconFocused: "barbell" },
   { name: "Gym Lab", href: "/forge-lab", icon: "analytics-outline", iconFocused: "analytics" },
   { name: "Profile", href: "/(tabs)/profile", icon: "person-outline", iconFocused: "person" },
@@ -35,6 +38,8 @@ export function PersistentTabBar() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const isAuthenticated = useIsAuthenticated();
+  const user = useUser();
+  const pendingCount = usePendingFriendRequestCount(user?.id ?? ME_ID);
 
   // Only show when authenticated
   if (!isAuthenticated) {
@@ -73,6 +78,7 @@ export function PersistentTabBar() {
     >
       {TABS.map((tab) => {
         const active = isActive(tab.href);
+        const badgeCount = tab.badgeKey === "friends" ? pendingCount : 0;
         return (
           <Pressable
             key={tab.name}
@@ -84,14 +90,45 @@ export function PersistentTabBar() {
               paddingVertical: 4,
             }}
           >
-            <Ionicons
-              name={active ? tab.iconFocused : tab.icon}
-              size={24}
-              color={active ? (c.text || "#fff") : (c.muted || "#888")}
-            />
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name={active ? tab.iconFocused : tab.icon}
+                size={24}
+                color={active ? (c.text || "#fff") : (c.muted || "#888")}
+              />
+              {badgeCount > 0 && (
+                <View style={[styles.badge, { backgroundColor: c.primary || "#FF4444" }]}>
+                  <Text style={styles.badgeText}>
+                    {badgeCount > 9 ? "9+" : badgeCount}
+                  </Text>
+                </View>
+              )}
+            </View>
           </Pressable>
         );
       })}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -8,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "700",
+  },
+});

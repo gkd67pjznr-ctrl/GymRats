@@ -185,13 +185,31 @@ const PUNCHY_WEIGHT = [
 const PUNCHY_E1RM = [
   "New ceiling unlocked.",
   "Strength is showing.",
-  "That’s real progress.",
-  "You’re building something serious.",
+  "That's real progress.",
+  "You're building something serious.",
   "Engine upgrade.",
 ];
 
-export function pickPunchyVariant(kind: "rep" | "weight" | "e1rm"): string {
-  const pool = kind === "rep" ? PUNCHY_REP : kind === "weight" ? PUNCHY_WEIGHT : PUNCHY_E1RM;
+/** Recovery PR variants - for comeback after decline */
+const PUNCHY_RECOVERY = [
+  "Welcome back to the top. 👑",
+  "The comeback is REAL.",
+  "You never lost it. You just took a break.",
+  "Peak strength: RESTORED.",
+  "That's how legends return.",
+  "Stronger than before the setback.",
+  "Recovery complete. 💪",
+];
+
+export function pickPunchyVariant(kind: "rep" | "weight" | "e1rm" | "recovery"): string {
+  const pool =
+    kind === "rep"
+      ? PUNCHY_REP
+      : kind === "weight"
+        ? PUNCHY_WEIGHT
+        : kind === "recovery"
+          ? PUNCHY_RECOVERY
+          : PUNCHY_E1RM;
   return pool[Math.floor(Math.random() * pool.length)];
 }
 

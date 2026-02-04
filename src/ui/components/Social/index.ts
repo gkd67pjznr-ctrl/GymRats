@@ -16,3 +16,7 @@ export { ReportModal } from './ReportModal';
 export type { ReportReason } from './ReportModal';
 
 export { PostOptions } from './PostOptions';
+
+export { AnimatedReactionButton } from './AnimatedReactionButton';
+export { ReactionsModal } from './ReactionsModal';
+export { CommentsSection } from './CommentsSection';

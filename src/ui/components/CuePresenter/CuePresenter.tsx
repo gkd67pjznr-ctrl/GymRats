@@ -11,8 +11,10 @@ import type {
   AnimationDirection,
   AnimationStyle,
   CueIntensity,
+  PRType,
 } from "@/src/lib/cues/cueTypes";
 import { enrichCue, computeIntensity } from "@/src/lib/cues/cueTypes";
+import { playSound, type SoundKey } from "@/src/lib/sound/SoundManager";
 
 // ============================================================================
 // Configuration
@@ -120,9 +122,9 @@ export function CuePresenter({
     translateY.setValue(getInitialTranslateY(position));
     scale.setValue(richCue.intensity === "legendary" ? 0.5 : 0.8);
 
-    // Play audio if enabled
-    if (audioEnabled && settings.soundsEnabled && richCue.audioId) {
-      playAudio(richCue.audioId);
+    // Play audio if enabled - either from audioId or based on prType
+    if (audioEnabled && settings.soundsEnabled && (richCue.audioId || richCue.prType !== 'none')) {
+      playAudio(richCue.audioId || '', richCue.prType);
     }
 
     // Animate in
@@ -195,11 +197,15 @@ export function CuePresenter({
         },
       ]}
     >
-      {/* Illustration slot (future) */}
-      {illustrationsEnabled && richCue.illustrationId && (
+      {/* Illustration slot - emoji-based for now, future: themed illustrations */}
+      {illustrationsEnabled && (isHype || isLegendary) && (
         <View style={styles.illustrationSlot}>
-          {/* TODO: Load illustration by ID from theme system */}
-          {/* <ThemedIllustration id={richCue.illustrationId} /> */}
+          <Text style={[
+            styles.illustrationEmoji,
+            { fontSize: isLegendary ? 48 : 36 }
+          ]}>
+            {PR_EMOJI_MAP[richCue.prType] || PR_EMOJI_MAP.none}
+          </Text>
         </View>
       )}
 
@@ -298,10 +304,52 @@ function getLabelText(prType: RichCue["prType"]): string {
   }
 }
 
-function playAudio(audioId: string) {
-  // TODO: Integrate with audio system
-  // audioSystem.play(audioId);
-  console.log("[CuePresenter] Would play audio:", audioId);
+/** Map PR types to sound keys */
+const PR_SOUND_MAP: Partial<Record<PRType, SoundKey>> = {
+  weight: 'triumph',    // Big fanfare for weight PRs
+  rep: 'cheer',         // Cheer for rep PRs
+  e1rm: 'powerup',      // Powerup for e1RM PRs
+  rank_up: 'triumph',   // Big fanfare for rank ups
+  volume: 'stamp',      // Stamp for volume PRs
+  streak: 'spark',      // Sparkle for streaks
+};
+
+/** Map PR types to celebration emojis */
+const PR_EMOJI_MAP: Record<PRType, string> = {
+  weight: '🏋️',        // Weight PR - lifting
+  rep: '💪',           // Rep PR - muscle
+  e1rm: '🔥',          // e1RM PR - fire
+  rank_up: '⭐',       // Rank up - star
+  volume: '📈',        // Volume PR - chart
+  streak: '🔥',        // Streak - fire
+  cardio: '🏃',        // Cardio - running
+  none: '✨',          // Fallback - sparkle
+};
+
+function playAudio(audioId: string, prType?: PRType) {
+  // Map audioId or prType to actual sound key
+  let soundKey: SoundKey | undefined;
+
+  // First try direct audioId mapping
+  if (audioId in PR_SOUND_MAP) {
+    soundKey = PR_SOUND_MAP[audioId as PRType];
+  }
+  // Then try prType
+  else if (prType && prType in PR_SOUND_MAP) {
+    soundKey = PR_SOUND_MAP[prType];
+  }
+  // Fallback to 'spark' for any unrecognized cue
+  else {
+    soundKey = 'spark';
+  }
+
+  if (soundKey) {
+    playSound(soundKey).catch((error) => {
+      if (__DEV__) {
+        console.warn("[CuePresenter] Failed to play sound:", error);
+      }
+    });
+  }
 }
 
 // ============================================================================
@@ -324,6 +372,9 @@ const styles = StyleSheet.create({
   illustrationSlot: {
     alignItems: "center",
     marginBottom: 8,
+  },
+  illustrationEmoji: {
+    textAlign: "center",
   },
   label: {
     fontSize: 11,

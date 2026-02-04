@@ -15,6 +15,9 @@ export type MilestoneConditionType =
   | 'workouts'         // Total workouts completed
   | 'streak'           // Consecutive day streak
   | 'prs'              // Total PRs achieved
+  | 'pr_streak'        // Consecutive workouts with PRs
+  | 'prs_in_workout'   // Max PRs achieved in single workout
+  | 'pr_types'         // All 3 PR types achieved (weight, rep, e1rm)
   | 'rank'             // Exercise rank achieved
   | 'level'            // User level reached
   | 'sets'             // Total sets logged
@@ -95,6 +98,14 @@ export interface MilestoneUserStats {
   longestStreak: number;
   /** Total PRs achieved */
   totalPRs: number;
+  /** Current PR streak (consecutive workouts with PRs) */
+  prStreak: number;
+  /** Longest PR streak ever achieved */
+  longestPRStreak: number;
+  /** Max PRs achieved in a single workout */
+  maxPRsInWorkout: number;
+  /** Whether user has achieved all 3 PR types (weight, rep, e1rm) */
+  hasAllPRTypes: boolean;
   /** Current level */
   currentLevel: number;
   /** Total sets logged */
