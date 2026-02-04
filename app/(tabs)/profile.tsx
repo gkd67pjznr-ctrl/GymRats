@@ -213,8 +213,8 @@ export default function ProfileTab() {
       <ScrollView
         style={{ flex: 1, backgroundColor: c.bg }}
         contentContainerStyle={{
-          padding: 16,
-          paddingTop: insets.top + TOP_BAR_HEIGHT + 4,
+          paddingHorizontal: 16,
+          paddingTop: TOP_BAR_HEIGHT + insets.top,
           paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20,
           gap: 12
         }}

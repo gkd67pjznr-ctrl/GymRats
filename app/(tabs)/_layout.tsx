@@ -1,15 +1,12 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "../../src/ui/theme";
-import { TOP_BAR_HEIGHT } from "../../src/ui/components/GlobalTopBar";
 
 // Note: Authentication is now handled centrally in app/_layout.tsx via useRouteProtection
 // This layout no longer needs an AuthGuard wrapper
 
 export default function TabsLayout() {
   const c = useThemeColors();
-  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -21,8 +18,6 @@ export default function TabsLayout() {
             display: 'none', // Hidden - using PersistentTabBar instead
           },
           sceneStyle: {
-            paddingTop: insets.top + TOP_BAR_HEIGHT,
-            paddingBottom: 60, // Space for persistent tab bar
             backgroundColor: c.bg,
           },
         }}
