@@ -265,14 +265,15 @@ export {
 } from "../gamification/shop";
 
 // Top Bar (notifications, dropdown state)
-export {
-  useTopBarStore,
-  useDropdownOpen,
-  useNotifications,
-  useUnreadCount,
-  useIsLoadingNotifications,
-  topBarActions,
-} from './topBarStore';
+// NOTE: Import directly from './topBarStore' to avoid React Compiler re-export issues
+// export {
+//   useTopBarStore,
+//   useDropdownOpen,
+//   useNotifications,
+//   useUnreadCount,
+//   useIsLoadingNotifications,
+//   topBarActions,
+// } from './topBarStore';
 
 // User Stats (unified stats store)
 export {

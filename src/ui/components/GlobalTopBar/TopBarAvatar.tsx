@@ -10,15 +10,16 @@ import { useCurrentLevel } from '@/src/lib/stores/gamificationStore';
 
 interface TopBarAvatarProps {
   onPress?: () => void;
+  size?: number;
 }
 
 /**
  * TopBarAvatar Component
  *
- * Displays user avatar (32px) with a level badge overlay.
+ * Displays user avatar with a level badge overlay.
  * Taps navigate to profile.
  */
-export function TopBarAvatar({ onPress }: TopBarAvatarProps) {
+export function TopBarAvatar({ onPress, size = 32 }: TopBarAvatarProps) {
   const router = useRouter();
   const c = useThemeColors();
   const ds = makeDesignSystem('dark', 'toxic');
@@ -34,8 +35,8 @@ export function TopBarAvatar({ onPress }: TopBarAvatarProps) {
   };
 
   // Avatar size for top bar
-  const AVATAR_SIZE = 32;
-  const BADGE_SIZE = 16;
+  const AVATAR_SIZE = size;
+  const BADGE_SIZE = Math.round(size / 2);
 
   // Get tier color based on level
   const tierColor = getTierColor(level, ds);
@@ -90,7 +91,7 @@ export function TopBarAvatar({ onPress }: TopBarAvatarProps) {
               },
             ]}
           >
-            <Text style={[styles.initialsText, { color: c.text }]}>
+            <Text style={[styles.initialsText, { color: c.text, fontSize: Math.round(AVATAR_SIZE * 0.4) }]}>
               {initials}
             </Text>
           </View>
@@ -105,12 +106,12 @@ export function TopBarAvatar({ onPress }: TopBarAvatarProps) {
               height: BADGE_SIZE,
               borderRadius: BADGE_SIZE / 2,
               backgroundColor: tierColor,
-              borderWidth: 1.5,
+              borderWidth: 1,
               borderColor: c.bg,
             },
           ]}
         >
-          <Text style={styles.levelText}>{level}</Text>
+          <Text style={[styles.levelText, { fontSize: Math.round(BADGE_SIZE * 0.6) }]}>{level}</Text>
         </View>
       </View>
     </Pressable>

@@ -19,7 +19,7 @@ import { NotificationDropdown } from './NotificationDropdown';
 import type { AppNotification } from '@/src/lib/socialModel';
 
 // Height of the top bar (excluding safe area)
-export const TOP_BAR_HEIGHT = 56;
+export const TOP_BAR_HEIGHT = 28;
 
 // Routes where the top bar should be hidden
 const HIDDEN_ROUTES = ['/auth', '/onboarding'];
@@ -115,9 +115,9 @@ export function GlobalTopBar() {
         <View style={styles.content}>
           {/* Left section: Avatar + Level + XP */}
           <View style={styles.leftSection}>
-            <TopBarAvatar />
+            <TopBarAvatar size={22} />
             <View style={styles.levelSection}>
-              <XPProgressMini width={80} height={6} />
+              <XPProgressMini width={60} height={4} />
             </View>
           </View>
 
@@ -134,7 +134,7 @@ export function GlobalTopBar() {
             >
               <Ionicons
                 name="settings-outline"
-                size={22}
+                size={18}
                 color={c.muted}
               />
             </Pressable>
@@ -150,13 +150,13 @@ export function GlobalTopBar() {
             >
               <Ionicons
                 name="search-outline"
-                size={22}
+                size={18}
                 color={c.muted}
               />
             </Pressable>
 
             {/* Notification bell */}
-            <NotificationBell size={22} />
+            <NotificationBell size={18} />
           </View>
         </View>
       </View>
@@ -186,23 +186,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
   },
   leftSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   levelSection: {
-    marginLeft: 4,
+    marginLeft: 2,
   },
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
   },
   iconButton: {
-    padding: 8,
+    padding: 4,
   },
 });
 
