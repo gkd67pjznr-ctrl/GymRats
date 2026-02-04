@@ -21,7 +21,7 @@ export type TrainingGoal = "strength" | "aesthetics" | "health" | "sport" | "gen
 /**
  * Onboarding steps
  */
-export type OnboardingStep = "welcome" | "avatar" | "goals" | "profile" | "personality" | "highlights" | "tutorial" | "complete";
+export type OnboardingStep = "welcome" | "avatar" | "goals" | "profile" | "lifts" | "personality" | "highlights" | "tutorial" | "complete";
 
 /**
  * User profile data collected during onboarding

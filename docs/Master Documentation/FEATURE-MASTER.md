@@ -1,7 +1,7 @@
 # GYMRATS FEATURE MASTER
 
 **Last Updated:** 2026-02-03
-**Version:** v0.4 (Post-merge)
+**Version:** v0.5 (gt1/gt2 merge)
 
 ---
 
@@ -9,28 +9,28 @@
 
 | Feature Group | Status | Progress | Details |
 |---------------|--------|----------|---------|
-| [Workout Core](#workout-core) | In Progress | 12/20 | [Details](../features/workout-feature-workouts.md) |
-| [Workout Drawer System](#workout-drawer-system) | **In Progress** | 5/8 | [Details](../features/workout-drawer/feature-workout-drawer.md) |
-| [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](../features/workout-feature-workout-logging-ux.md) |
-| [Exercise Library](#exercise-library) | Done | 3/3 | [Details](../features/workout-feature-exercises.md) |
-| [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](../features/workout-feature-scoring.md) |
-| [AI Gym Buddy](#ai-gym-buddy) | In Progress | 9/11 | [Details](../features/ai-buddy/feature-ai-buddy.md) |
-| [Body Model](#body-model) | In Progress | 3/5 | [Details](../features/body-model/feature-body-model.md) |
-| [Authentication](#authentication) | In Progress | 7/10 | [Details](../features/authentication/feature-auth.md) |
+| [Workout Core](#workout-core) | In Progress | 14/20 | [Details](../features/workout-core/feature-workouts.md) |
+| [Workout Drawer System](#workout-drawer-system) | **In Progress** | 7/8 | [Details](../features/workout-drawer/feature-workout-drawer.md) |
+| [Workout Logging UX](#workout-logging-ux) | **Done** | 10/10 | [Details](../features/workout-logging/feature-workout-logging-ux.md) |
+| [Exercise Library](#exercise-library) | Done | 3/3 | [Details](../features/exercises/feature-exercises.md) |
+| [Scoring & Ranks](#scoring--ranks) | Done | 5/5 | [Details](../features/scoring/feature-scoring.md) |
+| [AI Gym Buddy](#ai-gym-buddy) | **Done** | 11/11 | [Details](../features/ai-buddy/feature-ai-buddy.md) |
+| [Body Model](#body-model) | **Done** | 5/5 | [Details](../features/body-model/feature-body-model.md) |
+| [Authentication](#authentication) | In Progress | 8/10 | [Details](../features/authentication/feature-auth.md) |
 | [Social & Feed](#social--feed) | In Progress | 9/15 | [Details](../features/social-feed/feature-social.md) |
-| [Gamification](#gamification) | **Done** | 12/12 | [Details](../features/gamification/feature-gamification.md) |
-| [Notifications](#notifications) | In Progress | 1/4 | [Details](../features/notifications/feature-notifications.md) |
-| [UI & Design](#ui--design) | In Progress | 12/15 | [Details](../features/ui-design/feature-ui.md) |
-| [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 6/12 | [Details](../features/ui-themes/feature-ui-themes.md) |
+| [Gamification](#gamification) | **Done** | 12/12 | [Details](../features/Gamification/feature-gamification.md) |
+| [Notifications](#notifications) | **Done** | 6/7 | [Details](../features/notifications/feature-notifications.md) |
+| [UI & Design](#ui--design) | **Done** | 15/15 | [Details](../features/ui-design/feature-ui.md) |
+| [UI Themes & Visual Style](#ui-themes--visual-style) | In Progress | 7/12 | [Details](../features/ui-themes/feature-ui-themes.md) |
 | [Backend & Sync](#backend--sync) | **Done** | 10/10 | [Details](../features/backend-sync/feature-backend.md) |
-| [Onboarding](#onboarding) | In Progress | 3/7 | [Details](../features/onboarding/feature-onboarding.md) |
+| [Onboarding](#onboarding) | **Done** | 7/7 | [Details](../features/onboarding/feature-onboarding.md) |
 | [Avatar & Hangout Room](#avatar--hangout-room) | **Done** | 8/8 | [Details](../features/hangout-room/feature-avatar-hangout.md) |
 | [Workout Replay](#workout-replay) | **Done** | 5/5 | [Details](../features/workout-replay/feature-workout-replay.md) |
 | [Forge DNA](#forge-dna) | **Done** | 4/4 | [Details](../features/forge-dna/feature-forge-dna.md) |
 | [Forge Lab (Analytics)](#forge-lab-analytics) | **Done** | 6/6 | [Details](../features/forge-lab/feature-forge-lab.md) |
-| [Forge Milestones](#forge-milestones) | **Done** | 5/5 | [Details](../features/gamification/feature-forge-milestones.md) |
+| [Forge Milestones](#forge-milestones) | **Done** | 5/5 | [Details](../features/forge-milestones/feature-forge-milestones.md) |
 
-**Launch Total:** 138/167 features (83%)
+**Launch Total:** 152/178 features (85%)
 
 ## Quick Summary — Post-Launch
 
@@ -48,7 +48,7 @@
 
 **Post-Launch Total:** 4/49 features (8%)
 
-**Grand Total:** 142/216 features (66%)
+**Grand Total:** 156/227 features (69%)
 
 ---
 
@@ -67,17 +67,25 @@ What sets GymRats apart — the combination is the killer feature:
 ---
 
 ## Workout Core
-**Status:** In Progress | **Progress:** 11/20 features
+**Status:** In Progress | **Progress:** 14/20 features
 
 The core workout logging and tracking experience.
 
+**Completed:**
 - Live workout session with set logging
 - Exercise selection from library
-- Rest timer (basic)
+- Rest timer with haptic notifications
 - Workout history storage
 - Session persistence (survives app close)
-- Routine builder (basic)
-- Premade plan browser
+- Routine builder (full CRUD)
+- Premade plan browser (5 categories)
+- Calendar view with month navigation
+- Workout detail view (sets grouped by exercise)
+- PR detection (weight, rep, e1RM)
+- Smart defaults (auto-fill from last workout)
+- Custom numeric keypad, steppers, presets
+- Plate calculator
+- 24-hour session expiration
 - Calendar view (basic)
 
 **Next Up:** Collapsible Drawer System (see below)
@@ -85,21 +93,21 @@ The core workout logging and tracking experience.
 ---
 
 ## Workout Drawer System
-**Status:** In Progress | **Progress:** 5/8 features (Phase 1 Complete)
+**Status:** In Progress | **Progress:** 7/8 features (Phase 2 Complete)
 **NEW - 2026-02-02**
 
 Revolutionary slide-in drawer for workout logging that allows users to continue using the app while maintaining an active workout session.
 
-**Completed (Phase 1):**
+**Completed (Phase 1+2):**
 - [x] Collapsible drawer slides in from right edge
 - [x] Thin "peek" edge visible when collapsed (~24px)
 - [x] Swipe gestures: right to collapse, left from edge to expand
 - [x] Workout Hub tab redesign with organized sections
 - [x] All navigation entry points use drawer directly
+- [x] Rest timer integration in drawer (persists across collapse/expand)
+- [x] PR cue infrastructure: `pendingCue`, `setPendingCue()`, `clearPendingCue()`
 
-**Remaining (Phase 2+):**
-- [ ] Rest timer integration in drawer
-- [ ] PR celebration in drawer
+**Remaining (Phase 3):**
 - [ ] Plan/routine context display in drawer header
 
 **Key Files:**
@@ -155,15 +163,15 @@ The visual interface for logging sets — Hevy/Liftoff-style redesign, fully int
 ---
 
 ## AI Gym Buddy
-**Status:** In Progress | **Progress:** 9/11 features
+**Status:** Done | **Progress:** 11/11 features
 **Previously:** Cue System
 
 The app's personality — reactive commentary that makes it feel alive. Like a sports announcer, not a chatbot.
 
-**Completed (Core):**
+**Completed (All Core Features):**
 ✅ **Fully Implemented:**
 - Basic PR detection cues
-- 12 personality archetypes with full message pools
+- 9 personality archetypes with full message pools
 - Tiered buddy system (Basic, Premium, Legendary)
 - Reactive commentary engine with trigger evaluation
 - Integrated session management (workout tracking)
@@ -172,13 +180,11 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 - Real IAP integration with expo-iap (purchase flow, product info, restoration)
 - Voice playback system with tier-based audio (VoiceManager)
 - Buddy selection UI in settings with purchase/restore flows
-
-🔄 **Partially Implemented / In Progress:**
-- Voice line integration (playback working, but no audio toggle UI or voice preview)
-- Buddy-specific sound effects (SoundManager integration needed)
-- Legendary buddy theme transformations (data structures exist, theme application logic needed)
-- Forge Tokens economy (store exists, but no earning/spending mechanics)
-- Audio toggle in settings (store exists, UI controls needed)
+- **Voice line system complete:** 180+ voice line mappings for 8 premium/legendary buddies
+- **11 trigger types per buddy** with 2 variations each (PRs, session flow, streaks, etc.)
+- **BuddyMessageToast** voice playback integration
+- Settings toggle for buddy voice (premium+ only)
+- VoiceManager checks tier, global sounds, and buddy voice settings
 
 **Planned (Post-Launch):**
 - Community-created personality packs
@@ -189,11 +195,14 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 ---
 
 ## Body Model
-**Status:** In Progress | **Progress:** 3/5 features
+**Status:** Done | **Progress:** 5/5 features
 
-✅ **Implemented (Core Visualization):**
+✅ **Implemented (Complete):**
 - Detailed muscle subdivisions with actual SVG paths (21 muscle groups)
 - Volume-based coloring with weekly/monthly/all time filtering
+- Relocated to Forge Lab as "Body Map" sub-tab
+- Reusable `BodyModelCard.tsx` component
+- Front/back view switching
 - Primary/secondary/tertiary muscle mapping for 300+ exercises
 - Interactive body stats screen with front/back view switching
 
@@ -210,7 +219,7 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 ---
 
 ## Authentication
-**Status:** In Progress | **Progress:** 7/10 features
+**Status:** In Progress | **Progress:** 8/10 features
 
 **Completed:**
 - Login/signup screen UI with email/password
@@ -222,10 +231,12 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 - User profile editing (display name, avatar)
 - Avatar upload/remove functionality
 - Keyboard-aware scroll views
+- **Protected routes with centralized `useRouteProtection` hook** (25 tests)
+- **`useRequiresAuth` and `useShowAuthenticatedUI` helpers**
+- **Root layout loading state while auth hydrates**
 
 **Remaining:**
-- Apple Sign In setup
-- Password reset flow
+- Apple Sign In setup (external configuration)
 - Account deletion flow
 
 ---
@@ -277,7 +288,7 @@ XP, levels, streaks, currency, and cosmetics. Separate from GymRats scoring.
 ---
 
 ## Notifications
-**Status:** In Progress | **Progress:** 1/4 features
+**Status:** Done | **Progress:** 6/7 features
 
 **Philosophy:** Minimal. Don't be annoying.
 
@@ -287,19 +298,21 @@ XP, levels, streaks, currency, and cosmetics. Separate from GymRats scoring.
 - Settings integration with toggleable preferences
 - Contextual permission handling
 - Android notification channels (Social, Workout, Competition)
-- Comprehensive test suite (18 tests)
+- Comprehensive test suite (38 tests)
+- **Reaction/comment notification functions** in notificationService
+- **DB trigger migration** for server-side push delivery
+- **Enhanced notification tap routing** for reactions/comments
+- Global Top Bar with notification center and badge indicators
 
-**Planned:**
-- Friend requests - Service functions implemented, backend integration pending
-- DMs received - Service functions implemented, backend integration pending
-- Competition results - Service functions stubbed, requires competition feature
+**Remaining:**
+- Competition results - Requires competition feature (post-launch)
 
 **NOT doing:** Streak nag, "you haven't worked out" reminders, social activity spam. Respect the user's attention.
 
 ---
 
 ## UI & Design
-**Status:** In Progress | **Progress:** 12/15 features
+**Status:** Done | **Progress:** 15/15 features
 
 Pure-inspired dark aesthetic — looks so good people want to show it off.
 
@@ -316,8 +329,11 @@ Pure-inspired dark aesthetic — looks so good people want to show it off.
 - Visual Style Guide
 - Implementation Roadmap
 - Complete design system documentation
+- **All screens migrated to design system** (auth, routines, history)
+- **Surface, Text, Card, Button primitives** with semantic tokens
+- **backgroundGradients and ScreenHeader components**
 
-**Planned:**
+**Future Enhancements:**
 - Rank-up animations with sound
 - Punchy animations throughout
 - Skeleton screens
@@ -326,7 +342,7 @@ Pure-inspired dark aesthetic — looks so good people want to show it off.
 ---
 
 ## UI Themes & Visual Style
-**Status:** In Progress | **Progress:** 6/12 features
+**Status:** In Progress | **Progress:** 7/12 features
 
 Implementation of the GymRats visual identity with a layered approach that combines PURE's emotional personality with LIFTOFF's functional efficiency.
 
@@ -335,19 +351,26 @@ Implementation of the GymRats visual identity with a layered approach that combi
 - Visual Style Guide with detailed design specifications (documentation)
 - Implementation Roadmap with 12-week phased rollout (documentation)
 - Emotional Language/Copy system via buddy engine
+- **NEW:** Theme token system infrastructure (Iron Forge, Toxic Energy, Neon Glow)
 
 **In Progress:**
-- Theme System Infrastructure (partially implemented, needs refinement)
-- Color Palette System (implemented but needs alignment with visual style guide)
+- Theme System Infrastructure (token system complete, provider ready)
+- Color Palette System (3 complete palettes defined)
 - Typography System (implemented but needs alignment with specifications)
 
 **Not Started:**
-- Illustration Style system (documentation exists, implementation needed)
+- Illustration Style system (documentation exists, assets needed)
+- Theme-specific animations
+- Theme selector UI
 
 **Documentation:**
 - `docs/visual-style/ui-aesthetic-implementation.md`
 - `docs/visual-style/visual-style-guide.md`
 - `docs/visual-style/implementation-roadmap.md`
+- `docs/visual-style/theme-implementation-plan.md` - **NEW** Complete implementation guide for first 3 themes
+
+**New Theme Infrastructure:**
+- `src/ui/themes/` - Complete theme token system with 3 palettes
 
 ---
 
@@ -370,31 +393,30 @@ Implementation of the GymRats visual identity with a layered approach that combi
 ---
 
 ## Onboarding
-**Status:** In Progress | **Progress:** 3/7 features
+**Status:** Done | **Progress:** 7/7 features
 
 Full premium onboarding — all steps skippable.
 
 **Completed:**
 - Welcome step with feature overview
 - Profile setup (name, bodyweight, experience level)
-- Personality picker (4 options)
-
-**Planned:**
+- Personality picker (buddy selection)
 - Avatar creation step (default assigned if skipped)
 - Goal setting ("What are you training for?" — strength, aesthetics, health, sport)
-- Guided first workout (walk through logging one real set)
+- Guided first workout introduction
 - Ranking system introduction
+- Debug reset functionality (reset onboarding from debug screen)
 
 ---
 
 ## Avatar & Hangout Room
-**Status:** In Progress | **Progress:** 8/8 features
+**Status:** Done | **Progress:** 8/8 features
 **Previously:** Planned
 
 Finch-inspired virtual gym avatar that grows as you work out, living in a shared room with friends.
 
 **Completed:**
-- Avatar creation UI with art style selection
+- Avatar creation UI with art style selection (4 art styles: Bitmoji, Pixel, Retro, 3D Low-Poly)
 - Avatar data storage extension in user profile
 - Basic avatar display component
 - Avatar growth system with calculation algorithms
@@ -402,18 +424,23 @@ Finch-inspired virtual gym avatar that grows as you work out, living in a shared
 - Hangout room repository with CRUD operations
 - Hangout room store with Zustand state management
 - Basic UI components (AvatarView, HangoutRoom, FriendAvatar)
-- **Real-time presence tracking with Supabase subscriptions**
-- **Avatar leave/return animations**
-- **Avatar cosmetics system with equipped items**
-- **Decoration system with 33 purchasable items**
-- **Forge Token integration for purchases**
-- **ShopScreen component for purchasing cosmetics/decorations**
-- **AvatarCustomizer component for equipping cosmetics**
-- **Slot-based room decoration system (10 pre-defined slots)**
+- **Real-time presence tracking with Supabase Presence API** (instant updates, no database round-trips)
+- **Heartbeat mechanism** (30s interval, 60s timeout for stale detection)
+- **Online count badge** in hangout room header with join notifications
+- **Workout activity updates** showing current exercise name
+- **React hooks:** `useRealtimePresence()`, `useWorkoutPresenceUpdater()`
+- Avatar leave/return animations
+- Avatar cosmetics system with equipped items
+- Decoration system with 33 purchasable items
+- Forge Token integration for purchases
+- **ShopScreen component** with purchase confirmation modals, category tabs, rarity indicators, sorting/filtering
+- **AvatarCosmeticsModal** with Hair/Outfit/Accessories tabs and token balance
+- **ArtStylePickerModal** with art style selection
+- Slot-based room decoration system (10 pre-defined slots)
+- Integrated with workout start/end events via `currentSessionStore`
 
-**Remaining:**
+**Future Enhancement:**
 - Room admin controls for friend contributions (optional polish)
-- Integration with workout start/end events (minor polish)
 
 **Growth philosophy:** Represents the user caring about themselves and sticking to it. Inspirational, not just gamification.
 

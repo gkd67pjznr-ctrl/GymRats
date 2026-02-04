@@ -190,13 +190,12 @@ describe('workoutDrawerStore', () => {
   });
 
   describe('PR cue', () => {
-    const mockCue = {
-      kind: 'weight' as const,
-      exerciseId: 'bench',
+    // QuickCue format (will be normalized to RichCue)
+    const mockQuickCue = {
+      message: 'New Weight PR!',
+      detail: '+5 lb',
       intensity: 'high' as const,
-      newValue: 100,
-      oldValue: 95,
-      unit: 'kg' as const,
+      prType: 'weight' as const,
     };
 
     it('starts with no pending cue', () => {
@@ -204,15 +203,20 @@ describe('workoutDrawerStore', () => {
       expect(useWorkoutDrawerStore.getState().hasPendingCue).toBe(false);
     });
 
-    it('sets pending cue', () => {
-      useWorkoutDrawerStore.getState().setPendingCue(mockCue);
+    it('sets pending cue and normalizes to RichCue', () => {
+      useWorkoutDrawerStore.getState().setPendingCue(mockQuickCue);
 
-      expect(useWorkoutDrawerStore.getState().pendingCue).toEqual(mockCue);
+      const pendingCue = useWorkoutDrawerStore.getState().pendingCue;
+      expect(pendingCue).not.toBeNull();
+      expect(pendingCue?.message).toBe('New Weight PR!');
+      expect(pendingCue?.detail).toBe('+5 lb');
+      expect(pendingCue?.prType).toBe('weight');
+      expect(pendingCue?.id).toBeDefined(); // RichCue has id
       expect(useWorkoutDrawerStore.getState().hasPendingCue).toBe(true);
     });
 
     it('clears pending cue', () => {
-      useWorkoutDrawerStore.getState().setPendingCue(mockCue);
+      useWorkoutDrawerStore.getState().setPendingCue(mockQuickCue);
       useWorkoutDrawerStore.getState().clearPendingCue();
 
       expect(useWorkoutDrawerStore.getState().pendingCue).toBeNull();
@@ -221,7 +225,7 @@ describe('workoutDrawerStore', () => {
 
     it('clears pending cue when workout ends', () => {
       useWorkoutDrawerStore.getState().startWorkout();
-      useWorkoutDrawerStore.getState().setPendingCue(mockCue);
+      useWorkoutDrawerStore.getState().setPendingCue(mockQuickCue);
       useWorkoutDrawerStore.getState().endWorkout();
 
       expect(useWorkoutDrawerStore.getState().pendingCue).toBeNull();
@@ -229,8 +233,9 @@ describe('workoutDrawerStore', () => {
     });
 
     it('provides imperative access to PR cue', () => {
-      workoutDrawerActions.setPendingCue(mockCue);
-      expect(workoutDrawerActions.getPendingCue()).toEqual(mockCue);
+      workoutDrawerActions.setPendingCue(mockQuickCue);
+      const cue = workoutDrawerActions.getPendingCue();
+      expect(cue?.message).toBe('New Weight PR!');
 
       workoutDrawerActions.clearPendingCue();
       expect(workoutDrawerActions.getPendingCue()).toBeNull();

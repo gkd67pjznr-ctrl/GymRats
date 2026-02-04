@@ -32,14 +32,27 @@ import { EXERCISES_V1 } from '@/src/data/exercises';
 import { kgToLb, lbToKg } from '@/src/lib/units';
 import { uid } from '@/src/lib/uid';
 import { getSettings } from '@/src/lib/stores/settingsStore';
-import { randomHighlightDurationMs } from '@/src/lib/perSetCue';
+import {
+  detectCueForWorkingSet,
+  makeEmptyExerciseState,
+} from '@/src/lib/perSetCue';
 import type { LoggedSet } from '@/src/lib/loggerTypes';
+import type { ExerciseSessionState } from '@/src/lib/perSetCueTypes';
+import {
+  shouldDetectPRsForExercise,
+  getBaselineStateForExercise,
+  rebuildPRsFromHistory,
+} from '@/src/lib/stores/prStore';
+import { useWorkoutStore } from '@/src/lib/stores/workoutStore';
+import type { WorkoutSession, WorkoutSet } from '@/src/lib/workoutModel';
 
 // Components
 import { ExercisePicker } from '@/src/ui/components/LiveWorkout/ExercisePicker';
 import { ExerciseCard } from '@/src/ui/components/LiveWorkout/ExerciseCard';
 import { RestTimerOverlay } from '@/src/ui/components/RestTimerOverlay';
-import { InstantCueToast, type InstantCue } from '@/src/ui/components/LiveWorkout/InstantCueToast';
+import { CuePresenter } from '@/src/ui/components/CuePresenter';
+import type { RichCue, PRType } from '@/src/lib/cues/cueTypes';
+import { computeIntensity } from '@/src/lib/cues/cueTypes';
 
 // Helper to get exercise name
 function getExerciseName(exerciseId: string): string {
@@ -199,11 +212,104 @@ export function DrawerContent() {
         const restSeconds = settings.defaultRestSeconds ?? DEFAULT_REST_SECONDS;
         startRestTimer(restSeconds);
 
-        // TODO: PR detection - will be integrated with perSetCue
-        // When PR is detected, call setPendingCue(cue) to show it
+        // PR detection - only for exercises with prior history or user-entered baseline
+        if (shouldDetectPRsForExercise(set.exerciseId)) {
+          const exerciseName = getExerciseName(set.exerciseId);
+          const unit = settings.unitSystem ?? 'lb';
+
+          // Get baseline from PR store, then overlay session state for within-session tracking
+          const baselineState = getBaselineStateForExercise(set.exerciseId);
+          const sessionState = session.exerciseStates?.[set.exerciseId];
+
+          // Merge: use higher of baseline or session bests
+          const prevState: ExerciseSessionState = {
+            bestE1RMKg: Math.max(baselineState.bestE1RMKg, sessionState?.bestE1RMKg ?? 0),
+            bestWeightKg: Math.max(baselineState.bestWeightKg, sessionState?.bestWeightKg ?? 0),
+            bestRepsAtWeight: {
+              ...baselineState.bestRepsAtWeight,
+              ...sessionState?.bestRepsAtWeight,
+            },
+          };
+
+          const result = detectCueForWorkingSet({
+            weightKg: set.weightKg,
+            reps: set.reps,
+            unit,
+            exerciseName,
+            prev: prevState,
+          });
+
+          // Update exercise state in session
+          updateCurrentSession((s) => ({
+            ...s,
+            exerciseStates: {
+              ...s.exerciseStates,
+              [set.exerciseId]: result.next,
+            },
+          }));
+
+          // Show cue if PR detected
+          if (result.cue) {
+            // Map PR type
+            const prType: PRType = result.meta.type === 'cardio' ? 'cardio'
+              : result.meta.type === 'weight' ? 'weight'
+              : result.meta.type === 'rep' ? 'rep'
+              : result.meta.type === 'e1rm' ? 'e1rm'
+              : 'none';
+
+            // Compute delta for intensity calculation
+            const delta = prType === 'weight' ? result.meta.weightDeltaLb
+              : prType === 'rep' ? result.meta.repDeltaAtWeight
+              : prType === 'e1rm' ? result.meta.e1rmDeltaLb
+              : 0;
+
+            // Build detail string
+            const detail =
+              prType === 'weight'
+                ? `+${result.meta.weightDeltaLb.toFixed(0)} lb`
+                : prType === 'rep'
+                ? `+${result.meta.repDeltaAtWeight} reps at ${result.meta.weightLabel}`
+                : prType === 'e1rm'
+                ? `+${result.meta.e1rmDeltaLb.toFixed(0)} lb e1RM`
+                : undefined;
+
+            // Create rich cue
+            const richCue: RichCue = {
+              id: `pr_${Date.now()}_${set.id}`,
+              message: result.cue.message,
+              detail,
+              prType,
+              exerciseId: set.exerciseId,
+              exerciseName,
+              delta,
+              deltaUnit: prType === 'rep' ? 'reps' : 'lb',
+              intensity: computeIntensity(prType, delta),
+              triggeredBySetId: set.id,
+              sessionId: session.id,
+              createdAt: Date.now(),
+            };
+
+            setPendingCue(richCue);
+
+            // Extra haptic for PRs (stronger for bigger PRs)
+            if (settings.hapticsEnabled && Platform.OS === 'ios') {
+              const hapticType = richCue.intensity === 'legendary'
+                ? Haptics.NotificationFeedbackType.Success
+                : richCue.intensity === 'hype'
+                ? Haptics.NotificationFeedbackType.Success
+                : Haptics.ImpactFeedbackStyle.Medium;
+
+              if (richCue.intensity === 'legendary' || richCue.intensity === 'hype') {
+                Haptics.notificationAsync(hapticType as Haptics.NotificationFeedbackType).catch(() => {});
+              } else {
+                Haptics.impactAsync(hapticType as Haptics.ImpactFeedbackStyle).catch(() => {});
+              }
+            }
+          }
+        }
       }
     }
-  }, [doneBySetId, session, settings.hapticsEnabled, settings.defaultRestSeconds, startRestTimer]);
+  }, [doneBySetId, session, settings.hapticsEnabled, settings.defaultRestSeconds, settings.unitSystem, startRestTimer, setPendingCue]);
 
   // Update weight for a set
   const handleWeightChange = useCallback((setId: string, text: string) => {
@@ -287,6 +393,9 @@ export function DrawerContent() {
   const completedSetCount = Object.values(doneBySetId).filter(Boolean).length;
   const exerciseCount = session?.exerciseBlocks?.length ?? 0;
 
+  // Get addSession from workout store
+  const addSession = useWorkoutStore((state) => state.addSession);
+
   // Complete workout handler
   const handleCompleteWorkout = useCallback(() => {
     if (completedSetCount === 0) {
@@ -301,12 +410,6 @@ export function DrawerContent() {
       return;
     }
 
-    // TODO: Implement full completion flow
-    // - Convert session to WorkoutSession
-    // - Save to workoutStore
-    // - Process gamification
-    // - Navigate to summary
-
     Alert.alert(
       'Complete Workout?',
       `You've completed ${completedSetCount} sets across ${exerciseCount} exercises. Ready to finish?`,
@@ -315,13 +418,42 @@ export function DrawerContent() {
         {
           text: 'Complete',
           onPress: () => {
+            if (session) {
+              // Convert completed sets to WorkoutSets
+              const completedSets: WorkoutSet[] = session.sets
+                .filter((set) => doneBySetId[set.id])
+                .map((set) => ({
+                  id: set.id,
+                  exerciseId: set.exerciseId,
+                  weightKg: set.weightKg,
+                  reps: set.reps,
+                  timestampMs: set.timestampMs,
+                }));
+
+              // Create WorkoutSession
+              const workoutSession: WorkoutSession = {
+                id: session.id,
+                startedAtMs: session.startedAtMs,
+                endedAtMs: Date.now(),
+                sets: completedSets,
+                routineId: session.routineId,
+                planId: session.planId,
+              };
+
+              // Save to workout store
+              addSession(workoutSession);
+
+              // Rebuild PR history so future PRs are detected correctly
+              rebuildPRsFromHistory();
+            }
+
             clearCurrentSession();
             endWorkout();
           },
         },
       ]
     );
-  }, [completedSetCount, exerciseCount, endWorkout]);
+  }, [completedSetCount, exerciseCount, session, doneBySetId, addSession, endWorkout]);
 
   // Discard workout handler
   const handleDiscardWorkout = useCallback(() => {
@@ -496,12 +628,12 @@ export function DrawerContent() {
         </View>
       </View>
 
-      {/* PR Cue Toast - only show when drawer is expanded */}
+      {/* PR Cue Presenter - only show when drawer is expanded */}
       {drawerPosition === 'expanded' && (
-        <InstantCueToast
+        <CuePresenter
           cue={pendingCue}
-          onClear={handleClearCue}
-          randomHoldMs={randomHighlightDurationMs}
+          onDismiss={handleClearCue}
+          position="top"
         />
       )}
 

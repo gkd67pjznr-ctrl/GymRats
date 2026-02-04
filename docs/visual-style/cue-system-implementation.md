@@ -728,3 +728,51 @@ interface CueContext {
 ```
 
 This comprehensive cue system implementation provides a solid foundation for delivering engaging, themed feedback throughout the GymRats experience while maintaining performance and scalability.
+
+---
+
+## Related Documentation
+
+- [Theme Implementation Plan](theme-implementation-plan.md) - Implementation guide for Iron Forge, Toxic Energy, Neon Glow themes
+- [Visual Style Guide](visual-style-guide.md) - Complete design specifications
+- [Cue Types Definition](../src/lib/cues/cueTypes.ts) - TypeScript types for RichCue and QuickCue
+- [CuePresenter Component](../src/ui/components/CuePresenter/CuePresenter.tsx) - React component for displaying cues
+
+## Current Implementation
+
+The cue system is implemented at `src/lib/cues/cueTypes.ts` with the following key types:
+
+```typescript
+// Quick cue format (minimal)
+interface QuickCue {
+  message: string;
+  detail?: string;
+  intensity: CueIntensity;
+  prType: PRType;
+}
+
+// Rich cue format (full featured)
+interface RichCue {
+  id: string;
+  message: string;
+  detail?: string;
+  subtext?: string;
+  prType: PRType;
+  exerciseId?: string;
+  delta?: number;
+  intensity: CueIntensity;
+  illustrationId?: string;
+  audioId?: string;
+  voiceLineId?: string;
+  animationDirection?: AnimationDirection;
+  animationStyle?: AnimationStyle;
+  durationMs?: number;
+}
+```
+
+The `CuePresenter` component at `src/ui/components/CuePresenter/CuePresenter.tsx` handles:
+- Position-based entry/exit animations
+- Intensity-based duration and sizing
+- Theme-aware coloring
+- Illustration display slots (ready for assets)
+- Audio playback hooks (ready for implementation)

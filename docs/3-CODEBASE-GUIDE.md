@@ -86,8 +86,9 @@ gymrats-glm/
 │   │   └── e1rm.ts             # 1-rep max (Epley formula)
 │   │
 │   ├── ui/                      # UI layer
-│   │   ├── designSystem.ts     # Design tokens
-│   │   ├── theme.ts            # Theme hook
+│   │   ├── designSystem.ts     # Design tokens (legacy)
+│   │   ├── theme.ts            # Theme hook (legacy)
+│   │   ├── themes/             # New theme system (3 palettes)
 │   │   └── components/         # Reusable components
 │   │       ├── LiveWorkout/    # Workout UI components
 │   │       ├── ForgeLab/       # Analytics components
@@ -146,11 +147,12 @@ export const useMyStore = create<MyState>()(
 
 | Store | Purpose | Key Features |
 |-------|---------|-------------|
-| `currentSessionStore` | Active workout state | Session persistence, exercise blocks |
+| `currentSessionStore` | Active workout state | Session persistence, exercise blocks, 24h expiration |
 | `workoutStore` | Workout history | CRUD, sync, real-time |
+| `workoutDrawerStore` | Drawer UI state | Collapse/expand, rest timer, PR cue pending |
 | `routinesStore` | Saved routines | CRUD, sync |
 | `workoutPlanStore` | Current plan | Session management |
-| `settingsStore` | User preferences | Bodyweight, units, theme |
+| `settingsStore` | User preferences | Bodyweight, units, theme, location |
 | `authStore` | Authentication | OAuth, profile, session |
 | `feedStore` | Social feed posts | Sync, real-time, mutations |
 | `friendsStore` | Friend relationships | Sync, real-time, requests |
@@ -158,11 +160,13 @@ export const useMyStore = create<MyState>()(
 | `chatStore` | Direct messages | Sync, real-time, typing |
 | `gamificationStore` | XP, levels, streaks | Backend sync, achievements |
 | `milestonesStore` | Milestone achievements | Backend sync, trophy case |
-| `buddyStore` | AI buddy state | Personalities, IAP, triggers |
+| `buddyStore` | AI buddy state | Personalities, IAP, triggers, voice lines |
 | `journalStore` | Training journal | Entries, mood, energy |
 | `avatarStore` | Avatar system | Growth, customization |
 | `hangoutStore` | Hangout room | Presence, decorations, real-time |
 | `forgeLabStore` | Analytics data | Calculations, caching |
+| `onboardingStore` | Onboarding flow | Completion state, debug reset |
+| `userStatsStore` | Unified user stats | GymRank score, PRs, lifetime stats |
 
 ### Store Patterns
 
@@ -428,12 +432,36 @@ const c = useThemeColors();
 // Type: ds.type.h1.size, ds.type.body.w
 ```
 
-### Accent Themes
+### Accent Themes (Legacy)
 - `toxic` (lime green)
 - `electric` (purple)
 - `ember` (pink)
 - `ice` (cyan)
 - `ultra` (mixed)
+
+### New Theme System (Recommended)
+
+```typescript
+import { useTheme, ThemeProvider } from '@/src/ui/themes';
+
+// Available themes: 'toxic-energy', 'iron-forge', 'neon-glow'
+const theme = useTheme();
+
+// Theme colors
+theme.colors.bg           // Background
+theme.colors.card         // Card background
+theme.colors.primary      // Primary accent
+theme.colors.text         // Text color
+
+// Theme motion presets
+theme.motion.springTension   // Animation tension
+theme.motion.prEntryDuration // PR celebration entry time
+
+// Theme surfaces
+theme.surfaces.glowIntensity // Glow effect strength
+```
+
+See `docs/visual-style/theme-implementation-plan.md` for full implementation guide.
 
 ### Rank Colors
 `ds.tone.iron`, `ds.tone.bronze`, ... `ds.tone.mythic`

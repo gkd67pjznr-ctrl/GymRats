@@ -4,6 +4,7 @@ import { AppState, AppStateStatus } from 'react-native';
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { LoggedSet } from "../loggerTypes";
+import type { ExerciseSessionState } from "../perSetCueTypes";
 import { uid } from "../uid";
 import { createQueuedJSONStorage } from "./storage/createQueuedAsyncStorage";
 import { getGlobalPersistQueue } from "../utils/PersistQueue";
@@ -23,6 +24,9 @@ export type CurrentSession = {
   // Data
   sets: LoggedSet[];
   doneBySetId: Record<string, boolean>;
+
+  // PR detection state per exercise
+  exerciseStates: Record<string, ExerciseSessionState>;
 
   // Optional: link to plan/routine
   planId?: string;
@@ -121,6 +125,7 @@ export const useCurrentSessionStore = create<CurrentSessionState>()(
           exerciseBlocks: seed?.exerciseBlocks ?? [],
           sets: [],
           doneBySetId: {},
+          exerciseStates: {},
         };
 
         set({ session: newSession });

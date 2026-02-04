@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { View, Text, Pressable, ActivityIndicator, TextInput, ScrollView, Dimensions } from "react-native";
 import { useOnboardingStore, useCurrentOnboardingStep, PERSONALITIES } from "../src/lib/stores/onboardingStore";
 import { useAvatarStore } from "../src/lib/avatar/avatarStore";
+import { KEY_LIFTS, setBaselinePR } from "../src/lib/stores/prStore";
+import { lbToKg } from "../src/lib/units";
 import type { AvatarArtStyle } from "../src/lib/avatar/avatarTypes";
 import { useThemeColors } from "../src/ui/theme";
 import { FR } from "../src/ui/GrStyle";
@@ -41,6 +43,8 @@ function OnboardingContent({ currentStep }: { currentStep: string }) {
       return <GoalSettingStep />;
     case "profile":
       return <ProfileSetupStep />;
+    case "lifts":
+      return <LiftsStep />;
     case "personality":
       return <PersonalityPickerStep />;
     case "highlights":
@@ -395,7 +399,7 @@ function ProfileSetupStep() {
       experienceLevel: experience,
       personalityId: "coach", // default
     });
-    setCurrentStep("personality");
+    setCurrentStep("lifts");
   };
 
   const experienceOptions: { value: "beginner" | "intermediate" | "advanced"; label: string; years: string }[] = [
@@ -577,6 +581,140 @@ function UnitToggle({ value, onChange }: { value: "lb" | "kg"; onChange: (v: "lb
   );
 }
 
+// Step 5: Current Lifts (optional baseline PRs)
+function LiftsStep() {
+  const c = useThemeColors();
+  const { setCurrentStep, profile } = useOnboardingStore();
+  const unit = profile?.bodyweightUnit ?? "lb";
+
+  // Track PR values for key lifts
+  const [lifts, setLifts] = useState<Record<string, { weight: string; reps: string }>>({
+    bench: { weight: "", reps: "" },
+    squat: { weight: "", reps: "" },
+    deadlift: { weight: "", reps: "" },
+    ohp: { weight: "", reps: "" },
+  });
+
+  const handleLiftChange = (liftId: string, field: "weight" | "reps", value: string) => {
+    setLifts((prev) => ({
+      ...prev,
+      [liftId]: { ...prev[liftId], [field]: value },
+    }));
+  };
+
+  const handleNext = () => {
+    // Save any entered lifts as baseline PRs
+    for (const lift of KEY_LIFTS) {
+      const liftData = lifts[lift.id];
+      const weight = parseFloat(liftData.weight);
+      const reps = parseInt(liftData.reps, 10);
+
+      if (!isNaN(weight) && weight > 0 && !isNaN(reps) && reps > 0) {
+        // Convert to kg if user entered in lb
+        const weightKg = unit === "kg" ? weight : lbToKg(weight);
+        setBaselinePR(lift.id, weightKg, reps);
+      }
+    }
+
+    setCurrentStep("personality");
+  };
+
+  const handleSkip = () => {
+    setCurrentStep("personality");
+  };
+
+  return (
+    <ScrollView
+      style={{ flex: 1, backgroundColor: c.bg }}
+      contentContainerStyle={{ padding: FR.space.x6, gap: FR.space.x6 }}
+    >
+      <View style={{ gap: FR.space.x2 }}>
+        <Text style={{ color: c.text, ...FR.type.h1 }}>Your current lifts</Text>
+        <Text style={{ color: c.muted, ...FR.type.sub }}>
+          Enter your best lifts so we know when you hit a real PR. This is optional — you can skip and PRs will start tracking after your first workout.
+        </Text>
+      </View>
+
+      <View style={{ gap: FR.space.x4 }}>
+        {KEY_LIFTS.map((lift) => (
+          <View key={lift.id} style={{ gap: FR.space.x2 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x2 }}>
+              <Text style={{ fontSize: 24 }}>{lift.emoji}</Text>
+              <Text style={{ color: c.text, ...FR.type.body, fontWeight: "700" }}>{lift.name}</Text>
+            </View>
+            <View style={{ flexDirection: "row", gap: FR.space.x2 }}>
+              <View style={{ flex: 2 }}>
+                <TextInput
+                  value={lifts[lift.id].weight}
+                  onChangeText={(text) => handleLiftChange(lift.id, "weight", text)}
+                  placeholder={`Weight (${unit})`}
+                  placeholderTextColor={c.muted}
+                  keyboardType="decimal-pad"
+                  style={{
+                    ...FR.card({ card: c.card, border: c.border }),
+                    color: c.text,
+                    ...FR.type.body,
+                    paddingVertical: FR.space.x3,
+                    paddingHorizontal: FR.space.x3,
+                    minHeight: 48,
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <TextInput
+                  value={lifts[lift.id].reps}
+                  onChangeText={(text) => handleLiftChange(lift.id, "reps", text)}
+                  placeholder="Reps"
+                  placeholderTextColor={c.muted}
+                  keyboardType="number-pad"
+                  style={{
+                    ...FR.card({ card: c.card, border: c.border }),
+                    color: c.text,
+                    ...FR.type.body,
+                    paddingVertical: FR.space.x3,
+                    paddingHorizontal: FR.space.x3,
+                    minHeight: 48,
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+
+      <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>
+        Example: If you've benched 185 lb for 5 reps, enter "185" and "5"
+      </Text>
+
+      <View style={{ gap: FR.space.x2, marginTop: FR.space.x4 }}>
+        <Pressable
+          onPress={handleNext}
+          style={({ pressed }) => ({
+            ...FR.pillButton({ card: c.card, border: c.border }),
+            backgroundColor: c.text,
+            paddingVertical: FR.space.x4,
+            opacity: pressed ? 0.8 : 1,
+          })}
+        >
+          <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
+        </Pressable>
+        <Pressable
+          onPress={handleSkip}
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Skip for now</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setCurrentStep("profile")}
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
+  );
+}
+
 // Personality picker step
 function PersonalityPickerStep() {
   const c = useThemeColors();
@@ -636,7 +774,7 @@ function PersonalityPickerStep() {
           <Text style={{ color: c.bg, ...FR.type.h3, fontWeight: "900" }}>Continue</Text>
         </Pressable>
         <Pressable
-          onPress={() => setCurrentStep("profile")}
+          onPress={() => setCurrentStep("lifts")}
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
         >
           <Text style={{ color: c.muted, ...FR.type.sub, textAlign: "center" }}>Back</Text>

@@ -2,7 +2,11 @@
 // Global state for the collapsible workout drawer
 
 import { create } from 'zustand';
-import type { InstantCue } from '@/src/ui/components/LiveWorkout/InstantCueToast';
+import type { RichCue, QuickCue } from '@/src/lib/cues/cueTypes';
+import { enrichCue } from '@/src/lib/cues/cueTypes';
+
+/** Pending cue can be either rich or quick format */
+export type PendingCue = RichCue | QuickCue | null;
 
 /**
  * Drawer position states
@@ -32,7 +36,7 @@ interface WorkoutDrawerState {
   restTimer: RestTimerState;
 
   // PR cue queue (shown when drawer expands, or on edge when collapsed)
-  pendingCue: InstantCue | null;
+  pendingCue: RichCue | null;
   hasPendingCue: boolean;
 
   // Animation progress (0 = closed, 0.1 = collapsed/edge visible, 1 = expanded)
@@ -52,7 +56,12 @@ interface WorkoutDrawerState {
   clearRestTimer: () => void;
 
   // PR cue actions
-  setPendingCue: (cue: InstantCue | null) => void;
+  setPendingCue: (cue: RichCue | QuickCue | null, context?: {
+    exerciseId?: string;
+    exerciseName?: string;
+    setId?: string;
+    sessionId?: string;
+  }) => void;
   clearPendingCue: () => void;
 }
 
@@ -179,11 +188,27 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
 
   /**
    * Set a pending PR cue (shown when drawer expands or on edge)
+   * Accepts both RichCue and QuickCue formats - normalizes to RichCue
    */
-  setPendingCue: (cue: InstantCue | null) => {
+  setPendingCue: (cue: RichCue | QuickCue | null, context?: {
+    exerciseId?: string;
+    exerciseName?: string;
+    setId?: string;
+    sessionId?: string;
+  }) => {
+    if (!cue) {
+      set({ pendingCue: null, hasPendingCue: false });
+      return;
+    }
+
+    // If it's already a RichCue (has 'id' field), use as-is
+    const richCue: RichCue = 'id' in cue && 'prType' in cue
+      ? cue as RichCue
+      : enrichCue(cue as QuickCue, context);
+
     set({
-      pendingCue: cue,
-      hasPendingCue: !!cue,
+      pendingCue: richCue,
+      hasPendingCue: true,
     });
   },
 
@@ -247,7 +272,7 @@ export function useIsRestTimerActive(): boolean {
 /**
  * Hook to get pending PR cue
  */
-export function usePendingCue(): InstantCue | null {
+export function usePendingCue(): RichCue | null {
   return useWorkoutDrawerStore((state) => state.pendingCue);
 }
 
@@ -276,7 +301,12 @@ export const workoutDrawerActions = {
   clearRestTimer: () => useWorkoutDrawerStore.getState().clearRestTimer(),
   getRestTimer: () => useWorkoutDrawerStore.getState().restTimer,
   // PR cues
-  setPendingCue: (cue: InstantCue | null) => useWorkoutDrawerStore.getState().setPendingCue(cue),
+  setPendingCue: (cue: RichCue | QuickCue | null, context?: {
+    exerciseId?: string;
+    exerciseName?: string;
+    setId?: string;
+    sessionId?: string;
+  }) => useWorkoutDrawerStore.getState().setPendingCue(cue, context),
   clearPendingCue: () => useWorkoutDrawerStore.getState().clearPendingCue(),
   getPendingCue: () => useWorkoutDrawerStore.getState().pendingCue,
 };

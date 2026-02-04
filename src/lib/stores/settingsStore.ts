@@ -8,6 +8,7 @@ import { useMemo } from "react";
 // Import experience level type from onboarding store
 import type { ExperienceLevel, TrainingGoal } from "./onboardingStore";
 import type { Accent } from "@/src/ui/designSystem";
+import type { ThemeId } from "@/src/ui/themes/themeTokens";
 
 const STORAGE_KEY = "gymrats.settings.v2"; // New key for Zustand version
 
@@ -57,6 +58,7 @@ export interface Settings {
   personalityId: string;
   goal: TrainingGoal;
   accent: Accent;
+  themeId: ThemeId; // Visual theme selection
   replayAutoPlay: boolean;
   // Weight tracking
   weightHistory: { date: string; weightKg: number }[];
@@ -91,6 +93,7 @@ const DEFAULTS: Settings = {
   personalityId: "coach",
   goal: "general",
   accent: "toxic",
+  themeId: "toxic-energy", // Default visual theme
   replayAutoPlay: true,
   weightHistory: [],
   notificationPrefs: {
@@ -225,6 +228,7 @@ export const useSettingsStore = create<SettingsState>()(
         personalityId: state.personalityId,
         goal: state.goal,
         accent: state.accent,
+        themeId: state.themeId,
         replayAutoPlay: state.replayAutoPlay,
         weightHistory: state.weightHistory,
         notificationPrefs: state.notificationPrefs,
@@ -253,6 +257,7 @@ export const selectSettings = (state: SettingsState): Settings => ({
   personalityId: state.personalityId,
   goal: state.goal,
   accent: state.accent,
+  themeId: state.themeId,
   replayAutoPlay: state.replayAutoPlay,
   weightHistory: state.weightHistory,
   notificationPrefs: state.notificationPrefs,
@@ -276,6 +281,7 @@ export function useSettings(): Settings {
   const personalityId = useSettingsStore((state) => state.personalityId);
   const goal = useSettingsStore((state) => state.goal);
   const accent = useSettingsStore((state) => state.accent);
+  const themeId = useSettingsStore((state) => state.themeId);
   const replayAutoPlay = useSettingsStore((state) => state.replayAutoPlay);
   const weightHistory = useSettingsStore((state) => state.weightHistory);
   const notificationPrefs = useSettingsStore((state) => state.notificationPrefs);
@@ -298,6 +304,7 @@ export function useSettings(): Settings {
       personalityId,
       goal,
       accent,
+      themeId,
       replayAutoPlay,
       weightHistory,
       notificationPrefs,
@@ -306,7 +313,7 @@ export function useSettings(): Settings {
       rankSettings,
       location,
     }),
-    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location]
+    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location]
   );
 }
 
@@ -325,6 +332,7 @@ export function getSettings(): Settings {
     personalityId: state.personalityId,
     goal: state.goal,
     accent: state.accent,
+    themeId: state.themeId,
     replayAutoPlay: state.replayAutoPlay,
     weightHistory: state.weightHistory,
     notificationPrefs: state.notificationPrefs,

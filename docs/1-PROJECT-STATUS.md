@@ -34,7 +34,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Gamification | ✅ Done | 12/12 | XP, levels, streaks, tokens, store |
 | Notifications | ✅ Done | 6/7 | Full push notification system complete |
 | UI & Design | ✅ Done | 15/15 | Design system + screen migrations complete |
-| UI Themes & Visual Style | 🔄 In Progress | 6/12 | Documentation complete |
+| UI Themes & Visual Style | 🔄 In Progress | 7/12 | Theme token system complete (3 palettes) |
 | Backend & Sync | ✅ Done | 10/10 | Full sync system operational |
 | Onboarding | ✅ Done | 7/7 | Full flow implemented, debug reset available |
 | Avatar & Hangout Room | ✅ Done | 8/8 | Phase 2 complete - unified UserStatsStore for growth metrics |

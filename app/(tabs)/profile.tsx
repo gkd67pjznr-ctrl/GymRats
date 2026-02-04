@@ -285,6 +285,14 @@ export default function ProfileTab() {
           icon="🖼️"
         />
 
+        {/* Personal Records: manage baseline PRs */}
+        <NavigationCard
+          href="/profile/prs"
+          title="Personal Records"
+          subtitle="Enter or update your current lifts so we know when you hit a real PR."
+          icon="🏆"
+        />
+
         <View style={{ height: 6 }} />
 
         <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Coming next</Text>

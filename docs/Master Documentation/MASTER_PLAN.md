@@ -5,8 +5,8 @@
 
 ## Document Info
 - **Created:** 2026-01-25
-- **Last Updated:** 2026-01-30
-- **Status:** Active — Updated from brainstorm interview and documentation organization
+- **Last Updated:** 2026-02-03
+- **Status:** Active — Updated from worktree merge with gt1/gt2 features
 
 ---
 
@@ -383,30 +383,36 @@ Earned through gameplay, spent on cosmetics:
 - ✅ Establish solid foundation
 - ✅ Build backend sync system
 
-## Phase 1: Core Workout Polish
-- Routine-based workout flow
-- Exercise logging polish
-- Rest timer improvements
+## Phase 1: Core Workout Polish (Complete)
+- ✅ Routine-based workout flow
+- ✅ Exercise logging polish (Hevy-style redesign)
+- ✅ Rest timer improvements
+- ✅ Workout Drawer system (collapsible, persisted)
+- ✅ Protected routes with auth guards
 
-## Phase 2: AI Gym Buddy + Avatar
-- Personality engine (8-12 archetypes)
-- Reactive commentary system
-- AI-generated voice system
-- Avatar creation + growth system
-- Hangout room
+## Phase 2: AI Gym Buddy + Avatar (Complete)
+- ✅ Personality engine (9 archetypes)
+- ✅ Reactive commentary system
+- ✅ AI-generated voice system (180+ voice lines)
+- ✅ Avatar creation + growth system
+- ✅ Hangout room with real-time presence
+- ✅ Shop system with cosmetics and decorations
 
-## Phase 3: Social & Engagement
-- Full feed with auto-generated workout cards
-- Workout Replay (cinematic summaries)
-- Reactions + comments
-- Forge DNA + Forge Lab
-- Forge Milestones
+## Phase 3: Social & Engagement (Mostly Complete)
+- ✅ Feed with Global/Friends tabs
+- ✅ Workout Replay (cinematic summaries)
+- ✅ Reactions + comments
+- ✅ Forge DNA + Forge Lab
+- ✅ Forge Milestones (30 achievements)
+- ✅ Push notifications system
+- 🔄 Auto-generated workout cards (in progress)
 
-## Phase 4: Launch Polish
-- Full onboarding (avatar, goals, guided workout)
-- Visual polish + animations
-- Performance optimization
-- App Store preparation
+## Phase 4: Launch Polish (Current)
+- ✅ Full onboarding flow
+- ✅ Design system migration (15/15 screens)
+- 🔄 Visual polish + animations
+- 🔄 Performance optimization
+- 🔄 App Store preparation
 
 ## Phase 5: Post-Launch v2
 - Leaderboards + competitions
@@ -418,7 +424,7 @@ Earned through gameplay, spent on cosmetics:
 - Gym Finder / Map with partnerships
 - AI Coaching (template-based)
 - Templates Marketplace
-- Training Journal
+- ✅ Training Journal (complete)
 - Forge Seasons
 
 ---
@@ -519,6 +525,18 @@ What keeps users coming back when they're not lifting:
 
 # DECISION LOG
 
+## 2026-02-03: Major Feature Completion
+Key completions from gt1 and gt2 worktree merges:
+- **AI Buddy Voice Lines Complete:** 180+ voice line mappings for 8 premium/legendary buddies, 11 trigger types per buddy with 2 variations each
+- **Push Notifications Complete:** Full push notification system with reaction/comment functions, DB triggers for server-side delivery, 38 tests
+- **Protected Routes Complete:** Centralized `useRouteProtection` hook with auto-redirect, `useRequiresAuth` and `useShowAuthenticatedUI` helpers, 25 tests
+- **Real-time Presence Complete:** Supabase Presence API integration for hangout room, heartbeat mechanism (30s/60s), online count badges, workout activity updates
+- **Shop UI Polish Complete:** Purchase confirmation modals, category tabs, rarity indicators, sorting/filtering, full design system migration
+- **Design System Migration Complete:** All 15 screens migrated (auth, routines, history, etc.) using Surface, Text, Card, Button primitives
+- **UI Themes Progress:** Theme token system implemented with 3 complete palettes (Iron Forge, Toxic Energy, Neon Glow)
+
+Current focus shifted to Phase 4 (Launch Polish): visual animations, performance optimization, App Store preparation.
+
 ## 2026-01-30: Documentation Organization
 Key decisions:
 - **Documentation structure:** Organized into clear directories for better navigation
@@ -562,6 +580,6 @@ Key decisions:
 
 ---
 
-**End of Master Plan v2.1**
+**End of Master Plan v2.2**
 *This document is the source of truth for GymRats's vision and strategy.*
-*Updated from documentation organization on 2026-01-30.*
+*Updated from gt1/gt2 worktree merge on 2026-02-03.*

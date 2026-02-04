@@ -135,10 +135,20 @@ import { backgroundGradients, cardGradients } from '@/src/design';
 - `docs/visual-style/ui-aesthetic-implementation.md` - Complete strategy and implementation plan
 - `docs/visual-style/visual-style-guide.md` - Detailed design specifications
 - `docs/visual-style/implementation-roadmap.md` - Phased approach with timelines
+- `docs/visual-style/theme-implementation-plan.md` - **NEW** First 3 themes implementation guide
 - `src/ui/designSystem.ts` - Design tokens factory and theme system
 - `src/ui/theme.ts` - Theme colors hook and context provider
 - `src/ui/theme/ThemeProvider.tsx` - Theme context provider (illustration system not yet implemented)
 - `src/lib/buddyData.ts` - Personality-driven copy system
+
+**New Theme System Files:**
+- `src/ui/themes/themeTokens.ts` - Theme token type definitions
+- `src/ui/themes/ironForge.ts` - Iron Forge theme (medieval blacksmith)
+- `src/ui/themes/toxicEnergy.ts` - Toxic Energy theme (radioactive neon)
+- `src/ui/themes/neonGlow.ts` - Neon Glow theme (cosmic cyberpunk)
+- `src/ui/themes/ThemeProvider.tsx` - New theme context provider
+- `src/ui/themes/themeAssets.ts` - Theme-specific asset loading
+- `src/ui/themes/index.ts` - Barrel exports
 
 **Theming System Usage:**
 ```typescript
@@ -229,6 +239,14 @@ All visual style documentation is located in `docs/visual-style/`:
    - Milestone checkpoints and deliverables
    - Success metrics and evaluation criteria
    - Risk mitigation strategies
+
+4. **Theme Implementation Plan** (`theme-implementation-plan.md`) - **NEW**
+   - Complete implementation plan for Iron Forge, Toxic Energy, Neon Glow themes
+   - Theme token system architecture
+   - Asset requirements (21 illustrations, 3 textures, 3 badge frames)
+   - Component theming patterns
+   - Animation specifications per theme
+   - Step-by-step implementation checklist
 
 ---
 

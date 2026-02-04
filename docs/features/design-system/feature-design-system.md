@@ -523,4 +523,25 @@ corners.input   // 10
 
 - [Visual Style Guide](../../visual-style/visual-style-guide.md)
 - [UI Aesthetic Implementation](../../visual-style/ui-aesthetic-implementation.md)
+- [Theme Implementation Plan](../../visual-style/theme-implementation-plan.md) - Iron Forge, Toxic Energy, Neon Glow themes
 - [Workout Drawer](../workout-drawer/feature-workout-drawer.md)
+
+## New Theme System
+
+A new theme token system has been implemented at `src/ui/themes/`:
+
+```typescript
+import { useTheme, ThemeProvider } from '@/src/ui/themes';
+
+// Three palettes available:
+// - 'toxic-energy' (default) - Radioactive neon
+// - 'iron-forge' - Medieval blacksmith
+// - 'neon-glow' - Cosmic cyberpunk
+
+const theme = useTheme();
+// theme.colors.primary, theme.colors.card, etc.
+// theme.motion.springTension, theme.motion.prEntryDuration
+// theme.surfaces.glowIntensity
+```
+
+See [theme-implementation-plan.md](../../visual-style/theme-implementation-plan.md) for complete implementation guide.

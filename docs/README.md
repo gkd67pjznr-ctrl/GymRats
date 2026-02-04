@@ -9,7 +9,7 @@
 **Start Here →**
 - New to the codebase? Read **[3-CODEBASE-GUIDE.md](3-CODEBASE-GUIDE.md)**
 - Want project status? Read **[1-PROJECT-STATUS.md](1-PROJECT-STATUS.md)**
-- Want the big picture? Read **[Master Documentation/2-MASTER-PLAN.md](Master%20Documentation/2-MASTER-PLAN.md)**
+- Want the big picture? Read **[Master Documentation/MASTER_PLAN.md](Master%20Documentation/MASTER_PLAN.md)**
 
 ---
 
@@ -18,9 +18,9 @@
 ### Project Status & Planning
 | Document | Purpose | Last Updated |
 |----------|---------|--------------|
-| [1-PROJECT-STATUS.md](1-PROJECT-STATUS.md) | Feature status, metrics, priorities | 2026-02-02 |
-| [Master Documentation/2-MASTER-PLAN.md](Master%20Documentation/2-MASTER-PLAN.md) | Vision, differentiators, roadmap | 2026-01-30 |
-| [Master Documentation/4-FEATURE-MASTER.md](Master%20Documentation/4-FEATURE-MASTER.md) | Complete feature index | 2026-02-01 |
+| [1-PROJECT-STATUS.md](1-PROJECT-STATUS.md) | Feature status, metrics, priorities | 2026-02-03 |
+| [Master Documentation/MASTER_PLAN.md](Master%20Documentation/MASTER_PLAN.md) | Vision, differentiators, roadmap | 2026-02-03 |
+| [Master Documentation/FEATURE-MASTER.md](Master%20Documentation/FEATURE-MASTER.md) | Complete feature index | 2026-02-03 |
 
 ### Technical Reference
 | Document | Purpose | Last Updated |
@@ -35,35 +35,36 @@
 
 | Feature | Folder | Status |
 |---------|--------|--------|
-| AI Gym Buddy | [features/ai-buddy/](features/ai-buddy/) | 9/11 |
+| AI Gym Buddy | [features/ai-buddy/](features/ai-buddy/) | 11/11 ✅ |
 | AI Coaching | [features/ai-coaching/](features/ai-coaching/) | Planned |
-| Authentication | [features/authentication/](features/authentication/) | 7/10 |
-| Avatar | [features/avatar/](features/avatar/) | 4/8 |
-| Backend Sync | [features/backend-sync/](features/backend-sync/) | 10/10 |
-| Body Model | [features/body-model/](features/body-model/) | 3/5 |
+| Authentication | [features/authentication/](features/authentication/) | 8/10 |
+| Avatar | [features/Avatar/](features/Avatar/) | 8/8 ✅ |
+| Backend Sync | [features/backend-sync/](features/backend-sync/) | 10/10 ✅ |
+| Body Model | [features/body-model/](features/body-model/) | 5/5 ✅ |
 | Competitions | [features/competitions/](features/competitions/) | Planned |
-| Exercises | [features/exercises/](features/exercises/) | 3/3 |
-| Forge DNA | [features/forge-dna/](features/forge-dna/) | 4/4 |
-| Forge Lab | [features/forge-lab/](features/forge-lab/) | 6/6 |
-| Forge Milestones | [features/forge-milestones/](features/forge-milestones/) | 5/5 |
+| Design System | [features/design-system/](features/design-system/) | 15/15 ✅ |
+| Exercises | [features/exercises/](features/exercises/) | 3/3 ✅ |
+| Forge DNA | [features/forge-dna/](features/forge-dna/) | 4/4 ✅ |
+| Forge Lab | [features/forge-lab/](features/forge-lab/) | 6/6 ✅ |
+| Forge Milestones | [features/forge-milestones/](features/forge-milestones/) | 5/5 ✅ |
 | Forge Seasons | [features/forge-seasons/](features/forge-seasons/) | Planned |
-| Gamification | [features/gamification/](features/gamification/) | 12/12 |
+| Gamification | [features/Gamification/](features/Gamification/) | 12/12 ✅ |
 | Gym Finder | [features/gym-finder/](features/gym-finder/) | Planned |
 | Hangout Room | [features/hangout-room/](features/hangout-room/) | 8/8 ✅ |
-| Integrations | [features/integrations/](features/integrations/) | 5/5 |
+| Integrations | [features/integrations/](features/integrations/) | 5/5 ✅ |
 | Leaderboards | [features/leaderboards/](features/leaderboards/) | Planned |
 | Live Workout Together | [features/live-workout-together/](features/live-workout-together/) | Planned |
-| Notifications | [features/notifications/](features/notifications/) | 1/4 |
-| Onboarding | [features/onboarding/](features/onboarding/) | 3/7 |
-| Scoring | [features/scoring/](features/scoring/) | 5/5 |
+| Notifications | [features/notifications/](features/notifications/) | 6/7 ✅ |
+| Onboarding | [features/onboarding/](features/onboarding/) | 7/7 ✅ |
+| Scoring | [features/scoring/](features/scoring/) | 5/5 ✅ |
 | Social Feed | [features/social-feed/](features/social-feed/) | 9/15 |
 | Templates Marketplace | [features/templates-marketplace/](features/templates-marketplace/) | Planned |
-| Training Journal | [features/training-journal/](features/training-journal/) | 4/4 |
-| UI Design | [features/ui-design/](features/ui-design/) | 12/15 |
-| UI Themes | [features/ui-themes/](features/ui-themes/) | 6/12 |
-| Workout Core | [features/workout-core/](features/workout-core/) | 12/20 |
-| Workout Logging | [features/workout-logging/](features/workout-logging/) | 10/10 |
-| Workout Replay | [features/workout-replay/](features/workout-replay/) | 5/5 |
+| Training Journal | [features/training-journal/](features/training-journal/) | 4/4 ✅ |
+| UI Themes | [features/ui-themes/](features/ui-themes/) | 7/12 |
+| Workout Core | [features/workout-core/](features/workout-core/) | 14/20 |
+| Workout Drawer | [features/workout-drawer/](features/workout-drawer/) | 7/8 |
+| Workout Logging | [features/workout-logging/](features/workout-logging/) | 10/10 ✅ |
+| Workout Replay | [features/workout-replay/](features/workout-replay/) | 5/5 ✅ |
 
 ---
 
@@ -82,6 +83,7 @@
 - [visual-style/README.md](visual-style/README.md) - Design system overview
 - [visual-style/ui-aesthetic-implementation.md](visual-style/ui-aesthetic-implementation.md) - Implementation plan
 - [visual-style/visual-style-guide.md](visual-style/visual-style-guide.md) - Design specifications
+- [visual-style/theme-implementation-plan.md](visual-style/theme-implementation-plan.md) - **NEW** Iron Forge, Toxic Energy, Neon Glow implementation guide
 
 ### Codebase Analysis
 - [Codebase Analysis/exercise-db-api.md](Codebase%20Analysis/exercise-db-api.md) - ExerciseDB API reference
@@ -100,18 +102,21 @@ docs/
 ├── README.md (this file)
 │
 ├── 1-PROJECT-STATUS.md          # Project status (SINGLE SOURCE OF TRUTH)
-├── 2-MASTER-PLAN.md             # Vision and strategy
 ├── 3-CODEBASE-GUIDE.md          # Technical reference
-├── 4-FEATURE-MASTER.md          # Feature index
 │
-├── features/                    # 28 flat feature folders
+├── Master Documentation/
+│   ├── MASTER_PLAN.md           # Vision and strategy
+│   └── FEATURE-MASTER.md        # Feature index
+│
+├── features/                    # 31 flat feature folders
 │   ├── ai-buddy/
 │   ├── authentication/
+│   ├── design-system/
+│   ├── workout-drawer/
 │   └── ... (each feature has its own folder)
 │
-├── visual-style/                # Design system docs
+├── visual-style/                # Design system docs + theme palettes
 ├── Project Management/           # Internal processes
-├── Master Documentation/         # Strategic docs
 ├── Codebase Analysis/           # Technical deep-dives
 └── AskUQ/                       # Interview transcripts
 ```
@@ -133,7 +138,7 @@ docs/
 → Read `3-CODEBASE-GUIDE.md` → "State Management"
 
 **"What's the vision for the app?"**
-→ Read `Master Documentation/2-MASTER-PLAN.md` → "Vision Statement"
+→ Read `Master Documentation/MASTER_PLAN.md` → "Vision Statement"
 
 **"Where do I find docs for [feature]?"**
 → Check `features/` folder - each feature has its own folder
@@ -155,8 +160,8 @@ docs/
 **Updating documentation?**
 - Status changes → Update `1-PROJECT-STATUS.md`
 - Feature implementation → Update feature's `feature-*.md` file
-- New features → Add to `Master Documentation/4-FEATURE-MASTER.md`
+- New features → Add to `Master Documentation/FEATURE-MASTER.md`
 
 ---
 
-*Last updated: 2026-02-02*
+*Last updated: 2026-02-03*
