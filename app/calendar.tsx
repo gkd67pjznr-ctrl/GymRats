@@ -1,12 +1,14 @@
-import { useRouter } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { startOfDayMs } from "../src/lib/workoutModel";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { startOfDayMs, durationMs, formatDateShort, formatTimeShort, formatDuration } from "../src/lib/workoutModel";
 // [MIGRATED 2026-01-23] Using Zustand stores (auto-hydration, no manual hydrate needed)
 import { useWorkoutSessions } from "../src/lib/stores";
 import { useThemeColors } from "../src/ui/theme";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "../src/ui/components/ScreenHeader";
+import { TAB_BAR_HEIGHT } from "../src/ui/components/PersistentTabBar";
 
 function monthKey(d: Date) {
   return `${d.getFullYear()}-${d.getMonth()}`;
@@ -15,6 +17,7 @@ function monthKey(d: Date) {
 export default function Calendar() {
   const c = useThemeColors();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const sessions = useWorkoutSessions();
   const [cursor, setCursor] = useState(() => new Date());
   const [isLoading, setIsLoading] = useState(true);
@@ -71,11 +74,11 @@ export default function Calendar() {
   // Show loading spinner while hydrating
   if (isLoading) {
     return (
-      <View style={{ 
-        flex: 1, 
-        backgroundColor: c.bg, 
-        justifyContent: 'center', 
-        alignItems: 'center' 
+      <View style={{
+        flex: 1,
+        backgroundColor: c.bg,
+        justifyContent: 'center',
+        alignItems: 'center'
       }}>
         <ActivityIndicator size="large" color={c.text} />
         <Text style={{ color: c.muted, marginTop: 12, fontSize: 14 }}>
@@ -87,93 +90,155 @@ export default function Calendar() {
 
   return (
     <ProtectedRoute>
-      <ScreenHeader title="Calendar" />
-      <View style={{ flex: 1, backgroundColor: c.bg, padding: 16, gap: 12 }}>
-
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Pressable
-          onPress={() => {
-            const d = new Date(cursor);
-            d.setMonth(d.getMonth() - 1);
-            setCursor(d);
-          }}
+      <View style={{ flex: 1, backgroundColor: c.bg }}>
+        <ScreenHeader title="Calendar" />
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20 }}
         >
-          <Text style={{ color: c.text, fontWeight: "900" }}>◀</Text>
-        </Pressable>
+          {/* Calendar Header */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <Pressable
+              onPress={() => {
+                const d = new Date(cursor);
+                d.setMonth(d.getMonth() - 1);
+                setCursor(d);
+              }}
+              style={{ padding: 8 }}
+            >
+              <Text style={{ color: c.text, fontWeight: "900", fontSize: 18 }}>◀</Text>
+            </Pressable>
 
-        <Text style={{ color: c.text, fontWeight: "900" }}>{monthLabel}</Text>
+            <Text style={{ color: c.text, fontWeight: "900", fontSize: 18 }}>{monthLabel}</Text>
 
-        <Pressable
-          onPress={() => {
-            const d = new Date(cursor);
-            d.setMonth(d.getMonth() + 1);
-            setCursor(d);
-          }}
-        >
-          <Text style={{ color: c.text, fontWeight: "900" }}>▶</Text>
-        </Pressable>
-      </View>
-
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        {weekdays.map((w) => (
-          <Text
-           key={w.key}
-           style={{ width: "14.28%", textAlign: "center", color: c.muted, fontWeight: "800" }}
-          >                
-           {w.label}
-         </Text>                                                                                  
-      ))}
-      </View>
-
-      <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 10 }}>
-        {Array.from({ length: grid.length / 7 }).map((_, row) => (
-          <View key={`${monthKey(cursor)}-r${row}`} style={{ flexDirection: "row" }}>
-            {grid.slice(row * 7, row * 7 + 7).map((cell, idx) => {
-              const isEmpty = cell.day == null;
-              const hasWorkout = cell.dayMs != null && workoutDays.has(cell.dayMs);
-
-              return (
-                <View
-                  key={`${row}-${idx}`}
-                  style={{
-                    width: "14.28%",
-                    paddingVertical: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: isEmpty ? 0 : 1,
-                  }}
-                >
-                  <Pressable
-                    disabled={isEmpty}
-                    onPress={() => {
-                      if (!cell.dayMs) return;
-                      router.push(`/calendar/day/${cell.dayMs}`);
-                    }}
-                    style={{
-                      minWidth: 32,
-                      height: 32,
-                      borderRadius: 16,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderWidth: hasWorkout ? 1 : 0,
-                      borderColor: c.border,
-                      backgroundColor: hasWorkout ? c.bg : "transparent",
-                    }}
-                  >
-                    <Text style={{ color: c.text, fontWeight: hasWorkout ? "900" : "600" }}>
-                      {cell.day ?? ""}
-                    </Text>
-                  </Pressable>
-                </View>
-              );
-            })}
+            <Pressable
+              onPress={() => {
+                const d = new Date(cursor);
+                d.setMonth(d.getMonth() + 1);
+                setCursor(d);
+              }}
+              style={{ padding: 8 }}
+            >
+              <Text style={{ color: c.text, fontWeight: "900", fontSize: 18 }}>▶</Text>
+            </Pressable>
           </View>
-        ))}
-      </View>
 
-      <Text style={{ color: c.muted }}>
-        Tap any day to open day detail. Highlighted days have workouts.
-      </Text>
+          {/* Weekday labels */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            {weekdays.map((w) => (
+              <Text
+               key={w.key}
+               style={{ width: "14.28%", textAlign: "center", color: c.muted, fontWeight: "800" }}
+              >
+               {w.label}
+             </Text>
+          ))}
+          </View>
+
+          {/* Calendar Grid */}
+          <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 10 }}>
+            {Array.from({ length: grid.length / 7 }).map((_, row) => (
+              <View key={`${monthKey(cursor)}-r${row}`} style={{ flexDirection: "row" }}>
+                {grid.slice(row * 7, row * 7 + 7).map((cell, idx) => {
+                  const isEmpty = cell.day == null;
+                  const hasWorkout = cell.dayMs != null && workoutDays.has(cell.dayMs);
+
+                  return (
+                    <View
+                      key={`${row}-${idx}`}
+                      style={{
+                        width: "14.28%",
+                        paddingVertical: 10,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        opacity: isEmpty ? 0 : 1,
+                      }}
+                    >
+                      <Pressable
+                        disabled={isEmpty}
+                        onPress={() => {
+                          if (!cell.dayMs) return;
+                          router.push(`/calendar/day/${cell.dayMs}`);
+                        }}
+                        style={{
+                          minWidth: 32,
+                          height: 32,
+                          borderRadius: 16,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderWidth: hasWorkout ? 1 : 0,
+                          borderColor: c.border,
+                          backgroundColor: hasWorkout ? c.bg : "transparent",
+                        }}
+                      >
+                        <Text style={{ color: c.text, fontWeight: hasWorkout ? "900" : "600" }}>
+                          {cell.day ?? ""}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+
+          <Text style={{ color: c.muted, fontSize: 13 }}>
+            Tap any highlighted day to see that day's workouts.
+          </Text>
+
+          {/* History Section */}
+          <View style={{ marginTop: 8 }}>
+            <Text style={{ color: c.text, fontWeight: "900", fontSize: 18, marginBottom: 12 }}>
+              Workout History
+            </Text>
+
+            {sessions.length === 0 ? (
+              <View style={{
+                borderWidth: 1,
+                borderColor: c.border,
+                borderRadius: 14,
+                backgroundColor: c.card,
+                padding: 16
+              }}>
+                <Text style={{ color: c.muted }}>
+                  No workouts logged yet. Finish a workout to save it.
+                </Text>
+              </View>
+            ) : (
+              <View style={{ gap: 10 }}>
+                {sessions.map((s) => {
+                  const completionLabel = s.completionPct == null ? null : `${Math.round(s.completionPct * 100)}%`;
+
+                  return (
+                    <Link key={s.id} href={`/workout/${s.id}`} asChild>
+                      <Pressable
+                        style={({ pressed }) => ({
+                          borderWidth: 1,
+                          borderColor: c.border,
+                          borderRadius: 14,
+                          backgroundColor: c.card,
+                          padding: 14,
+                          gap: 6,
+                          opacity: pressed ? 0.7 : 1,
+                        })}
+                      >
+                        <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>
+                          {formatDateShort(s.startedAtMs)} • {formatTimeShort(s.startedAtMs)}
+                        </Text>
+
+                        <Text style={{ color: c.muted, fontSize: 13 }}>
+                          {s.routineName ? `${s.routineName} • ` : ""}
+                          {formatDuration(durationMs(s))} • {s.sets.length} sets
+                          {completionLabel ? ` • ${completionLabel}` : ""}
+                        </Text>
+                      </Pressable>
+                    </Link>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+        </ScrollView>
       </View>
     </ProtectedRoute>
   );

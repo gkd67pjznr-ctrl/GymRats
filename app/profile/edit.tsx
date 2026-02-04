@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, Image, ScrollView } from "react-native";
 import { useRouter, Link } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "@/src/ui/theme";
 import { useUser, useAuth } from "@/src/lib/stores";
 import { KeyboardAwareScrollView } from "@/src/ui/components/KeyboardAwareScrollView";
 import { ProtectedRoute } from "@/src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "@/src/ui/components/ScreenHeader";
+import { TAB_BAR_HEIGHT } from "@/src/ui/components/PersistentTabBar";
 import { generateAvatarUrl } from "@/src/lib/supabase/storage";
 
 /**
@@ -24,6 +26,7 @@ interface ValidationError {
 export default function ProfileEditScreen() {
   const router = useRouter();
   const c = useThemeColors();
+  const insets = useSafeAreaInsets();
   const user = useUser();
   const authStore = useAuth();
 
@@ -200,7 +203,7 @@ export default function ProfileEditScreen() {
         contentContainerStyle={{
           padding: 24,
           gap: 24,
-          paddingBottom: 100,
+          paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20,
         }}
       >
         {/* Avatar Section */}

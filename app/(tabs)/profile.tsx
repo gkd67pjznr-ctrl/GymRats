@@ -1,8 +1,11 @@
 // app/(tabs)/profile.tsx
 import { Pressable, ScrollView, Text, View, ActivityIndicator, Modal, TextInput, Alert } from "react-native";
 import { Link, type Href } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { useThemeColors } from "../../src/ui/theme";
+import { TOP_BAR_HEIGHT } from "../../src/ui/components/GlobalTopBar";
+import { TAB_BAR_HEIGHT } from "../../src/ui/components/PersistentTabBar";
 import { useDevMode } from "../../src/lib/devMode";
 import { TabErrorBoundary } from "../../src/ui/tab-error-boundary";
 import { ProtectedRoute } from "../../src/ui/components/ProtectedRoute";
@@ -29,6 +32,7 @@ export default function ProfileTab() {
   const c = useThemeColors();
   const devMode = useDevMode();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(true);
   const [tapCount, setTapCount] = useState(0);
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
@@ -208,7 +212,12 @@ export default function ProfileTab() {
 
       <ScrollView
         style={{ flex: 1, backgroundColor: c.bg }}
-        contentContainerStyle={{ padding: 16, gap: 12 }}
+        contentContainerStyle={{
+          padding: 16,
+          paddingTop: insets.top + TOP_BAR_HEIGHT + 16,
+          paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20,
+          gap: 12
+        }}
       >
         {/* Secret tap area */}
         <Pressable onPress={handleSecretTap}>
@@ -229,20 +238,12 @@ export default function ProfileTab() {
           icon="✏️"
         />
 
-        {/* Calendar: real data lives in /calendar */}
+        {/* Calendar with History */}
         <NavigationCard
           href="/calendar"
-          title="Workout Calendar"
-          subtitle="Shows a month grid with highlighted workout days (real data)."
+          title="Calendar"
+          subtitle="Monthly calendar with workout days highlighted, plus your complete workout history below."
           icon="📅"
-        />
-
-        {/* History: real data lives in /history */}
-        <NavigationCard
-          href="/history"
-          title="History"
-          subtitle="Browse your saved workout sessions by day/time/duration (real data)."
-          icon="📊"
         />
 
         {/* Avatar: virtual gym companion */}

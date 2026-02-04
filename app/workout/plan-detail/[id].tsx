@@ -12,6 +12,7 @@ import { EXERCISES_V1 } from "../../../src/data/exercises";
 import { makeDesignSystem } from "../../../src/ui/designSystem";
 import { getCategoryInfo } from "../../../src/lib/premadePlans/categories";
 import { ScreenHeader } from "../../../src/ui/components/ScreenHeader";
+import { TAB_BAR_HEIGHT } from "../../../src/ui/components/PersistentTabBar";
 import { useWorkoutDrawerStore } from "../../../src/lib/stores/workoutDrawerStore";
 import { ensureCurrentSession } from "../../../src/lib/stores/currentSessionStore";
 
@@ -150,7 +151,7 @@ export default function PlanDetail() {
       <ScrollView contentContainerStyle={{
         paddingTop: FR.space.x4,
         paddingHorizontal: FR.space.x4,
-        paddingBottom: 100 + insets.bottom,
+        paddingBottom: 100 + insets.bottom + TAB_BAR_HEIGHT,
         gap: FR.space.x4,
       }}>
         {/* Header */}
@@ -346,7 +347,7 @@ export default function PlanDetail() {
       <View
         style={{
           position: "absolute",
-          bottom: insets.bottom,
+          bottom: insets.bottom + TAB_BAR_HEIGHT,
           left: 0,
           right: 0,
           padding: FR.space.x4,

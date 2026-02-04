@@ -8,10 +8,10 @@ import { useAuthStore } from '../stores/authStore';
 /**
  * Routes that don't require authentication
  * These can be accessed by anyone, including unauthenticated users
+ * Note: onboarding requires authentication (happens after login)
  */
 const PUBLIC_ROUTES = new Set([
   'auth',           // All auth screens (login, signup, etc.)
-  'onboarding',     // Onboarding flow
   'index',          // Root redirect
 ]);
 

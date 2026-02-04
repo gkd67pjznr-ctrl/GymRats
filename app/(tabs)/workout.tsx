@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useThemeColors } from "../../src/ui/theme";
+import { TOP_BAR_HEIGHT } from "../../src/ui/components/GlobalTopBar";
 import { EXERCISES_V1 } from "../../src/data/exercises";
 import {
   ensureCurrentSession,
@@ -79,7 +80,7 @@ export default function WorkoutHub() {
     <TabErrorBoundary screenName="Workout">
       <ScrollView
         style={[styles.container, { backgroundColor: c.bg }]}
-        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + TOP_BAR_HEIGHT + 16, paddingBottom: insets.bottom + 100 }]}
       >
         {/* Header */}
         <View style={styles.header}>

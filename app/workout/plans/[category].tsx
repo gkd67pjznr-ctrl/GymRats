@@ -1,5 +1,6 @@
 import { View, Text, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { useThemeColors } from "../../../src/ui/theme";
 import { FR } from "../../../src/ui/GrStyle";
@@ -8,6 +9,7 @@ import { usePlansByCategory, hydratePremadePlansStore } from "../../../src/lib/p
 import { getCategoryInfo } from "../../../src/lib/premadePlans/categories";
 import { makeDesignSystem } from "../../../src/ui/designSystem";
 import { ScreenHeader } from "../../../src/ui/components/ScreenHeader";
+import { TAB_BAR_HEIGHT } from "../../../src/ui/components/PersistentTabBar";
 
 /**
  * Plan List - Shows all plans in a category
@@ -19,6 +21,7 @@ export default function PlanList() {
   const c = useThemeColors();
   const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { category } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,7 +56,7 @@ export default function PlanList() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenHeader title={categoryInfo.name} />
-      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3, paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3, paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20 }}>
         {/* Header */}
         <View style={{ gap: FR.space.x2 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: FR.space.x3 }}>

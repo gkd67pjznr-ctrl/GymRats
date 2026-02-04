@@ -4,7 +4,9 @@
 import { useState, useEffect } from "react";
 import { View, Text, Pressable, Alert, ScrollView, Image } from "react-native";
 import { useRouter, Link } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "@/src/ui/theme";
+import { TAB_BAR_HEIGHT } from "@/src/ui/components/PersistentTabBar";
 import { useThemeStore, useActivePalette } from "@/src/lib/stores/themeStore";
 import { ProtectedRoute } from "@/src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "@/src/ui/components/ScreenHeader";
@@ -142,6 +144,7 @@ function LocalThemeCard({
 export default function ThemeSelectionScreen() {
   const router = useRouter();
   const c = useThemeColors();
+  const insets = useSafeAreaInsets();
   const { database, setActiveTheme } = useThemeStore();
   const activePalette = useActivePalette();
   const [themes, setThemes] = useState<ThemePalette[]>([]);
@@ -202,7 +205,7 @@ export default function ThemeSelectionScreen() {
 
       <ScrollView
         style={{ flex: 1, backgroundColor: c.bg }}
-        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: 40 }}
+        contentContainerStyle={{ padding: 16, gap: 16, paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20 }}
       >
         {/* Header */}
         <View style={{ gap: 8 }}>

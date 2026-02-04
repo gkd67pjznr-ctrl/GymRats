@@ -1,6 +1,8 @@
 import { View, Pressable, ScrollView, Alert } from "react-native";
 import { Link, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Surface, Text, Card, surface, text, border, corners, space } from "@/src/design";
+import { TAB_BAR_HEIGHT } from "@/src/ui/components/PersistentTabBar";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { useRoutines, clearCurrentSession, hasCurrentSession, ensureCurrentSession } from "../../src/lib/stores";
 import { setCurrentPlan } from "../../src/lib/workoutPlanStore";
@@ -24,6 +26,7 @@ function toPlannedExercise(rx: RoutineExercise) {
 
 export default function RoutinesHome() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const routines = useRoutines();
 
   function handleQuickStart(routine: { id: string; name: string; exercises: RoutineExercise[] }) {
@@ -82,7 +85,7 @@ export default function RoutinesHome() {
             </Link>
           }
         />
-        <ScrollView contentContainerStyle={{ padding: space.componentLg, gap: space.componentMd, paddingBottom: 40 }}>
+        <ScrollView contentContainerStyle={{ padding: space.componentLg, gap: space.componentMd, paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20 }}>
 
         {routines.length === 0 ? (
           <Text variant="body" color="muted">No routines yet. Tap &quot;+ New&quot;.</Text>

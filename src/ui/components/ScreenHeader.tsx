@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "../theme";
+import { TOP_BAR_HEIGHT } from "./GlobalTopBar";
 
 interface ScreenHeaderProps {
   title: string;
@@ -25,8 +26,11 @@ export function ScreenHeader({
 
   const handleBack = onBack ?? (() => router.back());
 
+  // Account for both safe area and GlobalTopBar height
+  const topPadding = insets.top + TOP_BAR_HEIGHT;
+
   return (
-    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: c.bg }]}>
+    <View style={[styles.container, { paddingTop: topPadding, backgroundColor: c.bg }]}>
       <View style={styles.row}>
         {/* Left: back button or custom */}
         <View style={styles.side}>

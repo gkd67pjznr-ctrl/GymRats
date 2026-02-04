@@ -2,6 +2,9 @@
 // Persistent bottom tab bar that stays visible across all screens
 
 import { View, Pressable } from "react-native";
+
+// Height of tab bar content (excluding safe area)
+export const TAB_BAR_HEIGHT = 60;
 import { useRouter, usePathname } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

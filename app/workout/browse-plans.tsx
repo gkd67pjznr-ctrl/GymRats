@@ -1,11 +1,13 @@
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getAllCategories } from "../../src/lib/premadePlans/categories";
 import { getPlanCountByCategory } from "../../src/lib/premadePlans/store";
 import { makeDesignSystem } from "../../src/ui/designSystem";
 import { FR } from "../../src/ui/GrStyle";
 import { useThemeColors, useThemeRadius } from "../../src/ui/theme";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
+import { TAB_BAR_HEIGHT } from "../../src/ui/components/PersistentTabBar";
 
 /**
  * Browse Plans - Category Selection
@@ -18,12 +20,13 @@ export default function BrowsePlans() {
   const r = useThemeRadius();
   const ds = makeDesignSystem("dark", "toxic");
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const categories = getAllCategories();
-  
+
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenHeader title="Browse Plans" />
-      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3, paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{ padding: FR.space.x4, gap: FR.space.x3, paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 20 }}>
         {/* Header */}
         <View style={{ gap: FR.space.x2 }}>
           <Text style={{ color: c.muted, ...FR.type.sub }}>

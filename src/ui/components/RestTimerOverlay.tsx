@@ -263,6 +263,22 @@ export function RestTimerOverlay(props: Props) {
         </Pressable>
       </View>
 
+      {/* Backdrop to block touches when expanded */}
+      {expanded && (
+        <Pressable
+          onPress={() => setExpanded(false)}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 998,
+            backgroundColor: "rgba(0,0,0,0.3)",
+          }}
+        />
+      )}
+
       {/* SLIDE-IN PANEL (overlay only; compact) */}
       <Animated.View
         pointerEvents={expanded ? "auto" : "none"}
@@ -290,23 +306,14 @@ export function RestTimerOverlay(props: Props) {
             elevation: 10,
           }}
         >
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          {/* Tappable header to collapse */}
+          <Pressable
+            onPress={() => setExpanded(false)}
+            style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 4 }}
+          >
             <Text style={{ color: c.text, fontWeight: "900" }}>Rest Timer</Text>
-
-            <Pressable
-              onPress={() => setExpanded(false)}
-              style={{
-                paddingVertical: 6,
-                paddingHorizontal: 10,
-                borderRadius: 999,
-                borderWidth: 1,
-                borderColor: c.border,
-                backgroundColor: c.bg,
-              }}
-            >
-              <Text style={{ color: c.text, fontWeight: "900", fontSize: 12 }}>Close</Text>
-            </Pressable>
-          </View>
+            <Text style={{ color: c.muted, fontSize: 12, fontWeight: "600" }}>Tap to collapse</Text>
+          </Pressable>
 
           <View style={{ alignItems: "center", justifyContent: "center", marginVertical: 10 }}>
             <View style={{ position: "relative", width: 120, height: 120, alignItems: "center", justifyContent: "center" }}>
@@ -351,10 +358,6 @@ export function RestTimerOverlay(props: Props) {
             />
           </View>
 
-          {/* tiny hint line */}
-          <Text style={{ color: c.muted, fontSize: 12, marginTop: 2 }}>
-            Tip: Tap the pill to show/hide.
-          </Text>
         </View>
       </Animated.View>
     </>

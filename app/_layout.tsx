@@ -63,7 +63,10 @@ export default function RootLayout() {
   // Determine if authenticated UI should be shown
   const showAuthenticatedUI = useShowAuthenticatedUI();
 
-  // Redirect to onboarding if not completed
+  // Get auth state to check if user is authenticated
+  const isAuthenticated = useAuthStore(state => state.user !== null);
+
+  // Redirect to onboarding if not completed (but only after user is authenticated)
   const mountedRef = useRef(false);
   useEffect(() => {
     mountedRef.current = true;
@@ -75,6 +78,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!isOnboarding) return;
     if (!isHydrated) return; // Wait for auth to hydrate first
+    if (!isAuthenticated) return; // Only redirect to onboarding AFTER user is authenticated
 
     // Wait for next tick to ensure navigator is mounted
     const timer = setTimeout(() => {
@@ -84,7 +88,7 @@ export default function RootLayout() {
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [isOnboarding, isHydrated, router]);
+  }, [isOnboarding, isHydrated, isAuthenticated, router]);
 
   // Initialize auth state listener on mount
   useEffect(() => {
