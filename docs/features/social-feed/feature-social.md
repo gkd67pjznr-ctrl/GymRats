@@ -154,6 +154,32 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
+### Done - Auto-Generated Workout Cards
+- [x] ShareWorkoutModal auto-shows after workout completion
+- [x] ShareableWorkoutCard with tier gradients
+- [x] Top lifts display in card
+- [x] Share to feed or as image
+- [x] Photo attachment support
+
+**Implementation:**
+- `src/ui/components/WorkoutDrawer/DrawerContent.tsx` - Auto-show modal after completion
+- `src/ui/components/Social/ShareWorkoutModal.tsx` - Share modal
+- `src/ui/components/Social/ShareableWorkoutCard.tsx` - Visual card
+
+---
+
+### Done - Milestone Auto-Posts
+- [x] PR milestone badges (weight, rep, e1RM)
+- [x] Dynamic caption suggestions based on milestones
+- [x] Milestone-highlighted summary card
+- [x] Auto-detect PRs from session data
+
+**Implementation:**
+- `src/ui/components/Social/ShareWorkoutModal.tsx` - Milestone badges and dynamic captions
+- `src/lib/workoutPostGenerator.ts` - Milestone detection logic
+
+---
+
 ### Done - Comments
 - [x] Comment input on posts (CommentInput component with send button)
 - [x] Comment thread display (CommentList with threading)
@@ -168,11 +194,13 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
-### Planned - Friend Requests
-- [ ] Request notifications
-- [ ] Friend request list screen
-- [ ] Request badges on tab
+### Done - Friend Requests
+- [x] Request notifications (via notification system)
+- [x] Friend request list screen (friends.tsx)
+- [x] Request badges on tab (NotificationBell with badge)
 - [ ] Decline with reason (optional)
+
+**Implementation:** `src/ui/components/GlobalTopBar/NotificationBell.tsx`, `src/lib/stores/friendsStore.ts`
 
 ---
 
@@ -191,20 +219,27 @@ Social features for community engagement - friends, feed, posts, reactions. Buil
 
 ---
 
-### Planned - Content Moderation
-- [ ] Report post button
-- [ ] Report user button
-- [ ] Block user functionality
-- [ ] Moderation queue (admin)
+### Done - Content Moderation
+- [x] Report post button (PostOptions menu)
+- [x] Report user button (PostOptions menu)
+- [x] Block user functionality (PostOptions + ReportModal)
+- [ ] Moderation queue (admin - future)
+
+**Implementation:** `src/ui/components/Social/PostOptions.tsx`, `src/ui/components/Social/ReportModal.tsx`
 
 ---
 
-### Planned - Privacy Controls
-- [ ] Public by default (encourages discovery)
-- [ ] Friends-only option per post
-- [ ] Private account option
-- [ ] Per-post privacy selection
-- [ ] Clear privacy indicators
+### Done - Privacy Controls
+- [x] Public by default (encourages discovery)
+- [x] Friends-only option per post (ShareWorkoutModal)
+- [x] Private account option (settingsStore.privacy.privateAccount)
+- [x] Per-post privacy selection (PostOptions)
+- [x] Clear privacy indicators (privacy icons in PostOptions)
+
+**Implementation:**
+- `src/lib/stores/settingsStore.ts` - Privacy settings
+- `src/ui/components/Social/ShareWorkoutModal.tsx` - Respects privateAccount setting
+- `src/ui/components/Social/PostOptions.tsx` - Per-post privacy change
 
 ---
 

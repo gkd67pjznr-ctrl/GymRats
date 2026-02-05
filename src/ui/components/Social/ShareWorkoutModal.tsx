@@ -22,6 +22,7 @@ import { PhotoAttachment } from './PhotoAttachment';
 import { ShareableWorkoutCard } from './ShareableWorkoutCard';
 import { shareWorkoutAsImage } from '@/src/lib/sharing/workoutCardGenerator';
 import { calculateBestTierForSession } from '@/src/lib/workoutPostGenerator';
+import { useSettingsStore } from '@/src/lib/stores/settingsStore';
 
 interface ShareWorkoutModalProps {
   visible: boolean;
@@ -46,17 +47,74 @@ const PRIVACY_OPTIONS: Array<{ value: PrivacyLevel; label: string; description: 
   },
 ];
 
-// Suggested captions
-const SUGGESTED_CAPTIONS = [
+// Base suggested captions
+const BASE_CAPTIONS = [
   'Just crushed it! 💪',
   'Progress, not perfection. 🔥',
   'One step closer to my goals. ⚡',
   'The grind never stops. 🏋️',
-  'New PRs today! 🏆',
-  'Leg day complete. 🦵',
-  'Upper body gains. 💪',
-  'Rest day earned. 😴',
 ];
+
+// Milestone-specific captions
+const MILESTONE_CAPTIONS = {
+  weight_pr: [
+    'New weight PR! 🏋️',
+    'Lifting heavier than ever! ⚡',
+    'Strength gains unlocked! 💪',
+  ],
+  rep_pr: [
+    'Rep PR unlocked! 🔥',
+    'More reps, more gains! 💪',
+    'Pushing the limits! ⚡',
+  ],
+  e1rm_pr: [
+    'New estimated max! 📈',
+    'Getting stronger every day! 💪',
+    'Progress in the making! 🔥',
+  ],
+  multi_pr: [
+    'Multiple PRs today! 🏆',
+    'Unstoppable! PRs falling! 🔥',
+    'PR city! 💎',
+  ],
+  streak: [
+    'Consistency is key! 🔥',
+    'Streak mode activated! ⚡',
+    'Building the habit! 💪',
+  ],
+};
+
+// Generate suggested captions based on milestones
+function generateMilestoneCaptions(session: WorkoutSession): string[] {
+  const captions: string[] = [];
+
+  const totalPRs = (session.prCount ?? 0);
+  const weightPRs = session.weightPRs ?? 0;
+  const repPRs = session.repPRs ?? 0;
+  const e1rmPRs = session.e1rmPRs ?? 0;
+
+  // Multiple PRs
+  if (totalPRs >= 2) {
+    captions.push(...MILESTONE_CAPTIONS.multi_pr);
+  } else {
+    // Single PR type
+    if (weightPRs > 0) {
+      captions.push(MILESTONE_CAPTIONS.weight_pr[0]);
+    }
+    if (repPRs > 0) {
+      captions.push(MILESTONE_CAPTIONS.rep_pr[0]);
+    }
+    if (e1rmPRs > 0) {
+      captions.push(MILESTONE_CAPTIONS.e1rm_pr[0]);
+    }
+  }
+
+  // Add base captions
+  captions.push(...BASE_CAPTIONS);
+
+  // Return unique captions, limit to 8
+  return [...new Set(captions)].slice(0, 8);
+}
 
 export function ShareWorkoutModal({
   visible,
@@ -70,9 +128,13 @@ export function ShareWorkoutModal({
   const createPostFromWorkout = useSocialStore((state) => state.createPostFromWorkout);
   const cardRef = useRef<View>(null);
 
+  // Get privacy settings - private accounts default to friends-only posts
+  const privacySettings = useSettingsStore((state) => state.privacy);
+  const defaultPrivacy: PrivacyLevel = privacySettings?.privateAccount ? 'friends' : 'public';
+
   const [activeTab, setActiveTab] = useState<ShareTab>('feed');
   const [caption, setCaption] = useState('');
-  const [selectedPrivacy, setSelectedPrivacy] = useState<PrivacyLevel>('public');
+  const [selectedPrivacy, setSelectedPrivacy] = useState<PrivacyLevel>(defaultPrivacy);
   const [photos, setPhotos] = useState<string[]>([]);
   const [sharing, setSharing] = useState(false);
 
@@ -85,6 +147,16 @@ export function ShareWorkoutModal({
   const bestTier = calculateBestTierForSession(session);
   const totalVolume = session.sets.reduce((sum, s) => sum + s.weightKg * s.reps, 0);
 
+  // Milestone data
+  const totalPRs = session.prCount ?? 0;
+  const weightPRs = session.weightPRs ?? 0;
+  const repPRs = session.repPRs ?? 0;
+  const e1rmPRs = session.e1rmPRs ?? 0;
+  const hasMilestones = totalPRs > 0;
+
+  // Generate dynamic captions based on milestones
+  const suggestedCaptions = generateMilestoneCaptions(session);
+
   const handleShareToFeed = async () => {
     if (!user) return;
 
@@ -94,7 +166,7 @@ export function ShareWorkoutModal({
         session,
         authorUserId: user.id,
         authorDisplayName: user.displayName || 'You',
-        authorAvatarUrl: user.avatarUrl,
+        authorAvatarUrl: user.avatarUrl ?? undefined,
         privacy: selectedPrivacy,
         caption: caption.trim() || undefined,
       });
@@ -126,7 +198,7 @@ export function ShareWorkoutModal({
       await shareWorkoutAsImage(
         {
           session,
-          userName: user?.displayName,
+          userName: user?.displayName ?? undefined,
           bestTier: bestTier ?? 'Iron',
           totalVolume,
         },
@@ -204,12 +276,40 @@ export function ShareWorkoutModal({
                 <View
                   style={[
                     styles.summaryCard,
-                    { backgroundColor: c.bg, borderColor: c.border },
+                    { backgroundColor: c.bg, borderColor: hasMilestones ? ds.tone.accent : c.border },
                   ]}
                 >
                   <Text style={[styles.summaryTitle, { color: c.text }]}>
                     {session.routineName || `${exerciseCount} Exercise Workout`}
                   </Text>
+
+                  {/* Milestone Badges */}
+                  {hasMilestones && (
+                    <View style={styles.milestoneBadges}>
+                      {weightPRs > 0 && (
+                        <View style={[styles.milestoneBadge, { backgroundColor: alpha(ds.tone.accent, 0.2) }]}>
+                          <Text style={[styles.milestoneBadgeText, { color: ds.tone.accent }]}>
+                            🏋️ {weightPRs} Weight PR{weightPRs > 1 ? 's' : ''}
+                          </Text>
+                        </View>
+                      )}
+                      {repPRs > 0 && (
+                        <View style={[styles.milestoneBadge, { backgroundColor: alpha(ds.tone.accent, 0.2) }]}>
+                          <Text style={[styles.milestoneBadgeText, { color: ds.tone.accent }]}>
+                            💪 {repPRs} Rep PR{repPRs > 1 ? 's' : ''}
+                          </Text>
+                        </View>
+                      )}
+                      {e1rmPRs > 0 && (
+                        <View style={[styles.milestoneBadge, { backgroundColor: alpha(ds.tone.accent, 0.2) }]}>
+                          <Text style={[styles.milestoneBadgeText, { color: ds.tone.accent }]}>
+                            📈 {e1rmPRs} e1RM PR{e1rmPRs > 1 ? 's' : ''}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+
                   <View style={styles.summaryStats}>
                     <View style={styles.stat}>
                       <Text style={[styles.statValue, { color: ds.tone.accent }]}>
@@ -320,10 +420,10 @@ export function ShareWorkoutModal({
                 {/* Suggested Captions */}
                 <View style={styles.field}>
                   <Text style={[styles.label, { color: c.text }]}>
-                    Quick Add
+                    {hasMilestones ? 'Celebrate Your PRs' : 'Quick Add'}
                   </Text>
                   <View style={styles.suggestionsGrid}>
-                    {SUGGESTED_CAPTIONS.map((suggested) => (
+                    {suggestedCaptions.map((suggested) => (
                       <TouchableOpacity
                         key={suggested}
                         onPress={() => setCaption(suggested)}
@@ -351,7 +451,7 @@ export function ShareWorkoutModal({
                     <ShareableWorkoutCard
                       ref={cardRef}
                       session={session}
-                      userName={user?.displayName}
+                      userName={user?.displayName ?? undefined}
                       bestTier={bestTier ?? 'Iron'}
                       totalVolume={totalVolume}
                     />
@@ -483,6 +583,21 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 18,
     fontWeight: '800',
+  },
+  milestoneBadges: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  milestoneBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  milestoneBadgeText: {
+    fontSize: 13,
+    fontWeight: '700',
   },
   summaryStats: {
     flexDirection: 'row',

@@ -45,6 +45,14 @@ export interface LocationData {
   country: string;
 }
 
+// Privacy settings for account visibility
+export interface PrivacySettings {
+  privateAccount: boolean;       // If true, posts default to friends-only
+  showProfileToStrangers: boolean; // If false, profile is hidden from non-friends
+  allowFriendRequests: boolean;    // If false, others can't send friend requests
+}
+
+
 export interface Settings {
   hapticsEnabled: boolean;
   soundsEnabled: boolean;
@@ -80,6 +88,8 @@ export interface Settings {
   rankSettings: RankSettings;
   // Location data for regional leaderboards
   location: LocationData;
+  // Privacy settings
+  privacy: PrivacySettings;
 }
 
 const DEFAULTS: Settings = {
@@ -130,6 +140,11 @@ const DEFAULTS: Settings = {
     zipCode: '',
     region: '',
     country: '',
+  },
+  privacy: {
+    privateAccount: false,        // Public by default (encourages discovery)
+    showProfileToStrangers: true, // Profile visible to all by default
+    allowFriendRequests: true,    // Accept friend requests by default
   },
 };
 
@@ -269,6 +284,7 @@ export const selectSettings = (state: SettingsState): Settings => ({
   restTimerFeedback: state.restTimerFeedback,
   rankSettings: state.rankSettings,
   location: state.location,
+  privacy: state.privacy,
 });
 
 // Hook for accessing settings (matches old API)
@@ -294,6 +310,7 @@ export function useSettings(): Settings {
   const restTimerFeedback = useSettingsStore((state) => state.restTimerFeedback);
   const rankSettings = useSettingsStore((state) => state.rankSettings);
   const location = useSettingsStore((state) => state.location);
+  const privacy = useSettingsStore((state) => state.privacy);
 
   // Memoize the settings object to prevent unnecessary re-renders
   return useMemo(
@@ -318,8 +335,9 @@ export function useSettings(): Settings {
       restTimerFeedback,
       rankSettings,
       location,
+      privacy,
     }),
-    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, exerciseRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location]
+    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, exerciseRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location, privacy]
   );
 }
 
@@ -347,6 +365,7 @@ export function getSettings(): Settings {
     restTimerFeedback: state.restTimerFeedback,
     rankSettings: state.rankSettings,
     location: state.location,
+    privacy: state.privacy,
   };
 }
 

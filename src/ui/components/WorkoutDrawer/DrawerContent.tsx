@@ -54,6 +54,7 @@ import { ExerciseCard } from '@/src/ui/components/LiveWorkout/ExerciseCard';
 import { RestTimerOverlay } from '@/src/ui/components/RestTimerOverlay';
 import { CuePresenter } from '@/src/ui/components/CuePresenter';
 import { PRCelebration } from '@/src/ui/components/LiveWorkout/PRCelebration';
+import { ShareWorkoutModal } from '@/src/ui/components/Social/ShareWorkoutModal';
 import type { RichCue, PRType } from '@/src/lib/cues/cueTypes';
 import { computeIntensity } from '@/src/lib/cues/cueTypes';
 import { selectCelebration } from '@/src/lib/celebration/selector';
@@ -108,6 +109,9 @@ export function DrawerContent() {
 
   // PR celebration modal state (for legendary PRs)
   const [prCelebration, setPrCelebration] = useState<SelectedCelebration | null>(null);
+
+  // Completed session for share modal (shown after workout completion)
+  const [completedSession, setCompletedSession] = useState<WorkoutSession | null>(null);
 
   // Track done state locally (synced with session)
   const doneBySetId = session?.doneBySetId ?? {};
@@ -501,15 +505,22 @@ export function DrawerContent() {
 
               // Rebuild PR history so future PRs are detected correctly
               rebuildPRsFromHistory();
-            }
 
-            clearCurrentSession();
-            endWorkout();
+              // Show share modal with completed session
+              setCompletedSession(workoutSession);
+            }
           },
         },
       ]
     );
-  }, [completedSetCount, exerciseCount, session, doneBySetId, addSession, endWorkout]);
+  }, [completedSetCount, exerciseCount, session, doneBySetId, addSession]);
+
+  // Handle share modal close - clean up and end workout
+  const handleShareModalClose = useCallback(() => {
+    setCompletedSession(null);
+    clearCurrentSession();
+    endWorkout();
+  }, [endWorkout]);
 
   // Discard workout handler
   const handleDiscardWorkout = useCallback(() => {
@@ -584,7 +595,7 @@ export function DrawerContent() {
                 createPost({
                   authorUserId: user.id,
                   authorDisplayName: user.displayName || 'Gym Rat',
-                  authorAvatarUrl: user.avatarUrl,
+                  authorAvatarUrl: user.avatarUrl ?? undefined,
                   privacy: 'public',
                   createdAtMs: Date.now(),
                   title: headline,
@@ -759,6 +770,13 @@ export function DrawerContent() {
         celebration={prCelebration}
         onDismiss={() => setPrCelebration(null)}
         onShare={handlePRShare}
+      />
+
+      {/* Share Workout Modal - shown after workout completion */}
+      <ShareWorkoutModal
+        visible={!!completedSession}
+        session={completedSession}
+        onClose={handleShareModalClose}
       />
     </KeyboardAvoidingView>
   );

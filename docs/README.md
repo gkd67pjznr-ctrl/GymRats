@@ -64,7 +64,7 @@ The `business/` folder contains private business documents (LLC, banking, pricin
 | Notifications | [features/notifications/](features/notifications/) | 6/7 ✅ |
 | Onboarding | [features/onboarding/](features/onboarding/) | 7/7 ✅ |
 | Scoring | [features/scoring/](features/scoring/) | 5/5 ✅ |
-| Social Feed | [features/social-feed/](features/social-feed/) | 9/15 |
+| Social Feed | [features/social-feed/](features/social-feed/) | 14/16 |
 | Templates Marketplace | [features/templates-marketplace/](features/templates-marketplace/) | Planned |
 | Training Journal & Day Log | [features/training-journal/](features/training-journal/) | 4/10 |
 | UI Themes | [features/ui-themes/](features/ui-themes/) | 7/12 |

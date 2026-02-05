@@ -14,10 +14,42 @@ import { EXERCISES_V1 } from "../data/exercises";
  * 2. Trigger evaluation (PRs, behavior patterns, session flow)
  * 3. Message selection with personality-specific content
  * 4. Tier-based feature gating (text/voice/theme)
+ *
+ * Cues are fetched from Supabase and cached via cueStore.
+ * Falls back to hard-coded buddyData if cueStore has no data.
  */
 
 // Import store functions to get real user data
 import { useBuddyStore } from './stores/buddyStore';
+import { useCueStore, type CueCategory, getRandomCueWithVoice } from './stores/cueStore';
+
+/**
+ * Map TriggerType to CueCategory for database lookup
+ */
+const TRIGGER_TO_CATEGORY: Record<TriggerType, CueCategory> = {
+  // Performance Events → HYPE (big moments)
+  pr_weight: 'HYPE',
+  pr_rep: 'HYPE',
+  pr_e1rm: 'HYPE',
+  rank_up: 'MILESTONE',
+  volume_milestone: 'MILESTONE',
+
+  // Behavior Patterns
+  long_rest: 'REST',
+  skip: 'NUDGE',
+  streak: 'MILESTONE',
+  return_after_absence: 'COMEBACK',
+  short_workout: 'END',
+
+  // Session Flow
+  session_start: 'START',
+  session_mid: 'SHORT',
+  final_set: 'HYPE',
+  session_end: 'END',
+
+  // Special
+  none: 'SHORT',
+};
 
 /**
  * Get the currently equipped buddy
@@ -161,18 +193,32 @@ export function evaluateSessionTriggers(args: {
 }
 
 /**
- * Select a message from a buddy's message pool for a given trigger
+ * Select a message from cueStore (Supabase) or fall back to buddy's message pool
  */
 function selectMessageForTrigger(
   buddy: Buddy,
   triggerType: TriggerType,
   context: any
 ): CueMessage | null {
-  const messagePool = buddy.messages[triggerType];
-  if (!messagePool || messagePool.length === 0) return null;
+  // Map trigger type to cue category
+  const category = TRIGGER_TO_CATEGORY[triggerType];
 
-  // Select random message from pool
-  const message = messagePool[Math.floor(Math.random() * messagePool.length)];
+  // Try to get cue from cueStore (Supabase-backed)
+  const cueResult = getRandomCueWithVoice(buddy.id, category);
+
+  let message: string;
+  let voiceUrl: string | undefined;
+
+  if (cueResult) {
+    // Use cue from database
+    message = cueResult.text;
+    voiceUrl = cueResult.voiceUrl;
+  } else {
+    // Fall back to hard-coded buddyData
+    const messagePool = buddy.messages[triggerType];
+    if (!messagePool || messagePool.length === 0) return null;
+    message = messagePool[Math.floor(Math.random() * messagePool.length)];
+  }
 
   // Determine intensity based on context
   let intensity: 'low' | 'high' | 'epic' = 'low';
@@ -190,8 +236,12 @@ function selectMessageForTrigger(
     text: message,
   };
 
-  // Add voice line and SFX for premium+ buddies
-  if (buddy.tier !== 'basic' && buddy.voiceLines?.[triggerType]) {
+  // Add voice line from cueStore (Supabase Storage URL)
+  if (voiceUrl) {
+    cueMessage.voiceLine = voiceUrl;
+  }
+  // Fall back to hard-coded voice lines for premium+ buddies
+  else if (buddy.tier !== 'basic' && buddy.voiceLines?.[triggerType]) {
     const voicePool = buddy.voiceLines[triggerType];
     if (voicePool.length > 0) {
       cueMessage.voiceLine = voicePool[Math.floor(Math.random() * voicePool.length)];
@@ -208,6 +258,29 @@ function selectMessageForTrigger(
   }
 
   return cueMessage;
+}
+
+/**
+ * Ensure cues are loaded for the current buddy before starting a workout
+ * Call this when a workout begins or when buddy selection changes.
+ */
+export async function preloadBuddyCues(): Promise<void> {
+  const buddyId = useBuddyStore.getState().currentBuddyId;
+  if (!buddyId) return;
+
+  const cueStore = useCueStore.getState();
+
+  // Check if cues are already cached
+  if (cueStore.cuesByPersonality[buddyId]) {
+    return;
+  }
+
+  // Fetch cues from Supabase
+  try {
+    await cueStore.fetchCuesForPersonality(buddyId);
+  } catch (error) {
+    console.warn(`[BuddyEngine] Failed to preload cues for ${buddyId}, will use fallback:`, error);
+  }
 }
 
 /**
