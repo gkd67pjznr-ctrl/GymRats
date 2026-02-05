@@ -10,6 +10,7 @@ import {
   getFriendStatus,
   sendFriendRequest,
   useFriendEdges,
+  usePendingFriendRequestCount,
   setupFriendsRealtime,
   useFriendsStore,
 } from "../src/lib/stores/friendsStore";
@@ -66,6 +67,9 @@ export default function FriendsScreen() {
   const friendEdges = useFriendEdges(userId);
   const friendUserIds = friendEdges.map(e => e.otherUserId);
   const friendProfiles = useUserProfiles(friendUserIds);
+
+  // Get pending friend request count for badge
+  const pendingRequestCount = usePendingFriendRequestCount(userId);
 
   // Setup realtime subscriptions for friends
   useEffect(() => {
@@ -145,6 +149,43 @@ export default function FriendsScreen() {
               Friends-only messaging is enforced in the chat store. Manage requests here.
             </Text>
           </View>
+
+          {/* Friend Requests Link with Badge */}
+          <Pressable
+            onPress={() => router.push("/friend-requests")}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 14,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: c.border,
+              backgroundColor: c.card,
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <Text style={{ fontSize: 20 }}>👋</Text>
+              <Text style={{ color: c.text, fontWeight: "900" }}>Friend Requests</Text>
+            </View>
+            {pendingRequestCount > 0 && (
+              <View
+                style={{
+                  minWidth: 24,
+                  height: 24,
+                  borderRadius: 12,
+                  backgroundColor: c.accent,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingHorizontal: 8,
+                }}
+              >
+                <Text style={{ color: c.bg, fontWeight: "900", fontSize: 12 }}>
+                  {pendingRequestCount > 99 ? "99+" : pendingRequestCount}
+                </Text>
+              </View>
+            )}
+          </Pressable>
 
           {/* Search Bar */}
           <View style={{ gap: 4 }}>

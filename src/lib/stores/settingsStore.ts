@@ -254,6 +254,7 @@ export const useSettingsStore = create<SettingsState>()(
         restTimerFeedback: state.restTimerFeedback,
         rankSettings: state.rankSettings,
         location: state.location,
+        privacy: state.privacy,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);

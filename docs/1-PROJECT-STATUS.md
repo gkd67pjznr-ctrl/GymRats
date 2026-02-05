@@ -96,7 +96,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - **Voice line system complete:** 180+ voice line mappings for premium/legendary buddies
 - Voice playback integration with BuddyMessageToast
 - Settings toggle for buddy voice (premium+ only)
-- IAP integration with expo-iap
+- IAP integration with RevenueCat
 - Performance events, behavior patterns, and session flow triggers
 
 ### Workout Replay
@@ -180,6 +180,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | Issue | Status | Action Required |
 |-------|--------|-----------------|
 | **OAuth Setup** | Google/Apple scaffolded | External setup required: Google Cloud Console, Supabase provider, env vars |
+| **RevenueCat API Keys** | Code ready, keys missing | Get API keys from RevenueCat dashboard, set `EXPO_PUBLIC_REVENUECAT_APPLE_KEY` and `EXPO_PUBLIC_REVENUECAT_GOOGLE_KEY` |
 | **Backend Testing** | Sync system complete | Test with real Supabase backend |
 
 ---

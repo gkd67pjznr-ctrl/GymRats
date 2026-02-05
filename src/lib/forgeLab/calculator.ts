@@ -3,7 +3,8 @@
  */
 import { EXERCISES_V1 } from '@/src/data/exercises';
 import { estimate1RM_Epley as calculateE1RM } from '@/src/lib/e1rm';
-import { MuscleGroup, ExerciseStat, MuscleGroupVolumeData } from './types';
+import { MuscleGroup, ExerciseStat, MuscleGroupVolumeData, DayLogCorrelation, DayLogFactor, WorkoutMetric } from './types';
+import type { DayLog } from '@/src/lib/dayLog/types';
 import { WorkoutSession, WorkoutSet } from '@/src/lib/workoutModel';
 import { scoreFromE1rm } from '@/src/lib/GrScoring';
 
@@ -428,4 +429,184 @@ export function compileForgeLabData(
     exerciseStats,
     muscleGroupVolume
   };
+}
+
+// ============================================================================
+// Day Log Correlation Analysis
+// ============================================================================
+
+/**
+ * Convert Day Log factor to numeric value for correlation
+ */
+function dayLogFactorToNumeric(log: DayLog, factor: DayLogFactor): number {
+  switch (factor) {
+    case 'hydration':
+      return log.hydration;
+    case 'nutrition':
+      // Convert enum to numeric: none=0, light=1, moderate=2, full=3
+      return { none: 0, light: 1, moderate: 2, full: 3 }[log.nutrition];
+    case 'carbsLevel':
+      // Convert enum to numeric: low=0, moderate=1, high=2
+      return { low: 0, moderate: 1, high: 2 }[log.carbsLevel];
+    case 'energyLevel':
+      return log.energyLevel;
+    case 'sleepQuality':
+      return log.sleepQuality;
+    case 'hasPain':
+      // Convert boolean to numeric: no pain=1, has pain=0
+      return log.hasPain ? 0 : 1;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Calculate performance metric for a workout session
+ */
+function calculateSessionMetric(
+  session: WorkoutSession,
+  metric: WorkoutMetric
+): number {
+  switch (metric) {
+    case 'prCount':
+      return session.prCount ?? 0;
+    case 'totalVolume':
+      return session.sets.reduce((sum, set) => sum + set.weightKg * set.reps, 0);
+    case 'setCount':
+      return session.sets.length;
+    case 'avgScore':
+      // Calculate average e1RM across all sets
+      if (session.sets.length === 0) return 0;
+      const totalE1RM = session.sets.reduce((sum, set) => {
+        return sum + calculateE1RM(set.weightKg, set.reps);
+      }, 0);
+      return totalE1RM / session.sets.length;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Get human-readable factor name
+ */
+function getFactorLabel(factor: DayLogFactor): string {
+  const labels: Record<DayLogFactor, string> = {
+    hydration: 'Hydration',
+    nutrition: 'Nutrition',
+    carbsLevel: 'Carbs',
+    energyLevel: 'Energy',
+    sleepQuality: 'Sleep',
+    hasPain: 'Pain-Free',
+  };
+  return labels[factor];
+}
+
+/**
+ * Get human-readable metric name
+ */
+function getMetricLabel(metric: WorkoutMetric): string {
+  const labels: Record<WorkoutMetric, string> = {
+    prCount: 'PRs',
+    totalVolume: 'Volume',
+    setCount: 'Sets',
+    avgScore: 'Avg Strength',
+  };
+  return labels[metric];
+}
+
+/**
+ * Generate description for a correlation
+ */
+function generateCorrelationDescription(
+  factor: DayLogFactor,
+  metric: WorkoutMetric,
+  correlation: number,
+  strength: 'strong' | 'moderate' | 'weak' | 'none'
+): string {
+  const factorLabel = getFactorLabel(factor);
+  const metricLabel = getMetricLabel(metric);
+  const isPositive = correlation >= 0;
+
+  if (strength === 'none') {
+    return `No clear relationship between ${factorLabel.toLowerCase()} and ${metricLabel.toLowerCase()}.`;
+  }
+
+  const strengthWord = strength === 'strong' ? 'strongly' : strength === 'moderate' ? 'moderately' : 'weakly';
+
+  if (isPositive) {
+    return `Better ${factorLabel.toLowerCase()} ${strengthWord} correlates with more ${metricLabel.toLowerCase()}.`;
+  } else {
+    return `Lower ${factorLabel.toLowerCase()} ${strengthWord} correlates with more ${metricLabel.toLowerCase()}.`;
+  }
+}
+
+/**
+ * Calculate Day Log correlations with workout metrics
+ * Returns insights like "When well-rested → X% more PRs"
+ */
+export function calculateDayLogCorrelations(
+  dayLogs: DayLog[],
+  sessions: WorkoutSession[]
+): DayLogCorrelation[] {
+  const results: DayLogCorrelation[] = [];
+
+  // Need at least 3 data points for meaningful correlation
+  if (dayLogs.length < 3) {
+    return results;
+  }
+
+  // Build a map of sessionId -> DayLog for quick lookup
+  const logBySessionId = new Map<string, DayLog>();
+  dayLogs.forEach(log => {
+    logBySessionId.set(log.sessionId, log);
+  });
+
+  // Filter sessions that have a Day Log
+  const matchedPairs: { log: DayLog; session: WorkoutSession }[] = [];
+  sessions.forEach(session => {
+    const log = logBySessionId.get(session.id);
+    if (log) {
+      matchedPairs.push({ log, session });
+    }
+  });
+
+  // Need at least 3 matched pairs
+  if (matchedPairs.length < 3) {
+    return results;
+  }
+
+  // Factors and metrics to analyze
+  const factors: DayLogFactor[] = ['hydration', 'nutrition', 'carbsLevel', 'energyLevel', 'sleepQuality', 'hasPain'];
+  const metrics: WorkoutMetric[] = ['prCount', 'totalVolume', 'setCount'];
+
+  // Calculate correlations for each factor-metric pair
+  for (const factor of factors) {
+    for (const metric of metrics) {
+      // Extract numeric values
+      const factorValues = matchedPairs.map(p => dayLogFactorToNumeric(p.log, factor));
+      const metricValues = matchedPairs.map(p => calculateSessionMetric(p.session, metric));
+
+      // Calculate Pearson correlation
+      const r = calculateCorrelation(factorValues, metricValues);
+      const strength = getCorrelationStrength(r);
+
+      // Only include correlations that are at least weak
+      if (strength !== 'none') {
+        results.push({
+          factor: getFactorLabel(factor),
+          metric: getMetricLabel(metric),
+          correlation: r,
+          strength,
+          description: generateCorrelationDescription(factor, metric, r, strength),
+          sampleSize: matchedPairs.length,
+          isPositive: r >= 0,
+        });
+      }
+    }
+  }
+
+  // Sort by absolute correlation strength (strongest first)
+  results.sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation));
+
+  return results;
 }

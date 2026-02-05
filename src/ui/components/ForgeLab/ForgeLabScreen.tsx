@@ -13,6 +13,7 @@ import VolumeTrendCard from './VolumeTrendCard';
 import MuscleBalanceCard from './MuscleBalanceCard';
 import RankProgressionCard from './RankProgressionCard';
 import IntegrationDataCard from './IntegrationDataCard';
+import DayLogCorrelationsCard from './DayLogCorrelationsCard';
 import PremiumLockOverlay from './PremiumLockOverlay';
 import { BodyModelCard } from './BodyModelCard';
 import { GymDNACard } from './GymDNACard';
@@ -187,6 +188,14 @@ const ForgeLabScreen: React.FC = () => {
               />
               {!isPremium && <PremiumLockOverlay featureName="Integration Data" />}
             </View>
+
+            {/* Day Log Correlations (Free) */}
+            <View style={styles.cardContainer}>
+              <DayLogCorrelationsCard isLoading={loading} />
+            </View>
+
+            {/* Bottom padding */}
+            <View style={{ height: 40 }} />
           </ScrollView>
         </>
       )}
