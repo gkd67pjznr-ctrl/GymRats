@@ -66,12 +66,14 @@ The `business/` folder contains private business documents (LLC, banking, pricin
 | Scoring | [features/scoring/](features/scoring/) | 5/5 ✅ |
 | Social Feed | [features/social-feed/](features/social-feed/) | 9/15 |
 | Templates Marketplace | [features/templates-marketplace/](features/templates-marketplace/) | Planned |
-| Training Journal | [features/training-journal/](features/training-journal/) | 4/4 ✅ |
+| Training Journal & Day Log | [features/training-journal/](features/training-journal/) | 4/10 |
 | UI Themes | [features/ui-themes/](features/ui-themes/) | 7/12 |
 | Workout Core | [features/workout-core/](features/workout-core/) | 14/20 |
 | Workout Drawer | [features/workout-drawer/](features/workout-drawer/) | 7/8 |
 | Workout Logging | [features/workout-logging/](features/workout-logging/) | 10/10 ✅ |
 | Workout Replay | [features/workout-replay/](features/workout-replay/) | 5/5 ✅ |
+| Exercise Notes | [features/exercise-notes/](features/exercise-notes/) | 0/4 (NEW) |
+| Exercise Database | [features/exercise-database/](features/exercise-database/) | 1/6 (NEW) |
 
 ---
 

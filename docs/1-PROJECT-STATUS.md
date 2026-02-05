@@ -48,8 +48,11 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 | DNA | ✅ Done | 4/4 | Visualization complete |
 | Gym Lab Analytics | ✅ Done | 6/6 | Full analytics dashboard |
 | Forge Milestones | ✅ Done | 5/5 | 30 achievements implemented |
+| Training Journal & Day Log | 🔄 In Progress | 4/10 | Day Log analytics system NEW |
+| Exercise Notes | 📋 Planned | 0/4 | Per-exercise persistent notes NEW |
+| Exercise Database | 🔄 In Progress | 1/6 | Master file created, sync needed |
 
-**Launch Total:** 152/178 features (85%)
+**Launch Total:** 157/198 features (79%)
 
 ---
 
@@ -133,11 +136,19 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - Rank-up and tier-up local notifications
 - Settings toggles for sharing, notifications, and friend comparison
 
-### Training Journal
+### Training Journal & Day Log
 - Per-workout notes integration
 - Daily journal entries independent of workouts
 - Mood, energy, and soreness tracking (1-5 star ratings)
 - Journal history with search, filtering, and statistics
+- **NEW:** Day Log system planned - structured quick-input (hydration, nutrition, sleep, energy, pain)
+- **NEW:** Gym Lab analytics integration for Day Log correlations
+
+### Exercise Database Management (NEW)
+- **Master file created:** `docs/data/EXERCISE-DATABASE-MASTER.md` (1,590 exercises)
+- Organized by primary muscle group with equipment flags
+- Generation script: `scripts/generateExerciseMaster.js`
+- Sync script needed for MD → JSON updates
 
 ### Global Top Bar (NEW)
 - Persistent top bar with user avatar, level badge, and XP progress
@@ -231,6 +242,31 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 ---
 
 ## Recent Updates (Last 30 Days)
+
+### 2026-02-05
+- **Voice Memo Analysis Session** - 4 voice memos analyzed, 19 new tasks created
+- **Exercise Database Master File** - Created `docs/data/EXERCISE-DATABASE-MASTER.md` (1,590 exercises)
+  - Organized by primary muscle group (21 groups)
+  - Equipment flags (BB, DB, Machine, Cable, Bands, KB, Bodyweight)
+  - Human-readable format for manual name cleanup
+  - Generation script: `scripts/generateExerciseMaster.js`
+- **Training Journal Enhanced** - Day Log system designed
+  - Structured quick-input: hydration, nutrition, sleep, energy, pain tracking
+  - Gym Lab analytics integration for performance correlations
+  - "When well-rested → 23% more PRs" style insights
+- **Exercise Notes Feature** - Designed per-exercise persistent notes
+  - Note icon on exercise cards in workout drawer
+  - Notes stick to exercises across sessions
+  - Use cases: machine calibration, form reminders, equipment settings
+- **CSV Export/Import System** - Core feature requirements defined
+  - CSV export of complete workout history (launch requirement)
+  - CSV import from competitors (Strong, Hevy, JEFIT)
+  - Anti-gaming rule: imported data doesn't affect ranks
+- **Documentation Created:**
+  - `docs/features/exercise-notes/feature-exercise-notes.md`
+  - `docs/features/exercise-database/feature-exercise-database.md`
+  - `docs/Master Documentation/VOICE-MEMO-SUMMARY-2026-02-05.md`
+  - Updated `docs/features/training-journal/feature-training-journal.md`
 
 ### 2026-02-04
 - **Forge Lab Chart Enhancements Complete** - 7 major charting improvements

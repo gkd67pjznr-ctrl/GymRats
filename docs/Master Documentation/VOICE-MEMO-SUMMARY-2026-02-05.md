@@ -160,6 +160,17 @@ Two-tier note system that actually provides value through analytics.
 | `docs/data/EXERCISE-DATABASE-MASTER.md` | Source of truth for exercises (1,590) |
 | `scripts/generateExerciseMaster.js` | Script to regenerate master file |
 | `docs/Master Documentation/VOICE-MEMO-SUMMARY-2026-02-05.md` | This summary |
+| `docs/features/exercise-notes/feature-exercise-notes.md` | Exercise Notes feature spec |
+| `docs/features/exercise-database/feature-exercise-database.md` | Exercise Database feature spec |
+| `docs/features/training-journal/feature-training-journal.md` | Updated with Day Log system |
+
+## Master Documents Updated
+
+| Document | Changes |
+|----------|---------|
+| `docs/Master Documentation/FEATURE-MASTER.md` | Added Exercise Notes, Exercise Database, updated Training Journal |
+| `docs/1-PROJECT-STATUS.md` | Added new features, updated totals, added 2026-02-05 updates |
+| `docs/README.md` | Added new feature folders to index |
 
 ---
 

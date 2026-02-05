@@ -43,12 +43,14 @@
 | [Live Workout Together](#live-workout-together) | Planned | 0/4 | [Details](../features/live-workout-together/feature-live-together.md) |
 | [AI Coaching](#ai-coaching) | Planned | 0/4 | [Details](../features/ai-coaching/feature-ai-coaching.md) |
 | [Templates Marketplace](#templates-marketplace) | Planned | 0/4 | [Details](../features/templates-marketplace/feature-templates-marketplace.md) |
-| [Training Journal](#training-journal) | Implemented | 4/4 | [Details](../features/training-journal/feature-training-journal.md) |
+| [Training Journal & Day Log](#training-journal--day-log) | In Progress | 4/10 | [Details](../features/training-journal/feature-training-journal.md) |
+| [Exercise Notes](#exercise-notes) | Planned | 0/4 | [Details](../features/exercise-notes/feature-exercise-notes.md) |
+| [Exercise Database](#exercise-database) | In Progress | 1/6 | [Details](../features/exercise-database/feature-exercise-database.md) |
 | [Forge Seasons](#forge-seasons) | Planned | 0/4 | [Details](../features/forge-seasons/feature-forge-seasons.md) |
 
-**Post-Launch Total:** 4/49 features (8%)
+**Post-Launch Total:** 5/65 features (8%)
 
-**Grand Total:** 156/227 features (69%)
+**Grand Total:** 157/243 features (65%)
 
 ---
 
@@ -629,19 +631,65 @@ Community-driven workout template sharing.
 
 ---
 
-## Training Journal
-**Status:** Implemented | **Progress:** 4/4 features
-**Post-launch**
+## Training Journal & Day Log
+**Status:** In Progress | **Progress:** 4/10 features
+**Launch Priority for Day Log**
 
-Free-form workout notes for serious lifters.
+Comprehensive workout journaling that combines free-form notes with structured input tracking tied to analytics.
 
-**Implemented:**
+**Implemented (Free-Form Notes):**
 - Per-workout notes (how you felt, what went well)
 - Per-day journal entries
-- Mood/energy/soreness tracking
+- Basic mood/energy/soreness tracking
 - Journal history and search
 
-Could feed into AI coaching suggestions over time.
+**Planned (Day Log System - NEW):**
+- Structured quick-input UI (hydration, nutrition, sleep, energy)
+- Pain tracking with body part selection
+- Gym Lab correlation analytics ("When well-rested → 23% more PRs")
+- Day Log history view
+- Export with Day Log data
+
+**Key Insight:** "Journal entries that don't affect anything don't matter." Day Log ties directly into performance analytics.
+
+---
+
+## Exercise Notes
+**Status:** Planned | **Progress:** 0/4 features
+**Launch Priority**
+
+Persistent per-exercise notes that stick to exercises across sessions.
+
+**Planned:**
+- Exercise note storage (exerciseNotesStore.ts)
+- Note icon on exercise cards in workout drawer
+- Dropdown text input UI
+- Note display in exercise selection
+
+**Use Cases:**
+- Machine weight calibration ("Brand X feels 20% heavier")
+- Form reminders ("Keep elbows tucked")
+- Equipment settings ("Seat position 3, back pad 2")
+- Injury accommodations ("Avoid full ROM")
+
+---
+
+## Exercise Database
+**Status:** In Progress | **Progress:** 1/6 features
+**Launch Priority**
+
+Maintainable system for the 1,590+ exercise database with human-readable master file.
+
+**Completed:**
+- Master exercise file (docs/data/EXERCISE-DATABASE-MASTER.md)
+- Generation script (scripts/generateExerciseMaster.js)
+
+**Planned:**
+- Sync script (MD → JSON)
+- Exercise name cleanup
+- Icon style definition
+- Icon generation pipeline
+- Image storage integration
 
 ---
 
