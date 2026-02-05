@@ -412,14 +412,6 @@ export default function LeaderboardTab() {
               />
             }
           >
-            {/* Title */}
-            <View style={{ gap: 6 }}>
-              <Text style={{ color: c.text, ...FR.type.h1 }}>Leaderboards</Text>
-              <Text style={{ color: c.muted, ...FR.type.sub }}>
-                Rankings across exercises, users, and consistency. Compete with friends!
-              </Text>
-            </View>
-
             {/* Tab Toggle */}
             <ScrollView
               horizontal

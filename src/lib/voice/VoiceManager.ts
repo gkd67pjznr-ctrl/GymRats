@@ -1,10 +1,10 @@
 // src/lib/voice/VoiceManager.ts
 // Audio playback manager for buddy voice lines
 //
-// Uses expo-av for sound playback
+// Uses expo-audio for sound playback
 // Maps voiceLine IDs to audio assets (URLs or local files)
 
-import { Audio } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync, AudioPlayer } from 'expo-audio';
 import { getSettings } from '../stores/settingsStore';
 import { useBuddyStore } from '../stores/buddyStore';
 
@@ -259,7 +259,7 @@ type VoiceStatus = 'idle' | 'loading' | 'playing' | 'error';
  * Cached voice object
  */
 interface CachedVoice {
-  sound: Audio.Sound;
+  player: AudioPlayer;
   status: VoiceStatus;
   durationMs: number;
 }
@@ -283,9 +283,9 @@ class VoiceManagerClass {
 
     try {
       // Set up audio mode
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        shouldPlayInBackground: false,
         shouldDuckAndroid: true,
       });
 
@@ -339,25 +339,38 @@ class VoiceManagerClass {
     }
 
     try {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: audioUrl },
-        { shouldPlay: false }
-      );
+      const player = createAudioPlayer({ uri: audioUrl });
 
-      const status = await sound.getStatusAsync();
-      const durationMs = ((status as any).durationMillis ?? 500);
+      // Wait for the player to load
+      await new Promise<void>((resolve) => {
+        const timeout = setTimeout(() => {
+          resolve(); // Resolve anyway after timeout
+        }, 5000);
+
+        const checkLoaded = () => {
+          if (player.isLoaded) {
+            clearTimeout(timeout);
+            resolve();
+          } else {
+            setTimeout(checkLoaded, 50);
+          }
+        };
+        checkLoaded();
+      });
+
+      const durationMs = (player.duration ?? 0.5) * 1000;
 
       this.cache.set(voiceLineId, {
-        sound,
+        player,
         status: 'idle',
         durationMs,
       });
 
-      // Handle unload on finish
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          const cached = this.cache.get(voiceLineId);
-          if (cached) {
+      // Handle playback status updates
+      player.addListener('playbackStatusUpdate', (status) => {
+        const cached = this.cache.get(voiceLineId);
+        if (cached) {
+          if (!status.playing && cached.status === 'playing') {
             cached.status = 'idle';
           }
         }
@@ -388,14 +401,15 @@ class VoiceManagerClass {
       const cached = this.cache.get(voiceLineId);
       if (!cached) return;
 
-      // Replay from beginning if already playing
+      // Stop if already playing
       if (cached.status === 'playing') {
-        await cached.sound.stopAsync();
+        cached.player.pause();
       }
 
-      await cached.sound.setPositionAsync(0);
-      await cached.sound.setVolumeAsync(volume);
-      await cached.sound.playAsync();
+      // Seek to beginning and play
+      await cached.player.seekTo(0);
+      cached.player.volume = volume;
+      cached.player.play();
 
       cached.status = 'playing';
     } catch (error) {
@@ -407,19 +421,12 @@ class VoiceManagerClass {
    * Stop all playing voice lines
    */
   async stopAll(): Promise<void> {
-    const promises: Promise<void>[] = [];
-
     for (const [voiceLineId, cached] of this.cache.entries()) {
       if (cached.status === 'playing') {
-        promises.push(
-          cached.sound.stopAsync().then(() => {
-            cached.status = 'idle';
-          })
-        );
+        cached.player.pause();
+        cached.status = 'idle';
       }
     }
-
-    await Promise.allSettled(promises);
   }
 
   /**
@@ -430,7 +437,7 @@ class VoiceManagerClass {
     if (!cached) return;
 
     try {
-      await cached.sound.unloadAsync();
+      cached.player.remove();
       this.cache.delete(voiceLineId);
     } catch (error) {
       console.warn(`[VoiceManager] Failed to unload voice line "${voiceLineId}":`, error);
@@ -441,13 +448,9 @@ class VoiceManagerClass {
    * Unload all voice lines
    */
   async unloadAll(): Promise<void> {
-    const promises: Promise<void>[] = [];
-
     for (const voiceLineId of this.cache.keys()) {
-      promises.push(this.unload(voiceLineId));
+      await this.unload(voiceLineId);
     }
-
-    await Promise.allSettled(promises);
     this.cache.clear();
   }
 

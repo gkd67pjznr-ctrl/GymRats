@@ -8,42 +8,20 @@ This document tracks necessary package updates and migrations for GymRats to mai
 ## High Priority Migrations
 
 ### 1. `expo-av` → `expo-audio` + `expo-video`
-**Status**: Deprecated, will be removed in SDK 54
-**Warning**: `[expo-av]: Expo AV has been deprecated and will be removed in SDK 54. Use the expo-audio and expo-video packages to replace the required functionality.`
+**Status**: ✅ COMPLETED (Feb 2026)
 
-**Files Affected**:
-- `src/lib/sound/SoundManager.ts` - Audio playback for celebration sounds
-- `src/lib/voice/VoiceManager.ts` - Audio playback for buddy voice lines
-- Jest mocks in `jest.setup.js` and test files
+**Migration Summary**:
+- Replaced `expo-av` with `expo-audio` and `expo-video`
+- Updated `SoundManager.ts` and `VoiceManager.ts` to use new API
+- Updated Jest mocks in `jest.setup.js` and `SoundManager.test.ts`
+- Removed `expo-av` from dependencies
 
-**APIs Used**:
-- `Audio.setAudioModeAsync()` - Audio configuration
-- `Audio.Sound.createAsync()` - Sound loading/creation
-- `Audio.Sound` methods: `playAsync()`, `stopAsync()`, `unloadAsync()`, `setVolumeAsync()`, `setPositionAsync()`, `getStatusAsync()`, `setOnPlaybackStatusUpdate()`
-
-**Migration Steps**:
-1. Install new packages:
-   ```bash
-   npm install expo-audio
-   npm install expo-video  # If video functionality needed
-   ```
-2. Update imports:
-   ```typescript
-   // From:
-   import { Audio } from 'expo-av';
-
-   // To:
-   import { Audio } from 'expo-audio';
-   ```
-3. Verify API compatibility:
-   - Check if `Audio.Sound` API is similar in `expo-audio`
-   - Test sound playback after migration
-4. Update Jest mocks:
-   - `jest.setup.js:37-38`
-   - `__tests__/lib/sound/SoundManager.test.ts:6-7`
-   - `__tests__/lib/avatar/avatarUtils.test.ts` (if applicable)
-
-**Estimated Effort**: Medium (requires testing audio playback)
+**New API used**:
+- `createAudioPlayer(source)` - Creates AudioPlayer instance
+- `setAudioModeAsync({ playsInSilentMode, shouldPlayInBackground, shouldDuckAndroid })`
+- `AudioPlayer.play()`, `.pause()`, `.seekTo()`, `.remove()`
+- `AudioPlayer.volume` property (not async method)
+- `AudioPlayer.addListener('playbackStatusUpdate', callback)`
 
 ### 2. `expo-notifications` Limitations
 **Warning**: `expo-notifications functionality is not fully supported in Expo Go. Use a development build instead.`

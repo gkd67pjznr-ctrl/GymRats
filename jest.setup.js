@@ -58,23 +58,44 @@ jest.mock('expo-speech', () => ({
   stop: jest.fn(),
 }));
 
-// Mock expo-av
-jest.mock('expo-av', () => ({
-  Audio: {
-    Sound: jest.fn().mockImplementation(() => ({
-      loadAsync: jest.fn(),
-      playAsync: jest.fn(),
-      pauseAsync: jest.fn(),
-      stopAsync: jest.fn(),
-      unloadAsync: jest.fn(),
-      setPositionAsync: jest.fn(),
-      setVolumeAsync: jest.fn(),
-      setOnPlaybackStatusUpdate: jest.fn(),
-      getStatusAsync: jest.fn(() => Promise.resolve({ isLoaded: true, durationMillis: 1000 })),
-    })),
-    setAudioModeAsync: jest.fn(),
-  },
-}));
+// Mock expo-audio
+jest.mock('expo-audio', () => {
+  const mockPlayer = {
+    id: 1,
+    playing: false,
+    muted: false,
+    loop: false,
+    paused: false,
+    isLoaded: true,
+    isAudioSamplingSupported: false,
+    isBuffering: false,
+    currentTime: 0,
+    duration: 1,
+    volume: 1,
+    playbackRate: 1,
+    shouldCorrectPitch: false,
+    currentStatus: { playing: false },
+    play: jest.fn(),
+    pause: jest.fn(),
+    replace: jest.fn(),
+    seekTo: jest.fn(() => Promise.resolve()),
+    setPlaybackRate: jest.fn(),
+    setAudioSamplingEnabled: jest.fn(),
+    setActiveForLockScreen: jest.fn(),
+    updateLockScreenMetadata: jest.fn(),
+    clearLockScreenControls: jest.fn(),
+    remove: jest.fn(),
+    addListener: jest.fn(() => ({ remove: jest.fn() })),
+  };
+
+  return {
+    createAudioPlayer: jest.fn(() => mockPlayer),
+    setAudioModeAsync: jest.fn(() => Promise.resolve()),
+    setIsAudioActiveAsync: jest.fn(() => Promise.resolve()),
+    useAudioPlayer: jest.fn(() => mockPlayer),
+    useAudioPlayerStatus: jest.fn(() => ({ playing: false })),
+  };
+});
 
 // Mock expo-iap
 jest.mock('expo-iap', () => ({

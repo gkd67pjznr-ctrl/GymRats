@@ -1,28 +1,46 @@
 // __tests__/lib/sound/SoundManager.test.ts
 // Tests for SoundManager audio playback system
 
-import { SoundManager, playSound, initializeSoundManager } from '@/src/lib/sound';
+import { SoundManager, playSound, initializeSoundManager, SoundKey } from '@/src/lib/sound';
 
-// Mock expo-av
-jest.mock('expo-av', () => ({
-  Audio: {
+// Mock expo-audio
+jest.mock('expo-audio', () => {
+  const mockPlayer = {
+    id: 1,
+    playing: false,
+    muted: false,
+    loop: false,
+    paused: false,
+    isLoaded: true,
+    isAudioSamplingSupported: false,
+    isBuffering: false,
+    currentTime: 0,
+    duration: 0.5,
+    volume: 1,
+    playbackRate: 1,
+    shouldCorrectPitch: false,
+    currentStatus: { playing: false },
+    play: jest.fn(),
+    pause: jest.fn(),
+    replace: jest.fn(),
+    seekTo: jest.fn(() => Promise.resolve()),
+    setPlaybackRate: jest.fn(),
+    setAudioSamplingEnabled: jest.fn(),
+    setActiveForLockScreen: jest.fn(),
+    updateLockScreenMetadata: jest.fn(),
+    clearLockScreenControls: jest.fn(),
+    remove: jest.fn(),
+    addListener: jest.fn(() => ({ remove: jest.fn() })),
+  };
+
+  return {
+    createAudioPlayer: jest.fn(() => ({ ...mockPlayer })),
     setAudioModeAsync: jest.fn(() => Promise.resolve()),
-    Sound: {
-      createAsync: jest.fn(() => Promise.resolve({
-        sound: {
-          setStatusAsync: jest.fn(() => Promise.resolve({ isLoaded: true, durationMillis: 500 })),
-          setVolumeAsync: jest.fn(() => Promise.resolve()),
-          setPositionAsync: jest.fn(() => Promise.resolve()),
-          playAsync: jest.fn(() => Promise.resolve()),
-          stopAsync: jest.fn(() => Promise.resolve()),
-          unloadAsync: jest.fn(() => Promise.resolve()),
-          setOnPlaybackStatusUpdate: jest.fn(),
-        },
-        status: { isLoaded: true, durationMillis: 500 },
-      })),
-    },
-  },
-}));
+    setIsAudioActiveAsync: jest.fn(() => Promise.resolve()),
+    useAudioPlayer: jest.fn(() => mockPlayer),
+    useAudioPlayerStatus: jest.fn(() => ({ playing: false })),
+  };
+});
 
 describe('SoundManager', () => {
   beforeEach(() => {
@@ -69,7 +87,7 @@ describe('SoundManager', () => {
     });
 
     it('preloads all sound keys', async () => {
-      const keys: Array<Parameters<typeof SoundManager.preload>[0]> = [
+      const keys: SoundKey[] = [
         'spark',
         'stamp',
         'thud',
@@ -116,7 +134,7 @@ describe('SoundManager', () => {
     });
 
     it('returns fallback duration for unknown sound', () => {
-      const duration = SoundManager.getDuration('unknown');
+      const duration = SoundManager.getDuration('unknown' as SoundKey);
       expect(duration).toBe(500); // Default fallback
     });
   });
@@ -138,7 +156,7 @@ describe('SoundManager', () => {
     });
 
     it('unloading unknown sound is safe', async () => {
-      await expect(SoundManager.unload('unknown')).resolves.not.toThrow();
+      await expect(SoundManager.unload('unknown' as SoundKey)).resolves.not.toThrow();
     });
 
     it('unloads all sounds', async () => {

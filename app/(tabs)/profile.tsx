@@ -218,24 +218,15 @@ export default function ProfileTab() {
           gap: 12
         }}
       >
-        {/* Secret tap area */}
+        {/* Edit Profile Card - secret tap for dev mode */}
         <Pressable onPress={handleSecretTap}>
-          <Text style={{ color: c.text, fontSize: 26, fontWeight: "900" }}>
-            Profile {devMode.isEnabled && "🔧"}
-          </Text>
+          <NavigationCard
+            href="/profile/edit"
+            title={`Edit Profile${devMode.isEnabled ? " 🔧" : ""}`}
+            subtitle="Update your display name and profile picture"
+            icon="✏️"
+          />
         </Pressable>
-
-        <Text style={{ color: c.muted, lineHeight: 18 }}>
-          Your training history, calendar, stats, and progress over time.
-        </Text>
-
-        {/* Edit Profile Card */}
-        <NavigationCard
-          href="/profile/edit"
-          title="Edit Profile"
-          subtitle="Update your display name and profile picture"
-          icon="✏️"
-        />
 
         {/* Calendar with History */}
         <NavigationCard

@@ -81,11 +81,6 @@ export default function WorkoutHub() {
         style={[styles.container, { backgroundColor: c.bg }]}
         contentContainerStyle={[styles.content, { paddingTop: 16, paddingBottom: insets.bottom + 100 }]}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: c.text }]}>Workout</Text>
-        </View>
-
         {/* Active Workout Banner */}
         {hasSession && (
           <Pressable
@@ -290,13 +285,6 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     gap: 20,
-  },
-  header: {
-    marginBottom: 4,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '900',
   },
 
   // Active workout banner

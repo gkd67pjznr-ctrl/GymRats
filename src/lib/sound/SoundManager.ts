@@ -1,11 +1,10 @@
 // src/lib/sound/SoundManager.ts
 // Audio playback manager for celebration sounds
 //
-// Uses expo-av for sound playback
+// Uses expo-audio for sound playback
 // Sounds are preloaded and cached for performance
 
-import { Audio } from 'expo-av';
-import { Platform } from 'react-native';
+import { createAudioPlayer, setAudioModeAsync, AudioPlayer } from 'expo-audio';
 
 /**
  * Sound effect keys matching designSystem.sounds
@@ -38,7 +37,7 @@ type SoundStatus = 'idle' | 'loading' | 'playing' | 'error';
  * Cached sound object
  */
 interface CachedSound {
-  sound: Audio.Sound;
+  player: AudioPlayer;
   status: SoundStatus;
   durationMs: number;
 }
@@ -65,9 +64,9 @@ class SoundManagerClass {
 
     try {
       // Set up audio mode
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        shouldPlayInBackground: false,
         shouldDuckAndroid: true,
       });
 
@@ -105,26 +104,39 @@ class SoundManagerClass {
     if (this.cache.has(key)) return;
 
     try {
-      const filename = SOUND_FILES[key];
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: filename },
-        { shouldPlay: false }
-      );
+      const uri = SOUND_FILES[key];
+      const player = createAudioPlayer({ uri });
 
-      const status = await sound.getStatusAsync();
-      const durationMs = (status.durationMillis ?? 500);
+      // Wait for the player to load
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          resolve(); // Resolve anyway after timeout
+        }, 5000);
+
+        const checkLoaded = () => {
+          if (player.isLoaded) {
+            clearTimeout(timeout);
+            resolve();
+          } else {
+            setTimeout(checkLoaded, 50);
+          }
+        };
+        checkLoaded();
+      });
+
+      const durationMs = (player.duration ?? 0.5) * 1000;
 
       this.cache.set(key, {
-        sound,
+        player,
         status: 'idle',
         durationMs,
       });
 
-      // Handle unload on finish
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          const cached = this.cache.get(key);
-          if (cached) {
+      // Handle playback status updates
+      player.addListener('playbackStatusUpdate', (status) => {
+        const cached = this.cache.get(key);
+        if (cached) {
+          if (!status.playing && cached.status === 'playing') {
             cached.status = 'idle';
           }
         }
@@ -157,14 +169,15 @@ class SoundManagerClass {
       const cached = this.cache.get(key);
       if (!cached) return;
 
-      // Replay from beginning if already playing
+      // Stop if already playing
       if (cached.status === 'playing') {
-        await cached.sound.stopAsync();
+        cached.player.pause();
       }
 
-      await cached.sound.setPositionAsync(0);
-      await cached.sound.setVolumeAsync(volume);
-      await cached.sound.playAsync();
+      // Seek to beginning and play
+      await cached.player.seekTo(0);
+      cached.player.volume = volume;
+      cached.player.play();
 
       cached.status = 'playing';
     } catch (error) {
@@ -178,19 +191,12 @@ class SoundManagerClass {
    * Stop all playing sounds
    */
   async stopAll(): Promise<void> {
-    const promises: Promise<void>[] = [];
-
     for (const [key, cached] of this.cache.entries()) {
       if (cached.status === 'playing') {
-        promises.push(
-          cached.sound.stopAsync().then(() => {
-            cached.status = 'idle';
-          })
-        );
+        cached.player.pause();
+        cached.status = 'idle';
       }
     }
-
-    await Promise.allSettled(promises);
   }
 
   /**
@@ -201,7 +207,7 @@ class SoundManagerClass {
     if (!cached) return;
 
     try {
-      await cached.sound.unloadAsync();
+      cached.player.remove();
       this.cache.delete(key);
     } catch (error) {
       if (__DEV__) {
@@ -216,13 +222,9 @@ class SoundManagerClass {
    * Call this when the app is shutting down or going to background.
    */
   async unloadAll(): Promise<void> {
-    const promises: Promise<void>[] = [];
-
     for (const key of this.cache.keys()) {
-      promises.push(this.unload(key));
+      await this.unload(key);
     }
-
-    await Promise.allSettled(promises);
     this.cache.clear();
   }
 

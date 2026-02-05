@@ -318,14 +318,34 @@ export const selectFriendStatus = (myUserId: ID, otherUserId: ID) => (state: Fri
 export const selectAreFriends = (myUserId: ID, otherUserId: ID) => (state: FriendsState) =>
   state.edges.find((x) => x.userId === myUserId && x.otherUserId === otherUserId)?.status === "friends";
 
-export const selectPendingFriendRequests = (myUserId: ID) => (state: FriendsState): FriendEdge[] =>
-  state.edges.filter((e) => e.userId === myUserId && e.status === "pending");
+// Memoized selector cache for pending requests
+const pendingRequestsCache = new Map<string, { edges: FriendEdge[]; result: FriendEdge[] }>();
+
+export const selectPendingFriendRequests = (myUserId: ID) => (state: FriendsState): FriendEdge[] => {
+  const cached = pendingRequestsCache.get(myUserId);
+  if (cached && cached.edges === state.edges) {
+    return cached.result;
+  }
+  const result = state.edges.filter((e) => e.userId === myUserId && e.status === "pending");
+  pendingRequestsCache.set(myUserId, { edges: state.edges, result });
+  return result;
+};
 
 export const selectPendingFriendRequestCount = (myUserId: ID) => (state: FriendsState): number =>
-  state.edges.filter((e) => e.userId === myUserId && e.status === "pending").length;
+  selectPendingFriendRequests(myUserId)(state).length;
 
-export const selectBlockedUsers = (myUserId: ID) => (state: FriendsState): FriendEdge[] =>
-  state.edges.filter((e) => e.userId === myUserId && e.status === "blocked");
+// Memoized selector cache for blocked users
+const blockedUsersCache = new Map<string, { edges: FriendEdge[]; result: FriendEdge[] }>();
+
+export const selectBlockedUsers = (myUserId: ID) => (state: FriendsState): FriendEdge[] => {
+  const cached = blockedUsersCache.get(myUserId);
+  if (cached && cached.edges === state.edges) {
+    return cached.result;
+  }
+  const result = state.edges.filter((e) => e.userId === myUserId && e.status === "blocked");
+  blockedUsersCache.set(myUserId, { edges: state.edges, result });
+  return result;
+};
 
 // ============================================================================
 // Hooks (match old API)

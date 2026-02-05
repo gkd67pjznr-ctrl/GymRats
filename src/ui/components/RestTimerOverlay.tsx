@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, AppState, AppStateStatus, Pressable, Text, View, Dimensions } from "react-native";
+import { Animated, AppState, AppStateStatus, Pressable, Text, View, Dimensions, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from 'expo-haptics';
+import Svg, { Circle } from 'react-native-svg';
 import { useThemeColors } from "../theme";
 import { scheduleRestTimerNotification, cancelRestTimerNotification } from "@/src/lib/notifications/notificationService";
 import { playSound } from "@/src/lib/sound";
@@ -22,6 +23,52 @@ function clampInt(n: number, min: number, max: number) {
 }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
+
+// Circular progress for the collapsed pill
+function CircularProgress({
+  progress,
+  size = 32,
+  strokeWidth = 3,
+  color,
+  bgColor,
+}: {
+  progress: number;
+  size?: number;
+  strokeWidth?: number;
+  color: string;
+  bgColor: string;
+}) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference * (1 - progress);
+
+  return (
+    <Svg width={size} height={size}>
+      {/* Background circle */}
+      <Circle
+        stroke={bgColor}
+        fill="transparent"
+        strokeWidth={strokeWidth}
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+      />
+      {/* Progress circle */}
+      <Circle
+        stroke={color}
+        fill="transparent"
+        strokeWidth={strokeWidth}
+        strokeDasharray={circumference}
+        strokeDashoffset={strokeDashoffset}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+      />
+    </Svg>
+  );
+}
 
 function LinearProgress({
   progress,
@@ -80,11 +127,11 @@ export function RestTimerOverlay(props: Props) {
   const insets = useSafeAreaInsets();
   const [appState, setAppState] = useState(AppState.currentState);
 
-  // pill always shows when visible, panel expands on tap
+  // Collapsed = small pill at bottom, expanded = full panel
   const [expanded, setExpanded] = useState(false);
 
   const [secondsLeft, setSecondsLeft] = useState(props.initialSeconds);
-  const [totalSeconds, setTotalSeconds] = useState(props.initialSeconds); // Track total for progress
+  const [totalSeconds, setTotalSeconds] = useState(props.initialSeconds);
   const [isRunning, setIsRunning] = useState(true);
   const [scheduledNotificationId, setScheduledNotificationId] = useState<string | null>(null);
   const hasPlayedStartSoundRef = useRef(false);
@@ -93,11 +140,10 @@ export function RestTimerOverlay(props: Props) {
   const pausedAtRef = useRef<number | null>(null);
   const timeOffsetRef = useRef(0);
 
-  // slide animation: panel only (overlay)
-  const panelY = useRef(new Animated.Value(220)).current; // off-screen-ish
+  // Panel slide animation
+  const panelY = useRef(new Animated.Value(300)).current;
 
   // Reset timer when visibility changes
-  // Calculate remaining time from startedAtMs to maintain continuity across drawer collapse/expand
   useEffect(() => {
     if (!props.visible) return;
 
@@ -115,7 +161,7 @@ export function RestTimerOverlay(props: Props) {
     pausedAtRef.current = null;
     timeOffsetRef.current = 0;
 
-    // Only reset sound flag if this is a truly fresh timer (not a resume)
+    // Only reset sound flag if this is a truly fresh timer
     if (!props.startedAtMs || remaining === props.initialSeconds) {
       hasPlayedStartSoundRef.current = false;
     }
@@ -124,7 +170,7 @@ export function RestTimerOverlay(props: Props) {
     cancelRestTimerNotification().catch(console.error);
   }, [props.visible, props.initialSeconds, props.startedAtMs]);
 
-  // Countdown timer - only runs when isRunning is true
+  // Countdown timer
   useEffect(() => {
     if (!props.visible) return;
     if (!isRunning) return;
@@ -149,11 +195,10 @@ export function RestTimerOverlay(props: Props) {
     return () => subscription.remove();
   }, []);
 
-  // Schedule background notification when timer starts and app is in background
+  // Schedule background notification when app goes to background
   useEffect(() => {
     if (!props.visible || !isRunning || secondsLeft <= 0) return;
 
-    // Only schedule notification if app is in background
     if (appState !== 'active') {
       scheduleRestTimerNotification(secondsLeft)
         .then((id) => { if (id) setScheduledNotificationId(id); })
@@ -198,7 +243,7 @@ export function RestTimerOverlay(props: Props) {
     if (!props.visible) return;
 
     Animated.spring(panelY, {
-      toValue: expanded ? 0 : 220,
+      toValue: expanded ? 0 : 300,
       useNativeDriver: true,
       damping: 18,
       stiffness: 180,
@@ -211,188 +256,277 @@ export function RestTimerOverlay(props: Props) {
   const progress = totalSeconds > 0 ? 1 - (secondsLeft / totalSeconds) : 0;
 
   // Handle +/- time adjustments
-  const adjustTime = (delta: number) => {
+  const adjustTime = useCallback((delta: number) => {
     setSecondsLeft((s) => {
       const newSeconds = clampInt(s + delta, 0, 3600);
       return newSeconds;
     });
-    // Also adjust total so progress bar stays sensible
     if (delta > 0) {
       setTotalSeconds((t) => t + delta);
     }
-    // Sync adjustment to store so it persists across drawer collapse/expand
     workoutDrawerActions.adjustRestTimer(delta);
-  };
+  }, []);
+
+  const handlePauseResume = useCallback(() => {
+    setIsRunning((v) => !v);
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setSecondsLeft(props.initialSeconds);
+    setTotalSeconds(props.initialSeconds);
+    setIsRunning(true);
+    hasPlayedStartSoundRef.current = false;
+  }, [props.initialSeconds]);
+
+  const handleDismiss = useCallback(() => {
+    setExpanded(false);
+    props.onClose();
+  }, [props.onClose]);
 
   if (!props.visible) return null;
 
-  const SmallBtn = (p: { title: string; onPress: () => void; subtle?: boolean; minW?: number }) => (
-    <Pressable
-      onPress={p.onPress}
-      style={{
-        paddingVertical: 8,
-        paddingHorizontal: 10,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: c.border,
-        backgroundColor: p.subtle ? c.bg : c.card,
-        alignItems: "center",
-        justifyContent: "center",
-        minWidth: p.minW ?? 64,
-      }}
-    >
-      <Text style={{ color: c.text, fontWeight: "900", fontSize: 12 }}>{p.title}</Text>
-    </Pressable>
-  );
-
   return (
     <>
-      {/* Full-screen touch blocker - always present when timer visible to prevent touches passing through */}
-      <View
-        pointerEvents="box-none"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 997,
-        }}
-      >
-        {/* Invisible blocker area around the timer UI */}
-        <View
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: Math.max(insets.bottom, 14) + 250,
-          }}
-          pointerEvents="box-only"
-          onStartShouldSetResponder={() => true}
-        />
-      </View>
-
-      {/* COMPACT PILL - positioned lower */}
-      <Pressable
-        onPress={() => setExpanded((v) => !v)}
-        style={{
-          position: "absolute",
-          bottom: Math.max(insets.bottom, 14) + 140,
-          alignSelf: "center",
-          left: "50%",
-          transform: [{ translateX: -55 }], // Half of approximate pill width
-          zIndex: 999,
-          borderWidth: 1,
-          borderColor: c.border,
-          backgroundColor: c.card,
-          borderRadius: 999,
-          paddingVertical: 6,
-          paddingHorizontal: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 6,
-          shadowOpacity: 0.16,
-          shadowRadius: 10,
-          shadowOffset: { width: 0, height: 6 },
-          elevation: 8,
-        }}
-      >
-        <Text style={{ color: c.text, fontWeight: "900", fontSize: 13, minWidth: 32, textAlign: "center" }}>{compactTimeLabel}</Text>
-        <Text style={{ color: c.muted, fontWeight: "900", fontSize: 9 }}>
-          {expanded ? "▼" : "▲"}
-        </Text>
-      </Pressable>
-
-      {/* Full-screen backdrop to block ALL touches when expanded */}
+      {/* Backdrop when expanded - tap to collapse */}
       {expanded && (
         <Pressable
           onPress={() => setExpanded(false)}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 998,
-            backgroundColor: "rgba(0,0,0,0.5)",
-          }}
+          style={styles.backdrop}
         />
       )}
 
-      {/* SLIDE-IN PANEL (overlay only; compact) */}
+      {/* COLLAPSED PILL - bottom of screen */}
+      {!expanded && (
+        <Pressable
+          onPress={() => setExpanded(true)}
+          style={[
+            styles.collapsedPill,
+            {
+              bottom: insets.bottom + 16,
+              backgroundColor: c.card,
+              borderColor: c.primary,
+            },
+          ]}
+        >
+          <CircularProgress
+            progress={progress}
+            size={32}
+            strokeWidth={3}
+            color={c.primary}
+            bgColor={`${c.primary}30`}
+          />
+          <View style={styles.pillTextContainer}>
+            <Text style={[styles.pillTime, { color: c.text }]}>{compactTimeLabel}</Text>
+            <Text style={[styles.pillLabel, { color: c.muted }]}>Rest</Text>
+          </View>
+          <Text style={[styles.pillChevron, { color: c.muted }]}>▲</Text>
+        </Pressable>
+      )}
+
+      {/* EXPANDED PANEL */}
       <Animated.View
         pointerEvents={expanded ? "auto" : "none"}
-        style={{
-          position: "absolute",
-          left: 12,
-          right: 12,
-          bottom: Math.max(insets.bottom, 14) + 190,
-          zIndex: 1000,
-          transform: [{ translateY: panelY }],
-        }}
+        style={[
+          styles.expandedPanel,
+          {
+            bottom: insets.bottom + 16,
+            transform: [{ translateY: panelY }],
+          },
+        ]}
       >
-        {/* Panel container */}
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: c.border,
-            backgroundColor: c.card,
-            borderRadius: 16,
-            overflow: "hidden",
-
-            shadowOpacity: 0.2,
-            shadowRadius: 12,
-            shadowOffset: { width: 0, height: 8 },
-            elevation: 10,
-          }}
-        >
-          {/* Top area (including padding) - tap anywhere here to collapse */}
+        <View style={[styles.panelContainer, { backgroundColor: c.card, borderColor: c.border }]}>
+          {/* Collapse handle */}
           <Pressable
             onPress={() => setExpanded(false)}
-            style={{ paddingTop: 16, paddingHorizontal: 16, paddingBottom: 16, alignItems: "center", gap: 12 }}
+            style={styles.collapseHandle}
           >
-            <Text style={{ color: c.text, fontWeight: "900", fontSize: 48 }}>
-              {timeLabel}
-            </Text>
+            <View style={[styles.handleBar, { backgroundColor: c.muted }]} />
+          </Pressable>
+
+          {/* Timer display */}
+          <View style={styles.timerSection}>
+            <Text style={[styles.timerText, { color: c.text }]}>{timeLabel}</Text>
             <LinearProgress
               progress={progress}
               color={c.primary}
               backgroundColor={`${c.primary}30`}
             />
-          </Pressable>
+          </View>
 
-          {/* Controls - each button handles its own press */}
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "center", paddingHorizontal: 16, paddingBottom: 16 }}>
-            <SmallBtn
-              title={isRunning ? "Pause" : "Resume"}
-              onPress={() => setIsRunning((v) => !v)}
-              minW={74}
-            />
-            <SmallBtn title="-15s" onPress={() => adjustTime(-15)} subtle />
-            <SmallBtn title="+15s" onPress={() => adjustTime(15)} subtle />
-            <SmallBtn
-              title="Reset"
-              onPress={() => {
-                setSecondsLeft(props.initialSeconds);
-                setTotalSeconds(props.initialSeconds);
-                setIsRunning(true);
-                hasPlayedStartSoundRef.current = false;
-              }}
-              subtle
-            />
-            <SmallBtn
-              title="Dismiss"
-              onPress={() => {
-                setExpanded(false);
-                props.onClose();
-              }}
-              subtle
-              minW={80}
-            />
+          {/* Control buttons */}
+          <View style={styles.controlsRow}>
+            <Pressable
+              onPress={handlePauseResume}
+              style={[styles.controlBtn, styles.primaryBtn, { backgroundColor: c.primary }]}
+            >
+              <Text style={styles.primaryBtnText}>{isRunning ? "Pause" : "Resume"}</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => adjustTime(-15)}
+              style={[styles.controlBtn, { backgroundColor: c.bg, borderColor: c.border }]}
+            >
+              <Text style={[styles.controlBtnText, { color: c.text }]}>-15s</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => adjustTime(15)}
+              style={[styles.controlBtn, { backgroundColor: c.bg, borderColor: c.border }]}
+            >
+              <Text style={[styles.controlBtnText, { color: c.text }]}>+15s</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.secondaryRow}>
+            <Pressable
+              onPress={handleReset}
+              style={[styles.secondaryBtn, { borderColor: c.border }]}
+            >
+              <Text style={[styles.secondaryBtnText, { color: c.muted }]}>Reset</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={handleDismiss}
+              style={[styles.secondaryBtn, { borderColor: c.border }]}
+            >
+              <Text style={[styles.secondaryBtnText, { color: c.muted }]}>Dismiss</Text>
+            </Pressable>
           </View>
         </View>
       </Animated.View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    zIndex: 998,
+  },
+
+  // Collapsed pill
+  collapsedPill: {
+    position: "absolute",
+    alignSelf: "center",
+    zIndex: 999,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 24,
+    borderWidth: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  pillTextContainer: {
+    alignItems: "center",
+  },
+  pillTime: {
+    fontSize: 16,
+    fontWeight: "900",
+  },
+  pillLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    marginTop: -2,
+  },
+  pillChevron: {
+    fontSize: 10,
+    fontWeight: "900",
+  },
+
+  // Expanded panel
+  expandedPanel: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    zIndex: 1000,
+  },
+  panelContainer: {
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  collapseHandle: {
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  handleBar: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+  },
+
+  timerSection: {
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+    gap: 16,
+  },
+  timerText: {
+    fontSize: 56,
+    fontWeight: "900",
+    letterSpacing: -2,
+  },
+
+  controlsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  controlBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    minWidth: 70,
+    alignItems: "center",
+  },
+  primaryBtn: {
+    borderWidth: 0,
+    minWidth: 100,
+  },
+  primaryBtnText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  controlBtnText: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+
+  secondaryRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
+  secondaryBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  secondaryBtnText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+});
