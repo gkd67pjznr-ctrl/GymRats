@@ -94,3 +94,37 @@ export type ForgeLabState = {
   refreshData: () => void;
   clearData: () => void;
 };
+
+/**
+ * Day Log correlation result for analytics
+ * Correlates pre-workout state factors with workout performance
+ */
+export type DayLogCorrelation = {
+  factor: string; // e.g., 'hydration', 'sleep', 'energy'
+  metric: string; // e.g., 'prCount', 'volume', 'avgScore'
+  correlation: number; // -1 to 1 (Pearson r)
+  strength: 'strong' | 'moderate' | 'weak' | 'none';
+  description: string; // Human-readable insight
+  sampleSize: number; // Number of data points used
+  isPositive: boolean; // Whether correlation is positive
+};
+
+/**
+ * Day Log factor names for correlation analysis
+ */
+export type DayLogFactor =
+  | 'hydration'
+  | 'nutrition'
+  | 'carbsLevel'
+  | 'energyLevel'
+  | 'sleepQuality'
+  | 'hasPain';
+
+/**
+ * Workout performance metric names for correlation analysis
+ */
+export type WorkoutMetric =
+  | 'prCount'
+  | 'totalVolume'
+  | 'setCount'
+  | 'avgScore';

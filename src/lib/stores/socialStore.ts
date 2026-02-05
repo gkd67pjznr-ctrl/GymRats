@@ -14,6 +14,7 @@ import { postRepository } from "../sync/repositories/postRepository";
 import { reactionRepository } from "../sync/repositories/reactionRepository";
 import { commentRepository } from "../sync/repositories/commentRepository";
 import { notificationRepository } from "../sync/repositories/notificationRepository";
+import { reportRepository } from "../sync/repositories/reportRepository";
 import { networkMonitor } from "../sync/NetworkMonitor";
 import { subscribeToUserPosts, subscribeToPostReactions, subscribeToPostComments } from "../sync/RealtimeManager";
 import { useMemo } from "react";
@@ -296,22 +297,15 @@ export const useSocialStore = create<SocialState>()(
         }
 
         try {
-          // Create report locally and sync to server
-          const report = {
-            id: uid(),
+          // Submit report to server
+          await reportRepository.submitReport({
             reporterUserId: user.id,
             targetPostId: args.postId,
             reason: args.reason,
             additionalInfo: args.additionalInfo,
-            createdAtMs: Date.now(),
-            status: 'pending' as const,
-          };
+          });
 
-          // Sync to server
-          if (networkMonitor.isOnline()) {
-            // TODO: Create reportRepository when backend is ready
-            console.log('[socialStore] Report submitted:', report);
-          }
+          console.log('[socialStore] Post report submitted successfully');
         } catch (error) {
           console.error('[socialStore] Failed to report post:', error);
           throw error;
@@ -326,22 +320,15 @@ export const useSocialStore = create<SocialState>()(
         }
 
         try {
-          // Create report locally and sync to server
-          const report = {
-            id: uid(),
+          // Submit report to server
+          await reportRepository.submitReport({
             reporterUserId: user.id,
             targetUserId: args.reportedUserId,
             reason: args.reason,
             additionalInfo: args.additionalInfo,
-            createdAtMs: Date.now(),
-            status: 'pending' as const,
-          };
+          });
 
-          // Sync to server
-          if (networkMonitor.isOnline()) {
-            // TODO: Create reportRepository when backend is ready
-            console.log('[socialStore] User report submitted:', report);
-          }
+          console.log('[socialStore] User report submitted successfully');
         } catch (error) {
           console.error('[socialStore] Failed to report user:', error);
           throw error;

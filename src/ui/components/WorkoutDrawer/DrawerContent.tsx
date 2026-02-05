@@ -23,6 +23,7 @@ import {
   useRestTimer,
   usePendingCue,
   useDrawerPosition,
+  useShowDayLogModal,
 } from '@/src/lib/stores/workoutDrawerStore';
 import {
   useCurrentSession,
@@ -61,6 +62,11 @@ import type { SelectedCelebration } from '@/src/lib/celebration/types';
 import { getUser } from '@/src/lib/stores/authStore';
 import { createPost } from '@/src/lib/stores/socialStore';
 
+// Day Log
+import { DayLogModal } from '@/src/ui/components/DayLog';
+import { addDayLog } from '@/src/lib/stores/dayLogStore';
+import type { DayLogDraft } from '@/src/lib/dayLog/types';
+
 // Helper to get exercise name
 function getExerciseName(exerciseId: string): string {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -91,10 +97,12 @@ export function DrawerContent() {
     clearRestTimer,
     setPendingCue,
     clearPendingCue,
+    hideDayLog,
   } = useWorkoutDrawerStore();
   const session = useCurrentSession();
   const scrollRef = useRef<ScrollView>(null);
   const drawerPosition = useDrawerPosition();
+  const showDayLogModal = useShowDayLogModal();
 
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -606,6 +614,19 @@ export function DrawerContent() {
     Keyboard.dismiss();
   }, []);
 
+  // Handle Day Log submission
+  const handleDayLogSubmit = useCallback((draft: DayLogDraft) => {
+    if (session?.id) {
+      addDayLog(draft, session.id);
+    }
+    hideDayLog();
+  }, [session?.id, hideDayLog]);
+
+  // Handle Day Log skip
+  const handleDayLogSkip = useCallback(() => {
+    hideDayLog();
+  }, [hideDayLog]);
+
   // Render exercise picker when open
   if (showExercisePicker) {
     return (
@@ -759,6 +780,13 @@ export function DrawerContent() {
         celebration={prCelebration}
         onDismiss={() => setPrCelebration(null)}
         onShare={handlePRShare}
+      />
+
+      {/* Day Log Modal - for pre-workout check-in */}
+      <DayLogModal
+        visible={showDayLogModal}
+        onSubmit={handleDayLogSubmit}
+        onSkip={handleDayLogSkip}
       />
     </KeyboardAvoidingView>
   );

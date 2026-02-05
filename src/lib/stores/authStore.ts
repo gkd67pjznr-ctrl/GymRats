@@ -6,6 +6,7 @@ import type { AuthError, Session } from "@supabase/supabase-js";
 import type { DatabaseUser, mapDatabaseUser } from "../supabase/types";
 import { syncOrchestrator } from "../sync/SyncOrchestrator";
 import { uploadAvatar, generateAvatarUrl } from "../supabase/storage";
+import { RevenueCatService } from "../iap/RevenueCatService";
 
 /**
  * User profile matching camelCase convention used in the app
@@ -969,12 +970,22 @@ export function setupAuthListener(
           useGamificationStore.getState().pullFromServer().catch((err: unknown) => {
             console.error('[authStore] Gamification sync error:', err);
           });
+
+          // Set RevenueCat user ID for purchase tracking
+          RevenueCatService.setUserId(session.user.id).catch((err: unknown) => {
+            console.error('[authStore] RevenueCat user ID sync error:', err);
+          });
         }
       }
 
       // Clear sync state on sign out
       if (event === 'SIGNED_OUT') {
         syncOrchestrator.onSignOut();
+
+        // Clear RevenueCat user
+        RevenueCatService.clearUser().catch((err: unknown) => {
+          console.error('[authStore] RevenueCat clear user error:', err);
+        });
       }
 
       // Call optional callback

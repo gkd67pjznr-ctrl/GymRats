@@ -7,6 +7,8 @@ import { useThemeColors } from "../src/ui/theme";
 // [MIGRATED 2026-01-23] Using Zustand stores
 import { useSettings, updateSettings, usePersonality } from "../src/lib/stores";
 import { useAuthStore, useIsEmailVerified, useUser } from "../src/lib/stores/authStore";
+import { useBlockedUsers, unblockUser } from "../src/lib/stores/friendsStore";
+import { useUserProfiles } from "../src/lib/stores/userProfileStore";
 import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { migrateLocalToCloud, importFromCSV } from "../src/lib/migration/dataMigrator";
@@ -77,6 +79,11 @@ export default function SettingsScreen() {
   const { signOut, loading: authLoading, session, resendVerificationEmail, deleteAccount, updateAvatar, removeAvatar, loading: avatarLoading } = useAuthStore();
   const isEmailVerified = useIsEmailVerified();
   const currentPersonality = usePersonality();
+
+  // Blocked users data
+  const blockedUsers = useBlockedUsers(user?.id ?? "");
+  const blockedUserIds = blockedUsers.map(e => e.otherUserId);
+  const blockedProfiles = useUserProfiles(blockedUserIds);
 
   // Delete account modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -841,6 +848,96 @@ export default function SettingsScreen() {
               }
             />
           </Pressable>
+        </View>
+
+        {/* Privacy & Safety Section */}
+        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+          <Row
+            title="Privacy & Safety"
+            subtitle="Manage blocked users and privacy settings"
+          />
+
+          {/* Private Account Toggle */}
+          <View style={{ marginTop: 12, marginBottom: 16 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text style={{ fontWeight: "700", fontSize: 14 }}>Private Account</Text>
+                <Text style={{ opacity: 0.75, fontSize: 12 }}>
+                  Only friends can see your posts and activity
+                </Text>
+              </View>
+              <Toggle
+                value={settings.isPrivateAccount}
+                onChange={(v) => updateSettings({ isPrivateAccount: v })}
+              />
+            </View>
+          </View>
+
+          {/* Blocked Users */}
+          <View style={{ gap: 8 }}>
+            <Text style={{ fontWeight: "700", fontSize: 14 }}>
+              Blocked Users ({blockedUsers.length})
+            </Text>
+
+            {blockedUsers.length === 0 ? (
+              <Text style={{ opacity: 0.75, fontSize: 13 }}>
+                No blocked users
+              </Text>
+            ) : (
+              <View style={{ gap: 8 }}>
+                {blockedUsers.map((edge) => {
+                  const profile = blockedProfiles[edge.otherUserId];
+                  const displayName = profile?.displayName ?? edge.otherUserId;
+
+                  return (
+                    <View
+                      key={edge.otherUserId}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: 10,
+                        borderRadius: 10,
+                        backgroundColor: c.bg,
+                        borderWidth: 1,
+                        borderColor: c.border,
+                      }}
+                    >
+                      <Text style={{ fontWeight: "700", fontSize: 14 }}>
+                        {displayName}
+                      </Text>
+                      <Pressable
+                        onPress={() => {
+                          if (!user?.id) return;
+                          Alert.alert(
+                            "Unblock User",
+                            `Are you sure you want to unblock ${displayName}?`,
+                            [
+                              { text: "Cancel", style: "cancel" },
+                              {
+                                text: "Unblock",
+                                onPress: () => unblockUser(user.id, edge.otherUserId),
+                              },
+                            ]
+                          );
+                        }}
+                        style={{
+                          paddingVertical: 6,
+                          paddingHorizontal: 12,
+                          borderRadius: 8,
+                          backgroundColor: c.card,
+                          borderWidth: 1,
+                          borderColor: c.border,
+                        }}
+                      >
+                        <Text style={{ fontWeight: "700", fontSize: 12 }}>Unblock</Text>
+                      </Pressable>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+          </View>
         </View>
 
         {/* Email Verification Status */}

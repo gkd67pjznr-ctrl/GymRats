@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { Buddy, BuddyTier } from '../buddyTypes';
 import { buddies } from '../buddyData';
 import { createQueuedJSONStorage } from './storage/createQueuedAsyncStorage';
-import { IAPService, initializeIAPService } from '../iap/IAPService';
+import { RevenueCatService } from '../iap/RevenueCatService';
 
 /**
  * Buddy Store - Zustand store for AI Gym Buddy system state
@@ -185,17 +185,21 @@ export const useBuddyStore = create<BuddyStoreState & BuddyStoreActions>()(
         };
       }),
 
-      // IAP purchase - real implementation with expo-iap
+      // IAP purchase - using RevenueCat
       purchaseBuddy: async (buddyId: string) => {
         const buddy = buddies.find(b => b.id === buddyId);
         if (!buddy || buddy.unlockMethod !== 'iap') return false;
 
         try {
-          // Start purchase flow through IAPService
-          const success = await IAPService.purchaseBuddy(buddyId);
+          // Start purchase flow through RevenueCat
+          const success = await RevenueCatService.purchaseBuddy(buddyId);
           if (success) {
-            console.log(`[BuddyStore] Purchase initiated for ${buddyId}, awaiting completion...`);
-            // The actual unlock will happen via purchaseSuccessCallback
+            console.log(`[BuddyStore] Purchase completed for ${buddyId}`);
+            // Unlock the buddy immediately since RevenueCat confirmed success
+            set(state => ({
+              purchasedBuddies: { ...state.purchasedBuddies, [buddyId]: true },
+              unlockedBuddies: { ...state.unlockedBuddies, [buddyId]: true }
+            }));
             return true;
           }
           return false;
@@ -205,22 +209,22 @@ export const useBuddyStore = create<BuddyStoreState & BuddyStoreActions>()(
         }
       },
 
-      // Initialize IAP service
+      // Initialize RevenueCat service
       initializeIAP: async () => {
         try {
           // Set up success callback that updates store when purchase completes
-          IAPService.setPurchaseSuccessCallback((buddyId: string) => {
+          RevenueCatService.setPurchaseSuccessCallback((buddyId: string) => {
             set(state => ({
               purchasedBuddies: { ...state.purchasedBuddies, [buddyId]: true },
               unlockedBuddies: { ...state.unlockedBuddies, [buddyId]: true }
             }));
-            console.log(`[BuddyStore] Buddy ${buddyId} unlocked via IAP`);
+            console.log(`[BuddyStore] Buddy ${buddyId} unlocked via RevenueCat`);
           });
 
-          await initializeIAPService();
-          console.log('[BuddyStore] IAP service initialized');
+          await RevenueCatService.initialize();
+          console.log('[BuddyStore] RevenueCat service initialized');
         } catch (error) {
-          console.error('[BuddyStore] Failed to initialize IAP service:', error);
+          console.error('[BuddyStore] Failed to initialize RevenueCat service:', error);
         }
       },
 
@@ -230,14 +234,14 @@ export const useBuddyStore = create<BuddyStoreState & BuddyStoreActions>()(
         if (!buddy || !buddy.iapProductId) return null;
 
         try {
-          const productInfo = await IAPService.getProductInfo(buddyId);
+          const productInfo = await RevenueCatService.getProductForBuddy(buddyId);
           if (!productInfo) return null;
 
           return {
             title: productInfo.title,
-            price: productInfo.price,
-            currency: productInfo.currency,
-            localizedPrice: productInfo.localizedPrice,
+            price: String(productInfo.price),
+            currency: productInfo.currencyCode,
+            localizedPrice: productInfo.priceString,
           };
         } catch (error) {
           console.error(`[BuddyStore] Failed to get product info for ${buddyId}:`, error);
@@ -248,8 +252,23 @@ export const useBuddyStore = create<BuddyStoreState & BuddyStoreActions>()(
       // Restore previous purchases (important for iOS)
       restorePurchases: async () => {
         try {
-          await IAPService.restorePurchases();
-          console.log('[BuddyStore] Purchases restored');
+          await RevenueCatService.restorePurchases();
+
+          // After restoring, check which buddies are unlocked via entitlements
+          const unlockedIds = RevenueCatService.getUnlockedBuddyIds();
+          if (unlockedIds.length > 0) {
+            set(state => {
+              const newPurchased = { ...state.purchasedBuddies };
+              const newUnlocked = { ...state.unlockedBuddies };
+              for (const id of unlockedIds) {
+                newPurchased[id] = true;
+                newUnlocked[id] = true;
+              }
+              return { purchasedBuddies: newPurchased, unlockedBuddies: newUnlocked };
+            });
+          }
+
+          console.log('[BuddyStore] Purchases restored via RevenueCat');
         } catch (error) {
           console.error('[BuddyStore] Failed to restore purchases:', error);
         }

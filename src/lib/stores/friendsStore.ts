@@ -29,8 +29,10 @@ interface FriendsState {
   // Actions
   sendFriendRequest: (myUserId: ID, otherUserId: ID) => void;
   acceptFriendRequest: (myUserId: ID, otherUserId: ID) => void;
+  declineFriendRequest: (myUserId: ID, otherUserId: ID) => void;
   removeFriend: (myUserId: ID, otherUserId: ID) => void;
   blockUser: (myUserId: ID, otherUserId: ID) => void;
+  unblockUser: (myUserId: ID, otherUserId: ID) => void;
   setHydrated: (value: boolean) => void;
 
   // Sync actions
@@ -109,6 +111,21 @@ export const useFriendsStore = create<FriendsState>()(
         }
       },
 
+      declineFriendRequest: (myUserId, otherUserId) => {
+        // Declining removes both edges (the pending edge for me and the requested edge for them)
+        set((state) => ({
+          edges: state.edges.filter(
+            (e) => !((e.userId === myUserId && e.otherUserId === otherUserId) ||
+                     (e.userId === otherUserId && e.otherUserId === myUserId))
+          ),
+        }));
+
+        // Queue sync if online
+        if (networkMonitor.isOnline()) {
+          queueSync('declineFriendRequest', { myUserId, otherUserId });
+        }
+      },
+
       removeFriend: (myUserId, otherUserId) => {
         set((state) => ({
           edges: state.edges.filter(
@@ -141,6 +158,20 @@ export const useFriendsStore = create<FriendsState>()(
         // Queue sync if online
         if (networkMonitor.isOnline()) {
           queueSync('blockUser', { myUserId, otherUserId });
+        }
+      },
+
+      unblockUser: (myUserId, otherUserId) => {
+        // Simply remove the blocked edge - they go back to "none" status
+        set((state) => ({
+          edges: state.edges.filter(
+            (e) => !(e.userId === myUserId && e.otherUserId === otherUserId && e.status === "blocked")
+          ),
+        }));
+
+        // Queue sync if online
+        if (networkMonitor.isOnline()) {
+          queueSync('unblockUser', { myUserId, otherUserId });
         }
       },
 
@@ -293,6 +324,9 @@ export const selectPendingFriendRequests = (myUserId: ID) => (state: FriendsStat
 export const selectPendingFriendRequestCount = (myUserId: ID) => (state: FriendsState): number =>
   state.edges.filter((e) => e.userId === myUserId && e.status === "pending").length;
 
+export const selectBlockedUsers = (myUserId: ID) => (state: FriendsState): FriendEdge[] =>
+  state.edges.filter((e) => e.userId === myUserId && e.status === "blocked");
+
 // ============================================================================
 // Hooks (match old API)
 // ============================================================================
@@ -324,6 +358,11 @@ export function usePendingFriendRequests(myUserId: ID): FriendEdge[] {
 export function usePendingFriendRequestCount(myUserId: ID): number {
   const selector = useMemo(() => selectPendingFriendRequestCount(myUserId), [myUserId]);
   return useFriendsStore(selector);
+}
+
+export function useBlockedUsers(myUserId: ID): FriendEdge[] {
+  const selector = useMemo(() => selectBlockedUsers(myUserId), [myUserId]);
+  return useFriendsStore(selector, shallow);
 }
 
 // ============================================================================
@@ -367,12 +406,20 @@ export function acceptFriendRequest(myUserId: ID, otherUserId: ID): void {
   useFriendsStore.getState().acceptFriendRequest(myUserId, otherUserId);
 }
 
+export function declineFriendRequest(myUserId: ID, otherUserId: ID): void {
+  useFriendsStore.getState().declineFriendRequest(myUserId, otherUserId);
+}
+
 export function removeFriend(myUserId: ID, otherUserId: ID): void {
   useFriendsStore.getState().removeFriend(myUserId, otherUserId);
 }
 
 export function blockUser(myUserId: ID, otherUserId: ID): void {
   useFriendsStore.getState().blockUser(myUserId, otherUserId);
+}
+
+export function unblockUser(myUserId: ID, otherUserId: ID): void {
+  useFriendsStore.getState().unblockUser(myUserId, otherUserId);
 }
 
 // ============================================================================

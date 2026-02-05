@@ -300,6 +300,36 @@ export type DatabaseComment = {
 };
 
 /**
+ * ReportReason enum for reports table
+ */
+export type DatabaseReportReason =
+  | "spam"
+  | "harassment"
+  | "inappropriate"
+  | "misinformation"
+  | "other";
+
+/**
+ * ReportStatus enum for reports table
+ */
+export type DatabaseReportStatus = "pending" | "reviewed" | "resolved";
+
+/**
+ * reports table - content moderation reports
+ */
+export type DatabaseReport = {
+  id: string;
+  reporter_user_id: string;
+  target_post_id: string | null;
+  target_user_id: string | null;
+  reason: DatabaseReportReason;
+  additional_info: string | null;
+  status: DatabaseReportStatus;
+  created_at: string; // ISO 8601 datetime
+  updated_at: string; // ISO 8601 datetime
+};
+
+/**
  * NotificationType enum for notifications table
  */
 export type DatabaseNotificationType =
@@ -577,6 +607,8 @@ export type DatabasePostInsert = Pick<
 export type DatabaseReactionInsert = Pick<DatabaseReaction, "emote"> & { post_id: string; user_id: string };
 
 export type DatabaseCommentInsert = Pick<DatabaseComment, "text" | "parent_comment_id"> & { post_id: string; user_id: string };
+
+export type DatabaseReportInsert = Pick<DatabaseReport, "reason" | "additional_info" | "target_post_id" | "target_user_id"> & { reporter_user_id: string };
 
 export type DatabaseNotificationInsert = Pick<
   DatabaseNotification,

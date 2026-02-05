@@ -80,6 +80,8 @@ export interface Settings {
   rankSettings: RankSettings;
   // Location data for regional leaderboards
   location: LocationData;
+  // Privacy settings
+  isPrivateAccount: boolean;
 }
 
 const DEFAULTS: Settings = {
@@ -131,6 +133,7 @@ const DEFAULTS: Settings = {
     region: '',
     country: '',
   },
+  isPrivateAccount: false,
 };
 
 interface SettingsState extends Settings {
@@ -239,6 +242,7 @@ export const useSettingsStore = create<SettingsState>()(
         restTimerFeedback: state.restTimerFeedback,
         rankSettings: state.rankSettings,
         location: state.location,
+        isPrivateAccount: state.isPrivateAccount,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
@@ -269,6 +273,7 @@ export const selectSettings = (state: SettingsState): Settings => ({
   restTimerFeedback: state.restTimerFeedback,
   rankSettings: state.rankSettings,
   location: state.location,
+  isPrivateAccount: state.isPrivateAccount,
 });
 
 // Hook for accessing settings (matches old API)
@@ -294,6 +299,7 @@ export function useSettings(): Settings {
   const restTimerFeedback = useSettingsStore((state) => state.restTimerFeedback);
   const rankSettings = useSettingsStore((state) => state.rankSettings);
   const location = useSettingsStore((state) => state.location);
+  const isPrivateAccount = useSettingsStore((state) => state.isPrivateAccount);
 
   // Memoize the settings object to prevent unnecessary re-renders
   return useMemo(
@@ -318,8 +324,9 @@ export function useSettings(): Settings {
       restTimerFeedback,
       rankSettings,
       location,
+      isPrivateAccount,
     }),
-    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, exerciseRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location]
+    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, exerciseRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location, isPrivateAccount]
   );
 }
 
@@ -347,6 +354,7 @@ export function getSettings(): Settings {
     restTimerFeedback: state.restTimerFeedback,
     rankSettings: state.rankSettings,
     location: state.location,
+    isPrivateAccount: state.isPrivateAccount,
   };
 }
 

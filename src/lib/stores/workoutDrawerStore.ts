@@ -39,6 +39,9 @@ interface WorkoutDrawerState {
   pendingCue: RichCue | null;
   hasPendingCue: boolean;
 
+  // Day Log modal state (shown when starting a new workout)
+  showDayLogModal: boolean;
+
   // Animation progress (0 = closed, 0.1 = collapsed/edge visible, 1 = expanded)
   // This is controlled by Reanimated, store just tracks logical state
 
@@ -64,6 +67,10 @@ interface WorkoutDrawerState {
     sessionId?: string;
   }) => void;
   clearPendingCue: () => void;
+
+  // Day Log modal actions
+  showDayLog: () => void;
+  hideDayLog: () => void;
 }
 
 /**
@@ -85,6 +92,7 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
   },
   pendingCue: null,
   hasPendingCue: false,
+  showDayLogModal: false,
 
   /**
    * Open the drawer to expanded state
@@ -113,11 +121,13 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
 
   /**
    * Start a new workout - opens drawer and marks workout as active
+   * Shows Day Log modal for pre-workout check-in
    */
   startWorkout: () => {
     set({
       hasActiveWorkout: true,
-      position: 'expanded'
+      position: 'expanded',
+      showDayLogModal: true, // Show Day Log modal when starting
     });
   },
 
@@ -135,6 +145,7 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
       },
       pendingCue: null,
       hasPendingCue: false,
+      showDayLogModal: false,
     });
   },
 
@@ -243,6 +254,20 @@ export const useWorkoutDrawerStore = create<WorkoutDrawerState>((set, get) => ({
       hasPendingCue: false,
     });
   },
+
+  /**
+   * Show Day Log modal
+   */
+  showDayLog: () => {
+    set({ showDayLogModal: true });
+  },
+
+  /**
+   * Hide Day Log modal
+   */
+  hideDayLog: () => {
+    set({ showDayLogModal: false });
+  },
 }));
 
 // ============================================================================
@@ -305,6 +330,13 @@ export function useHasPendingCue(): boolean {
   return useWorkoutDrawerStore((state) => state.hasPendingCue);
 }
 
+/**
+ * Hook to check if Day Log modal should be shown
+ */
+export function useShowDayLogModal(): boolean {
+  return useWorkoutDrawerStore((state) => state.showDayLogModal);
+}
+
 // ============================================================================
 // Imperative API for non-React code
 // ============================================================================
@@ -332,6 +364,10 @@ export const workoutDrawerActions = {
   }) => useWorkoutDrawerStore.getState().setPendingCue(cue, context),
   clearPendingCue: () => useWorkoutDrawerStore.getState().clearPendingCue(),
   getPendingCue: () => useWorkoutDrawerStore.getState().pendingCue,
+  // Day Log modal
+  showDayLog: () => useWorkoutDrawerStore.getState().showDayLog(),
+  hideDayLog: () => useWorkoutDrawerStore.getState().hideDayLog(),
+  isShowingDayLog: () => useWorkoutDrawerStore.getState().showDayLogModal,
 };
 
 // Re-export RestTimerState type for consumers
