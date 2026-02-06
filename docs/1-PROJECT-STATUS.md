@@ -218,6 +218,30 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 ---
 
+## Admin Tasks
+
+| # | Task | Description | Status |
+|---|------|-------------|--------|
+| 1 | **Populate Verified Tops** | Add verified top e1RM standards for all exercises in `src/data/exerciseDatabase.ts`. Currently only 6/873 exercises have verified standards. Without this data, exercises show "Iron" rank regardless of performance. Research world-class lifts for each exercise and add to `VERIFIED_TOPS` array. | 🔴 Pending |
+
+**Verified Tops Data Format:**
+```typescript
+{
+  exerciseId: 'Exercise_Database_ID',  // Match ID from exercises-raw.json
+  displayName: 'Human Readable Name',
+  topE1RMKg: 300,  // World-class e1RM in kg
+  notes: 'Source or context for the standard',
+}
+```
+
+**Priority exercises to add verified tops:**
+1. All barbell compound movements (incline bench, front squat, sumo deadlift, etc.)
+2. Popular dumbbell exercises (DB bench, DB row, DB shoulder press)
+3. Machine exercises with standardized weights (leg press, cable rows)
+4. Bodyweight movements with added weight (dips, chin-ups)
+
+---
+
 ## Quality Metrics
 
 ### Test Status

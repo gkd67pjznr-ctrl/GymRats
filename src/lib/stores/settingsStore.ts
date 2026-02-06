@@ -57,6 +57,7 @@ export interface Settings {
   hapticsEnabled: boolean;
   soundsEnabled: boolean;
   buddyVoiceEnabled: boolean;
+  liveActivityEnabled: boolean; // iOS 16.2+ Dynamic Island/Lock Screen workout display
   unitSystem: "lb" | "kg";
   defaultRestSeconds: number;
   exerciseRestSeconds: Record<string, number>; // Custom rest times per exercise (exerciseId -> seconds)
@@ -96,6 +97,7 @@ const DEFAULTS: Settings = {
   hapticsEnabled: true,
   soundsEnabled: true,
   buddyVoiceEnabled: true,
+  liveActivityEnabled: true, // Enabled by default on iOS 16.2+
   unitSystem: "lb",
   defaultRestSeconds: 90,
   exerciseRestSeconds: {}, // Empty by default - uses defaultRestSeconds
@@ -237,6 +239,7 @@ export const useSettingsStore = create<SettingsState>()(
         hapticsEnabled: state.hapticsEnabled,
         soundsEnabled: state.soundsEnabled,
         buddyVoiceEnabled: state.buddyVoiceEnabled,
+        liveActivityEnabled: state.liveActivityEnabled,
         unitSystem: state.unitSystem,
         defaultRestSeconds: state.defaultRestSeconds,
         exerciseRestSeconds: state.exerciseRestSeconds,
@@ -268,6 +271,7 @@ export const selectSettings = (state: SettingsState): Settings => ({
   hapticsEnabled: state.hapticsEnabled,
   soundsEnabled: state.soundsEnabled,
   buddyVoiceEnabled: state.buddyVoiceEnabled,
+  liveActivityEnabled: state.liveActivityEnabled,
   unitSystem: state.unitSystem,
   defaultRestSeconds: state.defaultRestSeconds,
   exerciseRestSeconds: state.exerciseRestSeconds,
@@ -294,6 +298,7 @@ export function useSettings(): Settings {
   const hapticsEnabled = useSettingsStore((state) => state.hapticsEnabled);
   const soundsEnabled = useSettingsStore((state) => state.soundsEnabled);
   const buddyVoiceEnabled = useSettingsStore((state) => state.buddyVoiceEnabled);
+  const liveActivityEnabled = useSettingsStore((state) => state.liveActivityEnabled);
   const unitSystem = useSettingsStore((state) => state.unitSystem);
   const defaultRestSeconds = useSettingsStore((state) => state.defaultRestSeconds);
   const exerciseRestSeconds = useSettingsStore((state) => state.exerciseRestSeconds);
@@ -319,6 +324,7 @@ export function useSettings(): Settings {
       hapticsEnabled,
       soundsEnabled,
       buddyVoiceEnabled,
+      liveActivityEnabled,
       unitSystem,
       defaultRestSeconds,
       exerciseRestSeconds,
@@ -338,7 +344,7 @@ export function useSettings(): Settings {
       location,
       privacy,
     }),
-    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, unitSystem, defaultRestSeconds, exerciseRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location, privacy]
+    [hapticsEnabled, soundsEnabled, buddyVoiceEnabled, liveActivityEnabled, unitSystem, defaultRestSeconds, exerciseRestSeconds, displayName, bodyweight, experienceLevel, personalityId, goal, accent, themeId, replayAutoPlay, weightHistory, notificationPrefs, audioCues, restTimerFeedback, rankSettings, location, privacy]
   );
 }
 
@@ -349,6 +355,7 @@ export function getSettings(): Settings {
     hapticsEnabled: state.hapticsEnabled,
     soundsEnabled: state.soundsEnabled,
     buddyVoiceEnabled: state.buddyVoiceEnabled,
+    liveActivityEnabled: state.liveActivityEnabled,
     unitSystem: state.unitSystem,
     defaultRestSeconds: state.defaultRestSeconds,
     exerciseRestSeconds: state.exerciseRestSeconds,

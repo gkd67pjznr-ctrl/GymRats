@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator, TextInput, Modal, Image } from "react-native";
+import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator, TextInput, Modal, Image, Platform } from "react-native";
 import { Link , useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -481,6 +481,22 @@ export default function SettingsScreen() {
             }
           />
         </View>
+
+        {/* Live Activity - iOS 16.2+ only */}
+        {Platform.OS === "ios" && (
+          <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
+            <Row
+              title="Live Activity"
+              subtitle="Show workout progress on Lock Screen and Dynamic Island."
+              right={
+                <Toggle
+                  value={settings.liveActivityEnabled}
+                  onChange={(v) => updateSettings({ liveActivityEnabled: v })}
+                />
+              }
+            />
+          </View>
+        )}
 
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
           <Row

@@ -194,18 +194,20 @@ export const ExerciseCard = memo(function ExerciseCard({
           )}
 
           {/* Add Set button */}
-          <Pressable
-            onPress={handleAddSet}
-            style={({ pressed }) => [
-              styles.addSetButton,
-              { opacity: pressed ? 0.6 : 1 },
-            ]}
-          >
-            <Ionicons name="add" size={16} color={c.primary} />
-            <Text style={[styles.addSetText, { color: c.primary }]}>
-              Add Set
-            </Text>
-          </Pressable>
+          <View style={styles.addSetRow}>
+            <Pressable
+              onPress={handleAddSet}
+              style={({ pressed }) => [
+                styles.addSetButton,
+                { opacity: pressed ? 0.6 : 1 },
+              ]}
+            >
+              <Ionicons name="add" size={16} color={c.primary} />
+              <Text style={[styles.addSetText, { color: c.primary }]}>
+                Add Set
+              </Text>
+            </Pressable>
+          </View>
         </>
       )}
     </View>
@@ -272,11 +274,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "500",
   },
+  addSetRow: {
+    alignItems: "center",
+    paddingVertical: 8,
+  },
   addSetButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     gap: 4,
   },
   addSetText: {
