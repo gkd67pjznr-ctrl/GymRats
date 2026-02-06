@@ -218,8 +218,8 @@ export function useWorkoutOrchestrator(options: WorkoutOrchestratorOptions): Wor
       // Award Forge Tokens for PR
       const { calculatePRReward } = require("../gamification");
       const { addGamificationTokens } = require("../stores/gamificationStore");
-      const tier = meta.tier as number | undefined;
-      const reward = calculatePRReward(t, tier);
+      // meta.tier is now properly typed as CelebrationTier (1-4)
+      const reward = calculatePRReward(t, meta.tier);
       addGamificationTokens(reward.amount);
 
       // Trigger PR celebration callback

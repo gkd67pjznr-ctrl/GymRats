@@ -1,4 +1,4 @@
-import { View, Pressable, ActivityIndicator } from 'react-native';
+import { View, Pressable, ActivityIndicator, Platform } from 'react-native';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -166,8 +166,9 @@ export default function RootLayout() {
     initSync();
   }, []);
 
-  // Initialize voice manager for buddy voice lines
+  // Initialize voice manager for buddy voice lines (skip on web)
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     const initVoice = async () => {
       try {
         await initializeVoiceManager();
@@ -178,8 +179,9 @@ export default function RootLayout() {
     initVoice();
   }, []);
 
-  // Initialize IAP service for premium/legendary buddy purchases
+  // Initialize IAP service for premium/legendary buddy purchases (skip on web)
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     const initIAP = async () => {
       try {
         await useBuddyStore.getState().initializeIAP();
@@ -258,8 +260,9 @@ export default function RootLayout() {
     };
   }, []);
 
-  // Set up global notification response handler
+  // Set up global notification response handler (skip on web)
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     const responseListener = setupNotificationResponseListener((response) => {
       const data = response.notification.request.content.data;
       const screen = data?.screen;

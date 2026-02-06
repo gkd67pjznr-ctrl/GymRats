@@ -38,6 +38,16 @@ export interface DetectCueResult {
 }
 
 /**
+ * Celebration tier based on PR magnitude
+ *
+ * Tier 1: Small PR (0-5 lb delta)
+ * Tier 2: Medium PR (5-10 lb delta)
+ * Tier 3: Big PR (10-20 lb delta)
+ * Tier 4: Massive PR (20+ lb delta)
+ */
+export type CelebrationTier = 1 | 2 | 3 | 4;
+
+/**
  * Metadata about PR detection
  *
  * Provides detailed information about what was detected, including deltas
@@ -56,6 +66,8 @@ export interface DetectCueMeta {
   type: PRType;
   /** Formatted weight label for display */
   weightLabel: string;
+  /** Celebration tier based on delta magnitude (1-4) */
+  tier: CelebrationTier;
 }
 
 /**

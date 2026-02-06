@@ -3,7 +3,18 @@ import { bucketKeyForUser, bucketValueInUserUnit } from "./buckets";
 import { estimate1RM_Epley } from "./e1rm";
 import { kgToLb } from "./units"; // [FIX 2026-01-23] Use canonical implementation
 
-// Export types from centralized types file
+// Import and re-export types from centralized types file
+import type {
+  Cue,
+  InstantCue,
+  ExerciseSessionState,
+  DetectCueParams,
+  DetectCueResult,
+  DetectCueMeta,
+  PRType,
+  CelebrationTier,
+} from "./perSetCueTypes";
+
 export type {
   Cue,
   InstantCue,
@@ -12,7 +23,23 @@ export type {
   DetectCueResult,
   DetectCueMeta,
   PRType,
-} from "./perSetCueTypes";
+  CelebrationTier,
+};
+
+/**
+ * Calculate celebration tier based on delta magnitude (in lb)
+ *
+ * Tier 1: Small PR (0-5 lb)
+ * Tier 2: Medium PR (5-10 lb)
+ * Tier 3: Big PR (10-20 lb)
+ * Tier 4: Massive PR (20+ lb)
+ */
+function calculateTier(deltaLb: number): CelebrationTier {
+  if (deltaLb < 5) return 1;
+  if (deltaLb < 10) return 2;
+  if (deltaLb < 20) return 3;
+  return 4;
+}
 
 export function makeEmptyExerciseState(): ExerciseSessionState {
   return { bestE1RMKg: 0, bestWeightKg: 0, bestRepsAtWeight: {} };
@@ -83,7 +110,8 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "cardio",
         weightLabel,
-      } as const,
+        tier: 1 as CelebrationTier, // Cardio doesn't have meaningful tier
+      },
     };
   }
 
@@ -98,11 +126,15 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "weight",
         weightLabel,
-      } as const,
+        tier: calculateTier(weightDeltaLb),
+      },
     };
   }
 
   if (isRepPRAtWeight) {
+    // For rep PRs, use e1RM delta if available, otherwise scale rep delta
+    // Rep delta of 2-3 is like 5-10 lb e1RM gain
+    const effectiveDelta = e1rmDeltaLb > 0 ? e1rmDeltaLb : repDeltaAtWeight * 3;
     return {
       cue: { message: `Rep PR on ${exerciseName}!`, intensity: "high" },
       next,
@@ -113,7 +145,8 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "rep",
         weightLabel,
-      } as const,
+        tier: calculateTier(effectiveDelta),
+      },
     };
   }
 
@@ -128,7 +161,8 @@ export function detectCueForWorkingSet(args: {
         e1rmDeltaLb,
         type: "e1rm",
         weightLabel,
-      } as const,
+        tier: calculateTier(e1rmDeltaLb),
+      },
     };
   }
 
@@ -142,7 +176,8 @@ export function detectCueForWorkingSet(args: {
       e1rmDeltaLb: 0,
       type: "none",
       weightLabel,
-    } as const,
+      tier: 1 as CelebrationTier, // No PR, default to tier 1
+    },
   };
 }
 
