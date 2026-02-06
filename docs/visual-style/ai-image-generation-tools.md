@@ -1,6 +1,21 @@
 # AI Image Generation Tools for UI Assets
 
-**Last Updated:** 2026-02-03
+**Last Updated:** 2026-02-06
+**Status:** SUPERSEDED - See comprehensive research below
+
+> **IMPORTANT:** This document has been superseded by the comprehensive research document:
+> **[AI-IMAGE-GEN-MASTER-RESEARCH.md](./AI-IMAGE-GEN-MASTER-RESEARCH.md)**
+>
+> The new document includes:
+> - MCP servers for Claude terminal integration
+> - Detailed API pricing comparison (2026)
+> - Batch processing strategies for 1590+ images
+> - Cost projections and recommendations
+> - Quick start guides
+
+---
+
+## Legacy Quick Reference
 
 Quick reference for generating palettes, icons, illustrations, effects, notifications, and animations using AI tools.
 
