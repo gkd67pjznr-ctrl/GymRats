@@ -32,8 +32,7 @@ This folder contains all documentation for the GymRats visual identity system, i
 | Document | Description |
 |----------|-------------|
 | [theme-implementation-plan.md](theme-implementation-plan.md) | **NEW** Step-by-step guide for Iron Forge, Toxic Energy, Neon Glow themes |
-| [implementation-roadmap.md](implementation-roadmap.md) | Original 12-week phased implementation timeline |
-| [implementation-roadmap-v2.md](implementation-roadmap-v2.md) | Updated roadmap with refined phases |
+| [implementation-roadmap-v2.md](implementation-roadmap-v2.md) | Implementation timeline (refined phases) |
 | [cue-system-implementation.md](cue-system-implementation.md) | PR celebration and cue system implementation |
 
 ### Asset & Content Guides
@@ -50,9 +49,9 @@ This folder contains all documentation for the GymRats visual identity system, i
 
 | Palette | Location | Aesthetic |
 |---------|----------|-----------|
-| Iron Forge | [Iron Forge Palette/analysis.md](Iron%20Forge%20Palette/analysis.md) | Medieval blacksmith, orange/gold |
-| Toxic Energy | [Toxic Energy Palette/analysis.md](Toxic%20Energy%20Palette/analysis.md) | Radioactive neon, lime/magenta |
-| Neon Glow | [Neon Glow Palette/analysis.md](Neon%20Glow%20Palette/analysis.md) | Cosmic cyberpunk, magenta/cyan |
+| Iron Forge | [iron-forge-palette/analysis.md](iron-forge-palette/analysis.md) | Medieval blacksmith, orange/gold |
+| Toxic Energy | [toxic-energy-palette/analysis.md](toxic-energy-palette/analysis.md) | Radioactive neon, lime/magenta |
+| Neon Glow | [neon-glow-palette/analysis.md](neon-glow-palette/analysis.md) | Cosmic cyberpunk, magenta/cyan |
 
 ---
 
