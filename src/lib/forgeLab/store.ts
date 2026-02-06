@@ -81,6 +81,8 @@ export const useForgeLabStore = create<ForgeLabState>()(
         set({ loading: true, error: null });
         try {
           // Get workout history
+          // NOTE: We use ALL sessions here (including imported) for analytics
+          // because Forge Lab is for viewing historical data, not for ranking/scoring
           const allSessions = await getWorkoutHistory();
           // Get user bodyweight and weight history
           const bodyweightKg = getUserBodyweight();

@@ -2,7 +2,9 @@
 // Export workout data to CSV format
 
 import * as FileSystem from "expo-file-system/legacy";
-import { Platform, Share } from "react-native";
+import * as Sharing from "expo-sharing";
+import * as MailComposer from "expo-mail-composer";
+import { Platform } from "react-native";
 
 import type { WorkoutSession, WorkoutSet } from "./workoutModel";
 import {
@@ -199,7 +201,7 @@ export async function exportWorkoutsToFile(
  * Export and share workout data
  *
  * This creates a temporary file and opens the system share sheet
- * Uses React Native's Share API for cross-platform sharing
+ * Uses expo-sharing for proper file attachment sharing
  *
  * @param userId Optional user ID to filter sessions
  * @returns Export result
@@ -215,14 +217,15 @@ export async function exportAndShareWorkouts(
   }
 
   try {
-    // On native platforms, we can share the file using React Native's Share API
-    // Note: On iOS/Android, this shares the content as text (file attachment requires expo-sharing)
-    // For now, we'll provide the file path and let users access it from the documents directory
-    if (Platform.OS !== "web") {
-      // Try to share via React Native Share API (shares as text/message)
-      await Share.share({
-        message: `GymRats Workout Export\n\nYour workout data has been exported to:\n${result.filePath}\n\nThe CSV file contains ${result.sessionsExported} workouts and ${result.setsExported} sets.`,
-        title: "GymRats Workout Export",
+    // Check if sharing is available
+    const isAvailable = await Sharing.isAvailableAsync();
+
+    if (isAvailable && Platform.OS !== "web") {
+      // Use expo-sharing for proper file attachment sharing
+      await Sharing.shareAsync(result.filePath, {
+        mimeType: "text/csv",
+        dialogTitle: "Export GymRats Workouts",
+        UTI: "public.comma-separated-values-text",
       });
     }
 
@@ -286,4 +289,111 @@ export function downloadCSVWeb(csvContent: string, filename?: string): boolean {
   } catch {
     return false;
   }
+}
+
+// ============================================================================
+// Email Export
+// ============================================================================
+
+/**
+ * Email export result
+ */
+export interface EmailExportResult extends FileExportResult {
+  emailSent?: boolean;
+}
+
+/**
+ * Check if email is available on this device
+ */
+export async function isEmailAvailable(): Promise<boolean> {
+  try {
+    return await MailComposer.isAvailableAsync();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Export workout data and send via email
+ *
+ * Opens the default email composer with the CSV file attached
+ *
+ * @param recipientEmail Optional email address to pre-fill
+ * @param userId Optional user ID to filter sessions
+ * @returns Email export result
+ */
+export async function exportAndEmailWorkouts(
+  recipientEmail?: string,
+  userId?: string
+): Promise<EmailExportResult> {
+  // Check if email is available
+  const emailAvailable = await isEmailAvailable();
+  if (!emailAvailable) {
+    return {
+      success: false,
+      csvContent: "",
+      sessionsExported: 0,
+      setsExported: 0,
+      error: "Email is not available on this device",
+      emailSent: false,
+    };
+  }
+
+  // Export to file first
+  const result = await exportWorkoutsToFile(userId);
+
+  if (!result.success || !result.filePath) {
+    return { ...result, emailSent: false };
+  }
+
+  try {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString();
+
+    // Compose the email with the CSV attached
+    const emailResult = await MailComposer.composeAsync({
+      recipients: recipientEmail ? [recipientEmail] : [],
+      subject: `GymRats Workout Export - ${dateStr}`,
+      body: `Here's your GymRats workout data export from ${dateStr}.\n\nThis export contains:\n- ${result.sessionsExported} workout sessions\n- ${result.setsExported} total sets\n\nThe attached CSV file can be opened in Excel, Google Sheets, or imported into other fitness apps.\n\nKeep crushing it!\n- GymRats`,
+      attachments: [result.filePath],
+      isHtml: false,
+    });
+
+    return {
+      ...result,
+      emailSent: emailResult.status === MailComposer.MailComposerStatus.SENT,
+    };
+  } catch (error) {
+    // If email fails to open, the file is still saved
+    if (__DEV__) {
+      console.log("[csvExport] Email composer failed:", error);
+    }
+    return {
+      ...result,
+      emailSent: false,
+      error: error instanceof Error ? error.message : "Failed to open email composer",
+    };
+  }
+}
+
+/**
+ * Export current user's workouts and send via email
+ */
+export async function exportAndEmailCurrentUserWorkouts(
+  recipientEmail?: string
+): Promise<EmailExportResult> {
+  const user = getUser();
+  if (!user) {
+    return {
+      success: false,
+      csvContent: "",
+      sessionsExported: 0,
+      setsExported: 0,
+      error: "No user signed in",
+      filePath: undefined,
+      emailSent: false,
+    };
+  }
+
+  return exportAndEmailWorkouts(recipientEmail, user.id);
 }

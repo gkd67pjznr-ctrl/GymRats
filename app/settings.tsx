@@ -13,6 +13,11 @@ import { ProtectedRoute } from "../src/ui/components/ProtectedRoute";
 import { ScreenHeader } from "../src/ui/components/ScreenHeader";
 import { migrateLocalToCloud, importFromCSV } from "../src/lib/migration/dataMigrator";
 import type { MigrationProgress } from "../src/lib/migration/dataMigrator";
+import {
+  exportAndShareCurrentUserWorkouts,
+  exportAndEmailCurrentUserWorkouts,
+  isEmailAvailable,
+} from "../src/lib/csvExport";
 import { WeightEntryModal } from "../src/ui/components/Settings/WeightEntryModal";
 import { LocationEntryModal } from "../src/ui/components/Settings/LocationEntryModal";
 import { kgToLb } from "../src/lib/units";
@@ -103,6 +108,11 @@ export default function SettingsScreen() {
   const [migrationProgress, setMigrationProgress] = useState<MigrationProgress | null>(null);
   const [migrationResult, setMigrationResult] = useState<{ workouts: number; routines: number } | null>(null);
   const [isMigrating, setIsMigrating] = useState(false);
+
+  // Export state
+  const [isExporting, setIsExporting] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [exportEmail, setExportEmail] = useState("");
 
   async function handleSignOut() {
     Alert.alert(
@@ -266,6 +276,56 @@ export default function SettingsScreen() {
       }
     } catch (_err) {
       Alert.alert("Error", "Failed to pick CSV file");
+    }
+  }
+
+  async function handleExportCSV() {
+    setIsExporting(true);
+    try {
+      const result = await exportAndShareCurrentUserWorkouts();
+      if (result.success) {
+        Alert.alert(
+          "Export Successful",
+          `Exported ${result.sessionsExported} workouts (${result.setsExported} sets)`,
+        );
+      } else {
+        Alert.alert("Export Failed", result.error || "An unknown error occurred");
+      }
+    } catch (_err) {
+      Alert.alert("Error", "Failed to export workout data");
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
+  async function handleEmailExport() {
+    const emailAvailable = await isEmailAvailable();
+    if (!emailAvailable) {
+      Alert.alert("Email Not Available", "Email is not configured on this device. Please set up an email account in your device settings.");
+      return;
+    }
+    // Pre-fill with user's email if available
+    setExportEmail(user?.email || "");
+    setShowEmailModal(true);
+  }
+
+  async function handleSendEmailExport() {
+    setShowEmailModal(false);
+    setIsExporting(true);
+    try {
+      const result = await exportAndEmailCurrentUserWorkouts(exportEmail || undefined);
+      if (result.success) {
+        Alert.alert(
+          "Email Ready",
+          `Your workout data (${result.sessionsExported} workouts, ${result.setsExported} sets) is ready to send.`,
+        );
+      } else {
+        Alert.alert("Export Failed", result.error || "An unknown error occurred");
+      }
+    } catch (_err) {
+      Alert.alert("Error", "Failed to prepare email export");
+    } finally {
+      setIsExporting(false);
     }
   }
 
@@ -769,34 +829,39 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
 
-        {/* Data Migration Section */}
+        {/* Data Export & Import Section */}
         <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
           <Row
-            title="Data Migration"
-            subtitle="Import data from other apps or migrate local data to cloud"
+            title="Data Export & Import"
+            subtitle="Export your workout data or import from other apps"
           />
-          <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>
+
+          {/* Export Options */}
+          <Text style={{ fontWeight: "700", fontSize: 14, marginTop: 12, marginBottom: 8 }}>Export</Text>
+          <View style={{ flexDirection: "row", gap: 8 }}>
             <Pressable
-              onPress={handleMigrateLocalData}
-              disabled={isMigrating}
+              onPress={handleExportCSV}
+              disabled={isExporting}
               style={{
                 flex: 1,
                 paddingVertical: 10,
                 paddingHorizontal: 14,
                 borderRadius: 12,
-                backgroundColor: c.bg,
-                borderWidth: 1,
-                borderColor: c.border,
+                backgroundColor: "#4ECDC4",
                 alignItems: "center",
-                opacity: isMigrating ? 0.5 : 1,
+                opacity: isExporting ? 0.5 : 1,
               }}
             >
-              <Text style={{ fontWeight: "700", fontSize: 12 }}>Migrate Local Data</Text>
+              {isExporting ? (
+                <ActivityIndicator size="small" color="#000" />
+              ) : (
+                <Text style={{ fontWeight: "700", fontSize: 12, color: "#000" }}>Export CSV</Text>
+              )}
             </Pressable>
 
             <Pressable
-              onPress={handleImportCSV}
-              disabled={isMigrating}
+              onPress={handleEmailExport}
+              disabled={isExporting}
               style={{
                 flex: 1,
                 paddingVertical: 10,
@@ -806,12 +871,56 @@ export default function SettingsScreen() {
                 borderWidth: 1,
                 borderColor: c.border,
                 alignItems: "center",
-                opacity: isMigrating ? 0.5 : 1,
+                opacity: isExporting ? 0.5 : 1,
+              }}
+            >
+              <Text style={{ fontWeight: "700", fontSize: 12 }}>Email Export</Text>
+            </Pressable>
+          </View>
+
+          {/* Import Options */}
+          <Text style={{ fontWeight: "700", fontSize: 14, marginTop: 16, marginBottom: 8 }}>Import</Text>
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <Pressable
+              onPress={handleImportCSV}
+              disabled={isMigrating || isExporting}
+              style={{
+                flex: 1,
+                paddingVertical: 10,
+                paddingHorizontal: 14,
+                borderRadius: 12,
+                backgroundColor: c.bg,
+                borderWidth: 1,
+                borderColor: c.border,
+                alignItems: "center",
+                opacity: (isMigrating || isExporting) ? 0.5 : 1,
               }}
             >
               <Text style={{ fontWeight: "700", fontSize: 12 }}>Import CSV</Text>
             </Pressable>
+
+            <Pressable
+              onPress={handleMigrateLocalData}
+              disabled={isMigrating || isExporting}
+              style={{
+                flex: 1,
+                paddingVertical: 10,
+                paddingHorizontal: 14,
+                borderRadius: 12,
+                backgroundColor: c.bg,
+                borderWidth: 1,
+                borderColor: c.border,
+                alignItems: "center",
+                opacity: (isMigrating || isExporting) ? 0.5 : 1,
+              }}
+            >
+              <Text style={{ fontWeight: "700", fontSize: 12 }}>Sync to Cloud</Text>
+            </Pressable>
           </View>
+
+          <Text style={{ fontSize: 11, color: c.muted, marginTop: 8 }}>
+            Note: Imported data is for analytics only and won't affect your ranking.
+          </Text>
         </View>
 
         {/* Dev Menu Link */}
@@ -867,8 +976,8 @@ export default function SettingsScreen() {
                 </Text>
               </View>
               <Toggle
-                value={settings.isPrivateAccount}
-                onChange={(v) => updateSettings({ isPrivateAccount: v })}
+                value={settings.privacy.privateAccount}
+                onChange={(v) => updateSettings({ privacy: { ...settings.privacy, privateAccount: v } })}
               />
             </View>
           </View>
@@ -1040,55 +1149,7 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
 
-        {/* Data Migration Section */}
-        <View style={{ borderWidth: 1, borderColor: c.border, borderRadius: 14, backgroundColor: c.card, padding: 12 }}>
-          <Row
-            title="Data Migration"
-            subtitle="Import data from other apps or migrate local data to cloud"
-          />
-          <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>
-            <Pressable
-              onPress={handleMigrateLocalData}
-              disabled={isMigrating}
-              style={{
-                flex: 1,
-                paddingVertical: 10,
-                paddingHorizontal: 14,
-                borderRadius: 12,
-                backgroundColor: c.bg,
-                borderWidth: 1,
-                borderColor: c.border,
-                alignItems: "center",
-                opacity: isMigrating ? 0.5 : 1,
-              }}
-            >
-              <Text style={{ fontWeight: "700", fontSize: 12 }}>Migrate Local Data</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={handleImportCSV}
-              disabled={isMigrating}
-              style={{
-                flex: 1,
-                paddingVertical: 10,
-                paddingHorizontal: 14,
-                borderRadius: 12,
-                backgroundColor: c.bg,
-                borderWidth: 1,
-                borderColor: c.border,
-                alignItems: "center",
-                opacity: isMigrating ? 0.5 : 1,
-              }}
-            >
-              <Text style={{ fontWeight: "700", fontSize: 12 }}>Import CSV</Text>
-            </Pressable>
-          </View>
-        </View>
-
-        <Text style={{ color: c.muted }}>
-          Next: we&rsquo;ll wire these settings into LiveWorkout (rest timer default + unit display).
-        </Text>
-        </ScrollView>
+                </ScrollView>
       </View>
 
       {/* Delete Account Confirmation Modal */}
@@ -1288,6 +1349,94 @@ export default function SettingsScreen() {
                 </Pressable>
               </>
             ) : null}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Email Export Modal */}
+      <Modal
+        visible={showEmailModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowEmailModal(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: c.card,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: c.border,
+              padding: 24,
+              width: "100%",
+              maxWidth: 400,
+              gap: 16,
+            }}
+          >
+            <Text style={{ color: c.text, fontSize: 20, fontWeight: "900", textAlign: "center" }}>
+              Email Your Workout Data
+            </Text>
+
+            <Text style={{ color: c.muted, textAlign: "center", lineHeight: 20 }}>
+              Enter your email address to receive your workout data as a CSV file attachment.
+            </Text>
+
+            <TextInput
+              value={exportEmail}
+              onChangeText={setExportEmail}
+              placeholder="Email address"
+              placeholderTextColor={c.muted}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={{
+                backgroundColor: c.bg,
+                borderWidth: 1,
+                borderColor: c.border,
+                borderRadius: 12,
+                padding: 16,
+                color: c.text,
+                fontSize: 16,
+              }}
+            />
+
+            <View style={{ flexDirection: "row", gap: 12 }}>
+              <Pressable
+                onPress={() => setShowEmailModal(false)}
+                style={{
+                  flex: 1,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: c.border,
+                  backgroundColor: c.bg,
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: c.text, fontWeight: "700" }}>Cancel</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={handleSendEmailExport}
+                style={{
+                  flex: 1,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                  backgroundColor: "#4ECDC4",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#000", fontWeight: "900" }}>Send Email</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
