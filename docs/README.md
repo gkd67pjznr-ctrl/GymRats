@@ -1,6 +1,6 @@
 # GymRats Documentation Hub
 
-**Last Updated:** 2026-02-04
+**Last Updated:** 2026-02-05
 
 ---
 
@@ -102,6 +102,9 @@ The `business/` folder contains private business documents (LLC, banking, pricin
 - [Master Documentation/TESTING_PLAN_MASTER.md](Master%20Documentation/TESTING_PLAN_MASTER.md) - Testing strategy
 - [Master Documentation/USER_TESTING_CHECKLIST.md](Master%20Documentation/USER_TESTING_CHECKLIST.md) - User test cases
 
+### Infrastructure
+- [infrastructure/SERVER-INFRASTRUCTURE.md](infrastructure/SERVER-INFRASTRUCTURE.md) - **NEW** Server scaling, cost projections, migration playbook (10 to 500K users)
+
 ---
 
 ## Documentation Organization
@@ -135,6 +138,7 @@ docs/
 ├── visual-style/                # Design system docs + theme palettes
 ├── Project Management/           # Internal processes
 ├── Codebase Analysis/           # Technical deep-dives
+├── infrastructure/              # Server scaling & cost docs (NEW)
 └── AskUQ/                       # Interview transcripts
 ```
 
@@ -164,6 +168,9 @@ docs/
 **"Where do I find docs for [feature]?"**
 → Check `features/` folder - each feature has its own folder
 
+**"How do we scale the infrastructure?"**
+→ Read `infrastructure/SERVER-INFRASTRUCTURE.md` → Scaling strategy, cost projections, migration playbook
+
 ---
 
 ## For Contributors
@@ -185,4 +192,4 @@ docs/
 
 ---
 
-*Last updated: 2026-02-04*
+*Last updated: 2026-02-05*
