@@ -1,0 +1,17 @@
+{
+  "completed": [
+    "Barbell_Deadlift",
+    "Barbell_Squat",
+    "Bent_Over_Barbell_Row",
+    "Goblet_Squat",
+    "Leg_Press",
+    "Plank",
+    "Romanian_Deadlift",
+    "Sumo_Deadlift",
+    "Trap_Bar_Deadlift",
+    "Alternate_Incline_Dumbbell_Curl"
+  ],
+  "failed": [],
+  "lastRun": "2026-02-06T14:16:05.747Z",
+  "totalCost": 0
+}

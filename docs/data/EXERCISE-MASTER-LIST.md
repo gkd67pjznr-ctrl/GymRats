@@ -1,4 +1,4 @@
-# GymRats Exercise Master List
+# GymRats Exercise Master List (You stopped at #Pull(other))
 
 > **Source of Truth** for the GymRats exercise database.
 > **Organization:** Grouped by Movement Pattern
@@ -71,156 +71,92 @@
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Arnold_Dumbbell_Press | Arnold Dumbbell Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Kettlebell_Arnold_Press | Kettlebell Arnold Press | shoulders | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 
 ### Bench Press (41)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Barbell_Bench_Press_-_Medium_Grip | Barbell Bench Press - Medium Grip | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1295 | Barbell Bench Press - NB | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Barbell_Guillotine_Bench_Press | Barbell Guillotine Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Barbell_Incline_Bench_Press_-_Medium_Grip | Barbell Incline Bench Press - Medium Grip | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Incline_Bench_Press | Incline Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_73 | Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Bench_Press_-_Powerlifting | Bench Press - Powerlifting | triceps | chest, forearms, lats, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_76 | Bench Press Narrow Grip | triceps | shoulders, chest | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Bench_Press_with_Chains | Bench Press with Chains | triceps | chest, lats, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Close-Grip_Barbell_Bench_Press | Close-Grip Barbell Bench Press | triceps | chest, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Decline_Barbell_Bench_Press | Decline Barbell Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_185 | Decline Bench Press Barbell | chest | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_538 | Incline Bench Press - Barbell | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1467 | Incline Close Grip Barbell Bench Press | triceps | shoulders, chest | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1436 | Pin Bench Press BB | chest, triceps | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Reverse_Band_Bench_Press | Reverse Band Bench Press | triceps | chest, forearms, lats, middle back, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Close-Grip_Bench_Press | Close-Grip Bench Press | triceps | chest, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Decline_Bench_Press | Decline Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1436 | Pin Bench Press | chest, triceps | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_498 | Reverse Grip Bench Press | chest, triceps | shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Reverse_Triceps_Bench_Press | Reverse Triceps Bench Press | triceps | chest, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Wide-Grip_Barbell_Bench_Press | Wide-Grip Barbell Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Wide-Grip_Decline_Barbell_Bench_Press | Wide-Grip Decline Barbell Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_186 | Decline Bench Press Dumbbell | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Decline_Dumbbell_Bench_Press | Decline Dumbbell Bench Press | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Wide-Grip_Bench_Press | Wide-Grip Bench Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_186 | Dumbbell Decline Bench Press | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Dumbbell_Bench_Press | Dumbbell Bench Press | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dumbbell_Bench_Press_with_Neutral_Grip | Dumbbell Bench Press with Neutral Grip | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1228 | Dumbbell close grip bench press | chest, triceps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1644 | Dumbbell Decline Bench Press | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1746 | Floor dumbbell bench press | chest | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Hammer_Grip_Incline_DB_Bench_Press | Hammer Grip Incline DB Bench Press | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_537 | Incline Bench Press - Dumbbell | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Dumbbell_Bench_Press_Neutral_Grip | Dumbbell Bench Press Neutral Grip | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1276 | Incline Dumbbell Bench Press | chest | shoulders | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | One_Arm_Dumbbell_Bench_Press | One Arm Dumbbell Bench Press | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Machine_Bench_Press | Machine Bench Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Smith_Machine_Bench_Press | Smith Machine Bench Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Smith_Machine_Close-Grip_Bench_Press | Smith Machine Close-Grip Bench Press | triceps | chest, shoulders | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Smith_Machine_Incline_Bench_Press | Smith Machine Incline Bench Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Bench_Press_-_With_Bands | Bench Press - With Bands | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| wger_539 | Incline Bench Press - MP | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1773 | Legend Incline Bench Press | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_75 | Benchpress Dumbbells | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1497 | DB Underhand bench press | chest | shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1498 | Elbows Tucked DB Bench Press | triceps | chest | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1094 | Seated Bench Press | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1497 | Dumbbell Underhand Bench Press | chest | shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Chest (5)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Isometric_Chest_Squeezes | Isometric Chest Squeezes | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Chest_Push_multiple_response | Chest Push (multiple response) | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Chest_Push_single_response | Chest Push (single response) | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Chest_Push_from_3_point_stance | Chest Push from 3 point stance | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Hug_Knees_To_Chest | Hug Knees To Chest | lower back | glutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Chest Press (14)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_1444 | Incline Chest Press DB | chest | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Cable_Chest_Press | Cable Chest Press | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Incline_Cable_Chest_Press | Incline Cable Chest Press | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Standing_Cable_Chest_Press | Standing Cable Chest Press | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Leverage_Chest_Press | Leverage Chest Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Leverage_Decline_Chest_Press | Leverage Decline Chest Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Leverage_Incline_Chest_Press | Leverage Incline Chest Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| wger_1656 | Cable Chest Press - Decline | chest | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1660 | Cable Chest Press - Incline | chest | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_129 | Chest Press | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1660 | Decline Cable Chest Press | chest | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_1278 | Dumbbell Chest Press | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_379 | Leverage Machine Chest Press | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1655 | Machine Chest Press Exercise | chest | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1461 | No Leg Drive Dumbbell Chest Press | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Dip (15)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Jerk_Dip_Squat | Jerk Dip Squat | quadriceps | abdominals, calves | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dip_Machine | Dip Machine | triceps | chest, shoulders | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Dip_Machine | Weight-Assisted Dip Machine | triceps | chest, shoulders | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Bench_Dips | Bench Dips | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Dips_-_Triceps_Version | Dips - Triceps Version | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1320 | Bench Dips On Floor HD | biceps, brachialis, triceps | shoulders, chest, calves, traps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1774 | Chair dips | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_194 | Dips | chest, triceps | triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1000 | Floor dips | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Dips_-_Chest_Version | Dips - Chest Version | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Dips_-_Chest_Focused | Dips - Chest Focused | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Dips_-_Triceps_Focused | Dips - Triceps Focused | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+
 | Parallel_Bar_Dip | Parallel Bar Dip | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Ring_Dips | Ring Dips | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1372 | Triceps Dips (Assisted) | triceps | chest | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_1269 | TRX dips | triceps | chest | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Weighted_Bench_Dip | Weighted Bench Dip | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_197 | Dips Between Two Benches | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Floor Press (8)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Floor_Press | Floor Press | triceps | chest, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Floor_Press_with_Chains | Floor Press with Chains | triceps | chest, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | One_Arm_Floor_Press | One Arm Floor Press | triceps | chest, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Dumbbell_Floor_Press | Dumbbell Floor Press | triceps | chest, shoulders | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Alternating_Floor_Press | Alternating Floor Press | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| Extended_Range_One-Arm_Kettlebell_Floor_Press | Extended Range One-Arm Kettlebell Floor Press | chest | shoulders, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| Leg-Over_Floor_Press | Leg-Over Floor Press | chest | shoulders, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | One-Arm_Kettlebell_Floor_Press | One-Arm Kettlebell Floor Press | chest | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 
 ### Fly (19)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_1643 | Dumbbell Incline Fly | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_238 | Fly With Dumbbells | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_239 | Fly With Dumbbells, Decline Bench | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_828 | Incline Bench Reverse Fly - Hello | shoulders, traps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_828 | Incline Bench Reverse Fly | rear delts, shoulders, traps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_308 | Incline Dumbbell Fly | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| One-Arm_Flat_Bench_Dumbbell_Flye | One-Arm Flat Bench Dumbbell Flye | chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Cable_Rear_Delt_Fly | Cable Rear Delt Fly | shoulders | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Incline_Cable_Flye | Incline Cable Flye | chest | shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| wger_1709 | Reverse Fly Standing | shoulders, traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| wger_1469 | Bent over Cable Flye | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Cable_Rear_Delt_Fly | Cross-Over Cable Rear Delt Fly | shoulders | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| Incline_Cable_Fly | Incline Cable Fly | chest | shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| wger_1469 | High-to-Low Cable Fly | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_924 | Cable Fly | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1691 | Cable Fly Lower Chest | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1689 | Cable Fly Middle Chest | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1690 | Cable Fly Upper Chest | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_237 | Fly With Cable | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_926 | Machine chest fly | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1775 | Pec deck rear delt fly | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1473 | Reverse Cable Flye | shoulders | traps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Sled_Reverse_Flye | Sled Reverse Flye | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1691 | Low-to-High Cable Fly | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_926 | Machine Chest Fly | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1775 | Machine Rear Delt Fly | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Landmine Press (2)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_346 | Landmine press | shoulders | chest, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_346 | Landmine Press | shoulders | chest, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1829 | Landmine Squat to Press | shoulders, glutes, quads | hamstrings, abs | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-
-### Military Press (5)
-
-| ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
-|----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Seated_Barbell_Military_Press | Seated Barbell Military Press | shoulders | triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Military_Press | Standing Military Press | shoulders | triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| One-Arm_Kettlebell_Military_Press_To_The_Side | One-Arm Kettlebell Military Press To The Side | shoulders | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| Two-Arm_Kettlebell_Military_Press | Two-Arm Kettlebell Military Press | shoulders | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| wger_418 | Military Press mit SZ-Bar | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Overhead Press (24)
 
@@ -228,24 +164,17 @@
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | wger_687 | Overhead Press | shoulders | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Overhead_Squat | Overhead Squat | quadriceps | abdominals, calves, glutes, hamstrings, lower back, shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Overhead_Barbell_Triceps_Extension | Standing Overhead Barbell Triceps Extension | triceps | shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1336 | Triceps Overhead (Dumbbell) | triceps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1336 | Dumbbell Overhead Tricep Extension | triceps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | One-Arm_Overhead_Kettlebell_Squats | One-Arm Overhead Kettlebell Squats | quadriceps | calves, glutes, hamstrings, shoulders | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| Cable_Rope_Overhead_Triceps_Extension | Cable Rope Overhead Triceps Extension | triceps | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Overhead_Cable_Curl | Overhead Cable Curl | biceps | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Triceps_Overhead_Extension_with_Rope | Triceps Overhead Extension with Rope | triceps | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Crunch_-_Hands_Overhead | Crunch - Hands Overhead | abdominals | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Overhead_Triceps | Overhead Triceps | triceps | lats | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1668 | One Arm Overhead Cable Tricep Extension | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
 | Speed_Band_Overhead_Triceps | Speed Band Overhead Triceps | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
 | wger_1513 | Overhead Cable Tricep Extension | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Overhead_Lat | Overhead Lat | lats | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Sled_Overhead_Backward_Walk | Sled Overhead Backward Walk | shoulders | calves, middle back, quadriceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Sled_Overhead_Triceps_Extension | Sled Overhead Triceps Extension | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Catch_and_Overhead_Throw | Catch and Overhead Throw | lats | abdominals, chest, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Overhead_Slam | Overhead Slam | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Overhead_Stretch | Overhead Stretch | abdominals | chest, forearms, lats, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1519 | Overhead Triceps Extension | traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Seated_Overhead_Stretch | Seated Overhead Stretch | abdominals | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Standing_Two-Arm_Overhead_Throw | Standing Two-Arm Overhead Throw | shoulders | chest, lats | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Supine_One-Arm_Overhead_Throw | Supine One-Arm Overhead Throw | abdominals | chest, lats, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -255,8 +184,7 @@
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_1439 | Pin OHP | shoulders, triceps | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Pin_Presses | Pin Presses | triceps | chest, forearms, lats, middle back, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Pin_Press | Pin Press | triceps | chest, forearms, lats, middle back, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ### Press (Other) (72)
 
@@ -270,85 +198,67 @@
 | Neck_Press | Neck Press | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Press_Sit-Up | Press Sit-Up | abdominals | chest, shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Push_Press | Push Press | shoulders | quadriceps, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Push_Press_-_Behind_the_Neck | Push Press - Behind the Neck | shoulders | calves, quadriceps, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Barbell_Press_Behind_Neck | Standing Barbell Press Behind Neck | shoulders | triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+|Behind_the_Neck_Push-Press | Behind the Neck Push-Press | shoulders | calves, quadriceps, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Standing_Behind_the_Neck_Press | Standing Behind the Neck Press| shoulders | triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Standing_Bradford_Press | Standing Bradford Press | shoulders | triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1583 | Supine press | traps | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1581 | Trap press | traps | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1638 | Barbell Clean and press | shoulders, chest | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Close-Grip_Dumbbell_Press | Close-Grip Dumbbell Press | triceps | chest, shoulders | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+=| Close-Grip_Dumbbell_Press | Close-Grip Dumbbell Press | triceps | chest, shoulders | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Cuban_Press | Cuban Press | shoulders | traps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1556 | Devil’s Press | shoulders, glutes, chest | hamstrings, lats, abdominals, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1504 | Dumbbel Bradford press | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1226 | Dumbbell bicep curl to press | biceps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1504 | Dumbbell Bradford Press | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1226 | Dumbbell Bicep Curl to Press | biceps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1503 | Dumbbell Frog Press | glutes | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1353 | Dumbbell Hex Press | - | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1686 | Glute Bridge Single-Arm Press | chest | shoulders, biceps, hamstrings, glutes, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Incline_Dumbbell_Press | Incline Dumbbell Press | chest | shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1442 | Kreis Press DB | shoulders | biceps, chest, abs, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1442 | Dumbbell Kreis Press | shoulders | biceps, chest, abs, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Seated_Dumbbell_Press | Seated Dumbbell Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Seated_Triceps_Press | Seated Triceps Press | triceps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| See-Saw_Press_Alternating_Side_Press | See-Saw Press (Alternating Side Press) | shoulders | abdominals, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Standing_Alternating_Dumbbell_Press | Standing Alternating Dumbbell Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Standing_Dumbbell_Press | Standing Dumbbell Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Palm-In_One-Arm_Dumbbell_Press | Standing Palm-In One-Arm Dumbbell Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Palms-In_Dumbbell_Press | Standing Palms-In Dumbbell Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Tate_Press | Tate Press | triceps | chest, shoulders | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Alternating_Kettlebell_Press | Alternating Kettlebell Press | shoulders | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | Bent_Press | Bent Press | abdominals | glutes, hamstrings, lower back, quadriceps, shoulders, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| wger_1360 | Double Kettlebell Clean and Press | shoulders, biceps, brachialis, quads, traps, triceps | hamstrings, glutes, lats, abs | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| Double_Kettlebell_Push_Press | Double Kettlebell Push Press | shoulders | calves, quadriceps, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+| wger_1360 | Kettlebell Clean and Press | shoulders, biceps, brachialis, quads, traps, triceps | hamstrings, glutes, lats, abs | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Double_Kettlebell_Push_Press | Kettlebell Push Press | shoulders | calves, quadriceps, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | Kettlebell_Seated_Press | Kettlebell Seated Press | shoulders | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | Kettlebell_Seesaw_Press | Kettlebell Seesaw Press | shoulders | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | One-Arm_Kettlebell_Para_Press | One-Arm Kettlebell Para Press | shoulders | triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | One-Arm_Kettlebell_Push_Press | One-Arm Kettlebell Push Press | shoulders | calves, quadriceps, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | Pallof_Press | Pallof Press | abdominals | chest, shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Pallof_Press_With_Rotation | Pallof Press With Rotation | abdominals | chest, shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Calf_Press | Calf Press | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Calf_Press_On_The_Leg_Press_Machine | Calf Press On The Leg Press Machine | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Decline_Smith_Press | Decline Smith Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Calf_Press_On_Leg_Press_Machine | Calf Press On Leg Press Machine | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Leg_Press | Leg Press | quadriceps | calves, glutes, hamstrings | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Machine_Shoulder_Military_Press | Machine Shoulder (Military) Press | shoulders | triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Machine_Shoulder_Press | Machine Shoulder Press | shoulders | triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Narrow_Stance_Leg_Press | Narrow Stance Leg Press | quadriceps | calves, glutes, hamstrings | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Smith_Machine_Decline_Press | Smith Machine Decline Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Smith_Machine_Decline_Bench_Press | Smith Machine Decline Bench Press | chest | shoulders, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Smith_Machine_Leg_Press | Smith Machine Leg Press | quadriceps | calves, glutes, hamstrings | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Body_Tricep_Press | Body Tricep Press | triceps | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1086 | Close-grip Press-ups | brachialis, lats, chest, traps | shoulders, biceps, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1457 | Cable Press Around | shoulders, chest, triceps | biceps, serratus anterior | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1661 | Cable Triceps Press | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_146 | Calf Press Using Leg Press Machine | calves | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Chain_Press | Chain Press | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Forward_Drag_with_Press | Forward Drag with Press | chest | calves, glutes, hamstrings, quadriceps, shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_1508 | High-Incline Smith Machine Press | shoulders, chest, triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_375 | Leg Press on Hackenschmidt Machine | quads | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1515 | Leg Press Toe Press | calves | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_925 | SMITH MACHINE SLIGHT INCLINE PRESS | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_375 | Machine Hack Squat | quads | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1515 | Machine Leg Press Toe Press | calves | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Svend_Press | Svend Press | chest | forearms, shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_691 | Upright Row, on Multi Press | shoulders, traps | biceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_691 | Machine Upright Row | shoulders, traps | biceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Close-Grip_EZ-Bar_Press | Close-Grip EZ-Bar Press | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_1827 | Double-Leg Abdominal Press | abs | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_1824 | Dumbell Tate Press | triceps | shoulders, chest | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1694 | Flat Machine Press | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1692 | Incline Smith Press | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Lying_Close-Grip_Barbell_Triceps_Press_To_Chin | Lying Close-Grip Barbell Triceps Press To Chin | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Lying_Triceps_Press | Lying Triceps Press | triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1735 | Single-leg side glute press | calves, glutes, quads | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_916 | Smith Press | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1694 | Machine Chest Press Flat | chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_916 | Smith Machine Overhead Press | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Pullover (11)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Bent-Arm_Barbell_Pullover | Bent-Arm Barbell Pullover | lats | chest, lats, shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Barbell_Pullover | Barbell Pullover | lats | chest, lats, shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Front_Raise_And_Pullover | Front Raise And Pullover | chest | lats, shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Wide-Grip_Decline_Barbell_Pullover | Wide-Grip Decline Barbell Pullover | chest | shoulders, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Bent-Arm_Dumbbell_Pullover | Bent-Arm Dumbbell Pullover | chest | lats, shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_161 | Cross-Bench Dumbbell Pullovers | lats, chest, serratus anterior | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1488 | Dumbbell Pullover | lats | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1273 | Pullover | chest | lats | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1488 | Dumbbell Pullover | lats | chest | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1273 | Pullover | lats | chest | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Straight-Arm_Dumbbell_Pullover | Straight-Arm Dumbbell Pullover | chest | lats, shoulders, triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1137 | PULL OVER POLEA ALTA | lats, serratus anterior | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1384 | Pullover Machine | lats | chest, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Cable_Pullover | Cable Pullover | lats | chest, triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+
+| wger_1384 | Machine Pullover | lats | chest, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_1634 | Rope Pullover/row | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Push-Up (46)
@@ -358,81 +268,46 @@
 | wger_801 | Dumbbell Push-Up | - | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Plyo_Kettlebell_Pushups | Plyo Kettlebell Pushups | chest | shoulders, triceps | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
 | Clock_Push-Up | Clock Push-Up | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Close-Grip_Push-Up_off_of_a_Dumbbell | Close-Grip Push-Up off of a Dumbbell | triceps | abdominals, chest, shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Handstand_Push-Ups | Handstand Push-Ups | shoulders | triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| Close-Grip_Dumbbell_Push-Up | Close-Grip Dumbbell Push-Up | triceps | abdominals, chest, shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Incline_Push-Up | Incline Push-Up | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Incline_Push-Up_Close-Grip | Incline Push-Up Close-Grip | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Incline_Push-Up_Medium | Incline Push-Up Medium | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Incline_Push-Up_Reverse_Grip | Incline Push-Up Reverse Grip | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Incline_Push-Up_Wide | Incline Push-Up Wide | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Plyo_Push-up | Plyo Push-up | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Push_Up_to_Side_Plank | Push Up to Side Plank | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Push-Up_Wide | Push-Up Wide | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Push-Ups_-_Close_Triceps_Position | Push-Ups - Close Triceps Position | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| Push-Up_Wide | Wide Push-Up | chest | abdominals, shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| Push-Up_Close | Close Push-Up | triceps | chest, shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Push-Ups_With_Feet_Elevated | Push-Ups With Feet Elevated | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Pushups | Pushups | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Pushups_Close_and_Wide_Hand_Positions | Pushups (Close and Wide Hand Positions) | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Single-Arm_Push-Up | Single-Arm Push-Up | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1554 | Clap Push-UP | chest | shoulders, abs, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_188 | Decline Pushups | chest | shoulders | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1777 | Deficit Push ups | chest | triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_386 | Diamond push ups | chest | triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1217 | Finger Pushup | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_282 | Handstand Pushup | traps, triceps | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1218 | knee push-ups | shoulders, chest | serratus anterior, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| wger_1218 | Kneeling Push-Ups | shoulders, chest | serratus anterior, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_998 | No push-up burpees | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1293 | One armed push-ups | chest, triceps | shoulders, abs | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_454 | Pike Push Ups | chest | triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1284 | Pseudo Planche Push-up | shoulders | chest | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1551 | Push-Up | chest | shoulders, abs, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_985 | Push-up rotations | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1675 | Push-Ups | chest | shoulders, abs, serratus anterior, triceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1209 | Shoulder width three-point push-up | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1090 | Vpushup | chest, quads, abs, triceps | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_713 | Wall Pushup | shoulders, chest, triceps | glutes, abs, serratus anterior, traps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_907 | Handstand Push Up | shoulders, triceps | chest | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1080 | Hindu Pushups | shoulders, chest | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_313 | Incline Push up | chest | hamstrings | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_907 | Handstand Push-Up | shoulders, triceps | chest | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1080 | Hindu Push-ups | shoulders, chest | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Incline_Push-Up_Depth_Jump | Incline Push-Up Depth Jump | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1113 | Push-Ups \| Parallettes | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_583 | Side to Side Push Ups | shoulders, abdominals, chest, triceps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Suspended_Push-Up | Suspended Push-Up | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Decline_Push-Up | Decline Push-Up | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1112 | Push-Ups \| Decline | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1111 | Push-Ups \| Incline | chest | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Push-Ups_With_Feet_On_An_Exercise_Ball | Push-Ups With Feet On An Exercise Ball | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Push-Ups_With_Feet_On_Exercise_Ball | Push-Ups With Feet On Exercise Ball | chest | shoulders, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Shoulder Press (18)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Barbell_Shoulder_Press | Barbell Shoulder Press | shoulders | chest, triceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_566 | Shoulder Press, Barbell | shoulders | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1575 | Standing Dowel Shoulder press | - | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_20 | Arnold Shoulder Press | - | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Dumbbell_One-Arm_Shoulder_Press | Dumbbell One-Arm Shoulder Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Dumbbell_Shoulder_Press | Dumbbell Shoulder Press | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1337 | Shoulder Press (Dumbbell) | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_567 | Shoulder Press, Dumbbells | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Alternating_Cable_Shoulder_Press | Alternating Cable Shoulder Press | shoulders | triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Cable_Shoulder_Press | Cable Shoulder Press | shoulders | triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Seated_Cable_Shoulder_Press | Seated Cable Shoulder Press | shoulders | triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Leverage_Shoulder_Press | Leverage Shoulder Press | shoulders | triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Smith_Machine_Overhead_Shoulder_Press | Smith Machine Overhead Shoulder Press | shoulders | triceps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Shoulder_Press_-_With_Bands | Shoulder Press - With Bands | shoulders | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| wger_543 | Shoulder Press, on Machine | shoulders | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_569 | Shoulder Press, on Multi Press | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_193 | Diagonal Shoulder Press | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1716 | Incline Shoulder Press Up | shoulders, chest | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-
-### Spanish - Press (4)
-
-| ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
-|----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_1120 | Remo maquina agarre estrecho supino | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1757 | supino | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1778 | Supino inclinado | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1802 | Supinos | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ---
 
@@ -451,7 +326,6 @@
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Iron_Cross | Iron Cross | shoulders | chest, glutes, hamstrings, lower back, quadriceps, traps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Cross_Over_-_With_Bands | Cross Over - With Bands | chest | biceps, shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
 | Crucifix | Crucifix | shoulders | forearms | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Deltoid (3)
@@ -459,183 +333,103 @@
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Cable_Rope_Rear-Delt_Rows | Cable Rope Rear-Delt Rows | shoulders | biceps, middle back | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Seated_Front_Deltoid | Seated Front Deltoid | shoulders | chest | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1536 | Delt Stretch | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Front Raise (5)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_256 | Front Raises | shoulders | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1745 | Cable Front Raise with a small bar | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1731 | Front Raise (Cable) | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_254 | Front Raises with Plates | shoulders, traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_917 | Straight Bar Cable Front Raise | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_256 | Dumbbell Front Raises | shoulders | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1745 | Cable Front Raise | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_254 | Barbell Front Raises | shoulders, traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Lateral Raise (38)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_1580 | Perpendicular Unilateral Landmine Row | shoulders, traps | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1604 | Sliding Lateral Lunge | hamstrings, glutes, quads | calves, abdominals | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1754 | 45° lateral raises | - | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dumbbell_Lying_One-Arm_Rear_Lateral_Raise | Dumbbell Lying One-Arm Rear Lateral Raise | shoulders | middle back | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dumbbell_Lying_Rear_Lateral_Raise | Dumbbell Lying Rear Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1188 | Flexión lateral | - | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_348 | Lateral Raises | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_351 | Lateral-to-Front Raises | shoulders, traps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Lying_One-Arm_Lateral_Raise | Lying One-Arm Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| One-Arm_Incline_Lateral_Raise | One-Arm Incline Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| One-Arm_Side_Laterals | One-Arm Side Laterals | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_348 | Dumbbell Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Incline_Dumbbell_Lateral_Raise | Incline Dumbbell Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| One-Arm_Dumbbell_Lateral_Raise | One-Arm Dumbbell Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_918 | Seated Dumbbell Side Lateral | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Seated_Side_Lateral_Raise | Seated Side Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Side_Lateral_Raise | Side Lateral Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Side_Laterals_to_Front_Raise | Side Laterals to Front Raise | shoulders | traps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Bent_Over_Low-Pulley_Side_Lateral | Bent Over Low-Pulley Side Lateral | shoulders | lower back, middle back, traps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Cable_Seated_Lateral_Raise | Cable Seated Lateral Raise | shoulders | middle back, traps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| Seated_Cable_Lateral_Raise | Seated Cable Lateral Raise | shoulders | middle back, traps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Lateral_Bound | Lateral Bound | adductors | abductors, calves, glutes, hamstrings, quadriceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1325 | Lateral Push Off | calves | hamstrings | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1491 | Remada unilateral no cabo | lats | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Lateral_Raise_-_With_Bands | Lateral Raise - With Bands | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
 | wger_1807 | Behind the Back Cable Lateral Raise | shoulders | traps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1378 | Cable Lateral Raises (Single Arm) | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1378 | Cable Lateral Raises | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Lateral_Box_Jump | Lateral Box Jump | adductors | abductors, calves, glutes, hamstrings, quadriceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Lateral_Cone_Hops | Lateral Cone Hops | adductors | abductors, calves, glutes, hamstrings, quadriceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_349 | Lateral Rows on Cable, One Armed | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_1514 | Lateral Walk | glutes | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1744 | Machine Side Lateral Raises | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1753 | Side lateral raise - Back (Cable) | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1752 | Side lateral raise - Front (Cable) | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1730 | Side Lateral Raise (Cable) | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1744 | Machine Lateral Raises | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Single-Leg_Lateral_Hop | Single-Leg Lateral Hop | quadriceps | abductors, adductors, calves, hamstrings | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1795 | unilateral cross body cable pull down | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_82 | Bent-over Lateral Raises | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1707 | Elevación lateral polea | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1654 | Machine lateral wise | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Standing_Lateral_Stretch | Standing Lateral Stretch | abdominals | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1636 | Unilateral Cable row | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1636 | One-Arm Cable Row | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Raise (Other) (64)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Barbell_Incline_Shoulder_Raise | Barbell Incline Shoulder Raise | shoulders | chest | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Barbell_Seated_Calf_Raise | Barbell Seated Calf Raise | calves | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Rocking_Standing_Calf_Raise | Rocking Standing Calf Raise | calves | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Smith_Incline_Shoulder_Raise | Smith Incline Shoulder Raise | shoulders | chest | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Standing_Barbell_Calf_Raise | Standing Barbell Calf Raise | calves | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Front_Barbell_Raise_Over_Head | Standing Front Barbell Raise Over Head | shoulders | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Straight_Raises_on_Incline_Bench | Straight Raises on Incline Bench | shoulders | traps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Alternating_Deltoid_Raise | Alternating Deltoid Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Calf_Raise_On_A_Dumbbell | Calf Raise On A Dumbbell | calves | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dumbbell_Incline_Shoulder_Raise | Dumbbell Incline Shoulder Raise | shoulders | triceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dumbbell_Raise | Dumbbell Raise | shoulders | biceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dumbbell_Seated_One-Leg_Calf_Raise | Dumbbell Seated One-Leg Calf Raise | calves | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Front_Dumbbell_Raise | Front Dumbbell Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Front_Incline_Dumbbell_Raise | Front Incline Dumbbell Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Front_Two-Dumbbell_Raise | Front Two-Dumbbell Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1338 | Schoulder Raise (Dumbbell) | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | wger_1620 | Seated Dumbbell Calf Raise | calves | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1443 | Shoulder Raise Side and Front DB | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Single_Dumbbell_Raise | Single Dumbbell Raise | shoulders | forearms, traps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Standing_Dumbbell_Calf_Raise | Standing Dumbbell Calf Raise | calves | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Dumbbell_Straight-Arm_Front_Delt_Raise_Above_Head | Standing Dumbbell Straight-Arm Front Delt Raise Above Head | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Front_Cable_Raise | Front Cable Raise | shoulders | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Standing_Low-Pulley_Deltoid_Raise | Standing Low-Pulley Deltoid Raise | shoulders | forearms | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Glute_Ham_Raise | Glute Ham Raise | hamstrings | calves, glutes | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Seated_Calf_Raise | Seated Calf Raise | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Smith_Machine_Calf_Raise | Smith Machine Calf Raise | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Smith_Machine_Hip_Raise | Smith Machine Hip Raise | abdominals | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Smith_Machine_Reverse_Calf_Raises | Smith Machine Reverse Calf Raises | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Calf_Raises | Standing Calf Raises | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Machine_Standing_Calf_Raises | Machine Standing Calf Raises | calves | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Bent-Knee_Hip_Raise | Bent-Knee Hip Raise | abdominals | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Flat_Bench_Lying_Leg_Raise | Flat Bench Lying Leg Raise | abdominals | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Front_Leg_Raises | Front Leg Raises | hamstrings | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Hanging_Leg_Raise | Hanging Leg Raise | abdominals | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Natural_Glute_Ham_Raise | Natural Glute Ham Raise | hamstrings | calves, glutes, lower back | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Rear_Leg_Raises | Rear Leg Raises | quadriceps | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Side_Leg_Raises | Side Leg Raises | adductors | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Step-up_with_Knee_Raise | Step-up with Knee Raise | glutes | hamstrings, quadriceps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1606 | Arm Raises (T/Y/I) | shoulders, lats, serratus anterior, traps | abdominals | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1203 | Calf raises, left leg | calves | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1021 | Calf raises, right leg | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1243 | Double Leg Calf Raise | calves | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_283 | Hanging Leg Raises | abs | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_292 | Hip Raise, Lying | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_978 | Knee Raises | abs | abdominals | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_979 | Leg raises pull up bar | abs | abdominals, quads | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1313 | Lying Leg Raise | abs | abdominals | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_957 | Quadriped Arm and Leg Raise | shoulders, glutes, serratus anterior, traps | lats | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | wger_1200 | Tibialis raises | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1474 | W-Raise | abdominals, abs | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| Calf_Raises_-_With_Bands | Calf Raises - With Bands | calves | - | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| wger_1466 | Calf Raise using Hack Squat Machine | calves | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1365 | Calf Raise with machine (seated) | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_148 | Calf Raises on Hackenschmitt Machine | calves | calves | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_702 | Calf raises, one legged | calves | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1458 | Cross-Body Cable Y-Raise | shoulders, lats, traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1365 | Seated Calf Raise Machine | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Donkey_Calf_Raises | Donkey Calf Raises | calves | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Front_Plate_Raise | Front Plate Raise | shoulders | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Knee_Hip_Raise_On_Parallel_Bars | Knee/Hip Raise On Parallel Bars | abdominals | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_376 | Leg Raise | abdominals, abs | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_378 | Leg Raises, Standing | abs | serratus anterior | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_590 | Sitting Calf Raises | calves | calves | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Floor_Glute-Ham_Raise | Floor Glute-Ham Raise | hamstrings | calves, glutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_377 | Leg Raises, Lying | abs | serratus anterior | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Shoulder_Raise | Shoulder Raise | shoulders | lats | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Rear Delt (11)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Barbell_Rear_Delt_Row | Barbell Rear Delt Row | shoulders | biceps, lats, middle back | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Bent_Over_Dumbbell_Rear_Delt_Raise_With_Head_On_Bench | Bent Over Dumbbell Rear Delt Raise With Head On Bench | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1227 | Dumbbell rear delt row | shoulders, brachialis, traps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_1227 | Dumbbell Rear Delt Row | shoulders, brachialis, traps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Lying_Rear_Delt_Raise | Lying Rear Delt Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_829 | Rear Delt Raise | shoulders, traps | lats | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_487 | Rear Delt Raises | - | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Reverse_Flyes | Reverse Flyes | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Reverse_Flyes_With_External_Rotation | Reverse Flyes With External Rotation | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Seated_Bent-Over_Rear_Delt_Raise | Seated Bent-Over Rear Delt Raise | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1098 | Seated rear delt rise | lats | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1825 | Chest-Supported Rear Delt Raise | shoulders | traps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Reverse_Flyes | Reverse Flys | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ### Shrug (17)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Barbell_Shrug | Barbell Shrug | traps | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Barbell_Shrug_Behind_The_Back | Barbell Shrug Behind The Back | traps | forearms, middle back | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Barbell_Shrug_Behind_The_Back | Behind The Back Barbell Shrug | traps | forearms, middle back | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Clean_Shrug | Clean Shrug | traps | forearms, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_571 | Shrugs, Barbells | shoulders | - | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_571 | Barbell Power Shrug | traps | shoulders, forearms, biceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Snatch_Shrug | Snatch Shrug | traps | forearms, shoulders | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Dumbbell_Shrug | Dumbbell Shrug | traps | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_923 | LYING DUMBBELL ROW SS SEATED SHRUG | lats | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Middle_Back_Shrug | Middle Back Shrug | middle back | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_572 | Shrugs, Dumbbells | shoulders | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Cable_Shrugs | Cable Shrugs | traps | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Calf-Machine_Shoulder_Shrug | Calf-Machine Shoulder Shrug | traps | - | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Leverage_Shrug | Leverage Shrug | traps | forearms | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Smith_Machine_Behind_the_Back_Shrug | Smith Machine Behind the Back Shrug | traps | shoulders | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| wger_570 | Shoulder Shrug | traps | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1472 | Cable Shrug-In | traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_922 | SEATED CABLE MID TRAP SHRUG | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_575 | Shrugs on Multipress | shoulders | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Cable_Shrug | Cable Shrug | traps | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| Smith_Machine_Behind_the_Back_Shrug | Smith Machine Shrug | traps | shoulders | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| wger_575 | Standing Machine Shrug | traps, shoulders | neck | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| wger_575 | Seated Machine Shrug | traps, shoulders | neck | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+
 
 ### Upright Row (10)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Upright_Barbell_Row | Upright Barbell Row | shoulders | traps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Dumbbell_One-Arm_Upright_Row | Dumbbell One-Arm Upright Row | shoulders | biceps, traps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_1229 | Dumbbell upright-row | shoulders, biceps, serratus anterior | - | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Standing_Dumbbell_Upright_Row | Standing Dumbbell Upright Row | traps | biceps, shoulders | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_694 | Upright Row w/ Dumbbells | shoulders, traps | biceps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Upright_Cable_Row | Upright Cable Row | traps | shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Smith_Machine_One-Arm_Upright_Row | Smith Machine One-Arm Upright Row | shoulders | biceps, traps | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| Upright_Barbell_Row | Barbell Upright Row | shoulders | traps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Dumbbell_Upright_Row | Dumbbell Upright Row | shoulders | biceps, traps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Upright_Cable_Row | Cable Upright Row | traps | shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Smith_Machine_Upright_Row | Smith Machine Upright Row | traps | biceps, middle back, shoulders | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Upright_Row_-_With_Bands | Upright Row - With Bands | traps | shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| wger_693 | Upright Row, SZ-bar | shoulders, traps | biceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ---
 
@@ -643,100 +437,57 @@
 
 *163 exercises*
 
-### Back (4)
-
-| ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
-|----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Back_Flyes_-_With_Bands | Back Flyes - With Bands | shoulders | middle back, triceps | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| wger_1381 | Upper Back | shoulders, traps | biceps, lats | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Elbows_Back | Elbows Back | chest | shoulders | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Upper_Back-Leg_Grab | Upper Back-Leg Grab | hamstrings | lower back, middle back | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Back Extension (7)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
 | Reverse_Hyperextension | Reverse Hyperextension | hamstrings | calves, glutes | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Hyperextensions_With_No_Hyperextension_Bench | Hyperextensions With No Hyperextension Bench | lower back | glutes, hamstrings | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1143 | Back extensión | lats, serratus anterior | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wger_301 | Hyperextensions | traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Hyperextensions_Back_Extensions | Hyperextensions (Back Extensions) | lower back | glutes, hamstrings | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1348 | Lower Back Extensions | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| Weighted_Ball_Hyperextension | Weighted Ball Hyperextension | lower back | glutes, hamstrings, middle back | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Bent Over (2)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_83 | Bent Over Rowing | lats | shoulders, biceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| wger_525 | Bent Over Rowing Reverse | lats | shoulders, biceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_83 | Bent Over Row | lats | shoulders, biceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| wger_525 | Bent Over Row Reverse Grip | lats | shoulders, biceps | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ### Chin-Up (5)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Chin-Up | Chin-Up | lats | biceps, forearms, middle back | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_152 | Chin Up | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_154 | Chin-ups | lats | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1737 | Assisted chin-ups | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| Chin-Up | Chin-Ups | lats | biceps, forearms, middle back | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| wger_1737 | Assisted Chin-Ups | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | One_Arm_Chin-Up | One Arm Chin-Up | middle back | biceps, forearms, lats | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Face Pull (4)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_1639 | Dumbbell Bent Over Face Pull | shoulders, lats | traps | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Face_Pull | Face Pull | shoulders | middle back | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| wger_1732 | Face pulls with yellow/green band | lats | traps | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
-| wger_222 | Facepull | traps | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Hang (3)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_804 | Sloper hanging | - | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_182 | Deadhang | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| One_Handed_Hang | One Handed Hang | lats | biceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-
-### Italian (3)
-
-| ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
-|----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| wger_1294 | Arco femorale una gamba | glutes, lats | - | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1282 | Isometria trazioni impugnatura inversa | lats | biceps, traps | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
-| wger_1292 | Trazioni impugnatura inversa | biceps, lats | abs | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| wger_182 | Deadhang | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | Note - This is counted by a timer. Higher time=better.
+| One_Handed_Hang | One-Handed DeadHang | lats | biceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ### Lat Pulldown (27)
 
 | ID | Name | Primary | Secondary | BB | DB | M | KB | BW | CB | BD | Other |
 |----|------|---------|-----------|----|----|---|----|----|----|----|-------|
-| Close-Grip_Front_Lat_Pulldown | Close-Grip Front Lat Pulldown | lats | biceps, middle back, shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Full_Range-Of-Motion_Lat_Pulldown | Full Range-Of-Motion Lat Pulldown | lats | biceps, middle back, shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | One_Arm_Lat_Pulldown | One Arm Lat Pulldown | lats | biceps, middle back | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Rope_Straight-Arm_Pulldown | Rope Straight-Arm Pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Straight-Arm_Pulldown | Straight-Arm Pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| Underhand_Cable_Pulldowns | Underhand Cable Pulldowns | lats | biceps, middle back, shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| V-Bar_Pulldown | V-Bar Pulldown | lats | biceps, middle back, shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Wide-Grip_Lat_Pulldown | Wide-Grip Lat Pulldown | lats | biceps, middle back, shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | Wide-Grip_Pulldown_Behind_The_Neck | Wide-Grip Pulldown Behind The Neck | lats | biceps, middle back, shoulders | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
-| wger_1470 | 1-Arm Half-Kneeling Lat Pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1280 | Biceps Close Grip Pull Down | biceps | shoulders, lats | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1470 | 1-Arm Kneeling Lat Pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| wger_1280 | Biceps Close Grip Pull Down | biceps | shoulders, lats | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 | wger_158 | Close-grip Lat Pull Down | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1806 | Lat Pull Down | lats | shoulders, brachialis, serratus anterior, traps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1350 | Lat Pull Down (close grip) | - | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_354 | Lat Pull Down (Leaning Back) | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_355 | Lat Pull Down (Straight Back) | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1659 | Lat Pulldown - Cross Body Single Arm | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1697 | Lat Pulldown (Wide Grip) | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1510 | Neutral Grip Lat Pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1727 | Side Straight-Arm Pulldown (Cable) | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_628 | Straight-arm Pull Down (bar Attachment) | lats | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_629 | Straight-arm Pull Down (rope Attachment) | lats | triceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1726 | Straight-Arm Pulldown (Cable) | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_684 | Underhand Lat Pull Down | lats | biceps | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_920 | V-BAR PULL DOWNS | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_723 | Wide-grip Pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
-| wger_1635 | Modified pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
+| wger_1806 | Lat Pull Down | lats | shoulders, serratus anterior, traps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| wger_1510 | Neutral Grip Lat Pulldown | lats | - | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| wger_628 | Straight-arm Pull Down | lats | triceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| wger_684 | Underhand Lat Pull Down | lats | biceps | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
 
 ### Pull (Other) (22)
 

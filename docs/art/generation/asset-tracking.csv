@@ -1,0 +1,172 @@
+asset_id,category,name,priority,status,generated_date,file_path,notes
+# Exercise Icons - P0 Critical (273 total - sample entries, full list in exercise-prompts.csv)
+wger_73,exercise_icon,Bench Press,P0,needed,,,Core compound movement
+Barbell_Bench_Press_-_Medium_Grip,exercise_icon,Barbell Bench Press - Medium Grip,P0,needed,,,
+Barbell_Squat,exercise_icon,Barbell Squat,P0,needed,,,Core compound movement
+Barbell_Full_Squat,exercise_icon,Barbell Full Squat,P0,needed,,,
+Barbell_Deadlift,exercise_icon,Barbell Deadlift,P0,needed,,,Core compound movement
+wger_184,exercise_icon,Deadlifts,P0,needed,,,
+Barbell_Shoulder_Press,exercise_icon,Barbell Shoulder Press,P0,needed,,,
+Bent_Over_Barbell_Row,exercise_icon,Bent Over Barbell Row,P0,needed,,,
+Dumbbell_Bench_Press,exercise_icon,Dumbbell Bench Press,P0,needed,,,
+Incline_Dumbbell_Press,exercise_icon,Incline Dumbbell Press,P0,needed,,,
+Chin-Up,exercise_icon,Chin-Up,P0,needed,,,
+Leg_Press,exercise_icon,Leg Press,P0,needed,,,
+Dumbbell_Bicep_Curl,exercise_icon,Dumbbell Bicep Curl,P0,needed,,,
+Dumbbell_Flyes,exercise_icon,Dumbbell Flyes,P0,needed,,,
+Cable_Crossover,exercise_icon,Cable Crossover,P0,needed,,,
+Triceps_Pushdown,exercise_icon,Triceps Pushdown,P0,needed,,,
+Crunches,exercise_icon,Crunches,P0,needed,,,
+Plank,exercise_icon,Plank,P0,needed,,,
+wger_194,exercise_icon,Dips,P0,needed,,,
+Pushups,exercise_icon,Pushups,P0,needed,,,
+# PR Badges - P0
+pr-badge-weight,celebration,Weight PR Badge,P0,needed,,,Tintable SVG 48x48
+pr-badge-rep,celebration,Rep PR Badge,P0,needed,,,Tintable SVG 48x48
+pr-badge-e1rm,celebration,e1RM PR Badge,P0,needed,,,Tintable SVG 48x48
+# Avatar Base Bodies - P0
+body_athletic_male_stage1,avatar_body,Athletic Male Stage 1,P0,needed,,,512x512 PNG
+body_athletic_male_stage2,avatar_body,Athletic Male Stage 2,P0,needed,,,512x512 PNG
+body_athletic_male_stage3,avatar_body,Athletic Male Stage 3,P0,needed,,,512x512 PNG
+body_athletic_male_stage4,avatar_body,Athletic Male Stage 4,P0,needed,,,512x512 PNG
+body_athletic_male_stage5,avatar_body,Athletic Male Stage 5,P0,needed,,,512x512 PNG
+body_average_male_stage1,avatar_body,Average Male Stage 1,P0,needed,,,512x512 PNG
+body_average_male_stage2,avatar_body,Average Male Stage 2,P0,needed,,,512x512 PNG
+body_average_male_stage3,avatar_body,Average Male Stage 3,P0,needed,,,512x512 PNG
+body_average_male_stage4,avatar_body,Average Male Stage 4,P0,needed,,,512x512 PNG
+body_average_male_stage5,avatar_body,Average Male Stage 5,P0,needed,,,512x512 PNG
+body_athletic_female_stage1,avatar_body,Athletic Female Stage 1,P0,needed,,,512x512 PNG
+body_athletic_female_stage2,avatar_body,Athletic Female Stage 2,P0,needed,,,512x512 PNG
+body_athletic_female_stage3,avatar_body,Athletic Female Stage 3,P0,needed,,,512x512 PNG
+body_athletic_female_stage4,avatar_body,Athletic Female Stage 4,P0,needed,,,512x512 PNG
+body_athletic_female_stage5,avatar_body,Athletic Female Stage 5,P0,needed,,,512x512 PNG
+body_average_female_stage1,avatar_body,Average Female Stage 1,P0,needed,,,512x512 PNG
+body_average_female_stage2,avatar_body,Average Female Stage 2,P0,needed,,,512x512 PNG
+body_average_female_stage3,avatar_body,Average Female Stage 3,P0,needed,,,512x512 PNG
+body_average_female_stage4,avatar_body,Average Female Stage 4,P0,needed,,,512x512 PNG
+body_average_female_stage5,avatar_body,Average Female Stage 5,P0,needed,,,512x512 PNG
+# Avatar Skin Tones - P0
+skin_tone1,avatar_skin,Porcelain,P0,needed,,,512x512 PNG #FFE0BD
+skin_tone2,avatar_skin,Warm Ivory,P0,needed,,,512x512 PNG #F5D0A9
+skin_tone3,avatar_skin,Sand,P0,needed,,,512x512 PNG #D4A76A
+skin_tone4,avatar_skin,Warm Brown,P0,needed,,,512x512 PNG #A67B5B
+skin_tone5,avatar_skin,Deep Brown,P0,needed,,,512x512 PNG #6B4423
+skin_tone6,avatar_skin,Ebony,P0,needed,,,512x512 PNG #3D2314
+# Avatar Faces - P0
+face_neutral,avatar_face,Neutral Expression,P0,needed,,,512x512 PNG
+face_happy,avatar_face,Happy Expression,P0,needed,,,512x512 PNG
+face_nervous,avatar_face,Nervous Expression,P0,needed,,,512x512 PNG
+face_tired,avatar_face,Tired Expression,P0,needed,,,512x512 PNG
+face_determined,avatar_face,Determined Expression,P0,needed,,,512x512 PNG
+face_focused,avatar_face,Focused Expression,P0,needed,,,512x512 PNG
+face_confident,avatar_face,Confident Expression,P0,needed,,,512x512 PNG
+face_intense,avatar_face,Intense Expression,P0,needed,,,512x512 PNG
+# Avatar Hair - P0 (sample entries)
+hair_short_straight_black,avatar_hair,Short Straight Black,P0,needed,,,512x512 PNG
+hair_short_straight_brown,avatar_hair,Short Straight Brown,P0,needed,,,512x512 PNG
+hair_short_straight_blonde,avatar_hair,Short Straight Blonde,P0,needed,,,512x512 PNG
+hair_short_straight_red,avatar_hair,Short Straight Red,P0,needed,,,512x512 PNG
+hair_short_straight_gray,avatar_hair,Short Straight Gray,P0,needed,,,512x512 PNG
+hair_short_straight_accent,avatar_hair,Short Straight Accent,P0,needed,,,512x512 PNG
+hair_short_curly_black,avatar_hair,Short Curly Black,P0,needed,,,512x512 PNG
+hair_medium_wavy_black,avatar_hair,Medium Wavy Black,P0,needed,,,512x512 PNG
+hair_long_straight_black,avatar_hair,Long Straight Black,P0,needed,,,512x512 PNG
+hair_ponytail_black,avatar_hair,Ponytail Black,P0,needed,,,512x512 PNG
+hair_bun_black,avatar_hair,Bun Black,P0,needed,,,512x512 PNG
+hair_buzz_black,avatar_hair,Buzz Cut Black,P0,needed,,,512x512 PNG
+hair_fade_black,avatar_hair,Fade Black,P0,needed,,,512x512 PNG
+hair_braids_black,avatar_hair,Braids Black,P0,needed,,,512x512 PNG
+hair_afro_black,avatar_hair,Afro Black,P0,needed,,,512x512 PNG
+hair_undercut_black,avatar_hair,Undercut Black,P0,needed,,,512x512 PNG
+hair_bald,avatar_hair,Bald,P0,needed,,,512x512 PNG
+# Avatar Tops - P0 (sample entries)
+top_tanktop_black,avatar_top,Tank Top Black,P0,needed,,,512x512 PNG
+top_tanktop_white,avatar_top,Tank Top White,P0,needed,,,512x512 PNG
+top_tanktop_gray,avatar_top,Tank Top Gray,P0,needed,,,512x512 PNG
+top_tanktop_accent,avatar_top,Tank Top Accent,P0,needed,,,512x512 PNG
+top_tshirt_black,avatar_top,T-Shirt Black,P0,needed,,,512x512 PNG
+top_sportsbra_black,avatar_top,Sports Bra Black,P0,needed,,,512x512 PNG
+top_hoodie_black,avatar_top,Hoodie Black,P0,needed,,,512x512 PNG
+top_stringer_black,avatar_top,Stringer Black,P0,needed,,,512x512 PNG
+top_longsleeve_black,avatar_top,Long Sleeve Black,P0,needed,,,512x512 PNG
+top_compression_black,avatar_top,Compression Shirt Black,P0,needed,,,512x512 PNG
+# Avatar Bottoms - P0 (sample entries)
+bottom_shorts_black,avatar_bottom,Gym Shorts Black,P0,needed,,,512x512 PNG
+bottom_shorts_white,avatar_bottom,Gym Shorts White,P0,needed,,,512x512 PNG
+bottom_shorts_gray,avatar_bottom,Gym Shorts Gray,P0,needed,,,512x512 PNG
+bottom_shorts_accent,avatar_bottom,Gym Shorts Accent,P0,needed,,,512x512 PNG
+bottom_joggers_black,avatar_bottom,Joggers Black,P0,needed,,,512x512 PNG
+bottom_leggings_black,avatar_bottom,Leggings Black,P0,needed,,,512x512 PNG
+bottom_sweatpants_black,avatar_bottom,Sweatpants Black,P0,needed,,,512x512 PNG
+bottom_compression_black,avatar_bottom,Compression Shorts Black,P0,needed,,,512x512 PNG
+# Avatar Footwear - P0
+foot_sneakers_white,avatar_footwear,Sneakers White,P0,needed,,,512x512 PNG
+foot_sneakers_black,avatar_footwear,Sneakers Black,P0,needed,,,512x512 PNG
+foot_sneakers_accent,avatar_footwear,Sneakers Accent,P0,needed,,,512x512 PNG
+foot_trainers_white,avatar_footwear,Training Shoes White,P0,needed,,,512x512 PNG
+foot_trainers_black,avatar_footwear,Training Shoes Black,P0,needed,,,512x512 PNG
+foot_trainers_accent,avatar_footwear,Training Shoes Accent,P0,needed,,,512x512 PNG
+foot_lifting_white,avatar_footwear,Lifting Shoes White,P0,needed,,,512x512 PNG
+foot_lifting_black,avatar_footwear,Lifting Shoes Black,P0,needed,,,512x512 PNG
+foot_lifting_accent,avatar_footwear,Lifting Shoes Accent,P0,needed,,,512x512 PNG
+foot_barefoot,avatar_footwear,Barefoot,P0,needed,,,512x512 PNG
+# Rank Badge Borders - P1
+rank-badge-border-iron,ui_border,Iron Rank Border,P1,needed,,,64x64 SVG fixed color #71797E
+rank-badge-border-bronze,ui_border,Bronze Rank Border,P1,needed,,,64x64 SVG fixed color #CD7F32
+rank-badge-border-silver,ui_border,Silver Rank Border,P1,needed,,,64x64 SVG fixed color #C0C0C0
+rank-badge-border-gold,ui_border,Gold Rank Border,P1,needed,,,64x64 SVG fixed color #FFD700
+rank-badge-border-platinum,ui_border,Platinum Rank Border,P1,needed,,,64x64 SVG fixed color #E5E4E2
+rank-badge-border-diamond,ui_border,Diamond Rank Border,P1,needed,,,64x64 SVG fixed color #B9F2FF
+rank-badge-border-mythic,ui_border,Mythic Rank Border,P1,needed,,,64x64 SVG grayscale tintable
+# Achievement Frames - P1
+achievement-frame-standard,ui_border,Standard Achievement Frame,P1,needed,,,128x128 SVG tintable
+achievement-frame-gold,ui_border,Gold Achievement Frame,P1,needed,,,128x128 SVG fixed gold
+# Rank-up Badges - P1
+rank-up-badge-iron,celebration,Iron Rank Badge,P1,needed,,,SVG
+rank-up-badge-bronze,celebration,Bronze Rank Badge,P1,needed,,,SVG
+rank-up-badge-silver,celebration,Silver Rank Badge,P1,needed,,,SVG
+rank-up-badge-gold,celebration,Gold Rank Badge,P1,needed,,,SVG
+rank-up-badge-platinum,celebration,Platinum Rank Badge,P1,needed,,,SVG
+rank-up-badge-diamond,celebration,Diamond Rank Badge,P1,needed,,,SVG
+rank-up-badge-mythic,celebration,Mythic Rank Badge,P1,needed,,,SVG
+# Lottie Animations - P1
+level-up-burst,animation,Level Up Burst,P1,needed,,,Lottie JSON
+workout-complete-check,animation,Workout Complete Check,P1,needed,,,Lottie JSON
+confetti-burst,animation,Confetti Burst,P1,needed,,,Lottie JSON
+sparkle-animation,animation,Sparkle Animation,P2,needed,,,Lottie JSON
+# Avatar Accessories - P1
+acc_headband,avatar_accessory,Headband,P1,needed,,,512x512 PNG
+acc_wristbands,avatar_accessory,Wristbands,P1,needed,,,512x512 PNG
+acc_belt,avatar_accessory,Lifting Belt,P1,needed,,,512x512 PNG
+acc_cap,avatar_accessory,Baseball Cap,P1,needed,,,512x512 PNG
+acc_straps,avatar_accessory,Lifting Straps,P1,needed,,,512x512 PNG
+acc_kneesleeves,avatar_accessory,Knee Sleeves,P1,needed,,,512x512 PNG
+# Particles - P2
+particle-star-sprite,ui_effect,Star Particle,P2,needed,,,16x16 SVG
+particle-ember-sprite,ui_effect,Ember Particle,P2,needed,,,16x16 SVG fixed #FF6B35
+particle-spark-sprite,ui_effect,Spark Particle,P2,needed,,,16x16 SVG fixed #06B6D4
+# Other P2
+streak-badge,celebration,Streak Badge,P2,needed,,,48x48 SVG tintable
+card-bg-texture-noise,ui_background,Noise Texture,P2,needed,,,256x256 PNG tileable
+# Avatar Effects - P2
+fx_aura_iron,avatar_effect,Iron Aura,P2,needed,,,512x512 PNG
+fx_aura_bronze,avatar_effect,Bronze Aura,P2,needed,,,512x512 PNG
+fx_aura_silver,avatar_effect,Silver Aura,P2,needed,,,512x512 PNG
+fx_aura_gold,avatar_effect,Gold Aura,P2,needed,,,512x512 PNG
+fx_aura_platinum,avatar_effect,Platinum Aura,P2,needed,,,512x512 PNG
+fx_aura_diamond,avatar_effect,Diamond Aura,P2,needed,,,512x512 PNG
+fx_aura_mythic,avatar_effect,Mythic Aura,P2,needed,,,512x512 PNG
+fx_particles_theme,avatar_effect,Theme Particles,P2,needed,,,512x512 PNG
+# Theme Assets - P2
+theme-preview-toxic,theme,Toxic Energy Preview,P2,needed,,,Theme preview card
+theme-preview-iron,theme,Iron Forge Preview,P2,needed,,,Theme preview card
+theme-preview-neon,theme,Neon Glow Preview,P2,needed,,,Theme preview card
+theme-preview-infernal,theme,Infernal Cosmos Preview,P2,needed,,,Theme preview card
+# Rank Glow Reveals - P2
+rank-glow-reveal-iron,animation,Iron Rank Glow,P2,needed,,,Lottie JSON
+rank-glow-reveal-bronze,animation,Bronze Rank Glow,P2,needed,,,Lottie JSON
+rank-glow-reveal-silver,animation,Silver Rank Glow,P2,needed,,,Lottie JSON
+rank-glow-reveal-gold,animation,Gold Rank Glow,P2,needed,,,Lottie JSON
+rank-glow-reveal-platinum,animation,Platinum Rank Glow,P2,needed,,,Lottie JSON
+rank-glow-reveal-diamond,animation,Diamond Rank Glow,P2,needed,,,Lottie JSON
+rank-glow-reveal-mythic,animation,Mythic Rank Glow,P2,needed,,,Lottie JSON
