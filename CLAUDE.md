@@ -409,6 +409,13 @@ Standard IDs from `src/data/exercises.ts`:
 - Always use milliseconds (`Date.now()`)
 - Field naming: `*Ms` suffix (e.g., `startedAtMs`, `timestampMs`)
 
+### Deprecating Files
+- When marking user-facing files as deprecated (e.g., `.md` files in `docs/`), prefix the filename with `dep_`
+- Example: `ai-image-generation-tools.md` → `dep_ai-image-generation-tools.md`
+- This applies to both files and folders
+- The deprecated file should contain a notice pointing to its replacement
+- This makes deprecated content visually obvious and easy to filter/cleanup
+
 ## Deprecated Code
 
 `src/lib/_old/` contains deprecated modules excluded from TypeScript compilation. Do not import from this directory. These are kept for reference during migration.
