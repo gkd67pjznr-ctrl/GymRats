@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-**⚠️ PARALLEL WORK ASSUMPTION:** Assume there are multiple instances of Claude working in parallel in the same project/worktree. Additionally, assume there are multiple worktrees with many agents working in parallel across those worktrees. Coordinate accordingly — check for conflicts, use git before making changes, and communicate clearly about what you're working on.
+**PARALLEL WORK ASSUMPTION:** Assume there are multiple instances of Claude working in parallel in the same project/worktree. Additionally, assume there are multiple worktrees with many agents working in parallel across those worktrees. Coordinate accordingly - check for conflicts, use git before making changes, and communicate clearly about what you're working on.
 
 ---
 
@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working on code
 
 ---
 
-## ⚡ COMMANDS - GO HERE IMMEDIATELY
+## COMMANDS - GO HERE IMMEDIATELY
 
 **IF YOU RECEIVED ONE OF THESE COMMANDS, follow the steps below exactly:**
 
@@ -16,59 +16,59 @@ This file provides guidance to Claude Code (claude.ai/code) when working on code
 
 ### Primary Command
 
-**`Let's work`** → GO HERE FIRST, THEN SECOND, THEN START:
-1. **FIRST:** Read `docs/1-PROJECT-STATUS.md` → "Critical Issues" section (top priority items)
-2. **SECOND:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "Top 3 Priorities"
+**`Let's work`** -> GO HERE FIRST, THEN SECOND, THEN START:
+1. **FIRST:** Read `docs/1-PROJECT-STATUS.md` -> "Critical Issues" section (top priority items)
+2. **SECOND:** Read `docs/project-management/claude-workflow.md` -> "Top 3 Priorities"
 3. **START:** Present top 3 priorities to user, confirm task, begin work
 
 ---
 
 ### Session Management Commands
 
-**`What should we do?`** → GO HERE FIRST, THEN START:
-1. **FIRST:** Read `docs/1-PROJECT-STATUS.md` → "Top 3 Priorities" (bottom of file)
+**`What should we do?`** -> GO HERE FIRST, THEN START:
+1. **FIRST:** Read `docs/1-PROJECT-STATUS.md` -> "Top 3 Priorities" (bottom of file)
 2. **START:** Present priorities to user, confirm task, begin work
 
-**`Start [task]`** → GO HERE FIRST, THEN START:
+**`Start [task]`** -> GO HERE FIRST, THEN START:
 1. **FIRST:** Read `docs/features/[task-name]/feature-*.md` (the feature file for that task)
-2. **SECOND:** Read `docs/3-CODEBASE-GUIDE.md` → relevant sections for patterns
+2. **SECOND:** Read `docs/3-CODEBASE-GUIDE.md` -> relevant sections for patterns
 3. **START:** Begin implementation
 
 ---
 
 ### Data Sync Commands
 
-**`Exercise DB sync` or `sync exercises`** → GO HERE IN ORDER, THEN START:
+**`Exercise DB sync` or `sync exercises`** -> GO HERE IN ORDER, THEN START:
 1. **FIRST:** Read `scripts/syncExercises.js` (sync script implementation)
 2. **SECOND:** Read `src/lib/exerciseAPI/syncService.ts` (sync service)
 3. **THIRD:** Read `docs/features/exercises/` (exercise feature docs)
-4. **FOURTH:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "DIRECTIVE: EXERCISE DB SYNC"
+4. **FOURTH:** Read `docs/project-management/claude-workflow.md` -> "DIRECTIVE: EXERCISE DB SYNC"
 5. **START:** Begin sync process
 
-**`Maestro scan`** → GO HERE IN ORDER, THEN START:
-1. **FIRST:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "MAESTRO DUTIES"
-2. **SECOND:** Read `docs/Master Documentation/4-FEATURE-MASTER.md` (feature status overview)
+**`Maestro scan`** -> GO HERE IN ORDER, THEN START:
+1. **FIRST:** Read `docs/project-management/claude-workflow.md` -> "MAESTRO DUTIES"
+2. **SECOND:** Read `docs/master/feature-master.md` (feature status overview)
 3. **START:** Begin synchronization process
 
 ---
 
 ### Debugging Commands
 
-**`Fix errors` or `Fix expo errors`** → GO HERE IN ORDER, THEN START:
-1. **FIRST:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "DIRECTIVE: FIX EXPO ERROR LOGS"
+**`Fix errors` or `Fix expo errors`** -> GO HERE IN ORDER, THEN START:
+1. **FIRST:** Read `docs/project-management/claude-workflow.md` -> "DIRECTIVE: FIX EXPO ERROR LOGS"
 2. **SECOND:** Check `expo-errors/` folder for latest error log
 3. **START:** Fix errors, prompt user to restart, delete log file
 
 ---
 
-## ⚠️ IF NO COMMAND GIVEN - GO HERE IMMEDIATELY
+## IF NO COMMAND GIVEN - GO HERE IMMEDIATELY
 
 **Default startup protocol when no specific command was provided:**
 
 1. **FIRST:** Read `docs/README.md` (navigation hub - 30 seconds max)
-2. **SECOND:** Read `docs/1-PROJECT-STATUS.md` → "Critical Issues" (30 seconds max)
-3. **THIRD:** Read `docs/3-CODEBASE-GUIDE.md` → "Directory Structure" (2 minutes max)
-4. **FOURTH:** Read `docs/Project Management/CLAUDE_WORKFLOW.md` → "Top 3 Priorities" (30 seconds max)
+2. **SECOND:** Read `docs/1-PROJECT-STATUS.md` -> "Critical Issues" (30 seconds max)
+3. **THIRD:** Read `docs/3-CODEBASE-GUIDE.md` -> "Directory Structure" (2 minutes max)
+4. **FOURTH:** Read `docs/project-management/claude-workflow.md` -> "Top 3 Priorities" (30 seconds max)
 5. **THEN:** Assess priorities and present recommendations to user
 
 **STOP:** Do NOT read all files in every category. Read ONLY the sections specified above. Do not read all feature files. Do not read old/consolidated docs.
@@ -79,14 +79,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working on code
 
 | Command | Go Here First | Then Read | Then Start |
 |---------|--------------|-----------|-----------|
-| `Let's work` | 1-PROJECT-STATUS.md → Critical Issues | CLAUDE_WORKFLOW.md → Top 3 | Assess & present |
-| `What should we do?` | 1-PROJECT-STATUS.md → Top 3 Priorities | - | Assess & present |
+| `Let's work` | 1-PROJECT-STATUS.md -> Critical Issues | claude-workflow.md -> Top 3 | Assess & present |
+| `What should we do?` | 1-PROJECT-STATUS.md -> Top 3 Priorities | - | Assess & present |
 | `Start [task]` | features/[task]/feature-*.md | 3-CODEBASE-GUIDE.md | Begin |
 | `Exercise DB sync` | scripts/syncExercises.js | syncService.ts, feature docs | Begin sync |
-| `Maestro scan` | CLAUDE_WORKFLOW.md → Maestro Duties | FEATURE-MASTER.md | Begin sync |
-| `Fix errors` | CLAUDE_WORKFLOW.md → Fix Expo directive | expo-errors/ | Fix & restart |
+| `Maestro scan` | claude-workflow.md -> Maestro Duties | feature-master.md | Begin sync |
+| `Fix errors` | claude-workflow.md -> Fix Expo directive | expo-errors/ | Fix & restart |
 
-**See `docs/Project Management/admin-workflow-commands.md` for complete command reference.**
+**See `docs/project-management/admin-workflow-commands.md` for complete command reference.**
 
 ---
 
@@ -94,10 +94,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working on code
 
 ## Work Session Protocol
 
-For full workflow details, see `docs/Project Management/CLAUDE_WORKFLOW.md`:
+For full workflow details, see `docs/project-management/claude-workflow.md`:
 
 1. **Session Startup** - Run status check, assess priorities, confirm task with user
-2. **The Work Loop** - Build → Test → Fix → Test → Document → Score
+2. **The Work Loop** - Build -> Test -> Fix -> Test -> Document -> Score
 3. **Completion Scoring** - Every task scored 0-100% against defined metrics
 4. **Quality Gates** - Tests must pass, score >= 70% for acceptable
 
@@ -130,7 +130,7 @@ For full workflow details, see `docs/Project Management/CLAUDE_WORKFLOW.md`:
 
 GymRats is a React Native workout tracking app built with Expo. Key features:
 - Live workout logging with real-time PR detection
-- 20-rank scoring system per exercise (Iron → Mythic)
+- 20-rank scoring system per exercise (Iron -> Mythic)
 - Social feed with posts, reactions, and friend filtering
 - Routine builder and pre-made workout plans
 - Workout history with calendar view
@@ -279,7 +279,7 @@ Priority: Weight > Rep > e1RM. Returns cue with intensity level (low/high).
 
 ### AI Gym Buddy System (`src/lib/buddyEngine.ts`)
 
-The app's personality — reactive commentary that makes it feel alive. Like a sports announcer, not a chatbot.
+The app's personality - reactive commentary that makes it feel alive. Like a sports announcer, not a chatbot.
 
 **Core Components:**
 - **Buddy Engine** (`src/lib/buddyEngine.ts`): Core logic for evaluating triggers and selecting messages
@@ -299,7 +299,7 @@ The app's personality — reactive commentary that makes it feel alive. Like a s
 
 ### e1RM Calculation (`src/lib/e1rm.ts`)
 
-Uses Epley formula: `e1RM = weight × (1 + reps/30)`
+Uses Epley formula: `e1RM = weight * (1 + reps/30)`
 
 ### Current Session Store (`src/lib/stores/currentSessionStore.ts`)
 
@@ -346,10 +346,10 @@ const ds = makeDesignSystem("dark", "toxic");
 
 1. **Start**: Creates or resumes `CurrentSession`
 2. **Exercise selection**: User picks exercise from blocks or picker
-3. **Set logging**: Weight + reps → creates `LoggedSet`
-4. **PR detection**: `detectCueForWorkingSet()` → shows toast if PR
+3. **Set logging**: Weight + reps -> creates `LoggedSet`
+4. **PR detection**: `detectCueForWorkingSet()` -> shows toast if PR
 5. **Persistence**: Each update saves to AsyncStorage
-6. **Finish**: Converts `LoggedSet[]` → `WorkoutSet[]`, creates `WorkoutSession`
+6. **Finish**: Converts `LoggedSet[]` -> `WorkoutSet[]`, creates `WorkoutSession`
 
 Key components:
 - `ExerciseBlocksCard`: Shows workout structure
