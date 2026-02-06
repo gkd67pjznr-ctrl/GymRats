@@ -3,7 +3,7 @@
 // For regular workouts, the drawer is now the primary interface.
 // This screen is kept for backwards compatibility and special modes (tutorial, live-together).
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View, Text, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -195,7 +195,7 @@ export default function LiveWorkout() {
   const [currentRestSeconds, setCurrentRestSeconds] = useState(DEFAULT_REST_SECONDS);
 
 
-  const onRestTimerDone = () => {
+  const onRestTimerDone = useCallback(() => {
     // Record rest duration in buddy store
     if (restStartTime) {
       const durationMs = Date.now() - restStartTime;
@@ -204,7 +204,7 @@ export default function LiveWorkout() {
     }
     // Call original feedback function
     onRestTimerDoneFeedback();
-  };
+  }, [restStartTime]);
 
 
   // PR celebration state
@@ -441,7 +441,7 @@ export default function LiveWorkout() {
     }
   }, [liveWorkoutTogether]);
 
-  const handleAddReaction = (type: Reaction['type']) => {
+  const handleAddReaction = useCallback((type: Reaction['type']) => {
     if (!user) return;
 
     const newReaction: Reaction = {
@@ -452,18 +452,15 @@ export default function LiveWorkout() {
       timestamp: Date.now()
     };
 
-    setReactions([...reactions, newReaction]);
+    setReactions(prev => [...prev, newReaction]);
 
     // Show animation for the reaction
-    setActiveReactions([...
-      activeReactions,
-      { reaction: getReactionEmoji(type), userName: user.displayName || "You" }
-    ]);
-  };
+    setActiveReactions(prev => [...prev, { reaction: getReactionEmoji(type), userName: user.displayName || "You" }]);
+  }, [user]);
 
-  const handleReactionAnimationComplete = (index: number) => {
-    setActiveReactions(activeReactions.filter((_, i) => i !== index));
-  };
+  const handleReactionAnimationComplete = useCallback((index: number) => {
+    setActiveReactions(prev => prev.filter((_, i) => i !== index));
+  }, []);
 
   // Persist UI state (selected exercise, exercise blocks)
   useEffect(() => {
@@ -491,26 +488,26 @@ export default function LiveWorkout() {
   }, [pickerState.selectedExerciseId, syncQuickAddToExercise]);
 
   // Add set row to the workout (no cue/rest timer - those fire on checkmark)
-  function addSetInternal(exerciseId: string, source: "quick" | "block") {
+  const addSetInternal = useCallback((exerciseId: string, source: "quick" | "block") => {
     session.addSet(exerciseId);
 
     if (source === "quick") {
       pickerState.setSelectedExerciseId(exerciseId);
     }
-  }
+  }, [session, pickerState]);
 
   // Handle checkmark press: trigger cue/PR detection + rest timer
-  function handleToggleDone(setId: string) {
+  const handleToggleDone = useCallback((setId: string) => {
     const wasDone = session.isDone(setId);
     session.toggleDone(setId);
 
     // Only trigger cue + rest timer when marking as done (not when unchecking)
     if (!wasDone) {
       const set = session.sets.find(s => s.id === setId);
-      if (set) {
-        const weightLb = session.kgToLb(set.weightKg);
-        orchestrator.addSetForExercise(set.exerciseId, weightLb, set.reps);
-      }
+      if (!set) return; // Guard against undefined set
+
+      const weightLb = session.kgToLb(set.weightKg);
+      orchestrator.addSetForExercise(set.exerciseId, weightLb, set.reps);
 
       // Request notification permission on first rest timer use
       if (!notificationPermissionRequestedRef.current) {
@@ -530,26 +527,29 @@ export default function LiveWorkout() {
       setRestStartTime(Date.now());
       setRestVisible(true);
     }
-  }
+  }, [session, orchestrator]);
 
-  const addSet = () => addSetInternal(pickerState.selectedExerciseId, "quick");
-  const addSetForExercise = (exerciseId: string) => addSetInternal(exerciseId, "block");
+  const addSet = useCallback(() => addSetInternal(pickerState.selectedExerciseId, "quick"), [addSetInternal, pickerState.selectedExerciseId]);
+  const addSetForExercise = useCallback((exerciseId: string) => addSetInternal(exerciseId, "block"), [addSetInternal]);
 
-  const handleSaveAsRoutine = () => {
+  const handleSaveAsRoutine = useCallback(() => {
     orchestrator.saveAsRoutine(pickerState.exerciseBlocks, session.sets);
-  };
+  }, [orchestrator, pickerState.exerciseBlocks, session.sets]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     initializedRef.current = false;
     orchestrator.reset(pickerState.plannedExerciseIds);
     setRestVisible(false);
     setFocusMode(false);
-  };
+  }, [orchestrator, pickerState.plannedExerciseIds]);
 
-  const allowedExerciseIds = pickerState.planMode ? pickerState.plannedExerciseIds : undefined;
+  const allowedExerciseIds = useMemo(
+    () => pickerState.planMode ? pickerState.plannedExerciseIds : undefined,
+    [pickerState.planMode, pickerState.plannedExerciseIds]
+  );
 
   // Wrapper to handle exercise selection with prefilled set
-  const handleExerciseSelectWithPrefill = (exerciseId: string) => {
+  const handleExerciseSelectWithPrefill = useCallback((exerciseId: string) => {
     // Check if this is adding a new exercise (not just changing selected)
     const isAddingNew = pickerState.pickerMode === "addBlock" &&
       !pickerState.exerciseBlocks.includes(exerciseId);
@@ -584,22 +584,11 @@ export default function LiveWorkout() {
       // Just changing selected exercise, use original handler
       pickerState.handleExerciseSelect(exerciseId);
     }
-  };
-
-  if (pickerState.pickerMode) {
-    return (
-      <ExercisePicker
-        visible
-        allowedExerciseIds={allowedExerciseIds}
-        selectedExerciseId={pickerState.selectedExerciseId}
-        onSelect={handleExerciseSelectWithPrefill}
-        onBack={pickerState.closePicker}
-      />
-    );
-  }
+  }, [pickerState]);
 
   // Helper to get previous set for an exercise at a given index
   // Uses workout history if available
+  // NOTE: Moved before early return to fix React Hook rules violation
   const getPreviousSet = useMemo(() => {
     return (exerciseId: string, setIndex: number): { weightKg: number; reps: number } | null => {
       // First check current session's previous sets for this exercise
@@ -617,14 +606,28 @@ export default function LiveWorkout() {
       }
       return null;
     };
-  }, [session.sets, session.getLastSetForExercise]);
+  }, [session, session.sets, session.getLastSetForExercise]);
 
   // Filter exercises to show based on focus mode
+  // NOTE: Moved before early return to fix React Hook rules violation
   const visibleExerciseIds = useMemo(() => {
     if (!focusMode) return pickerState.exerciseBlocks;
     if (!pickerState.selectedExerciseId) return pickerState.exerciseBlocks;
     return pickerState.exerciseBlocks.filter((id) => id === pickerState.selectedExerciseId);
   }, [pickerState.exerciseBlocks, focusMode, pickerState.selectedExerciseId]);
+
+  // Early return for picker mode - must come AFTER all hook calls
+  if (pickerState.pickerMode) {
+    return (
+      <ExercisePicker
+        visible
+        allowedExerciseIds={allowedExerciseIds}
+        selectedExerciseId={pickerState.selectedExerciseId}
+        onSelect={handleExerciseSelectWithPrefill}
+        onBack={pickerState.closePicker}
+      />
+    );
+  }
 
   return (
     <KeyboardAvoidingView

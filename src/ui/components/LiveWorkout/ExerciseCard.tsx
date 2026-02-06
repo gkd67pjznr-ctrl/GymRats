@@ -1,7 +1,7 @@
 // src/ui/components/LiveWorkout/ExerciseCard.tsx
 // Hevy/Liftoff-style exercise card with clean tabular set layout
 
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -33,7 +33,7 @@ function getExerciseName(exerciseId: string): string {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
 }
 
-export function ExerciseCard({
+export const ExerciseCard = memo(function ExerciseCard({
   exerciseId,
   sets,
   targetSets,
@@ -52,25 +52,25 @@ export function ExerciseCard({
   const [isNoteExpanded, setIsNoteExpanded] = useState(false);
   const hasNote = useHasExerciseNote(exerciseId);
 
-  const exerciseName = getExerciseName(exerciseId);
-  const completedSets = sets.filter((s) => isDone(s.id)).length;
+  const exerciseName = useMemo(() => getExerciseName(exerciseId), [exerciseId]);
+  const completedSets = useMemo(() => sets.filter((s) => isDone(s.id)).length, [sets, isDone]);
   const totalSets = targetSets ?? sets.length;
 
-  const triggerHaptic = () => {
+  const triggerHaptic = useCallback(() => {
     if (Platform.OS === "ios") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-  };
+  }, []);
 
-  const handleAddSet = () => {
+  const handleAddSet = useCallback(() => {
     triggerHaptic();
     onAddSet();
-  };
+  }, [triggerHaptic, onAddSet]);
 
-  const handleToggleExpand = () => {
+  const handleToggleExpand = useCallback(() => {
     triggerHaptic();
-    setIsExpanded(!isExpanded);
-  };
+    setIsExpanded(prev => !prev);
+  }, [triggerHaptic]);
 
   return (
     <View style={[styles.card, { backgroundColor: c.card, borderColor: c.border }]}>
@@ -210,7 +210,7 @@ export function ExerciseCard({
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {

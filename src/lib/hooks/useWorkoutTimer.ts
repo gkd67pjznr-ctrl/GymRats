@@ -78,14 +78,30 @@ export function useWorkoutTimer(options: UseWorkoutTimerOptions = {}): WorkoutTi
     totalEstimatedSets,
     totalEstimatedSeconds
   );
-  
+
+  // Define callbacks before effects that use them
+  const start = useCallback(() => {
+    startTimeRef.current = Date.now() - (elapsedSeconds * 1000);
+    setIsRunning(true);
+  }, [elapsedSeconds]);
+
+  const pause = useCallback(() => {
+    setIsRunning(false);
+  }, []);
+
+  const reset = useCallback(() => {
+    setIsRunning(false);
+    setElapsedSeconds(0);
+    startTimeRef.current = Date.now();
+  }, []);
+
   // Auto-start if startedAtMs provided
   useEffect(() => {
     if (startedAtMs && !isRunning) {
       start();
     }
-  }, [startedAtMs]);
-  
+  }, [startedAtMs, isRunning, start]);
+
   // Timer tick
   useEffect(() => {
     if (isRunning) {
@@ -100,28 +116,13 @@ export function useWorkoutTimer(options: UseWorkoutTimerOptions = {}): WorkoutTi
         intervalRef.current = null;
       }
     }
-    
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
   }, [isRunning]);
-  
-  const start = useCallback(() => {
-    startTimeRef.current = Date.now() - (elapsedSeconds * 1000);
-    setIsRunning(true);
-  }, [elapsedSeconds]);
-  
-  const pause = useCallback(() => {
-    setIsRunning(false);
-  }, []);
-  
-  const reset = useCallback(() => {
-    setIsRunning(false);
-    setElapsedSeconds(0);
-    startTimeRef.current = Date.now();
-  }, []);
   
   // Format displays
   const elapsedMins = Math.floor(elapsedSeconds / 60);

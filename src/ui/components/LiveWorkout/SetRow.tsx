@@ -2,7 +2,7 @@
 // Clean table row for set data - Hevy/Liftoff style
 // SET | PREVIOUS | LBS | REPS | [check]
 
-import { useRef } from "react";
+import { memo, useCallback, useMemo, useRef } from "react";
 import {
   View,
   Text,
@@ -35,7 +35,7 @@ export interface SetRowProps {
   prPrediction?: PRPrediction | null;
 }
 
-export function SetRow({
+export const SetRow = memo(function SetRow({
   set,
   setNumber,
   previousSet,
@@ -50,13 +50,16 @@ export function SetRow({
   const c = useThemeColors();
   const swipeableRef = useRef<Swipeable>(null);
 
-  const weightLb = kgToLb(set.weightKg);
-  const prevWeightLb = previousSet ? kgToLb(previousSet.weightKg) : null;
+  const weightLb = useMemo(() => kgToLb(set.weightKg), [kgToLb, set.weightKg]);
+  const prevWeightLb = useMemo(() => previousSet ? kgToLb(previousSet.weightKg) : null, [previousSet, kgToLb]);
   const prevReps = previousSet?.reps ?? null;
 
   // PR prediction styling
-  const predictionIntensity = prPrediction ? getPredictionIntensity(prPrediction) : "none";
-  const getPRBorderColor = () => {
+  const predictionIntensity = useMemo(
+    () => prPrediction ? getPredictionIntensity(prPrediction) : "none",
+    [prPrediction]
+  );
+  const prBorderColor = useMemo(() => {
     if (isDone) return "transparent";
     switch (predictionIntensity) {
       case "pr": return "#FFD700";
@@ -64,27 +67,26 @@ export function SetRow({
       case "close": return c.primary;
       default: return "transparent";
     }
-  };
-  const prBorderColor = getPRBorderColor();
+  }, [isDone, predictionIntensity, c.primary]);
 
-  const triggerHaptic = () => {
+  const triggerHaptic = useCallback(() => {
     if (Platform.OS === "ios") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-  };
+  }, []);
 
-  const handleToggleDone = () => {
+  const handleToggleDone = useCallback(() => {
     triggerHaptic();
     onToggleDone();
-  };
+  }, [triggerHaptic, onToggleDone]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (Platform.OS === "ios") {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     }
     swipeableRef.current?.close();
     onDelete();
-  };
+  }, [onDelete]);
 
   const renderRightActions = (
     _progress: Animated.AnimatedInterpolation<number>,
@@ -243,7 +245,7 @@ export function SetRow({
       </View>
     </Swipeable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   row: {
