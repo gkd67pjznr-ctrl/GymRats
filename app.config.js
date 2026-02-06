@@ -51,6 +51,7 @@ module.exports = {
         },
       ],
       'expo-font',
+      ['expo-live-activity', { enablePushNotifications: false }],
     ],
     experiments: {
       typedRoutes: true,

@@ -23,12 +23,92 @@ import { ShareableWorkoutCard } from './ShareableWorkoutCard';
 import { shareWorkoutAsImage } from '@/src/lib/sharing/workoutCardGenerator';
 import { calculateBestTierForSession } from '@/src/lib/workoutPostGenerator';
 import { useSettingsStore } from '@/src/lib/stores/settingsStore';
+import { scoreGymRank, type Tier } from '@/src/lib/GrScoring';
+import { EXERCISES_V1 } from '@/src/data/exercises';
+import { kgToLb } from '@/src/lib/units';
 
 interface ShareWorkoutModalProps {
   visible: boolean;
   onClose: () => void;
   session: WorkoutSession | null;
   onShared?: (postId: string) => void;
+}
+
+// Tier colors for visual feedback
+const TIER_COLORS: Record<Tier, string> = {
+  Iron: '#6B7280',      // gray-500
+  Bronze: '#D97706',    // amber-600
+  Silver: '#9CA3AF',    // gray-400
+  Gold: '#F59E0B',      // amber-500
+  Platinum: '#06B6D4',  // cyan-500
+  Diamond: '#8B5CF6',   // violet-500
+  Mythic: '#EC4899',    // pink-500
+};
+
+// Calculate per-exercise breakdown
+interface ExerciseBreakdown {
+  exerciseId: string;
+  exerciseName: string;
+  sets: number;
+  bestWeightKg: number;
+  bestReps: number;
+  e1rmKg: number;
+  tier: Tier;
+  score: number;
+}
+
+function calculateExerciseBreakdowns(session: WorkoutSession, bodyweightKg?: number): ExerciseBreakdown[] {
+  const exerciseMap = new Map<string, typeof session.sets>();
+
+  for (const set of session.sets) {
+    if (!exerciseMap.has(set.exerciseId)) {
+      exerciseMap.set(set.exerciseId, []);
+    }
+    exerciseMap.get(set.exerciseId)!.push(set);
+  }
+
+  const breakdowns: ExerciseBreakdown[] = [];
+
+  for (const [exerciseId, sets] of exerciseMap.entries()) {
+    // Find best set by e1RM
+    let bestSet = sets[0];
+    let bestE1RM = 0;
+
+    for (const set of sets) {
+      const e1rm = set.weightKg * (1 + set.reps / 30);
+      if (e1rm > bestE1RM) {
+        bestE1RM = e1rm;
+        bestSet = set;
+      }
+    }
+
+    // Score the best set
+    const scoring = scoreGymRank({
+      exerciseId,
+      weight: bestSet.weightKg,
+      reps: bestSet.reps,
+      unit: 'kg',
+      bodyweightKg,
+    });
+
+    const exercise = EXERCISES_V1.find(e => e.id === exerciseId);
+
+    breakdowns.push({
+      exerciseId,
+      exerciseName: exercise?.name ?? exerciseId,
+      sets: sets.length,
+      bestWeightKg: bestSet.weightKg,
+      bestReps: bestSet.reps,
+      e1rmKg: bestE1RM,
+      tier: scoring.tier,
+      score: scoring.total,
+    });
+  }
+
+  // Sort by score descending
+  breakdowns.sort((a, b) => b.score - a.score);
+
+  return breakdowns;
 }
 
 type ShareTab = 'feed' | 'image';
@@ -140,12 +220,21 @@ export function ShareWorkoutModal({
 
   if (!session) return null;
 
+  // Get user bodyweight for scoring
+  const bodyweight = useSettingsStore.getState().bodyweight;
+  const unitSystem = useSettingsStore.getState().unitSystem;
+
   // Format workout summary
   const exerciseCount = new Set(session.sets.map((s) => s.exerciseId)).size;
   const setCount = session.sets.length;
   const durationMin = Math.round((session.endedAtMs - session.startedAtMs) / 60000);
-  const bestTier = calculateBestTierForSession(session);
-  const totalVolume = session.sets.reduce((sum, s) => sum + s.weightKg * s.reps, 0);
+  const bestTier = calculateBestTierForSession(session, bodyweight);
+  const totalVolumeKg = session.sets.reduce((sum, s) => sum + s.weightKg * s.reps, 0);
+  const totalVolume = unitSystem === 'lb' ? kgToLb(totalVolumeKg) : totalVolumeKg;
+  const volumeUnit = unitSystem === 'lb' ? 'lb' : 'kg';
+
+  // Calculate per-exercise breakdowns with tiers
+  const exerciseBreakdowns = calculateExerciseBreakdowns(session, bodyweight);
 
   // Milestone data
   const totalPRs = session.prCount ?? 0;
@@ -200,7 +289,7 @@ export function ShareWorkoutModal({
           session,
           userName: user?.displayName ?? undefined,
           bestTier: bestTier ?? 'Iron',
-          totalVolume,
+          totalVolume: totalVolumeKg,
         },
         cardRef
       );
@@ -272,16 +361,29 @@ export function ShareWorkoutModal({
           >
             {activeTab === 'feed' ? (
               <>
-                {/* Workout Summary */}
+                {/* Workout Summary with Rank */}
                 <View
                   style={[
                     styles.summaryCard,
-                    { backgroundColor: c.bg, borderColor: hasMilestones ? ds.tone.accent : c.border },
+                    { backgroundColor: c.bg, borderColor: bestTier ? TIER_COLORS[bestTier] : c.border },
                   ]}
                 >
-                  <Text style={[styles.summaryTitle, { color: c.text }]}>
-                    {session.routineName || `${exerciseCount} Exercise Workout`}
-                  </Text>
+                  {/* Header with Rank Badge */}
+                  <View style={styles.summaryHeader}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.summaryTitle, { color: c.text }]}>
+                        {session.routineName || `${exerciseCount} Exercise Workout`}
+                      </Text>
+                      <Text style={[styles.summarySubtitle, { color: c.muted }]}>
+                        {durationMin} min • {Math.round(totalVolume).toLocaleString()} {volumeUnit} volume
+                      </Text>
+                    </View>
+                    {bestTier && (
+                      <View style={[styles.tierBadge, { backgroundColor: TIER_COLORS[bestTier] }]}>
+                        <Text style={styles.tierBadgeText}>{bestTier}</Text>
+                      </View>
+                    )}
+                  </View>
 
                   {/* Milestone Badges */}
                   {hasMilestones && (
@@ -310,6 +412,33 @@ export function ShareWorkoutModal({
                     </View>
                   )}
 
+                  {/* Per-Exercise Breakdown */}
+                  <View style={styles.exerciseBreakdown}>
+                    {exerciseBreakdowns.slice(0, 4).map((ex) => (
+                      <View key={ex.exerciseId} style={styles.exerciseRow}>
+                        <View style={styles.exerciseInfo}>
+                          <Text style={[styles.exerciseName, { color: c.text }]} numberOfLines={1}>
+                            {ex.exerciseName}
+                          </Text>
+                          <Text style={[styles.exerciseStats, { color: c.muted }]}>
+                            {ex.sets} sets • Best: {unitSystem === 'lb' ? Math.round(kgToLb(ex.bestWeightKg)) : Math.round(ex.bestWeightKg)} {volumeUnit} × {ex.bestReps}
+                          </Text>
+                        </View>
+                        <View style={[styles.exerciseTierBadge, { backgroundColor: alpha(TIER_COLORS[ex.tier], 0.2) }]}>
+                          <Text style={[styles.exerciseTierText, { color: TIER_COLORS[ex.tier] }]}>
+                            {ex.tier}
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
+                    {exerciseBreakdowns.length > 4 && (
+                      <Text style={[styles.moreExercises, { color: c.muted }]}>
+                        +{exerciseBreakdowns.length - 4} more exercises
+                      </Text>
+                    )}
+                  </View>
+
+                  {/* Stats Row */}
                   <View style={styles.summaryStats}>
                     <View style={styles.stat}>
                       <Text style={[styles.statValue, { color: ds.tone.accent }]}>
@@ -329,10 +458,10 @@ export function ShareWorkoutModal({
                     </View>
                     <View style={styles.stat}>
                       <Text style={[styles.statValue, { color: ds.tone.accent }]}>
-                        {durationMin}m
+                        {totalPRs}
                       </Text>
                       <Text style={[styles.statLabel, { color: c.muted }]}>
-                        Duration
+                        PRs
                       </Text>
                     </View>
                   </View>
@@ -453,7 +582,7 @@ export function ShareWorkoutModal({
                       session={session}
                       userName={user?.displayName ?? undefined}
                       bestTier={bestTier ?? 'Iron'}
-                      totalVolume={totalVolume}
+                      totalVolume={totalVolumeKg}
                     />
                   </View>
                   <Text style={[styles.previewHint, { color: c.muted }]}>
@@ -577,12 +706,68 @@ const styles = StyleSheet.create({
   summaryCard: {
     borderRadius: 16,
     padding: 16,
-    borderWidth: 1,
+    borderWidth: 2,
+    gap: 12,
+  },
+  summaryHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: 12,
   },
   summaryTitle: {
     fontSize: 18,
     fontWeight: '800',
+  },
+  summarySubtitle: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+  tierBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  tierBadgeText: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#fff',
+  },
+  exerciseBreakdown: {
+    gap: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  exerciseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  exerciseInfo: {
+    flex: 1,
+    marginRight: 8,
+  },
+  exerciseName: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  exerciseStats: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  exerciseTierBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  exerciseTierText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  moreExercises: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 4,
   },
   milestoneBadges: {
     flexDirection: 'row',

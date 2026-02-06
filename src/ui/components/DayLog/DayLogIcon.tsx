@@ -121,28 +121,6 @@ export function DayLogIcon({
 
   return (
     <View style={styles.container}>
-      {/* Text Bubble */}
-      {showBubble && (
-        <Animated.View
-          style={[
-            styles.bubble,
-            {
-              backgroundColor: ds.tone.card,
-              borderColor: ds.tone.accent,
-              opacity: bubbleOpacity,
-              transform: [{ scale: bubbleScale }],
-            },
-          ]}
-        >
-          <Text style={[styles.bubbleText, { color: colors.text }]}>
-            Log your physical/mental?
-          </Text>
-          <View
-            style={[styles.bubbleArrow, { borderBottomColor: ds.tone.card }]}
-          />
-        </Animated.View>
-      )}
-
       {/* Icon Button */}
       <Pressable
         onPress={handlePress}
@@ -173,6 +151,28 @@ export function DayLogIcon({
           </View>
         )}
       </Pressable>
+
+      {/* Text Bubble - positioned below the icon */}
+      {showBubble && (
+        <Animated.View
+          style={[
+            styles.bubble,
+            {
+              backgroundColor: ds.tone.card,
+              borderColor: ds.tone.accent,
+              opacity: bubbleOpacity,
+              transform: [{ scale: bubbleScale }],
+            },
+          ]}
+        >
+          <View
+            style={[styles.bubbleArrow, { borderBottomColor: ds.tone.card }]}
+          />
+          <Text style={[styles.bubbleText, { color: colors.text }]}>
+            Log your physical/mental?
+          </Text>
+        </Animated.View>
+      )}
     </View>
   );
 }
@@ -181,6 +181,8 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     alignItems: 'center',
+    overflow: 'visible',
+    zIndex: 100,
   },
   iconButton: {
     padding: 8,
@@ -188,14 +190,15 @@ const styles = StyleSheet.create({
   },
   bubble: {
     position: 'absolute',
-    bottom: '100%',
+    top: '100%',
     right: -8,
-    marginBottom: 8,
+    marginTop: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,
     borderWidth: 1,
     minWidth: 160,
+    zIndex: 1000,
     // Shadow for iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -211,7 +214,7 @@ const styles = StyleSheet.create({
   },
   bubbleArrow: {
     position: 'absolute',
-    bottom: -8,
+    top: -8,
     right: 16,
     width: 0,
     height: 0,
@@ -220,7 +223,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 8,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    transform: [{ rotate: '180deg' }],
+    // Arrow points up (no rotation needed now)
   },
   checkIndicator: {
     position: 'absolute',

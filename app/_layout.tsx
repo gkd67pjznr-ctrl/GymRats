@@ -27,6 +27,7 @@ import { useWorkoutDrawerStore } from '@/src/lib/stores/workoutDrawerStore';
 import { ensureCurrentSession } from '@/src/lib/stores/currentSessionStore';
 import { initializeSentry, setSentryUser, clearSentryUser } from '@/src/lib/monitoring/sentry';
 import { useRouteProtection, useShowAuthenticatedUI } from '@/src/lib/hooks/useRouteProtection';
+import { initializeLiveActivitySubscriptions } from '@/src/lib/liveActivity';
 
 // Initialize Sentry FIRST (before any other code that might crash)
 initializeSentry();
@@ -187,6 +188,12 @@ export default function RootLayout() {
       }
     };
     initIAP();
+  }, []);
+
+  // Initialize Live Activity subscriptions for iOS Dynamic Island / Lock Screen
+  useEffect(() => {
+    const cleanup = initializeLiveActivitySubscriptions();
+    return () => cleanup();
   }, []);
 
   // Handle deep links for OAuth callbacks
