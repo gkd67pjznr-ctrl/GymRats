@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Animated, Easing, Text, View } from "react-native";
-import { makeDesignSystem } from "../../designSystem";
+import { useThemePackColors, useThemePackMotion } from "../../../lib/themes";
 import type { CueMessage } from "../../../lib/buddyTypes";
 import { buddies } from "../../../lib/buddyData";
 import { playVoiceLine } from "../../../lib/voice/VoiceManager";
@@ -12,7 +12,8 @@ interface BuddyMessageToastProps {
 }
 
 export function BuddyMessageToast(props: BuddyMessageToastProps) {
-  const ds = makeDesignSystem("dark", "toxic");
+  const colors = useThemePackColors();
+  const motion = useThemePackMotion();
 
   const holdFnRef = useRef(props.randomHoldMs);
   useEffect(() => {
@@ -130,13 +131,19 @@ export function BuddyMessageToast(props: BuddyMessageToastProps) {
   const fontSize = props.message.intensity === "low" ? 16 :
                   props.message.intensity === "high" ? 24 : 28;
 
-  // Legendary buddies get special styling
-  const accentColor = isLegendary ? ds.tone.accent2 : ds.tone.accent;
-  const backgroundColor = isLegendary ? `${ds.tone.card}80` : ds.tone.card; // 50% opacity for legendary
+  // Legendary buddies get special styling from theme
+  const accentColor = isLegendary ? colors.secondary : colors.accent;
+  const backgroundColor = isLegendary ? `${colors.surface}80` : colors.surface;
+  const glowColor = colors.accentGlow ?? colors.accent;
+
+  // Use motion config for glow effect
+  const showGlow = motion.enableGlow;
 
   return (
     <Animated.View
       pointerEvents="none"
+      accessibilityRole="alert"
+      accessibilityLabel={`${buddy?.name ?? 'Buddy'} says: ${props.message.text}`}
       style={{
         position: "absolute",
         top: 16,
@@ -148,9 +155,9 @@ export function BuddyMessageToast(props: BuddyMessageToastProps) {
         backgroundColor,
         opacity,
         transform: [{ scale }, { translateY }],
-        shadowColor: isLegendary ? ds.tone.purple : ds.tone.accent,
-        shadowOpacity: 0.3,
-        shadowRadius: 12,
+        shadowColor: showGlow ? (isLegendary ? colors.secondary : glowColor) : 'transparent',
+        shadowOpacity: showGlow ? 0.4 : 0,
+        shadowRadius: showGlow ? 16 : 0,
         shadowOffset: { width: 0, height: 6 },
         elevation: 8,
         borderWidth: isLegendary ? 2 : 1,
@@ -161,7 +168,7 @@ export function BuddyMessageToast(props: BuddyMessageToastProps) {
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              color: ds.tone.text,
+              color: colors.textSecondary,
               fontSize: 12,
               fontWeight: "600",
               marginBottom: 4,
@@ -175,7 +182,7 @@ export function BuddyMessageToast(props: BuddyMessageToastProps) {
 
           <Text
             style={{
-              color: ds.tone.text,
+              color: colors.text,
               fontSize,
               fontWeight: props.message.intensity === "epic" ? "900" :
                          props.message.intensity === "high" ? "800" : "700",
@@ -191,13 +198,13 @@ export function BuddyMessageToast(props: BuddyMessageToastProps) {
             width: 24,
             height: 24,
             borderRadius: 12,
-            backgroundColor: ds.tone.purple,
+            backgroundColor: colors.secondary,
             justifyContent: "center",
             alignItems: "center",
             marginLeft: 12,
           }}>
             <Text style={{
-              color: ds.tone.bg,
+              color: colors.background,
               fontSize: 16,
               fontWeight: "900"
             }}>

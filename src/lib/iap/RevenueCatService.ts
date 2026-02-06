@@ -41,9 +41,14 @@ export interface RCProduct {
  * These should match what you configure in RevenueCat
  */
 export const ENTITLEMENTS = {
+  // Buddy entitlements
   PREMIUM_BUDDIES: 'premium_buddies',
   LEGENDARY_BUDDIES: 'legendary_buddies',
   ALL_BUDDIES: 'all_buddies',
+  // Theme pack entitlements
+  PREMIUM_THEMES: 'premium_themes',
+  LEGENDARY_THEMES: 'legendary_themes',
+  ALL_THEMES: 'all_themes',
 } as const;
 
 /**
@@ -339,6 +344,95 @@ class RevenueCatServiceClass {
   }
 
   /**
+   * Purchase any product by its RevenueCat product ID
+   *
+   * Use this for theme packs or any non-buddy products.
+   */
+  async purchaseProduct(productId: string): Promise<boolean> {
+    if (!this.initialized) {
+      console.warn('[RevenueCat] Not initialized');
+      return false;
+    }
+
+    try {
+      addBreadcrumb('iap', `Starting purchase for product ${productId}`);
+
+      const offerings = await Purchases.getOfferings();
+
+      // Find the package for this product
+      let targetPackage: PurchasesPackage | null = null;
+      for (const offering of Object.values(offerings.all)) {
+        for (const pkg of offering.availablePackages) {
+          if (pkg.product.identifier === productId) {
+            targetPackage = pkg;
+            break;
+          }
+        }
+        if (targetPackage) break;
+      }
+
+      if (!targetPackage) {
+        console.error(`[RevenueCat] Package not found for product ${productId}`);
+        return false;
+      }
+
+      // Make the purchase
+      const { customerInfo } = await Purchases.purchasePackage(targetPackage);
+      this.customerInfo = customerInfo;
+
+      console.log(`[RevenueCat] Purchase successful for product ${productId}`);
+      addBreadcrumb('iap', `Purchase completed for product ${productId}`);
+      return true;
+    } catch (error: any) {
+      // Check for user cancellation
+      if (error.userCancelled) {
+        console.log('[RevenueCat] User cancelled purchase');
+        return false;
+      }
+
+      console.error(`[RevenueCat] Purchase failed for product ${productId}:`, error);
+      captureException(error, { context: 'RevenueCat.purchaseProduct', productId });
+      return false;
+    }
+  }
+
+  /**
+   * Get product info by product ID
+   */
+  async getProductInfo(productId: string): Promise<RCProduct | null> {
+    if (!this.initialized) {
+      console.warn('[RevenueCat] Not initialized');
+      return null;
+    }
+
+    try {
+      const offerings = await Purchases.getOfferings();
+
+      // Search for the product in offerings
+      for (const offering of Object.values(offerings.all)) {
+        for (const pkg of offering.availablePackages) {
+          if (pkg.product.identifier === productId) {
+            return {
+              identifier: pkg.product.identifier,
+              title: pkg.product.title,
+              description: pkg.product.description,
+              price: pkg.product.price,
+              priceString: pkg.product.priceString,
+              currencyCode: pkg.product.currencyCode,
+            };
+          }
+        }
+      }
+
+      console.warn(`[RevenueCat] Product not found: ${productId}`);
+      return null;
+    } catch (error) {
+      console.error('[RevenueCat] Failed to get product info:', error);
+      return null;
+    }
+  }
+
+  /**
    * Restore previous purchases
    */
   async restorePurchases(): Promise<void> {
@@ -432,6 +526,46 @@ class RevenueCatServiceClass {
   isAvailable(): boolean {
     return Platform.OS === 'ios' || Platform.OS === 'android';
   }
+
+  /**
+   * Check if a theme pack is unlocked via entitlements
+   */
+  isThemePackUnlocked(tier: 'free' | 'premium' | 'legendary'): boolean {
+    // Free packs are always unlocked
+    if (tier === 'free') return true;
+
+    // Check all_themes entitlement first
+    if (this.hasEntitlement(ENTITLEMENTS.ALL_THEMES)) return true;
+
+    // Check tier-specific entitlement
+    if (tier === 'premium') {
+      return this.hasEntitlement(ENTITLEMENTS.PREMIUM_THEMES);
+    }
+    if (tier === 'legendary') {
+      return this.hasEntitlement(ENTITLEMENTS.LEGENDARY_THEMES);
+    }
+
+    return false;
+  }
+
+  /**
+   * Get all theme entitlements the user has
+   */
+  getActiveThemeEntitlements(): string[] {
+    const active: string[] = [];
+
+    if (this.hasEntitlement(ENTITLEMENTS.ALL_THEMES)) {
+      active.push(ENTITLEMENTS.ALL_THEMES);
+    }
+    if (this.hasEntitlement(ENTITLEMENTS.PREMIUM_THEMES)) {
+      active.push(ENTITLEMENTS.PREMIUM_THEMES);
+    }
+    if (this.hasEntitlement(ENTITLEMENTS.LEGENDARY_THEMES)) {
+      active.push(ENTITLEMENTS.LEGENDARY_THEMES);
+    }
+
+    return active;
+  }
 }
 
 /**
@@ -444,3 +578,11 @@ export const initializeRevenueCat = () => RevenueCatService.initialize();
 export const purchaseBuddyRC = (buddyId: string) => RevenueCatService.purchaseBuddy(buddyId);
 export const restorePurchasesRC = () => RevenueCatService.restorePurchases();
 export const getBuddyProductRC = (buddyId: string) => RevenueCatService.getProductForBuddy(buddyId);
+
+// Theme pack convenience functions
+export const purchaseProductRC = (productId: string) => RevenueCatService.purchaseProduct(productId);
+export const getProductInfoRC = (productId: string) => RevenueCatService.getProductInfo(productId);
+export const isThemePackUnlockedRC = (tier: 'free' | 'premium' | 'legendary') =>
+  RevenueCatService.isThemePackUnlocked(tier);
+export const hasEntitlementRC = (entitlementId: string) =>
+  RevenueCatService.hasEntitlement(entitlementId);

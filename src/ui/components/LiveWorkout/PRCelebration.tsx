@@ -18,11 +18,12 @@ import {
 import * as Haptics from 'expo-haptics';
 import { useThemeColors } from '@/src/ui/theme';
 import { FR } from '@/src/ui/GrStyle';
-import { makeDesignSystem } from '@/src/ui/designSystem';
+import { useResolvedTheme } from '@/src/lib/themes';
 import type { SelectedCelebration } from '@/src/lib/celebration';
 import { getAssetForKey, getPRTypeLabel, getTierLabel } from '@/src/lib/celebration';
 import { playSound, SoundManager } from '@/src/lib/sound';
 import { areSoundsEnabled, isAudioCueEnabled, areHapticsEnabled } from '@/src/lib/sound/soundUtils';
+import { ConfettiEffect } from '../effects/ConfettiEffect';
 
 interface PRCelebrationProps {
   /** Celebration data (null = hidden) */
@@ -53,7 +54,14 @@ export function PRCelebration({
   onShare,
 }: PRCelebrationProps) {
   const c = useThemeColors();
-  const ds = makeDesignSystem('dark', 'toxic');
+  const theme = useResolvedTheme();
+  const colors = theme.colors;
+  const particles = theme.particles;
+  const celebrationConfig = theme.celebrations;
+  const motion = theme.motion;
+
+  // State for confetti
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Animation values
   const opacity = useRef(new Animated.Value(0)).current;
@@ -91,11 +99,15 @@ export function PRCelebration({
     emojiScale.setValue(0);
     glowOpacity.setValue(0);
 
+    // Apply duration scale from theme
+    const durationScale = motion.durationScale ?? 1;
+    const baseDuration = 300 * durationScale;
+
     // Animate in
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 300,
+        duration: baseDuration,
         useNativeDriver: true,
       }),
       Animated.spring(scale, {
@@ -116,37 +128,49 @@ export function PRCelebration({
     Animated.timing(emojiScale, {
       toValue: 1,
       delay: 150,
-      duration: 400,
+      duration: 400 * durationScale,
       useNativeDriver: true,
     }).start();
 
-    // Glow pulse
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(glowOpacity, {
-          toValue: 0.6,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(glowOpacity, {
-          toValue: 0.3,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+    // Glow pulse (only if motion.enableGlow is true)
+    if (motion.enableGlow) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowOpacity, {
+            toValue: 0.6,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowOpacity, {
+            toValue: 0.3,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+
+    // Trigger confetti if particles are enabled
+    if (motion.enableParticles && celebrationConfig.prCelebration?.style !== 'custom') {
+      setShowConfetti(true);
+    }
   };
 
   const hideModal = () => {
+    // Stop confetti when hiding
+    setShowConfetti(false);
+
+    const durationScale = motion.durationScale ?? 1;
+
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: 0,
-        duration: 200,
+        duration: 200 * durationScale,
         useNativeDriver: true,
       }),
       Animated.timing(scale, {
         toValue: 0.9,
-        duration: 200,
+        duration: 200 * durationScale,
         useNativeDriver: true,
       }),
     ]).start();
@@ -214,18 +238,28 @@ export function PRCelebration({
   const { celebration: celeb, headline, subheadline, detail } = celebration;
   const asset = getAssetForKey(celeb.contentKey);
 
-  // Tier color (higher tier = more intense)
+  // Tier color from theme pack (higher tier = more intense)
+  const rankColors = colors.ranks ?? {};
   const tierColor =
     celeb.tier === 4
-      ? ds.tone.mythic
+      ? rankColors.mythic ?? '#f472b6'
       : celeb.tier === 3
-      ? ds.tone.diamond
+      ? rankColors.diamond ?? '#a78bfa'
       : celeb.tier === 2
-      ? ds.tone.platinum
-      : ds.tone.gold;
+      ? rankColors.platinum ?? '#06b6d4'
+      : rankColors.gold ?? '#fbbf24';
 
-  // Pre-calculate colors
-  const detailBoxBg = ds.tone.accent + '20';
+  // Pre-calculate colors from theme pack
+  const detailBoxBg = colors.primarySoft ?? `${colors.primary}20`;
+
+  // Get particle config for PR events
+  const prParticleConfig = particles.events?.pr ?? particles;
+  const particleColors = prParticleConfig.colors ?? particles.colors ?? [colors.primary, colors.secondary, colors.accent];
+  const particleCount = celebrationConfig.prCelebration?.intensity === 'epic'
+    ? (prParticleConfig.count ?? 80) * 1.5
+    : celebrationConfig.prCelebration?.intensity === 'subtle'
+    ? (prParticleConfig.count ?? 80) * 0.5
+    : prParticleConfig.count ?? 80;
 
   return (
     <Modal
@@ -332,13 +366,13 @@ export function PRCelebration({
                 styles.button,
                 styles.shareButton,
                 {
-                  backgroundColor: ds.tone.accent,
+                  backgroundColor: colors.primary,
                   opacity: pressed ? 0.7 : 1,
                 },
               ]}
               onPress={handleShare}
             >
-              <Text style={[styles.buttonText, { color: c.card }]}>
+              <Text style={[styles.buttonText, { color: colors.background }]}>
                 Share
               </Text>
             </Pressable>
@@ -348,18 +382,27 @@ export function PRCelebration({
                 styles.button,
                 styles.dismissButton,
                 {
-                  backgroundColor: c.border,
+                  backgroundColor: colors.border,
                   opacity: pressed ? 0.7 : 1,
                 },
               ]}
               onPress={handleDismiss}
             >
-              <Text style={[styles.buttonText, { color: c.text }]}>
+              <Text style={[styles.buttonText, { color: colors.text }]}>
                 Continue
               </Text>
             </Pressable>
           </View>
         </Animated.View>
+
+        {/* Confetti Effect from Theme Pack */}
+        <ConfettiEffect
+          active={showConfetti}
+          particleCount={Math.round(particleCount)}
+          colors={particleColors}
+          duration={prParticleConfig.duration ?? 3000}
+          onComplete={() => setShowConfetti(false)}
+        />
       </Animated.View>
     </Modal>
   );
