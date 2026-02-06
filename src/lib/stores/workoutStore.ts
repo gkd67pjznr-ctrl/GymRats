@@ -198,12 +198,16 @@ export async function getWorkoutHistory(): Promise<WorkoutSession[]> {
 }
 
 // Get user's all-time best e1RM for each exercise
+// NOTE: Only considers native (non-imported) sessions for accurate PR tracking
 export function getPersonalBests(userId: string): Record<string, {
   e1rmKg: number;
   timestampMs: number;
   exerciseName: string;
 }> {
-  const sessions = useWorkoutStore.getState().sessions.filter(s => s.userId === userId);
+  // Filter to only native sessions (exclude imported data)
+  const sessions = useWorkoutStore.getState().sessions.filter(
+    s => s.userId === userId && !s.isImported
+  );
 
   const personalBests: Record<string, {
     e1rmKg: number;
@@ -211,7 +215,7 @@ export function getPersonalBests(userId: string): Record<string, {
     exerciseName: string;
   }> = {};
 
-  // Process all sessions to find best e1RM for each exercise
+  // Process all native sessions to find best e1RM for each exercise
   for (const session of sessions) {
     for (const set of session.sets) {
       // Calculate e1RM using Epley formula
@@ -231,14 +235,16 @@ export function getPersonalBests(userId: string): Record<string, {
 }
 
 // Get historical rank progression data
+// NOTE: Only considers native (non-imported) sessions for accurate rank history
 export function getRankHistory(userId: string, exerciseId: string): {
   date: string;
   rank: number;
   score: number;
   e1rmKg: number;
 }[] {
+  // Filter to only native sessions (exclude imported data)
   const sessions = useWorkoutStore.getState().sessions
-    .filter(s => s.userId === userId)
+    .filter(s => s.userId === userId && !s.isImported)
     .sort((a, b) => a.startedAtMs - b.startedAtMs);
 
   const rankHistory: {
@@ -290,6 +296,66 @@ export function addWorkoutSession(session: WorkoutSession): void {
 
 export function clearWorkoutSessions(): void {
   useWorkoutStore.getState().clearSessions();
+}
+
+/**
+ * Add multiple workout sessions at once (for bulk import)
+ */
+export function addWorkoutSessions(sessions: WorkoutSession[]): void {
+  const store = useWorkoutStore.getState();
+  for (const session of sessions) {
+    store.addSession(session);
+  }
+}
+
+// ============================================================================
+// Import/Export Helpers
+// ============================================================================
+
+/**
+ * Get only native (non-imported) sessions for ranking/scoring
+ * These are sessions that were logged directly in the app
+ */
+export function getNativeWorkoutSessions(): WorkoutSession[] {
+  return useWorkoutStore.getState().sessions.filter(s => !s.isImported);
+}
+
+/**
+ * Get only imported sessions
+ */
+export function getImportedWorkoutSessions(): WorkoutSession[] {
+  return useWorkoutStore.getState().sessions.filter(s => s.isImported === true);
+}
+
+/**
+ * Hook for accessing only native (non-imported) sessions
+ */
+export function useNativeWorkoutSessions(): WorkoutSession[] {
+  return useWorkoutStore(state => state.sessions.filter(s => !s.isImported));
+}
+
+/**
+ * Hook for accessing only imported sessions
+ */
+export function useImportedWorkoutSessions(): WorkoutSession[] {
+  return useWorkoutStore(state => state.sessions.filter(s => s.isImported === true));
+}
+
+/**
+ * Get native workout sessions for a specific user
+ */
+export function getNativeWorkoutSessionsForUser(userId: string): WorkoutSession[] {
+  return useWorkoutStore.getState().sessions.filter(
+    s => s.userId === userId && !s.isImported
+  );
+}
+
+/**
+ * Get native workout history for analytics (async wrapper for compatibility)
+ * Excludes imported sessions
+ */
+export async function getNativeWorkoutHistory(): Promise<WorkoutSession[]> {
+  return getNativeWorkoutSessions();
 }
 
 // ============================================================================

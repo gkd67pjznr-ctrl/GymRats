@@ -80,9 +80,27 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
       /**
        * Process a completed workout - THE main entry point
        * Updates all stats, detects PRs, calculates Forge Rank
+       *
+       * NOTE: Imported sessions should NOT be processed here - they don't count
+       * for PRs, ranking, or gamification. They are only for historical viewing.
        */
       processWorkout: (session: WorkoutSession): ProcessWorkoutResult => {
         const state = get();
+
+        // Skip imported sessions - they shouldn't affect stats or PRs
+        // Return empty result matching the expected interface
+        if (session.isImported) {
+          return {
+            prs: [],
+            recoveryPRs: [],
+            rankUps: [],
+            gymRank: state.gymRank,
+            avatarGrowth: get().getAvatarGrowth(),
+            volumeAddedKg: 0,
+            setsAdded: 0,
+          };
+        }
+
         const now = Date.now();
 
         // Track PRs, recovery PRs, and rank-ups for the result
@@ -292,10 +310,15 @@ export const useUserStatsStore = create<UserStatsStoreState>()(
       /**
        * Rebuild all stats from workout history
        * Used for migration or data recovery
+       *
+       * NOTE: Filters out imported sessions - only native sessions count for stats
        */
       rebuildFromHistory: (sessions: WorkoutSession[]) => {
+        // Filter out imported sessions - they don't count for stats/PRs/ranks
+        const nativeSessions = sessions.filter(s => !s.isImported);
+
         // Sort sessions by start time
-        const sortedSessions = [...sessions].sort(
+        const sortedSessions = [...nativeSessions].sort(
           (a, b) => a.startedAtMs - b.startedAtMs
         );
 
@@ -519,10 +542,12 @@ async function checkAndRebuildIfNeeded(state: UserStatsStoreState) {
     if (!workoutDataStr) return;
 
     const workoutData = JSON.parse(workoutDataStr);
-    const sessions: WorkoutSession[] = workoutData.state?.sessions || [];
+    const allSessions: WorkoutSession[] = workoutData.state?.sessions || [];
+    // Filter out imported sessions - only native sessions count for stats
+    const sessions = allSessions.filter(s => !s.isImported);
     if (sessions.length === 0) return;
 
-    // Get unique exercise IDs from workout history
+    // Get unique exercise IDs from workout history (native sessions only)
     const historyExerciseIds = new Set<string>();
     for (const session of sessions) {
       for (const set of session.sets) {

@@ -284,6 +284,14 @@ export default function ProfileTab() {
           icon="🏆"
         />
 
+        {/* Data Export/Import: workout data portability */}
+        <NavigationCard
+          href="/profile/data-export"
+          title="Data Export & Import"
+          subtitle="Export your workout data as CSV or import from other apps. Your data, your control."
+          icon="📦"
+        />
+
         <View style={{ height: 6 }} />
 
         <Text style={{ color: c.text, fontWeight: "900", fontSize: 16 }}>Coming next</Text>

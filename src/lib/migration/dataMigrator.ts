@@ -5,6 +5,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../supabase/client";
 import { logError } from "../errorHandler";
 
+// Import the new CSV modules for improved import functionality
+import {
+  parseCSV,
+  rowsToSessions,
+  importFromCSVContent,
+  type CSVImportResult,
+} from "../csvImport";
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -169,11 +177,15 @@ export async function migrateLocalToCloud(
 
 /**
  * Import workouts from CSV file (Strong, Hevy format)
+ * This uses the new csvImport module for better parsing and validation.
  *
  * @param csvContent CSV file content
  * @param userId User ID for the import
  * @param onProgress Optional progress callback
  * @returns Import result with stats
+ *
+ * @deprecated Use importFromCSVContent from csvImport.ts for local-only import,
+ *             or this function if you need to also sync to cloud.
  */
 export async function importFromCSV(
   csvContent: string,
@@ -188,26 +200,45 @@ export async function importFromCSV(
       message: "Parsing CSV...",
     });
 
-    const lines = csvContent.split("\n").filter((line) => line.trim());
-    const workouts = parseCSVWorkouts(lines);
+    // Use the new CSV parsing module
+    const parseResult = parseCSV(csvContent);
+
+    if (!parseResult.success && parseResult.rows.length === 0) {
+      const errorMsg = parseResult.errors.length > 0
+        ? parseResult.errors[0].message
+        : "Failed to parse CSV";
+      return {
+        success: false,
+        error: errorMsg,
+      };
+    }
+
+    // Convert to workout sessions
+    const sessions = rowsToSessions(parseResult.rows, userId);
 
     onProgress?.({
       stage: "uploading",
       current: 20,
       total: 100,
-      message: `Importing ${workouts.length} workouts...`,
+      message: `Importing ${sessions.length} workouts...`,
     });
 
     let importedCount = 0;
-    for (const workout of workouts) {
-      await uploadWorkoutToCloud(userId, workout);
+    for (const session of sessions) {
+      // Upload to cloud with isImported flag
+      await uploadWorkoutToCloud(userId, {
+        ...session,
+        isImported: true,
+        importedAt: Date.now(),
+        importSource: "csv",
+      });
       importedCount++;
 
       onProgress?.({
         stage: "uploading",
-        current: 20 + Math.floor((importedCount / workouts.length) * 80),
+        current: 20 + Math.floor((importedCount / sessions.length) * 80),
         total: 100,
-        message: `Importing workout ${importedCount}/${workouts.length}...`,
+        message: `Importing workout ${importedCount}/${sessions.length}...`,
       });
     }
 
@@ -231,6 +262,21 @@ export async function importFromCSV(
   }
 }
 
+/**
+ * Import workouts from CSV to local storage only (no cloud sync)
+ * This is the preferred method for most use cases.
+ *
+ * @param csvContent CSV file content
+ * @param userId User ID for the import
+ * @returns Import result with detailed statistics
+ */
+export function importFromCSVLocal(
+  csvContent: string,
+  userId: string
+): CSVImportResult {
+  return importFromCSVContent(csvContent, userId);
+}
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -242,11 +288,14 @@ async function readLocalData(): Promise<LocalData> {
   const data: LocalData = {};
 
   try {
-    // Read workouts
-    const workoutsJson = await AsyncStorage.getItem("workoutStore.v1");
+    // Read workouts - try new key first, then fall back to old
+    let workoutsJson = await AsyncStorage.getItem("workoutSessions.v2");
+    if (!workoutsJson) {
+      workoutsJson = await AsyncStorage.getItem("workoutStore.v1");
+    }
     if (workoutsJson) {
       const parsed = JSON.parse(workoutsJson);
-      data.workouts = parsed.state?.workouts || [];
+      data.workouts = parsed.state?.sessions || parsed.state?.workouts || [];
     }
 
     // Read routines
@@ -277,6 +326,10 @@ async function uploadWorkoutToCloud(userId: string, workout: any): Promise<void>
     routine_name: workout.routineName || null,
     plan_id: workout.planId || null,
     completion_pct: workout.completionPct || null,
+    // Include import tracking fields
+    is_imported: workout.isImported || false,
+    imported_at: workout.importedAt || null,
+    import_source: workout.importSource || null,
   });
 
   if (error) {
@@ -301,42 +354,11 @@ async function uploadRoutineToCloud(userId: string, routine: any): Promise<void>
   }
 }
 
-/**
- * Parse CSV workouts (Strong/Hevy format)
- * Expected format: Date,Exercise,Set,Weight,Reps,Notes
- */
-function parseCSVWorkouts(lines: string[]): any[] {
-  const workouts: any[] = [];
-  const currentWorkoutMap = new Map<string, any>();
+// ============================================================================
+// Re-exports for convenience
+// ============================================================================
 
-  // Skip header row
-  for (let i = 1; i < lines.length; i++) {
-    const columns = lines[i].split(",");
-    if (columns.length < 5) continue;
-
-    const [dateStr, exercise, setStr, weightStr, repsStr] = columns;
-
-    // Create workout key (date + exercise group)
-    const key = dateStr;
-
-    if (!currentWorkoutMap.has(key)) {
-      currentWorkoutMap.set(key, {
-        startedAtMs: new Date(dateStr).getTime(),
-        endedAtMs: new Date(dateStr).getTime() + 3600000, // Default 1 hour
-        sets: [],
-      });
-    }
-
-    const workout = currentWorkoutMap.get(key);
-
-    // Add set
-    workout.sets.push({
-      exerciseId: exercise.toLowerCase().replace(/\s+/g, "_"),
-      weightKg: parseFloat(weightStr) || 0,
-      reps: parseInt(repsStr) || 0,
-      timestampMs: new Date(dateStr).getTime(),
-    });
-  }
-
-  return Array.from(currentWorkoutMap.values());
-}
+export { importFromCSVContent, pickAndImportCSV } from "../csvImport";
+export { exportAndShareCurrentUserWorkouts, sessionsToCSV } from "../csvExport";
+export type { CSVImportResult } from "../csvImport";
+export type { CSVExportResult } from "../csvSchema";

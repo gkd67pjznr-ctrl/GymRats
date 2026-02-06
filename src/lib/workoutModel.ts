@@ -39,6 +39,16 @@ export type WorkoutSession = {
   weightPRs?: number;     // Weight PRs achieved
   repPRs?: number;        // Rep PRs achieved
   e1rmPRs?: number;       // e1RM PRs achieved
+
+  // Import tracking
+  // When true, this session was imported from external data (CSV, other apps)
+  // Imported sessions appear in history but DO NOT count for:
+  // - PR detection
+  // - Rank calculations
+  // - Gamification scoring
+  isImported?: boolean;
+  importedAt?: number;    // Timestamp when imported (ms)
+  importSource?: string;  // Source of import (e.g., "csv", "strong", "hevy")
 };
 
 // [CHANGED 2026-01-23] Re-export from centralized uid

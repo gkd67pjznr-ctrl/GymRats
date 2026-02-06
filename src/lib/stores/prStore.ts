@@ -114,7 +114,9 @@ export const usePRStore = create<PRState>()(
 
       rebuildFromHistory: () => {
         const workoutStore = useWorkoutStore.getState();
-        const sessions = workoutStore.sessions;
+        // IMPORTANT: Only use native (non-imported) sessions for PR tracking
+        // Imported sessions should not affect rank calculations or PR detection
+        const sessions = workoutStore.sessions.filter(s => !s.isImported);
         const unit = getSettings().unitSystem ?? "lb";
 
         const exerciseBests: Record<string, ExerciseBest> = {};
