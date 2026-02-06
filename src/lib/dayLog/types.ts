@@ -30,47 +30,50 @@ export type NutritionStatus = 'none' | 'light' | 'moderate' | 'full';
 export type CarbsLevel = 'low' | 'moderate' | 'high';
 
 /**
+ * Mood state - mental/emotional state before workout
+ */
+export type MoodState = 'stressed' | 'neutral' | 'focused' | 'motivated';
+
+/**
  * Pain locations for tracking discomfort/injuries
+ * Expanded to include more body areas
  */
 export type PainLocation =
-  | 'shoulder_l'
-  | 'shoulder_r'
-  | 'elbow_l'
-  | 'elbow_r'
-  | 'wrist_l'
-  | 'wrist_r'
+  | 'shoulders'     // Combined (most common reporting)
+  | 'elbows'        // Combined
+  | 'wrists'        // Combined
+  | 'knees'         // Combined
   | 'lower_back'
-  | 'knee_l'
-  | 'knee_r';
+  | 'upper_back'
+  | 'neck'
+  | 'hips';
 
 /**
  * Human-readable labels for pain locations
  */
 export const PAIN_LOCATION_LABELS: Record<PainLocation, string> = {
-  shoulder_l: 'Left Shoulder',
-  shoulder_r: 'Right Shoulder',
-  elbow_l: 'Left Elbow',
-  elbow_r: 'Right Elbow',
-  wrist_l: 'Left Wrist',
-  wrist_r: 'Right Wrist',
+  shoulders: 'Shoulders',
+  elbows: 'Elbows',
+  wrists: 'Wrists',
+  knees: 'Knees',
   lower_back: 'Lower Back',
-  knee_l: 'Left Knee',
-  knee_r: 'Right Knee',
+  upper_back: 'Upper Back',
+  neck: 'Neck',
+  hips: 'Hips',
 };
 
 /**
- * All available pain locations
+ * All available pain locations (ordered by frequency of common gym injuries)
  */
 export const ALL_PAIN_LOCATIONS: PainLocation[] = [
-  'shoulder_l',
-  'shoulder_r',
-  'elbow_l',
-  'elbow_r',
-  'wrist_l',
-  'wrist_r',
+  'shoulders',
   'lower_back',
-  'knee_l',
-  'knee_r',
+  'knees',
+  'elbows',
+  'wrists',
+  'upper_back',
+  'neck',
+  'hips',
 ];
 
 /**
@@ -88,6 +91,7 @@ export type DayLog = {
   painLocations?: PainLocation[];
   energyLevel: EnergyLevel;
   sleepQuality: SleepQuality;
+  mood?: MoodState; // Mental/emotional state
   notes?: string;
 };
 
@@ -110,6 +114,7 @@ export const DEFAULT_DAY_LOG_DRAFT: DayLogDraft = {
   painLocations: [],
   energyLevel: 3,
   sleepQuality: 3,
+  mood: 'neutral',
   notes: '',
 };
 

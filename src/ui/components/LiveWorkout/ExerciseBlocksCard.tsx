@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Pressable, Text, TextInput, View, Platform, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "../../theme";
 import { FR } from "../../GrStyle";
 import { EXERCISES_V1 } from "../../../data/exercises";
@@ -7,6 +8,8 @@ import type { LoggedSet } from "../../../lib/loggerTypes";
 import * as Haptics from "expo-haptics";
 import { getRestSecondsForExercise, setExerciseRestSeconds, clearExerciseRestSeconds, useSettingsStore } from "../../../lib/stores/settingsStore";
 import { NumberInput } from "./NumberInput";
+import { ExerciseNoteInput, ExerciseNotePreview } from "../ExerciseNoteInput";
+import { useHasExerciseNote } from "../../../lib/stores/exerciseNotesStore";
 
 function exerciseName(exerciseId: string) {
   return EXERCISES_V1.find((e) => e.id === exerciseId)?.name ?? exerciseId;
@@ -54,6 +57,9 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
 
   // local collapse map (per block)
   const [collapsedByExerciseId, setCollapsedByExerciseId] = useState<Record<string, boolean>>({});
+
+  // local state for note expansion (per exercise)
+  const [noteExpandedByExerciseId, setNoteExpandedByExerciseId] = useState<Record<string, boolean>>({});
 
   // Handle long-press to set custom rest time for exercise
   const handleExerciseLongPress = (exerciseId: string) => {
@@ -161,6 +167,32 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
       </Text>
     </Pressable>
   );
+
+  // Note icon button component (needs to be inside to access hook context)
+  const NoteIconButton = (p: { exerciseId: string; isExpanded: boolean; onToggle: () => void }) => {
+    const hasNote = useHasExerciseNote(p.exerciseId);
+    return (
+      <Pressable
+        onPress={p.onToggle}
+        hitSlop={8}
+        style={({ pressed }) => ({
+          paddingVertical: FR.space.x2,
+          paddingHorizontal: FR.space.x2,
+          borderRadius: FR.radius.button,
+          borderWidth: 1,
+          borderColor: hasNote ? c.primary + "40" : c.border,
+          backgroundColor: hasNote ? c.primary + "15" : c.bg,
+          opacity: pressed ? 0.7 : 1,
+        })}
+      >
+        <Ionicons
+          name={hasNote ? "document-text" : "document-text-outline"}
+          size={16}
+          color={hasNote ? c.primary : c.muted}
+        />
+      </Pressable>
+    );
+  };
 
   if (props.exerciseIds.length === 0) {
     return (
@@ -278,7 +310,21 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
                 </View>
               </Pressable>
 
-              <View style={{ flexDirection: "row", gap: FR.space.x1 }}>
+              <View style={{ flexDirection: "row", gap: FR.space.x1, alignItems: "center" }}>
+                {/* Note icon button */}
+                <NoteIconButton
+                  exerciseId={exerciseId}
+                  isExpanded={!!noteExpandedByExerciseId[exerciseId]}
+                  onToggle={() => {
+                    if (Platform.OS === "ios") {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }
+                    setNoteExpandedByExerciseId((prev) => ({
+                      ...prev,
+                      [exerciseId]: !prev[exerciseId],
+                    }));
+                  }}
+                />
                 <BlockButton
                   title={isCollapsed ? "▼" : "▲"}
                   onPress={() => {
@@ -295,6 +341,16 @@ export function ExerciseBlocksCard(props: ExerciseBlocksCardProps) {
                 />
               </View>
             </View>
+
+            {/* Exercise Note Input (expandable) */}
+            {noteExpandedByExerciseId[exerciseId] && (
+              <ExerciseNoteInput exerciseId={exerciseId} />
+            )}
+
+            {/* Note preview (when collapsed and has note) */}
+            {!noteExpandedByExerciseId[exerciseId] && (
+              <ExerciseNotePreview exerciseId={exerciseId} maxLength={60} />
+            )}
 
             {/* Body */}
             {isCollapsed ? (

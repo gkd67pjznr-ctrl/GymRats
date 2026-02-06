@@ -107,17 +107,17 @@ describe('Day Log Store', () => {
     const draftWithPain: DayLogDraft = {
       ...validDraft,
       hasPain: true,
-      painLocations: ['shoulder_l', 'lower_back'],
+      painLocations: ['shoulders', 'lower_back'],
     };
 
     const logWithPain = addDayLog(draftWithPain, 'session-pain');
     expect(logWithPain?.hasPain).toBe(true);
-    expect(logWithPain?.painLocations).toEqual(['shoulder_l', 'lower_back']);
+    expect(logWithPain?.painLocations).toEqual(['shoulders', 'lower_back']);
 
     const draftNoPain: DayLogDraft = {
       ...validDraft,
       hasPain: false,
-      painLocations: ['shoulder_l'], // Should be ignored
+      painLocations: ['shoulders'], // Should be ignored
     };
 
     const logNoPain = addDayLog(draftNoPain, 'session-no-pain');

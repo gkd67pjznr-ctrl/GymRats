@@ -10,6 +10,8 @@ import { useThemeColors } from "../../theme";
 import { EXERCISES_V1 } from "../../../data/exercises";
 import type { LoggedSet } from "../../../lib/loggerTypes";
 import { SetRow } from "./SetRow";
+import { ExerciseNoteInput, ExerciseNotePreview } from "../ExerciseNoteInput";
+import { useHasExerciseNote } from "../../../lib/stores/exerciseNotesStore";
 
 export interface ExerciseCardProps {
   exerciseId: string;
@@ -47,6 +49,8 @@ export function ExerciseCard({
 }: ExerciseCardProps) {
   const c = useThemeColors();
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isNoteExpanded, setIsNoteExpanded] = useState(false);
+  const hasNote = useHasExerciseNote(exerciseId);
 
   const exerciseName = getExerciseName(exerciseId);
   const completedSets = sets.filter((s) => isDone(s.id)).length;
@@ -89,18 +93,59 @@ export function ExerciseCard({
           )}
         </Pressable>
 
-        <Pressable
-          onPress={handleToggleExpand}
-          hitSlop={12}
-          style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
-        >
-          <Ionicons
-            name={isExpanded ? "chevron-up" : "chevron-down"}
-            size={20}
-            color={c.muted}
-          />
-        </Pressable>
+        <View style={styles.headerRight}>
+          {/* Note icon */}
+          <Pressable
+            onPress={() => {
+              triggerHaptic();
+              setIsNoteExpanded(!isNoteExpanded);
+            }}
+            hitSlop={8}
+            style={({ pressed }) => [
+              styles.noteButton,
+              {
+                opacity: pressed ? 0.5 : 1,
+                borderColor: hasNote ? c.primary + "40" : c.border,
+                backgroundColor: hasNote ? c.primary + "15" : "transparent",
+              },
+            ]}
+          >
+            <Ionicons
+              name={hasNote ? "document-text" : "document-text-outline"}
+              size={16}
+              color={hasNote ? c.primary : c.muted}
+            />
+          </Pressable>
+
+          {/* Expand/collapse */}
+          <Pressable
+            onPress={handleToggleExpand}
+            hitSlop={12}
+            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+          >
+            <Ionicons
+              name={isExpanded ? "chevron-up" : "chevron-down"}
+              size={20}
+              color={c.muted}
+            />
+          </Pressable>
+        </View>
       </View>
+
+      {/* Note input (expandable) */}
+      {isNoteExpanded && (
+        <View style={styles.noteContainer}>
+          <ExerciseNoteInput exerciseId={exerciseId} />
+        </View>
+      )}
+
+      {/* Note preview (when collapsed and has note) */}
+      {!isNoteExpanded && hasNote && (
+        <View style={styles.notePreviewContainer}>
+          <Ionicons name="document-text" size={12} color={c.muted} style={{ marginRight: 4 }} />
+          <ExerciseNotePreview exerciseId={exerciseId} maxLength={50} />
+        </View>
+      )}
 
       {/* Expanded content */}
       {isExpanded && (
@@ -237,6 +282,26 @@ const styles = StyleSheet.create({
   addSetText: {
     fontSize: 14,
     fontWeight: "600",
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  noteButton: {
+    padding: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  noteContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  notePreviewContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
 });
 

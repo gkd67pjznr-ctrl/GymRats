@@ -302,3 +302,20 @@ export {
   type DerivedAvatarGrowth,
   type RankTier,
 } from "./userStatsStore";
+
+// Exercise Notes (per-exercise persistent notes)
+export {
+  useExerciseNotesStore,
+  useExerciseNote,
+  useHasExerciseNote,
+  useAllExerciseNotes,
+  useExerciseNotesHydrated,
+  getExerciseNote,
+  setExerciseNote,
+  deleteExerciseNote,
+  hasExerciseNote,
+  getAllExerciseNotes,
+  clearAllExerciseNotes,
+  MAX_NOTE_LENGTH,
+  type ExerciseNotes,
+} from "./exerciseNotesStore";

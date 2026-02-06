@@ -23,7 +23,6 @@ import {
   useRestTimer,
   usePendingCue,
   useDrawerPosition,
-  useShowDayLogModal,
 } from '@/src/lib/stores/workoutDrawerStore';
 import {
   useCurrentSession,
@@ -63,10 +62,13 @@ import type { SelectedCelebration } from '@/src/lib/celebration/types';
 import { getUser } from '@/src/lib/stores/authStore';
 import { createPost } from '@/src/lib/stores/socialStore';
 
-// Day Log
-import { DayLogModal } from '@/src/ui/components/DayLog';
-import { addDayLog } from '@/src/lib/stores/dayLogStore';
-import type { DayLogDraft } from '@/src/lib/dayLog/types';
+// Day Log - New refactored components
+import { DayLogIcon, DayLogPrompt, DayLogForm } from '@/src/ui/components/DayLog';
+import {
+  useDayLogUI,
+  startDayLogSession,
+  resetDayLogUI,
+} from '@/src/lib/stores/dayLogStore';
 
 // Helper to get exercise name
 function getExerciseName(exerciseId: string): string {
@@ -98,12 +100,13 @@ export function DrawerContent() {
     clearRestTimer,
     setPendingCue,
     clearPendingCue,
-    hideDayLog,
   } = useWorkoutDrawerStore();
   const session = useCurrentSession();
   const scrollRef = useRef<ScrollView>(null);
   const drawerPosition = useDrawerPosition();
-  const showDayLogModal = useShowDayLogModal();
+
+  // Day Log UI state
+  const dayLogUI = useDayLogUI();
 
   const [showExercisePicker, setShowExercisePicker] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -131,6 +134,13 @@ export function DrawerContent() {
   useEffect(() => {
     setRestTimerVisible(drawerPosition === 'expanded' && restTimer.isActive);
   }, [drawerPosition, restTimer.isActive]);
+
+  // Initialize Day Log session when workout starts
+  useEffect(() => {
+    if (session?.id && !dayLogUI.currentSessionId) {
+      startDayLogSession(session.id);
+    }
+  }, [session?.id, dayLogUI.currentSessionId]);
 
   // Update timer every second
   useEffect(() => {
@@ -527,6 +537,7 @@ export function DrawerContent() {
   const handleShareModalClose = useCallback(() => {
     setCompletedSession(null);
     clearCurrentSession();
+    resetDayLogUI();
     endWorkout();
   }, [endWorkout]);
 
@@ -542,6 +553,7 @@ export function DrawerContent() {
           style: 'destructive',
           onPress: () => {
             clearCurrentSession();
+            resetDayLogUI();
             endWorkout();
           },
         },
@@ -625,18 +637,11 @@ export function DrawerContent() {
     Keyboard.dismiss();
   }, []);
 
-  // Handle Day Log submission
-  const handleDayLogSubmit = useCallback((draft: DayLogDraft) => {
-    if (session?.id) {
-      addDayLog(draft, session.id);
-    }
-    hideDayLog();
-  }, [session?.id, hideDayLog]);
-
-  // Handle Day Log skip
-  const handleDayLogSkip = useCallback(() => {
-    hideDayLog();
-  }, [hideDayLog]);
+  // Reset Day Log UI when workout ends
+  const handleEndWorkout = useCallback(() => {
+    resetDayLogUI();
+    endWorkout();
+  }, [endWorkout]);
 
   // Render exercise picker when open
   if (showExercisePicker) {
@@ -683,14 +688,20 @@ export function DrawerContent() {
           </View>
         </View>
 
-        {/* Complete button */}
-        <Pressable
-          onPress={handleCompleteWorkout}
-          style={[styles.completeButton, { backgroundColor: c.primary }]}
-          hitSlop={8}
-        >
-          <Ionicons name="checkmark" size={20} color="#fff" />
-        </Pressable>
+        {/* Right side actions */}
+        <View style={styles.headerRightActions}>
+          {/* Day Log Icon */}
+          <DayLogIcon size={22} />
+
+          {/* Complete button */}
+          <Pressable
+            onPress={handleCompleteWorkout}
+            style={[styles.completeButton, { backgroundColor: c.primary }]}
+            hitSlop={8}
+          >
+            <Ionicons name="checkmark" size={20} color="#fff" />
+          </Pressable>
+        </View>
       </View>
 
       {/* Content */}
@@ -800,12 +811,12 @@ export function DrawerContent() {
         onClose={handleShareModalClose}
       />
 
-      {/* Day Log Modal - for pre-workout check-in */}
-      <DayLogModal
-        visible={showDayLogModal}
-        onSubmit={handleDayLogSubmit}
-        onSkip={handleDayLogSkip}
-      />
+      {/* Day Log Components - New refactored flow */}
+      {/* Yes/No confirmation prompt */}
+      <DayLogPrompt />
+
+      {/* Full Day Log form (top-third modal) */}
+      <DayLogForm sessionId={session?.id} />
     </KeyboardAvoidingView>
   );
 }
@@ -843,6 +854,11 @@ const styles = StyleSheet.create({
   },
   headerDot: {
     fontSize: 12,
+  },
+  headerRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   completeButton: {
     width: 36,
