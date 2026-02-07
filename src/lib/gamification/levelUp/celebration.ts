@@ -80,10 +80,14 @@ export function getLevelTierName(level: number): string {
  * @returns Design system color key
  */
 export function getLevelTierColor(level: number): string {
-  if (level <= 5) return 'iron';
+  if (level <= 5) return 'copper';
   if (level <= 10) return 'bronze';
-  if (level <= 15) return 'silver';
-  if (level <= 20) return 'gold';
-  if (level <= 30) return 'platinum';
-  return 'mythic';
+  if (level <= 15) return 'iron';
+  if (level <= 20) return 'silver';
+  if (level <= 25) return 'gold';
+  if (level <= 35) return 'master';
+  if (level <= 45) return 'legendary';
+  if (level <= 55) return 'mythic';
+  if (level <= 70) return 'supreme_being';
+  return 'goat';
 }

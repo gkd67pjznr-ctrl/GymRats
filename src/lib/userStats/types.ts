@@ -18,7 +18,7 @@ export interface ExerciseStats {
   bestWeightKg: number;
   /** Best reps at each weight bucket (kg string key) */
   bestRepsAtWeight: Record<string, number>;
-  /** Current rank (1-20) */
+  /** Current rank (1-28) */
   rank: number;
   /** Progress towards next rank (0-1) */
   progressToNext: number;
@@ -95,16 +95,68 @@ export interface VarietyMetrics {
 }
 
 /**
- * Rank tier names (7 tiers)
+ * Rank tier names (10 tiers)
+ * Order: Copper < Bronze < Iron < Silver < Gold < Master < Legendary < Mythic < Supreme Being < G.O.A.T
  */
 export type RankTier =
-  | "iron"
+  | "copper"
   | "bronze"
+  | "iron"
   | "silver"
   | "gold"
-  | "platinum"
-  | "diamond"
-  | "mythic";
+  | "master"
+  | "legendary"
+  | "mythic"
+  | "supreme_being"
+  | "goat";
+
+/**
+ * Rank level within a tier (I, II, III)
+ * G.O.A.T tier has no levels
+ */
+export type RankLevel = 1 | 2 | 3;
+
+/**
+ * Full rank identifier combining tier and level
+ */
+export interface RankIdentifier {
+  tier: RankTier;
+  level: RankLevel | null; // null for G.O.A.T
+}
+
+/**
+ * Roman numeral display for rank levels
+ */
+export const RANK_LEVEL_DISPLAY: Record<RankLevel, string> = {
+  1: "I",
+  2: "II",
+  3: "III",
+};
+
+/**
+ * Display names for rank tiers
+ */
+export const RANK_TIER_DISPLAY: Record<RankTier, string> = {
+  copper: "Copper",
+  bronze: "Bronze",
+  iron: "Iron",
+  silver: "Silver",
+  gold: "Gold",
+  master: "Master",
+  legendary: "Legendary",
+  mythic: "Mythic",
+  supreme_being: "Supreme Being",
+  goat: "G.O.A.T",
+};
+
+/**
+ * Get the display name for a rank (e.g., "Gold II", "G.O.A.T")
+ */
+export function getRankDisplayName(tier: RankTier, level: RankLevel | null): string {
+  if (tier === "goat") return "G.O.A.T";
+  if (level === null) return RANK_TIER_DISPLAY[tier];
+  return `${RANK_TIER_DISPLAY[tier]} ${RANK_LEVEL_DISPLAY[level]}`;
+}
 
 /**
  * Forge Rank - composite score combining all aspects
@@ -112,7 +164,7 @@ export type RankTier =
 export interface GymRank {
   /** Total score (0-1000) */
   score: number;
-  /** Rank number (1-20) */
+  /** Rank number (1-28) */
   rank: number;
   /** Rank tier name */
   tier: RankTier;
@@ -253,7 +305,7 @@ export const DEFAULT_VARIETY_METRICS: VarietyMetrics = {
 export const DEFAULT_FORGE_RANK: GymRank = {
   score: 0,
   rank: 1,
-  tier: "iron",
+  tier: "copper",
   progressToNext: 0,
   components: {
     strength: 0,

@@ -83,7 +83,7 @@ export interface RichCue {
   // === Theme/Personality Integration ===
   /**
    * Illustration ID to display (resolved by theme system)
-   * e.g., "pr_weight_fire", "pr_rep_explosion", "rank_up_diamond"
+   * e.g., "pr_weight_fire", "pr_rep_explosion", "rank_up_legendary"
    */
   illustrationId?: string;
 

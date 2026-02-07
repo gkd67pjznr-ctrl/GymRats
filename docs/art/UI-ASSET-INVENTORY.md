@@ -39,19 +39,41 @@ The theme system (see `src/lib/themes/`) defines **colors only**, not images. Th
 | `achievement-frame-standard` | SVG | No | P1 | Needed | Simple decorative frame |
 | `achievement-frame-gold` | SVG | No | P1 | Needed | Ornate gold-style frame |
 | `pr-celebration-frame` | Code + Lottie | No | P1 | Needed | Animated frame for PR moments |
-| `rank-badge-border-iron` | SVG | No | P1 | Needed | Matches rank color system |
-| `rank-badge-border-bronze` | SVG | No | P1 | Needed | Bronze tier styling |
-| `rank-badge-border-silver` | SVG | No | P1 | Needed | Silver tier styling |
-| `rank-badge-border-gold` | SVG | No | P1 | Needed | Gold tier styling |
-| `rank-badge-border-platinum` | SVG | No | P1 | Needed | Platinum tier styling |
-| `rank-badge-border-diamond` | SVG | No | P1 | Needed | Diamond tier styling |
-| `rank-badge-border-mythic` | Grayscale + theme tint | No | P1 | Needed | Uses theme accent color |
+
+#### Rank Badges (28 assets)
+
+**See [RANK-SYSTEM.md](./RANK-SYSTEM.md) for complete specifications.**
+
+Each tier has 3 variants (I, II, III) with progressive enhancement, except G.O.A.T which has 1.
+All badges include a **square inlay text box** at the bottom showing rank name (e.g., "Gold II").
+
+| Tier | Variants | Priority | Status | Color | Visual Style |
+|------|----------|----------|--------|-------|--------------|
+| Copper | I, II, III | P1 | Needed | `#B87333` | Simple oxidized ring |
+| Bronze | I, II, III | P1 | Needed | `#CD7F32` | Slightly polished |
+| Iron | I, II, III | P1 | Needed | `#6B6B6B` | Industrial, forged |
+| Silver | I, II, III | P1 | Needed | `#C0C0C0` | Polished, elegant |
+| Gold | I, II, III | P1 | Needed | `#FFD700` | Ornate flourishes |
+| Master | I, II, III | P1 | Needed | `#FFF8DC` | Circular + spikes + glow |
+| Legendary | I, II, III | P1 | Needed | `#9B30FF` | Mystical aura, gems |
+| Mythic | I, II, III | P1 | Needed | `#00CED1` | Ethereal, particles |
+| Supreme Being | I, II, III | P2 | Needed | TBD | Cosmic/celestial |
+| G.O.A.T | (single) | P2 | Needed | TBD | Ultimate, prismatic |
+
+**Level Enhancement (I → II → III):**
+- Level I: Base design
+- Level II: Added decorative elements
+- Level III: Maximum ornamentation for that tier
+
+**File naming:** `rank-badge-{tier}-{level}.png` (e.g., `rank-badge-copper-1.png`, `rank-badge-goat.png`)
+**Size:** 512x512 base, scales down for display
+**Location:** `assets/ui/badges/rank/`
 
 **Rationale:**
 - Standard card borders use code because React Native's border system is sufficient
 - Premium borders need subtle effects that require image assets
 - Legendary borders justify theme-specific variants for maximum impact
-- Rank borders are fixed colors (Iron-Diamond) except Mythic which uses theme accent
+- Rank borders are fixed tier colors with progressive visual complexity
 
 ---
 
@@ -155,7 +177,7 @@ Assets that need AI generation or manual creation:
 ### Priority 1 (Launch Features)
 | Asset | Type | Prompt/Description | Est. Count |
 |-------|------|-------------------|------------|
-| `rank-badge-border-*` | SVG | Decorative badge frames per rank tier, 64x64 | 7 |
+| `rank-badge-border-*` | SVG | Decorative badge frames per rank tier (10 tiers × 3 levels + G.O.A.T), 128x128 | 28 |
 | `achievement-frame-standard` | SVG | Simple decorative frame, 128x128 | 1 |
 | `achievement-frame-gold` | SVG | Ornate gold-style frame with flourishes, 128x128 | 1 |
 | `level-up-burst` | Lottie | Radial burst with stars, 2 sec loop | 1 |
@@ -283,10 +305,14 @@ assets/ui/
 │   ├── card-border-premium.svg
 │   ├── achievement-frame-standard.svg
 │   ├── achievement-frame-gold.svg
+├── badges/
 │   └── rank/
-│       ├── rank-badge-border-iron.svg
-│       ├── rank-badge-border-bronze.svg
-│       └── ...
+│       ├── rank-badge-copper-1.png
+│       ├── rank-badge-copper-2.png
+│       ├── rank-badge-copper-3.png
+│       ├── rank-badge-bronze-1.png
+│       ├── ... (28 total)
+│       └── rank-badge-goat.png
 ├── backgrounds/
 │   └── card-bg-texture-noise.png
 ├── buttons/

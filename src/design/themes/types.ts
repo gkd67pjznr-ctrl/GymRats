@@ -72,15 +72,18 @@ export interface ThemeColors {
     info: string;
   };
 
-  /** Rank-specific colors (can be customized per theme) */
+  /** Rank-specific colors (10 tiers - can be customized per theme) */
   ranks: {
-    iron: string;
+    copper: string;
     bronze: string;
+    iron: string;
     silver: string;
     gold: string;
-    platinum: string;
-    diamond: string;
+    master: string;
+    legendary: string;
     mythic: string;
+    supreme_being: string;
+    goat: string;
   };
 
   /** Overlay/scrim colors */

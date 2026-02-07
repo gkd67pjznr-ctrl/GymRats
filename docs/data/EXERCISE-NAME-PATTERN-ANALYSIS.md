@@ -1,13 +1,13 @@
 # Exercise Name Pattern Analysis
 
 > **Generated:** 2026-02-06
-> **Total Exercises:** 1590
+> **Total Exercises:** 637
 
 ---
 
 ## Executive Summary
 
-- **Total exercises:** 1590
+- **Total exercises:** 637
 - **Unique movement patterns identified:** 45
 - **Potential duplicate groups:** 17
 - **Exercises in duplicate groups:** 35

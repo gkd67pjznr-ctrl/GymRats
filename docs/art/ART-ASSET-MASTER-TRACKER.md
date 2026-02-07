@@ -87,7 +87,7 @@
 
 **Source:** `docs/art/generation/ui-asset-prompts.csv` and `docs/art/UI-ASSET-INVENTORY.md`
 
-#### Borders & Frames (13 items)
+#### Borders & Frames (37 items)
 
 | Asset ID | Priority | Status | Notes |
 |----------|----------|--------|-------|
@@ -97,15 +97,25 @@
 | `achievement-frame-standard` | P1 | Needed | Tintable SVG |
 | `achievement-frame-gold` | P1 | Needed | Fixed gold color SVG |
 | `pr-celebration-frame` | P1 | Needed | Code + Lottie |
-| `rank-badge-border-iron` | P1 | Needed | Fixed color SVG |
-| `rank-badge-border-bronze` | P1 | Needed | Fixed color SVG |
-| `rank-badge-border-silver` | P1 | Needed | Fixed color SVG |
-| `rank-badge-border-gold` | P1 | Needed | Fixed color SVG |
-| `rank-badge-border-platinum` | P1 | Needed | Fixed color SVG |
-| `rank-badge-border-diamond` | P1 | Needed | Fixed color SVG |
-| `rank-badge-border-mythic` | P1 | Needed | Grayscale + theme tint |
 
-**Subtotal: 11 needed** (2 already done via code)
+**Rank Badges (28 total - see [RANK-SYSTEM.md](./RANK-SYSTEM.md) for full specs):**
+
+| Tier | Assets | Priority | Status | Notes |
+|------|--------|----------|--------|-------|
+| Copper I, II, III | 3 | P1 | **DONE** | `#B87333` - Flexed arm + dumbbell |
+| Bronze I, II, III | 3 | P1 | **DONE** | `#CD7F32` - Flexed arm + dumbbell |
+| Iron I, II, III | 3 | P1 | **DONE** | `#6B6B6B` - Flexed arm + dumbbell |
+| Silver I, II, III | 3 | P1 | Needed | `#C0C0C0` - Elegant polished |
+| Gold I, II, III | 3 | P1 | Needed | `#FFD700` - Ornate flourishes |
+| Master I, II, III | 3 | P1 | Needed | `#FFF8DC` - Spiked with glow |
+| Legendary I, II, III | 3 | P1 | Needed | `#9B30FF` - Mystical aura |
+| Mythic I, II, III | 3 | P1 | Needed | `#00CED1` - Ethereal particles |
+| Supreme Being I, II, III | 3 | P2 | Needed | TBD - Cosmic/celestial |
+| G.O.A.T | 1 | P2 | Needed | TBD - Ultimate/prismatic |
+
+**All rank badges include square inlay text box showing rank name (e.g., "Gold II")**
+
+**Subtotal: 35 needed** (2 already done via code)
 
 #### Backgrounds (8 items)
 

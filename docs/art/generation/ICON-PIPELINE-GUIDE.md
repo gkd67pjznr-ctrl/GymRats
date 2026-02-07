@@ -4,7 +4,7 @@
 >
 > **Version:** 1.0.0
 > **Last Updated:** 2026-02-06
-> **Target:** 1590 exercise icons
+> **Target:** 637 exercise icons
 
 ---
 
@@ -53,7 +53,7 @@ node scripts/art/integrate-icons.js
 │                  │     │                  │     │                  │
 │  exercise-       │────▶│  refine-         │────▶│  refined-        │
 │  prompts.csv     │     │  exercise-       │     │  prompts.csv     │
-│  (1590 raw)      │     │  prompts.js      │     │  (prioritized)   │
+│  (637 raw)      │     │  prompts.js      │     │  (prioritized)   │
 │                  │     │                  │     │                  │
 └──────────────────┘     └──────────────────┘     └──────────────────┘
                                                            │
@@ -86,7 +86,7 @@ node scripts/art/integrate-icons.js
 
 | File/Folder | Purpose |
 |-------------|---------|
-| `docs/art/generation/exercise-prompts.csv` | Original 1590 prompts |
+| `docs/art/generation/exercise-prompts.csv` | Original 637 prompts |
 | `docs/art/generation/refined-prompts.csv` | Refined prompts with priorities |
 | `docs/art/generation/EXERCISE-ICON-STYLE-GUIDE.md` | Visual style spec |
 | `scripts/art/output/icons/` | Generated raw icons |
@@ -423,7 +423,7 @@ node scripts/art/integrate-icons.js
 
 | Metric | Expected |
 |--------|----------|
-| Icons generated | 1,590 |
+| Icons generated | 637 |
 | Success rate | 80-90% |
 | Time to generate | 3-6 hours |
 | Cost (Stability AI) | ~$55-65 |
@@ -513,7 +513,7 @@ node scripts/art/refine-exercise-prompts.js
 
 ### Cost by Provider (per 1000 icons)
 
-| Provider | Model | Per Image | Per 1000 | Per 1590 |
+| Provider | Model | Per Image | Per 1000 | Per 637 |
 |----------|-------|-----------|----------|----------|
 | Stability AI | SD3 Large | $0.035 | $35 | $55.65 |
 | Stability AI | SD3 Core | $0.03 | $30 | $47.70 |

@@ -1,7 +1,7 @@
 # AI Image Generation Master Research
 
 **Last Updated:** 2026-02-06
-**Purpose:** Comprehensive research for mass art asset creation (1590+ exercise icons, UI elements, avatars)
+**Purpose:** Comprehensive research for mass art asset creation (637+ exercise icons, UI elements, avatars)
 **Budget:** Cost-conscious with emphasis on time efficiency
 
 ---
@@ -12,7 +12,7 @@
 
 **Primary Strategy: Hybrid Approach**
 
-For 1590 exercise icons with the established "minimal silhouette with accent" style:
+For 637 exercise icons with the established "minimal silhouette with accent" style:
 
 | Phase | Tool | Cost Estimate | Time | Quality |
 |-------|------|---------------|------|---------|
@@ -25,7 +25,7 @@ For 1590 exercise icons with the established "minimal silhouette with accent" st
 2. **Local generation for bulk** - Zero marginal cost per image after hardware
 3. **API fallback** - If local quality insufficient, fal.ai offers best price/quality
 
-**Total Estimated Cost for 1590 Icons:** $0-$65 depending on approach chosen
+**Total Estimated Cost for 637 Icons:** $0-$65 depending on approach chosen
 
 ---
 
@@ -258,7 +258,7 @@ npx @gongrzhe/image-gen-server
 
 ### Pricing Table (2025-2026)
 
-| Service | Per Image (1024px) | 1590 Images | Batch Discount | Quality | Best For |
+| Service | Per Image (1024px) | 637 Images | Batch Discount | Quality | Best For |
 |---------|-------------------|-------------|----------------|---------|----------|
 | **Local (DiffuGen/ComfyUI)** | $0 | $0 | N/A | A | Bulk generation |
 | **Replicate Flux Schnell** | $0.003 | ~$5 | No | A- | Fast prototyping |
@@ -296,7 +296,7 @@ npx @gongrzhe/image-gen-server
 
 ## Batch Processing Strategy
 
-### Recommended Pipeline for 1590 Exercise Icons
+### Recommended Pipeline for 637 Exercise Icons
 
 #### Option A: Local Generation (Recommended for Budget)
 
@@ -495,7 +495,7 @@ def save_progress(completed, failed, total):
 
 ## Cost Projections
 
-### Exercise Icons (1590 images)
+### Exercise Icons (637 images)
 
 | Approach | Cost | Time | Notes |
 |----------|------|------|-------|
@@ -513,7 +513,7 @@ def save_progress(completed, failed, total):
 
 | Asset Type | Count | Per-Image | Subtotal |
 |------------|-------|-----------|----------|
-| Exercise Icons | 1590 | $0-$0.03 | $0-$50 |
+| Exercise Icons | 637 | $0-$0.03 | $0-$50 |
 | UI Borders/Frames | 50 | $0.05 | $2.50 |
 | Backgrounds | 20 | $0.08 | $1.60 |
 | Avatar Base Poses | 100 | $0.05 | $5 |
@@ -655,7 +655,7 @@ with open("test_icon.png", "wb") as f:
 
 ### Related Project Files
 
-- `docs/assets/exercise-image-prompts.csv` - 1590 prompts ready to use
+- `docs/assets/exercise-image-prompts.csv` - 637 prompts ready to use
 - `docs/assets/EXERCISE-ICON-STYLE-GUIDE.md` - Visual style specification
 - `docs/visual-style/ai-image-generation-tools.md` - Previous research (now superseded)
 

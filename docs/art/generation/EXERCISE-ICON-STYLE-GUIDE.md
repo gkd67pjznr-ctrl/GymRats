@@ -4,7 +4,7 @@
 >
 > **Last Updated:** 2026-02-05
 > **Version:** 1.1
-> **Target:** 1590 exercises
+> **Target:** 637 exercises
 
 ---
 
@@ -312,6 +312,6 @@ assets/
 
 ## Related Files
 
-- `exercise-image-prompts.csv` - All 1,590 exercise prompts
+- `exercise-image-prompts.csv` - All 637 exercise prompts
 - `EXERCISE-IMAGE-PRIORITY.md` - Priority ranking for generation order
 - `../data/EXERCISE-MASTER-LIST.md` - Source exercise database

@@ -678,7 +678,7 @@ Persistent per-exercise notes that stick to exercises across sessions.
 **Status:** In Progress | **Progress:** 1/6 features
 **Launch Priority**
 
-Maintainable system for the 1,590+ exercise database with human-readable master file.
+Maintainable system for the 637+ exercise database with human-readable master file.
 
 **Completed:**
 - Master exercise file (docs/data/EXERCISE-DATABASE-MASTER.md)

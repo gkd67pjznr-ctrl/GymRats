@@ -4,10 +4,12 @@
 import type {
   GymRank,
   RankTier,
+  RankLevel,
   ConsistencyMetrics,
   VarietyMetrics,
   ExerciseStats,
 } from "./types";
+import { getRankDisplayName, RANK_TIER_DISPLAY } from "./types";
 
 /**
  * Component weights for Forge Rank calculation
@@ -22,16 +24,32 @@ const WEIGHTS = {
 
 /**
  * Tier thresholds (score ranges)
- * Score 0-1000 maps to Rank 1-20 and these tiers
+ * Score 0-1000 maps to Rank 1-28 and these tiers
+ * Each tier has 3 levels (I, II, III) except G.O.A.T which has 1
+ *
+ * Tiers (10 total, 28 ranks):
+ * - Copper I-III (ranks 1-3): 0-179
+ * - Bronze I-III (ranks 4-6): 180-359
+ * - Iron I-III (ranks 7-9): 360-539
+ * - Silver I-III (ranks 10-12): 540-719
+ * - Gold I-III (ranks 13-15): 720-899
+ * - Master I-III (ranks 16-18): 900-979
+ * - Legendary I-III (ranks 19-21): 980-997
+ * - Mythic I-III (ranks 22-24): 997-999.5
+ * - Supreme Being I-III (ranks 25-27): 999.5-999.99
+ * - G.O.A.T (rank 28): 999.99+
  */
 const TIER_THRESHOLDS: { tier: RankTier; minScore: number; maxRank: number }[] = [
-  { tier: "iron", minScore: 0, maxRank: 3 },
-  { tier: "bronze", minScore: 150, maxRank: 6 },
-  { tier: "silver", minScore: 300, maxRank: 9 },
-  { tier: "gold", minScore: 450, maxRank: 12 },
-  { tier: "platinum", minScore: 600, maxRank: 15 },
-  { tier: "diamond", minScore: 750, maxRank: 18 },
-  { tier: "mythic", minScore: 900, maxRank: 20 },
+  { tier: "copper", minScore: 0, maxRank: 3 },
+  { tier: "bronze", minScore: 180, maxRank: 6 },
+  { tier: "iron", minScore: 360, maxRank: 9 },
+  { tier: "silver", minScore: 540, maxRank: 12 },
+  { tier: "gold", minScore: 720, maxRank: 15 },
+  { tier: "master", minScore: 900, maxRank: 18 },
+  { tier: "legendary", minScore: 980, maxRank: 21 },
+  { tier: "mythic", minScore: 997, maxRank: 24 },
+  { tier: "supreme_being", minScore: 999.5, maxRank: 27 },
+  { tier: "goat", minScore: 999.99, maxRank: 28 },
 ];
 
 /**
@@ -60,11 +78,11 @@ function calculateStrengthComponent(exerciseStats: Record<string, ExerciseStats>
   const stats = Object.values(exerciseStats);
   if (stats.length === 0) return 0;
 
-  // Average rank (1-20) converted to 0-1000 scale
+  // Average rank (1-28) converted to 0-1000 scale
   const avgRank = stats.reduce((sum, s) => sum + s.rank, 0) / stats.length;
 
-  // Rank 1 = 0, Rank 20 = 1000 (linear)
-  return ((avgRank - 1) / 19) * 1000;
+  // Rank 1 = 0, Rank 28 = 1000 (linear)
+  return ((avgRank - 1) / 27) * 1000;
 }
 
 /**
@@ -182,34 +200,49 @@ export function scoreToTierAndRank(score: number): {
   rank: number;
   tier: RankTier;
   progressToNext: number;
+  level: RankLevel | null;
 } {
   // Clamp score to valid range
   const clampedScore = Math.max(0, Math.min(1000, score));
 
-  // Linear mapping: score 0 = rank 1, score 1000 = rank 20
-  const exactRank = 1 + (clampedScore / 1000) * 19;
-  const rank = Math.min(20, Math.max(1, Math.floor(exactRank)));
+  // Linear mapping: score 0 = rank 1, score 1000 = rank 28
+  const exactRank = 1 + (clampedScore / 1000) * 27;
+  const rank = Math.min(28, Math.max(1, Math.floor(exactRank)));
 
   // Progress to next rank
-  const progressToNext = rank >= 20 ? 1 : exactRank - rank;
+  const progressToNext = rank >= 28 ? 1 : exactRank - rank;
 
-  // Get tier from rank
+  // Get tier and level from rank
   const tier = getTierFromRank(rank);
+  const level = getLevelFromRank(rank);
 
-  return { rank, tier, progressToNext };
+  return { rank, tier, progressToNext, level };
 }
 
 /**
- * Get tier name from rank number (1-20)
+ * Get tier name from rank number (1-28)
  */
 export function getTierFromRank(rank: number): RankTier {
-  if (rank <= 3) return "iron";
+  if (rank <= 3) return "copper";
   if (rank <= 6) return "bronze";
-  if (rank <= 9) return "silver";
-  if (rank <= 12) return "gold";
-  if (rank <= 15) return "platinum";
-  if (rank <= 18) return "diamond";
-  return "mythic";
+  if (rank <= 9) return "iron";
+  if (rank <= 12) return "silver";
+  if (rank <= 15) return "gold";
+  if (rank <= 18) return "master";
+  if (rank <= 21) return "legendary";
+  if (rank <= 24) return "mythic";
+  if (rank <= 27) return "supreme_being";
+  return "goat";
+}
+
+/**
+ * Get level (I, II, III) from rank number (1-28)
+ * Returns null for G.O.A.T (rank 28)
+ */
+export function getLevelFromRank(rank: number): RankLevel | null {
+  if (rank >= 28) return null; // G.O.A.T has no level
+  const positionInTier = ((rank - 1) % 3) + 1;
+  return positionInTier as RankLevel;
 }
 
 /**
@@ -217,20 +250,32 @@ export function getTierFromRank(rank: number): RankTier {
  */
 export function getTierColor(tier: RankTier): string {
   const colors: Record<RankTier, string> = {
-    iron: "#8B8B8B",
+    copper: "#B87333",
     bronze: "#CD7F32",
+    iron: "#6B6B6B",
     silver: "#C0C0C0",
     gold: "#FFD700",
-    platinum: "#E5E4E2",
-    diamond: "#B9F2FF",
-    mythic: "#FF00FF",
+    master: "#FFF8DC", // Bright white-gold
+    legendary: "#9B30FF", // Royal purple
+    mythic: "#00CED1", // Ethereal cyan
+    supreme_being: "#FF4500", // Cosmic fire (placeholder)
+    goat: "#FFFFFF", // Pure white (placeholder - may be rainbow/prismatic)
   };
   return colors[tier];
 }
 
 /**
- * Get tier display name
+ * Get tier display name (uses RANK_TIER_DISPLAY from types)
  */
 export function getTierDisplayName(tier: RankTier): string {
-  return tier.charAt(0).toUpperCase() + tier.slice(1);
+  return RANK_TIER_DISPLAY[tier];
+}
+
+/**
+ * Get full rank display name (e.g., "Gold II", "G.O.A.T")
+ */
+export function getFullRankDisplayName(rank: number): string {
+  const tier = getTierFromRank(rank);
+  const level = getLevelFromRank(rank);
+  return getRankDisplayName(tier, level);
 }

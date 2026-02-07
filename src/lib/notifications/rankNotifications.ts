@@ -4,17 +4,10 @@
 import * as Notifications from 'expo-notifications';
 import { getSettings } from '../stores/settingsStore';
 import type { RankTier } from '../userStats/types';
+import { RANK_TIER_DISPLAY } from '../userStats/types';
 
-// Tier display names
-const TIER_NAMES: Record<RankTier, string> = {
-  iron: 'Iron',
-  bronze: 'Bronze',
-  silver: 'Silver',
-  gold: 'Gold',
-  platinum: 'Platinum',
-  diamond: 'Diamond',
-  mythic: 'Mythic',
-};
+// Tier display names (imported from types)
+const TIER_NAMES = RANK_TIER_DISPLAY;
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -110,13 +103,16 @@ export async function sendTierUpNotification(params: {
 
   // Tier-specific messages
   const tierMessages: Record<RankTier, string> = {
-    iron: "Keep pushing! You're just getting started.",
+    copper: "Keep pushing! You're just getting started.",
     bronze: "You're building a solid foundation!",
+    iron: "Forging strength! Great progress!",
     silver: "Impressive progress! Keep it up!",
     gold: "You're among the dedicated lifters!",
-    platinum: "Elite status achieved!",
-    diamond: "Incredible! You're in the top tier!",
-    mythic: "LEGENDARY! You've reached the pinnacle!",
+    master: "Elite status achieved! You're a Master!",
+    legendary: "Incredible! Legendary strength unlocked!",
+    mythic: "MYTHIC! You've transcended normal limits!",
+    supreme_being: "SUPREME! You're among the gods!",
+    goat: "G.O.A.T! THE GREATEST OF ALL TIME!",
   };
 
   await Notifications.scheduleNotificationAsync({
@@ -143,13 +139,16 @@ export function checkTierChange(oldRank: number, newRank: number): {
   newTier: RankTier;
 } {
   const getTier = (rank: number): RankTier => {
-    if (rank <= 3) return 'iron';
+    if (rank <= 3) return 'copper';
     if (rank <= 6) return 'bronze';
-    if (rank <= 9) return 'silver';
-    if (rank <= 12) return 'gold';
-    if (rank <= 15) return 'platinum';
-    if (rank <= 18) return 'diamond';
-    return 'mythic';
+    if (rank <= 9) return 'iron';
+    if (rank <= 12) return 'silver';
+    if (rank <= 15) return 'gold';
+    if (rank <= 18) return 'master';
+    if (rank <= 21) return 'legendary';
+    if (rank <= 24) return 'mythic';
+    if (rank <= 27) return 'supreme_being';
+    return 'goat';
   };
 
   const oldTier = getTier(oldRank);

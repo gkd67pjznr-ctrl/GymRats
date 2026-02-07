@@ -298,12 +298,12 @@ const LEGENDARY_MILESTONES: ForgeMilestone[] = [
     tokens: 400,
   },
   {
-    id: 'first_diamond',
-    name: 'Diamond Standard',
-    description: 'Rank any exercise Diamond',
+    id: 'first_legendary',
+    name: 'Legendary Status',
+    description: 'Rank any exercise Legendary',
     rarity: 'legendary',
-    icon: '💎',
-    condition: { type: 'rank', threshold: 5, exerciseId: 'any' }, // Diamond is tier 5
+    icon: '👑',
+    condition: { type: 'rank', threshold: 7, exerciseId: 'any' }, // Legendary is tier 7
     tokens: 400,
   },
   {

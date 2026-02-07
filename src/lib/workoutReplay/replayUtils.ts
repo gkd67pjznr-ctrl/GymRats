@@ -26,14 +26,17 @@ export function formatWeight(weightKg: number, unit: 'lb' | 'kg' = 'lb'): string
 // Get tier color for UI
 export function getTierColor(tier: string): string {
   switch (tier.toLowerCase()) {
-    case 'iron': return '#808080';
+    case 'copper': return '#B87333';
     case 'bronze': return '#CD7F32';
+    case 'iron': return '#6B6B6B';
     case 'silver': return '#C0C0C0';
     case 'gold': return '#FFD700';
-    case 'platinum': return '#E5E4E2';
-    case 'diamond': return '#B9F2FF';
-    case 'mythic': return '#9370DB';
-    default: return '#808080';
+    case 'master': return '#FFF8DC';
+    case 'legendary': return '#9B30FF';
+    case 'mythic': return '#00CED1';
+    case 'supreme_being': return '#FF4500';
+    case 'goat': return '#FFFFFF';
+    default: return '#B87333'; // Default to copper
   }
 }
 

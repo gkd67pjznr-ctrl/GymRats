@@ -2,7 +2,7 @@
 
 ## Overview
 
-A maintainable system for managing the GymRats exercise database (1,590+ exercises). Includes a human-readable master file as the single source of truth, sync scripts for updates, and an exercise icon generation pipeline.
+A maintainable system for managing the GymRats exercise database (637+ exercises). Includes a human-readable master file as the single source of truth, sync scripts for updates, and an exercise icon generation pipeline.
 
 **Status:** In Progress | **Progress:** 1/6 features
 **Priority:** P1 (Launch)
@@ -12,7 +12,7 @@ A maintainable system for managing the GymRats exercise database (1,590+ exercis
 
 ## Problem Statement
 
-The exercise database has grown to 1,590 exercises with issues:
+The exercise database has grown to 637 exercises with issues:
 - Verbose/redundant naming ("Barbell Bench Press - Medium Grip" vs "Bench Press")
 - Duplicate entries for similar exercises
 - Missing or inconsistent metadata
@@ -144,7 +144,7 @@ app icon style, no text, consistent with fitness app aesthetic
 ### Current Data Structure
 
 ```typescript
-// src/data/exercises-raw.json (1,590 exercises)
+// src/data/exercises-raw.json (637 exercises)
 type RawExercise = {
   id: string;                    // "Barbell_Bench_Press_-_Medium_Grip"
   name: string;                  // "Barbell Bench Press - Medium Grip"
@@ -218,7 +218,7 @@ type GrExercise = {
 
 | Metric | Value |
 |--------|-------|
-| Total Exercises | 1,590 |
+| Total Exercises | 637 |
 | Muscle Groups | 21 |
 | Equipment Types | 7+ |
 | File Size (JSON) | 1.4MB |

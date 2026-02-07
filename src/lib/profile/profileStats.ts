@@ -28,14 +28,14 @@ export interface ExercisePR {
 
 export interface ExerciseRank {
   exerciseId: string;
-  rankIndex: number; // 0-19 (0 = Rank 1, 19 = Rank 20)
-  rankNumber: number; // 1-20 (human readable)
+  rankIndex: number; // 0-27 (0 = Rank 1, 27 = Rank 28)
+  rankNumber: number; // 1-28 (human readable)
   currentE1RMKg: number;
   progressToNext: number; // 0-1
   tier: RankTier;
 }
 
-export type RankTier = 'iron' | 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond' | 'mythic';
+export type RankTier = 'copper' | 'bronze' | 'iron' | 'silver' | 'gold' | 'master' | 'legendary' | 'mythic' | 'supreme_being' | 'goat';
 
 export interface ProfileStats {
   // PR counts
@@ -60,13 +60,16 @@ export interface ProfileStats {
 function getRankTier(rankIndex: number, numRanks: number): RankTier {
   const normalized = rankIndex / (numRanks - 1); // 0-1
 
-  if (normalized < 0.1) return 'iron';
-  if (normalized < 0.25) return 'bronze';
+  if (normalized < 0.1) return 'copper';
+  if (normalized < 0.2) return 'bronze';
+  if (normalized < 0.3) return 'iron';
   if (normalized < 0.4) return 'silver';
-  if (normalized < 0.55) return 'gold';
-  if (normalized < 0.7) return 'platinum';
-  if (normalized < 0.85) return 'diamond';
-  return 'mythic';
+  if (normalized < 0.5) return 'gold';
+  if (normalized < 0.65) return 'master';
+  if (normalized < 0.75) return 'legendary';
+  if (normalized < 0.85) return 'mythic';
+  if (normalized < 0.95) return 'supreme_being';
+  return 'goat';
 }
 
 // ============================================================================
@@ -266,13 +269,16 @@ export function getExerciseDisplayName(exerciseId: string): string {
  */
 export function getRankTierColor(tier: RankTier): string {
   const colors: Record<RankTier, string> = {
-    'iron': '#8B8B8B',
+    'copper': '#B87333',
     'bronze': '#CD7F32',
+    'iron': '#6B6B6B',
     'silver': '#C0C0C0',
     'gold': '#FFD700',
-    'platinum': '#E5E4E2',
-    'diamond': '#B9F2FF',
-    'mythic': '#FF6B9D',
+    'master': '#FFF8DC',
+    'legendary': '#9B30FF',
+    'mythic': '#00CED1',
+    'supreme_being': '#FF4500',
+    'goat': '#FFFFFF',
   };
 
   return colors[tier];

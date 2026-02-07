@@ -76,15 +76,18 @@ export interface ThemePackColors {
   accent: string;
   accentGlow?: string; // For glow effects
 
-  // Rank colors (can override defaults)
+  // Rank colors (can override defaults - 10 tiers)
   ranks?: {
-    iron?: string;
+    copper?: string;
     bronze?: string;
+    iron?: string;
     silver?: string;
     gold?: string;
-    platinum?: string;
-    diamond?: string;
+    master?: string;
+    legendary?: string;
     mythic?: string;
+    supreme_being?: string;
+    goat?: string;
   };
 
   // Gradients

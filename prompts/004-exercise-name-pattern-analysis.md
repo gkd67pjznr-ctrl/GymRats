@@ -6,11 +6,11 @@ The goal is to understand how exercises are named so we can:
 2. Group exercises by common movement patterns
 3. Create an organization strategy for the master list
 
-This analysis will inform a cleanup effort to deduplicate and standardize 1,590 exercises.
+This analysis will inform a cleanup effort to deduplicate and standardize 637 exercises.
 </objective>
 
 <data_sources>
-Read and analyze: `src/data/exercises-raw.json` (1,590 exercises)
+Read and analyze: `src/data/exercises-raw.json` (637 exercises)
 Reference: `docs/data/EXERCISE-MASTER-LIST.md` (organized by muscle group)
 </data_sources>
 
@@ -147,7 +147,7 @@ Structure:
 
 <verification>
 Before completing:
-1. All 1,590 exercises have been categorized
+1. All 637 exercises have been categorized
 2. Movement pattern counts are accurate
 3. Duplicate groups are clearly identified
 4. Recommendations are actionable

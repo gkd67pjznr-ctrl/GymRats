@@ -102,15 +102,18 @@ export const colors = {
     glow: 'rgba(59, 130, 246, 0.2)',
   },
 
-  // Rank colors (these are semantic but kept here for reference)
+  // Rank colors (10 tiers - see docs/art/RANK-SYSTEM.md)
   rank: {
-    iron: '#7B7E8A',
+    copper: '#B87333',
     bronze: '#CD7F32',
+    iron: '#6B6B6B',
     silver: '#C0C0C0',
     gold: '#FFD700',
-    platinum: '#64E6C2',
-    diamond: '#B9F2FF',
-    mythic: '#FF4DFF',
+    master: '#FFF8DC',
+    legendary: '#9B30FF',
+    mythic: '#00CED1',
+    supreme_being: '#FF4500',
+    goat: '#FFFFFF',
   },
 
   // Pure colors

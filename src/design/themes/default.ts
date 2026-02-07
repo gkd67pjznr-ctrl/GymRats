@@ -54,13 +54,16 @@ const toxicColors: ThemeColors = {
   },
 
   ranks: {
-    iron: colors.rank.iron,
+    copper: colors.rank.copper,
     bronze: colors.rank.bronze,
+    iron: colors.rank.iron,
     silver: colors.rank.silver,
     gold: colors.rank.gold,
-    platinum: colors.rank.platinum,
-    diamond: colors.rank.diamond,
+    master: colors.rank.master,
+    legendary: colors.rank.legendary,
     mythic: colors.rank.mythic,
+    supreme_being: colors.rank.supreme_being,
+    goat: colors.rank.goat,
   },
 
   overlays: {

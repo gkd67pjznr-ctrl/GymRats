@@ -135,14 +135,20 @@ export const accentGradients = {
 // =============================================================================
 
 export const rankGradients = {
-  iron: {
-    colors: ['#7B7E8A', '#5A5D66'],
+  copper: {
+    colors: ['#B87333', '#8B5A2B'],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
   } as GradientConfig,
 
   bronze: {
     colors: ['#CD7F32', '#8B5A2B'],
+    start: { x: 0, y: 0 },
+    end: { x: 1, y: 1 },
+  } as GradientConfig,
+
+  iron: {
+    colors: ['#6B6B6B', '#4A4A4A'],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
   } as GradientConfig,
@@ -159,20 +165,35 @@ export const rankGradients = {
     end: { x: 1, y: 1 },
   } as GradientConfig,
 
-  platinum: {
-    colors: ['#64E6C2', '#00CED1'],
+  master: {
+    colors: ['#FFF8DC', '#FFD700', '#FFF8DC'],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
+    locations: [0, 0.5, 1],
   } as GradientConfig,
 
-  diamond: {
-    colors: ['#B9F2FF', '#00BFFF'],
+  legendary: {
+    colors: ['#9B30FF', '#7B68EE'],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
   } as GradientConfig,
 
   mythic: {
-    colors: ['#FF4DFF', '#9400D3', '#FF4DFF'],
+    colors: ['#00CED1', '#20B2AA', '#00CED1'],
+    start: { x: 0, y: 0 },
+    end: { x: 1, y: 1 },
+    locations: [0, 0.5, 1],
+  } as GradientConfig,
+
+  supreme_being: {
+    colors: ['#FF4500', '#FF6347', '#FF4500'],
+    start: { x: 0, y: 0 },
+    end: { x: 1, y: 1 },
+    locations: [0, 0.5, 1],
+  } as GradientConfig,
+
+  goat: {
+    colors: ['#FFFFFF', '#FFD700', '#FFFFFF'],
     start: { x: 0, y: 0 },
     end: { x: 1, y: 1 },
     locations: [0, 0.5, 1],
@@ -201,7 +222,7 @@ export const celebrationGradients = {
 
   // Achievement unlocked
   achievement: {
-    colors: [`${colors.rank.diamond}20`, 'transparent'],
+    colors: [`${colors.rank.legendary}20`, 'transparent'],
     start: { x: 0.5, y: 0 },
     end: { x: 0.5, y: 0.6 },
   } as GradientConfig,

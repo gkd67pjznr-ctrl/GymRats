@@ -50,14 +50,17 @@ export type Tone = {
   accentSoft: string;
   purple: string; // For legendary/premium UI elements
 
-  // "rank" palette hooks
-  iron: string;
+  // "rank" palette hooks (10 tiers)
+  copper: string;
   bronze: string;
+  iron: string;
   silver: string;
   gold: string;
-  platinum: string;
-  diamond: string;
+  master: string;
+  legendary: string;
   mythic: string;
+  supreme_being: string;
+  goat: string;
 };
 
 export type TypeScale = {
@@ -205,13 +208,16 @@ export function makeDesignSystem(mode: DSMode = "dark", accent: Accent = "toxic"
           purple: "#B388FF", // For legendary/premium UI elements
 
           // rank hues (use sparingly, mostly for badges)
-          iron: "#7B7E8A",
-          bronze: "#B07A4A",
-          silver: "#BFC7D5",
-          gold: "#FFCC4A",
-          platinum: "#64E6C2",
-          diamond: "#53A8FF",
-          mythic: "#FF4DFF",
+          copper: "#B87333",
+          bronze: "#CD7F32",
+          iron: "#6B6B6B",
+          silver: "#C0C0C0",
+          gold: "#FFD700",
+          master: "#FFF8DC", // Bright white-gold
+          legendary: "#9B30FF", // Royal purple
+          mythic: "#00CED1", // Ethereal cyan
+          supreme_being: "#FF4500", // Cosmic fire (TBD)
+          goat: "#FFFFFF", // Pure white/prismatic (TBD)
         }
       : {
           // light mode is optional in v1; keep it clean and consistent
@@ -236,13 +242,16 @@ export function makeDesignSystem(mode: DSMode = "dark", accent: Accent = "toxic"
           accentSoft: "#EAF3EA",
           purple: "#7C4DFF", // For legendary/premium UI elements
 
-          iron: "#6C6F7A",
+          copper: "#8B5A2B",
           bronze: "#9B6B3D",
+          iron: "#5A5A5A",
           silver: "#8C95A6",
           gold: "#C99700",
-          platinum: "#00BFA5",
-          diamond: "#1C66FF",
-          mythic: "#B100B1",
+          master: "#DAA520", // Darker white-gold for light mode
+          legendary: "#7B68EE", // Medium purple
+          mythic: "#008B8B", // Dark cyan
+          supreme_being: "#CD3700", // Darker cosmic fire (TBD)
+          goat: "#FFD700", // Gold for visibility on light bg (TBD)
         };
 
   const type: TypeScale = {
@@ -390,14 +399,17 @@ export function makeDesignSystemFromPalette(mode: DSMode = "dark", palette: any)
     accentSoft: palette.colors?.soft || ACCENTS[accent].soft,
     purple: palette.colors?.purple || "#B388FF", // For legendary/premium UI elements
 
-    // rank hues
-    iron: palette.colors?.iron || "#7B7E8A",
-    bronze: palette.colors?.bronze || "#B07A4A",
-    silver: palette.colors?.silver || "#BFC7D5",
-    gold: palette.colors?.gold || "#FFCC4A",
-    platinum: palette.colors?.platinum || "#64E6C2",
-    diamond: palette.colors?.diamond || "#53A8FF",
-    mythic: palette.colors?.mythic || "#FF4DFF",
+    // rank hues (10 tiers)
+    copper: palette.colors?.copper || "#B87333",
+    bronze: palette.colors?.bronze || "#CD7F32",
+    iron: palette.colors?.iron || "#6B6B6B",
+    silver: palette.colors?.silver || "#C0C0C0",
+    gold: palette.colors?.gold || "#FFD700",
+    master: palette.colors?.master || "#FFF8DC",
+    legendary: palette.colors?.legendary || "#9B30FF",
+    mythic: palette.colors?.mythic || "#00CED1",
+    supreme_being: palette.colors?.supreme_being || "#FF4500",
+    goat: palette.colors?.goat || "#FFFFFF",
   };
 
   // Use the same type, radii, space, strokes, shadow, motion, and feedback as the standard function

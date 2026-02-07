@@ -8,27 +8,23 @@ import type { View } from 'react-native';
 import { getSettings } from '../stores/settingsStore';
 import type { ExerciseRankSummary } from '../types/rankTypes';
 import type { RankTier } from '../userStats/types';
+import { RANK_TIER_DISPLAY } from '../userStats/types';
 
-// Tier display names for sharing
-const TIER_NAMES: Record<RankTier, string> = {
-  iron: 'Iron',
-  bronze: 'Bronze',
-  silver: 'Silver',
-  gold: 'Gold',
-  platinum: 'Platinum',
-  diamond: 'Diamond',
-  mythic: 'Mythic',
-};
+// Tier display names for sharing (imported from types)
+const TIER_NAMES = RANK_TIER_DISPLAY;
 
 // Tier emojis for text sharing
 const TIER_EMOJIS: Record<RankTier, string> = {
-  iron: '',
-  bronze: '',
-  silver: '',
-  gold: '',
-  platinum: '',
-  diamond: '',
-  mythic: '',
+  copper: '🥉',
+  bronze: '🥉',
+  iron: '⚙️',
+  silver: '🥈',
+  gold: '🥇',
+  master: '👑',
+  legendary: '🏆',
+  mythic: '✨',
+  supreme_being: '🌟',
+  goat: '🐐',
 };
 
 /**

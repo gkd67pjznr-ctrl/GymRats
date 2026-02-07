@@ -38,7 +38,7 @@ docs/art/
 ├── generation/                  # AI image generation resources
 │   ├── AI-IMAGE-GEN-RESEARCH.md # Research & tool comparison
 │   ├── asset-tracking.csv       # Progress tracking spreadsheet
-│   ├── exercise-prompts.csv     # 1590 exercise icon prompts
+│   ├── exercise-prompts.csv     # 637 exercise icon prompts
 │   ├── avatar-prompts.csv       # 205 avatar asset prompts
 │   ├── avatar-asset-specs.md    # Avatar technical specifications
 │   ├── ui-asset-prompts.csv     # UI element generation prompts

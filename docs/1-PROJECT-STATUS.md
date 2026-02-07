@@ -145,7 +145,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 - **NEW:** Gym Lab analytics integration for Day Log correlations
 
 ### Exercise Database Management (NEW)
-- **Master file created:** `docs/data/EXERCISE-DATABASE-MASTER.md` (1,590 exercises)
+- **Master file created:** `docs/data/EXERCISE-DATABASE-MASTER.md` (637 exercises)
 - Organized by primary muscle group with equipment flags
 - Generation script: `scripts/generateExerciseMaster.js`
 - Sync script needed for MD → JSON updates
@@ -270,7 +270,7 @@ GymRats has a **solid, usable core** for workout logging, social sharing, and fr
 
 ### 2026-02-05
 - **Voice Memo Analysis Session** - 4 voice memos analyzed, 19 new tasks created
-- **Exercise Database Master File** - Created `docs/data/EXERCISE-DATABASE-MASTER.md` (1,590 exercises)
+- **Exercise Database Master File** - Created `docs/data/EXERCISE-DATABASE-MASTER.md` (637 exercises)
   - Organized by primary muscle group (21 groups)
   - Equipment flags (BB, DB, Machine, Cable, Bands, KB, Bodyweight)
   - Human-readable format for manual name cleanup

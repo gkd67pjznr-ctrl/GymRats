@@ -83,15 +83,19 @@ export function calculateLevelUpReward(newLevel: number): TokenReward {
  */
 export function calculateRankUpReward(newRank: string): TokenReward {
   const rankRewards: Record<string, number> = {
+    copper: 5,
     bronze: 10,
+    iron: 15,
     silver: 25,
     gold: 50,
-    platinum: 100,
-    diamond: 200,
-    mythic: 500,
+    master: 100,
+    legendary: 200,
+    mythic: 350,
+    supreme_being: 500,
+    goat: 1000,
   };
 
-  const amount = rankRewards[newRank.toLowerCase()] ?? 10;
+  const amount = rankRewards[newRank.toLowerCase()] ?? 5;
 
   return {
     type: 'rank_up',

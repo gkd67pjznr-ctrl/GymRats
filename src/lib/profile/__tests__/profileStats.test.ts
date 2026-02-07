@@ -256,13 +256,16 @@ describe('profileStats', () => {
 
   describe('getRankTierColor', () => {
     it('should return correct colors for each tier', () => {
-      expect(getRankTierColor('iron')).toBe('#8B8B8B');
+      expect(getRankTierColor('copper')).toBe('#B87333');
       expect(getRankTierColor('bronze')).toBe('#CD7F32');
+      expect(getRankTierColor('iron')).toBe('#6B6B6B');
       expect(getRankTierColor('silver')).toBe('#C0C0C0');
       expect(getRankTierColor('gold')).toBe('#FFD700');
-      expect(getRankTierColor('platinum')).toBe('#E5E4E2');
-      expect(getRankTierColor('diamond')).toBe('#B9F2FF');
-      expect(getRankTierColor('mythic')).toBe('#FF6B9D');
+      expect(getRankTierColor('master')).toBe('#FFF8DC');
+      expect(getRankTierColor('legendary')).toBe('#9B30FF');
+      expect(getRankTierColor('mythic')).toBe('#00CED1');
+      expect(getRankTierColor('supreme_being')).toBe('#FF4500');
+      expect(getRankTierColor('goat')).toBe('#FFFFFF');
     });
   });
 });

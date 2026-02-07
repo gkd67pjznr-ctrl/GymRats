@@ -11,7 +11,13 @@
     "Trap_Bar_Deadlift",
     "Alternate_Incline_Dumbbell_Curl"
   ],
-  "failed": [],
-  "lastRun": "2026-02-06T14:16:05.747Z",
+  "failed": [
+    {
+      "id": "Barbell_Deadlift",
+      "attempts": 2,
+      "lastError": "HTTP 405: 405: Method Not Allowed"
+    }
+  ],
+  "lastRun": "2026-02-06T15:03:53.536Z",
   "totalCost": 0
 }

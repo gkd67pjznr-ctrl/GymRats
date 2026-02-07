@@ -40,14 +40,17 @@ export const toxicEnergyTheme: ThemeTokens = {
     warning: '#FFFF00',      // Caution yellow
     error: '#FF3366',        // Hot pink error
 
-    // Rank colors - neon variants
-    rankIron: '#5A5A5A',
+    // Rank colors - neon variants (10 tiers)
+    rankCopper: '#B87333',
     rankBronze: '#8B4513',
+    rankIron: '#5A5A5A',
     rankSilver: '#A8A8A8',
     rankGold: '#CCCC00',     // Toxic gold
-    rankPlatinum: '#D4D4D4',
-    rankDiamond: '#00FFFF',  // Cyan diamond
+    rankMaster: '#FFFACD',   // Bright white-gold
+    rankLegendary: '#9400D3', // Dark violet
     rankMythic: '#ADFF2F',   // Toxic lime for mythic
+    rankSupremeBeing: '#FF4500', // Cosmic fire
+    rankGoat: '#FFFFFF',     // Pure white
   },
 
   gradients: {

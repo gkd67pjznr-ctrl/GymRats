@@ -14,16 +14,19 @@ import type {
 import type { RankTier } from '../userStats/types';
 
 /**
- * Get tier name from rank number (1-20)
+ * Get tier name from rank number (1-28)
  */
 function getTierFromRank(rank: number): RankTier {
-  if (rank <= 3) return 'iron';
+  if (rank <= 3) return 'copper';
   if (rank <= 6) return 'bronze';
-  if (rank <= 9) return 'silver';
-  if (rank <= 12) return 'gold';
-  if (rank <= 15) return 'platinum';
-  if (rank <= 18) return 'diamond';
-  return 'mythic';
+  if (rank <= 9) return 'iron';
+  if (rank <= 12) return 'silver';
+  if (rank <= 15) return 'gold';
+  if (rank <= 18) return 'master';
+  if (rank <= 21) return 'legendary';
+  if (rank <= 24) return 'mythic';
+  if (rank <= 27) return 'supreme_being';
+  return 'goat';
 }
 
 /**

@@ -69,7 +69,7 @@ const epicExplosion: ParticleEmitterConfig = {
   gravity: 300,
   colors: [
     colors.rank.mythic,
-    colors.rank.diamond,
+    colors.rank.legendary,
     colors.rank.gold,
     colors.white,
     colors.toxic.primary,
@@ -197,13 +197,13 @@ export const celebrationPresets: Record<string, CelebrationPreset> = {
     name: 'Achievement Unlocked',
     particles: {
       ...sparkShower,
-      colors: [colors.rank.diamond, colors.rank.platinum, colors.white],
+      colors: [colors.rank.legendary, colors.rank.master, colors.white],
     },
     duration: 2500,
     sound: 'celebration',
     haptic: 'success',
     glow: {
-      color: colors.rank.diamond,
+      color: colors.rank.legendary,
       intensity: 0.35,
       radius: 90,
       pulse: true,
@@ -219,10 +219,10 @@ export const celebrationPresets: Record<string, CelebrationPreset> = {
       count: 150,
       colors: [
         colors.rank.mythic,
-        '#FF4DFF',
-        '#9400D3',
+        '#00CED1',
+        '#20B2AA',
         colors.white,
-        colors.rank.diamond,
+        colors.rank.legendary,
       ],
     },
     duration: 5000,

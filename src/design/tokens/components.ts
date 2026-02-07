@@ -224,15 +224,20 @@ export const badge = {
       text: feedback.danger.text,
       border: colors.transparent,
     },
-    // Rank badges
-    iron: {
-      bg: `rgba(123, 126, 138, 0.15)`,
-      text: colors.rank.iron,
+    // Rank badges (10 tiers)
+    copper: {
+      bg: `rgba(184, 115, 51, 0.15)`,
+      text: colors.rank.copper,
       border: colors.transparent,
     },
     bronze: {
       bg: `rgba(205, 127, 50, 0.15)`,
       text: colors.rank.bronze,
+      border: colors.transparent,
+    },
+    iron: {
+      bg: `rgba(107, 107, 107, 0.15)`,
+      text: colors.rank.iron,
       border: colors.transparent,
     },
     silver: {
@@ -245,19 +250,29 @@ export const badge = {
       text: colors.rank.gold,
       border: colors.transparent,
     },
-    platinum: {
-      bg: `rgba(100, 230, 194, 0.15)`,
-      text: colors.rank.platinum,
+    master: {
+      bg: `rgba(255, 248, 220, 0.15)`,
+      text: colors.rank.master,
       border: colors.transparent,
     },
-    diamond: {
-      bg: `rgba(185, 242, 255, 0.15)`,
-      text: colors.rank.diamond,
+    legendary: {
+      bg: `rgba(155, 48, 255, 0.15)`,
+      text: colors.rank.legendary,
       border: colors.transparent,
     },
     mythic: {
-      bg: `rgba(255, 77, 255, 0.15)`,
+      bg: `rgba(0, 206, 209, 0.15)`,
       text: colors.rank.mythic,
+      border: colors.transparent,
+    },
+    supreme_being: {
+      bg: `rgba(255, 69, 0, 0.15)`,
+      text: colors.rank.supreme_being,
+      border: colors.transparent,
+    },
+    goat: {
+      bg: `rgba(255, 255, 255, 0.15)`,
+      text: colors.rank.goat,
       border: colors.transparent,
     },
   },

@@ -59,7 +59,7 @@ const CONFIG = {
       })
     },
     falai: {
-      endpoint: 'https://queue.fal.run/fal-ai/flux/schnell',
+      endpoint: 'https://fal.run/fal-ai/flux/schnell',
       costPerImage: 0.003,
       headers: (apiKey) => ({
         'Authorization': `Key ${apiKey}`,
