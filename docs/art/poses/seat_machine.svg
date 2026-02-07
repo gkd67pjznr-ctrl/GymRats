@@ -1,0 +1,10 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <circle cx="200" cy="150" r="25" fill="black"/> <!-- head -->
+        <line x1="200" y1="175" x2="200" y2="300" stroke="black" stroke-width="8"/> <!-- torso -->
+        <line x1="200" y1="300" x2="350" y2="300" stroke="black" stroke-width="8"/> <!-- thighs -->
+        <line x1="350" y1="300" x2="350" y2="420" stroke="black" stroke-width="8"/> <!-- shins -->
+        <line x1="200" y1="200" x2="280" y2="200" stroke="black" stroke-width="8"/> <!-- arms forward -->
+        <rect x="270" y="180" width="60" height="40" fill="none" stroke="#A6FF00" stroke-width="4"/> <!-- machine -->
+        <line x1="150" y1="320" x2="220" y2="320" stroke="gray" stroke-width="6"/> <!-- seat -->
+    </svg>

@@ -1,0 +1,8 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <circle cx="100" cy="300" r="20" fill="black"/> <!-- head -->
+        <line x1="120" y1="300" x2="400" y2="300" stroke="black" stroke-width="8"/> <!-- body straight -->
+        <line x1="120" y1="310" x2="120" y2="380" stroke="black" stroke-width="8"/> <!-- forearm -->
+        <line x1="400" y1="300" x2="430" y2="380" stroke="black" stroke-width="8"/> <!-- legs to toes -->
+        <line x1="80" y1="380" x2="450" y2="380" stroke="gray" stroke-width="2"/> <!-- ground -->
+    </svg>

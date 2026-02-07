@@ -1,0 +1,12 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <circle cx="256" cy="120" r="30" fill="black"/>
+        <line x1="256" y1="150" x2="256" y2="280" stroke="black" stroke-width="8"/> <!-- torso angled -->
+        <line x1="256" y1="280" x2="180" y2="380" stroke="black" stroke-width="8"/> <!-- left thigh -->
+        <line x1="256" y1="280" x2="332" y2="380" stroke="black" stroke-width="8"/> <!-- right thigh -->
+        <line x1="180" y1="380" x2="170" y2="480" stroke="black" stroke-width="8"/> <!-- left shin -->
+        <line x1="332" y1="380" x2="342" y2="480" stroke="black" stroke-width="8"/> <!-- right shin -->
+        <line x1="256" y1="170" x2="180" y2="140" stroke="black" stroke-width="8"/> <!-- left arm up -->
+        <line x1="256" y1="170" x2="332" y2="140" stroke="black" stroke-width="8"/> <!-- right arm up -->
+        <line x1="140" y1="130" x2="372" y2="130" stroke="#A6FF00" stroke-width="6"/> <!-- barbell on back -->
+    </svg>

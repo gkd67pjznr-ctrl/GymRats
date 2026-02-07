@@ -1,0 +1,11 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <circle cx="256" cy="80" r="25" fill="black"/> <!-- head -->
+        <line x1="256" y1="105" x2="256" y2="250" stroke="black" stroke-width="8"/> <!-- torso -->
+        <line x1="256" y1="250" x2="220" y2="400" stroke="black" stroke-width="8"/> <!-- left leg -->
+        <line x1="256" y1="250" x2="292" y2="400" stroke="black" stroke-width="8"/> <!-- right leg -->
+        <line x1="256" y1="140" x2="180" y2="280" stroke="black" stroke-width="8"/> <!-- left arm down -->
+        <line x1="256" y1="140" x2="332" y2="280" stroke="black" stroke-width="8"/> <!-- right arm down -->
+        <rect x="160" y="270" width="40" height="60" fill="#A6FF00"/> <!-- left weight -->
+        <rect x="312" y="270" width="40" height="60" fill="#A6FF00"/> <!-- right weight -->
+    </svg>

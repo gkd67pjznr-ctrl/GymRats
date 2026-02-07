@@ -1,0 +1,9 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <circle cx="150" cy="350" r="25" fill="black"/> <!-- head reclined -->
+        <line x1="175" y1="350" x2="280" y2="280" stroke="black" stroke-width="8"/> <!-- torso angled -->
+        <line x1="280" y1="280" x2="350" y2="180" stroke="black" stroke-width="8"/> <!-- thighs up -->
+        <line x1="350" y1="180" x2="380" y2="120" stroke="black" stroke-width="8"/> <!-- shins -->
+        <rect x="360" y="80" width="80" height="80" fill="none" stroke="#A6FF00" stroke-width="4"/> <!-- platform -->
+        <line x1="120" y1="380" x2="300" y2="300" stroke="gray" stroke-width="6"/> <!-- seat -->
+    </svg>

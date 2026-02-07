@@ -1,0 +1,13 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <circle cx="256" cy="80" r="30" fill="black"/>
+        <line x1="256" y1="110" x2="256" y2="250" stroke="black" stroke-width="8"/>
+        <line x1="256" y1="250" x2="200" y2="400" stroke="black" stroke-width="8"/>
+        <line x1="256" y1="250" x2="312" y2="400" stroke="black" stroke-width="8"/>
+        <line x1="200" y1="400" x2="190" y2="480" stroke="black" stroke-width="8"/>
+        <line x1="312" y1="400" x2="322" y2="480" stroke="black" stroke-width="8"/>
+        <line x1="256" y1="140" x2="180" y2="220" stroke="black" stroke-width="8"/>
+        <line x1="256" y1="140" x2="332" y2="220" stroke="black" stroke-width="8"/>
+        <rect x="165" y="210" width="30" height="15" fill="#A6FF00"/> <!-- left dumbbell -->
+        <rect x="317" y="210" width="30" height="15" fill="#A6FF00"/> <!-- right dumbbell -->
+    </svg>

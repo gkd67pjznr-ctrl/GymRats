@@ -2,9 +2,9 @@
 
 > **THE source of truth** for all art assets across the GymRats app.
 >
-> **Last Updated:** 2026-02-06
-> **Version:** 1.0
-> **Status:** Inventory Complete, Generation Pending
+> **Last Updated:** 2026-02-07
+> **Version:** 1.1
+> **Status:** Generation In Progress - Recraft API Testing
 
 ---
 
@@ -16,8 +16,9 @@
 | **P0 (Launch Blockers)** | 509 |
 | **P1 (Launch Nice-to-Have)** | 729 |
 | **P2 (Post-Launch)** | 772 |
-| **Generated** | 0 (0%) |
-| **Remaining** | 2,010 |
+| **Generated (Draft)** | ~1,500 (local batches) |
+| **Accepted (Final)** | 4 (Recraft) |
+| **Remaining** | 2,006 |
 
 ---
 
@@ -27,8 +28,11 @@
 
 - **Research:** COMPLETE - Tools and costs documented in `AI-IMAGE-GEN-RESEARCH.md`
 - **Prompts:** COMPLETE - All 2,010 prompts ready in CSV files
-- **Pipeline:** NOT STARTED - MCP/local setup pending
-- **Generation:** NOT STARTED
+- **Pipeline:** IN PROGRESS - ComfyUI local + Recraft API configured
+- **Generation:** IN PROGRESS - Testing Recraft for production quality
+  - Local batches: v1 (839) + v2 (637) generated for reference
+  - Recraft accepted: 4 icons (squat, deadlift, bench_press, barbell_row)
+  - Remaining to validate: overhead_press, then top 50
 
 ### Immediate Next Actions
 
@@ -64,10 +68,10 @@
 
 | Priority | Count | Description | Status |
 |----------|-------|-------------|--------|
-| P0 - Critical | 273 | Core gym movements (bench, squat, deadlift, etc.) | Prompts Ready |
-| P1 - Important | 685 | Popular exercises | Prompts Ready |
-| P2 - Nice to Have | 632 | Less common exercises | Prompts Ready |
-| **Total** | **1,590** | | |
+| P0 - Critical | 318 | Core gym movements (bench, squat, deadlift, etc.) | 4 Accepted, Testing |
+| P1 - Important | 173 | Popular exercises | Drafts Ready |
+| P2 - Nice to Have | 146 | Less common exercises | Drafts Ready |
+| **Total** | **637** | | |
 
 **Specifications:**
 - Format: PNG
@@ -324,7 +328,7 @@ Must have for v1.0 launch. Without these, the app feels incomplete.
 
 | Category | Count | Est. Cost | Est. Time |
 |----------|-------|-----------|-----------|
-| Exercise Icons (Top 273) | 273 | $0-15 | 24-48 hrs |
+| Exercise Icons (Top 318) | 318 | $13-25 (Recraft) | 8-16 hrs |
 | PR Badges (3) | 3 | $0.15 | 10 min |
 | Avatar Base (20 bodies) | 20 | $0-1 | 2 hrs |
 | Avatar Skins (6) | 6 | $0-0.30 | 30 min |
@@ -342,7 +346,7 @@ Improves launch quality but app is functional without them.
 
 | Category | Count | Est. Cost | Est. Time |
 |----------|-------|-----------|-----------|
-| Exercise Icons (Remaining P1) | 685 | $0-35 | 48-72 hrs |
+| Exercise Icons (Remaining P1) | 173 | $7-14 (Recraft) | 4-8 hrs |
 | Rank Badge Borders (7) | 7 | $0.35 | 30 min |
 | Achievement Frames (2) | 2 | $0.10 | 10 min |
 | Rank-up Badge Variants (7) | 7 | $0.35 | 30 min |
@@ -357,7 +361,7 @@ Can ship after launch. Polish and expansion content.
 
 | Category | Count | Est. Cost | Est. Time |
 |----------|-------|-----------|-----------|
-| Exercise Icons (P2) | 632 | $0-32 | 48-72 hrs |
+| Exercise Icons (P2) | 146 | $6-12 (Recraft) | 3-6 hrs |
 | Avatar Effects (8) | 8 | $0-0.40 | 1 hr |
 | Avatar Growth Stages (extended) | 0 | - | - |
 | Theme Preview Cards (6) | 6 | $0-0.30 | 30 min |
@@ -415,7 +419,7 @@ Can ship after launch. Polish and expansion content.
 
 | Phase | Assets | Tool | Cost | Time |
 |-------|--------|------|------|------|
-| All Icons | 1,590 | fal.ai Flux | ~$80 | 8 hrs |
+| All Icons | 637 | fal.ai Flux | ~$80 | 8 hrs |
 | All Avatar | 203 | Stability AI | ~$10 | 3 hrs |
 | All UI | 44 | Stability AI | ~$2.50 | 1 hr |
 | All Celebrations | 23 | Stability AI | ~$1.50 | 30 min |
@@ -452,10 +456,13 @@ Lottie animations require separate consideration:
 
 | Tool | Status | Purpose | Notes |
 |------|--------|---------|-------|
-| DiffuGen | Not Installed | Bulk local generation | Recommended for icons |
-| Stability AI MCP | Not Configured | Quality testing/fallback | Need API key |
-| fal.ai | Not Configured | Fast cloud fallback | Need account |
-| ComfyUI | Not Installed | Advanced workflows | Optional |
+| ComfyUI | ✅ Working | Local generation | v0.3.10 at /Users/tmac/ComfyUI-stable |
+| SDXL-Turbo | ✅ Installed | Fast local model | 6.5GB, good for drafts |
+| ControlNet OpenPose | ✅ Installed | Pose-guided generation | 5GB, improves consistency |
+| Recraft API | ✅ Configured | Production quality | $10 loaded, $0.04-0.08/image |
+| fal.ai | ✅ Configured | Fast cloud fallback | $10 loaded |
+| DiffuGen | Not Installed | Bulk local generation | May not need with Recraft |
+| Stability AI MCP | Not Configured | Alternative API | Recraft preferred |
 
 ### MCP Configuration
 
@@ -580,13 +587,23 @@ Update this section as generation progresses:
 
 | Category | Total | Generated | Reviewed | Approved | % Complete |
 |----------|-------|-----------|----------|----------|------------|
-| P0 Icons | 273 | 0 | 0 | 0 | 0% |
+| P0 Icons | 318 | ~318 (drafts) | 5 | 4 | 1.3% |
 | P0 Avatar | 183 | 0 | 0 | 0 | 0% |
 | P0 UI | 3 | 0 | 0 | 0 | 0% |
-| P1 Icons | 685 | 0 | 0 | 0 | 0% |
+| P1 Icons | 173 | ~173 (drafts) | 0 | 0 | 0% |
 | P1 Other | 44 | 0 | 0 | 0 | 0% |
-| P2 All | 772 | 0 | 0 | 0 | 0% |
-| **Total** | **2,010** | **0** | **0** | **0** | **0%** |
+| P2 All | 772 | ~146 (drafts) | 0 | 0 | 0% |
+| **Total** | **2,010** | **~637 drafts** | **5** | **4** | **0.2%** |
+
+**Note:** Draft icons generated locally via ComfyUI (v1+v2 batches). Production icons being generated via Recraft API.
+
+**Accepted Recraft Icons (4):**
+- squat_01.png
+- deadlift_v2.png
+- bench_press_v3.png
+- barbell_row_v3.png
+
+**Location:** `docs/art/recraft-test/accepted/`
 
 ### CSV Tracking
 
@@ -645,6 +662,7 @@ Before approving any generated asset:
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-02-07 | 1.1 | Updated with generation progress: ComfyUI working, Recraft API configured, 4 icons accepted |
 | 2026-02-06 | 1.0 | Initial master tracker created |
 
 ---

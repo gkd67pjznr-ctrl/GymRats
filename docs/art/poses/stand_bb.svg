@@ -1,0 +1,13 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <!-- Standing figure holding barbell -->
+        <circle cx="256" cy="80" r="30" fill="black"/> <!-- head -->
+        <line x1="256" y1="110" x2="256" y2="250" stroke="black" stroke-width="8"/> <!-- torso -->
+        <line x1="256" y1="250" x2="200" y2="400" stroke="black" stroke-width="8"/> <!-- left leg -->
+        <line x1="256" y1="250" x2="312" y2="400" stroke="black" stroke-width="8"/> <!-- right leg -->
+        <line x1="200" y1="400" x2="190" y2="480" stroke="black" stroke-width="8"/> <!-- left foot -->
+        <line x1="312" y1="400" x2="322" y2="480" stroke="black" stroke-width="8"/> <!-- right foot -->
+        <line x1="256" y1="140" x2="160" y2="200" stroke="black" stroke-width="8"/> <!-- left arm -->
+        <line x1="256" y1="140" x2="352" y2="200" stroke="black" stroke-width="8"/> <!-- right arm -->
+        <line x1="120" y1="200" x2="392" y2="200" stroke="#A6FF00" stroke-width="6"/> <!-- barbell -->
+    </svg>

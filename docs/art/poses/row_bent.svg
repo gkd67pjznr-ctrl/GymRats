@@ -1,0 +1,10 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <rect width="512" height="512" fill="white"/>
+        <circle cx="180" cy="180" r="25" fill="black"/> <!-- head bent over -->
+        <line x1="200" y1="195" x2="320" y2="280" stroke="black" stroke-width="8"/> <!-- torso angled -->
+        <line x1="320" y1="280" x2="280" y2="420" stroke="black" stroke-width="8"/> <!-- left leg -->
+        <line x1="320" y1="280" x2="360" y2="420" stroke="black" stroke-width="8"/> <!-- right leg -->
+        <line x1="240" y1="220" x2="240" y2="320" stroke="black" stroke-width="8"/> <!-- arms pulling -->
+        <line x1="280" y1="235" x2="280" y2="335" stroke="black" stroke-width="8"/>
+        <line x1="200" y1="340" x2="320" y2="340" stroke="#A6FF00" stroke-width="6"/> <!-- barbell -->
+    </svg>
